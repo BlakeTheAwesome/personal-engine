@@ -1,15 +1,13 @@
 #ifndef _beAssert_h_
 #define _beAssert_h_
 
-#include "BlakesEngine_PCH.h"
-
-#include "Core/beTypes.h"
-#include "Core/beMacros.h"
+#include "blakesengine/Core/beTypes.h"
+#include "blakesengine/Core/beMacros.h"
 
 #ifdef _DEBUG
-	#define beASSERT(x) beAssert::DebugBreak((x), #x, 3, beLOCATION )
+	#define BE_ASSERT(x) beAssert::DebugBreak((x), #x, 3, LOCATION )
 #else
-	#define beASSERT(x) beUNUSED(x)
+	#define BE_ASSERT(x) BE_UNUSED(x)
 #endif
 
 namespace beAssert

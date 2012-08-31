@@ -1,12 +1,13 @@
 #include "BlakesEngine_PCH.h"
 #include "beAssert.h"
-#include "bePrintf.h"
-
+#include "blakesengine/core/beMacros.h"
+#include "blakesengine/core/bePrintf.h"
+#include <stdio.h>
 namespace beAssert
 {
 	void DebugBreak( bool condition, const char* conditionAsString, s8 warningLevel, const char* location )
 	{
-		beUNUSED( warningLevel );
+		BE_UNUSED( warningLevel );
 		
 		if ( !condition )
 		{

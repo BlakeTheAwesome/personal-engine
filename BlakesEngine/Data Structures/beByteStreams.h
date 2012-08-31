@@ -1,8 +1,7 @@
 #ifndef _ByteStreams_h_
 #define _ByteStreams_h_
 
-#include "BlakesEngine_PCH.h"
-#include "DataStructures/DataStructuresConsts.h"
+#include "blakesengine/DataStructures/DataStructuresConsts.h"
 
 
 class beByteStreamBase

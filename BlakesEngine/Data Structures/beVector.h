@@ -1,7 +1,7 @@
 #ifndef _beVector_h_
 #define _beVector_h_
 
-#include "core/beMacros"
+#include "blakesengine/core/beMacros.h"
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<typename T>

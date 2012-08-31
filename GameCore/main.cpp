@@ -1,5 +1,4 @@
-#include "../BlakesEngine/BlakesEngine.h"
-
+#include "BlakesEngine\Core\beTypeTests.h"
 
 int main()
 {
