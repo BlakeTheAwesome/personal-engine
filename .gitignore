@@ -3,3 +3,6 @@
 *.suo
 *.vcproj.*
 *.vcxproj.*
+*.opensdf
+bin
+obj
