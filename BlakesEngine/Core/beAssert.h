@@ -4,11 +4,15 @@
 #include "blakesengine/Core/beTypes.h"
 #include "blakesengine/Core/beMacros.h"
 
-#ifdef _DEBUG
+#define ENABLE_ASSERTS 1
+
+#ifdef ENABLE_ASSERTS
 	#define BE_ASSERT(x) beAssert::DebugBreak((x), #x, 3, LOCATION )
 #else
 	#define BE_ASSERT(x) BE_UNUSED(x)
 #endif
+
+#define BA_ASSERT_COMPILETIME(x) {int i = 0; switch(i){case 0: case(x):;}}
 
 namespace beAssert
 {

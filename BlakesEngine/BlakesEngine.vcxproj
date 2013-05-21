@@ -97,6 +97,7 @@
     <ClInclude Include="Core\beAssert.h" />
     <ClInclude Include="Core\beMacros.h" />
     <ClInclude Include="Core\bePrintf.h" />
+    <ClInclude Include="Core\beString.h" />
     <ClInclude Include="Core\beTypes.h" />
     <ClInclude Include="Core\beTypeTests.h" />
     <ClInclude Include="Data Structures\beByteStreams.h" />
