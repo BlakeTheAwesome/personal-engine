@@ -1,4 +1,7 @@
 *.suo
 *.vcxproj.*
+*.sdf
+*.opensdf
+ipch
 bin
 obj
