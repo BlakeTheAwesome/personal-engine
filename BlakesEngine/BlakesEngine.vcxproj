@@ -69,10 +69,6 @@
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>
-      </ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BlakesEngine_PCH.h</PrecompiledHeaderFile>
@@ -92,6 +88,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Window\beWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\beAssert.h" />
@@ -104,6 +101,7 @@
     <ClInclude Include="Data Structures\beVector.h" />
     <ClInclude Include="Data Structures\DataStructuresConsts.h" />
     <ClInclude Include="BlakesEngine_PCH.h" />
+    <ClInclude Include="Window\beWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
