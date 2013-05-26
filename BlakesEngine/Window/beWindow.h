@@ -1,13 +1,7 @@
-#include "windows.h"
 #include "Core/beString.h"
+#include "Core/bePimpl.h"
 
 class beWindow
 {
-	public:
-		static beWindow* Create(HINSTANCE hInstance, const beString& windowName, int windowHeight, int windowWidth, bool fullscreen);
-		static void Destroy(beWindow* window);
-
-	private:
-		class Impl;
-		Impl* impl;
+	BE_PIMPL_CREATE(beWindow, void* hInstance, const beString& windowName, int windowHeight, int windowWidth, bool fullscreen);
 };

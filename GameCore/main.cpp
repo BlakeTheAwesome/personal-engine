@@ -21,7 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beClock::Initialise();
 
 	beString windowName("TestWindow");
-	beWindow* window = beWindow::Create(hInstance, windowName, 1024, 768, false);
+	beWindow* window = beWindow::Create(&hInstance, windowName, 1024, 768, false);
 
 	beWindow::Destroy(window);
 

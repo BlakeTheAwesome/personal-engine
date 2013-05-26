@@ -1,6 +1,8 @@
 #include "bePCH.h"
 #include "beWindow.h"
 
+#include "Core/beMacros.h"
+#include <windows.h>
 
 class beWindow::Impl
 {
@@ -14,19 +16,9 @@ class beWindow::Impl
 		HWND m_hWnd;
 };
 
-beWindow* beWindow::Create(HINSTANCE hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+BE_PIMPL_CPP_DECLARE(beWindow, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
 {
-	beWindow* self = (beWindow*)malloc(sizeof(beWindow) + sizeof(Impl));
-	void* impl = self+1;
-	new(impl) Impl(hInstance, windowName, windowWidth, windowHeight, fullscreen);
-	self->impl = (Impl*)impl;
-	return self;
-}
-
-void beWindow::Destroy(beWindow* window)
-{
-	window->impl->~Impl();
-	free(window);
+	BE_PIMPL_CPP_BODY(beWindow, *(HINSTANCE*)hInstance, windowName, windowWidth, windowHeight, fullscreen);
 }
 
 beWindow::Impl::Impl(HINSTANCE hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
