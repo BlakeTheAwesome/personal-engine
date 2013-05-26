@@ -13,7 +13,10 @@
 #define BE_SAFE_DELETE(x) delete(x); x = NULL;
 
 #define BE_MALLOC malloc
-#define BE_SAFE_FREE(x) free(x); x = NULL;
+#define BE_SAFE_FREE(x) if (x){free(x); x = NULL;};
+
+#define BE_SAFE_RELEASE(x) if (x){ x->Release(); x = NULL;};
+#define BE_SAFE_DESTROY(_type, x) if (x){ _type::Destroy(x); x = NULL;};
 
 #define BE_MEMCPY memcpy
 

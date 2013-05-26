@@ -48,7 +48,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WindowsSDK_IncludePath);$(SolutionDir);$(ProjectDir);$(DXSDK_DIR)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -64,6 +64,9 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\lib\x86</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -89,6 +92,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Time\beClock.cpp" />
     <ClCompile Include="Time\beFrameTimer.cpp" />
     <ClCompile Include="Time\beTimeValue.cpp" />
@@ -107,7 +111,8 @@
     <ClInclude Include="Data Structures\DataStructuresConsts.h" />
     <ClInclude Include="bePCH.h" />
     <ClInclude Include="External\XNAMath\xnamath.h" />
-    <ClInclude Include="Math\math.h" />
+    <ClInclude Include="Math\beMath.h" />
+    <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Time\beClock.h" />
     <ClInclude Include="Time\beFrameTimer.h" />
     <ClInclude Include="Time\beTimeValue.h" />

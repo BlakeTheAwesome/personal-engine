@@ -10,9 +10,7 @@ class beWindow::Impl
 		Impl(HINSTANCE hInstance,const beString& windowName, int windowWidth, int windowHeight, bool fullscreen);
 		~Impl();
 
-	private:
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 		HWND m_hWnd;
 };
 
@@ -59,8 +57,13 @@ beWindow::Impl::Impl(HINSTANCE hInstance, const beString& windowName, int window
 
 beWindow::Impl::~Impl()
 {
+	DestroyWindow(m_hWnd);
 }
 
+void* beWindow::GetHWnd() const
+{
+	return &m_impl->m_hWnd;
+}
 
 // this is the main message handler for the program
 LRESULT CALLBACK beWindow::Impl::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
