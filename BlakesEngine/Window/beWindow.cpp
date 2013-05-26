@@ -12,6 +12,8 @@ class beWindow::Impl
 
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		HWND m_hWnd;
+		int m_width;
+		int m_height;
 };
 
 BE_PIMPL_CPP_DECLARE(beWindow, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
@@ -21,6 +23,8 @@ BE_PIMPL_CPP_DECLARE(beWindow, void* hInstance, const beString& windowName, int 
 
 beWindow::Impl::Impl(HINSTANCE hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
 : m_hWnd(NULL)
+, m_width(windowWidth)
+, m_height(windowHeight)
 {
 	std::wstring wideWindowName;
 	wideWindowName.assign(windowName.begin (), windowName.end ());
@@ -63,6 +67,16 @@ beWindow::Impl::~Impl()
 void* beWindow::GetHWnd() const
 {
 	return &m_impl->m_hWnd;
+}
+
+int beWindow::GetWidth() const
+{
+	return m_impl->m_width;
+}
+
+int beWindow::GetHeight() const
+{
+	return m_impl->m_height;
 }
 
 // this is the main message handler for the program
