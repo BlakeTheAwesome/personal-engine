@@ -105,10 +105,18 @@
     <ClInclude Include="Data Structures\beVector.h" />
     <ClInclude Include="Data Structures\DataStructuresConsts.h" />
     <ClInclude Include="bePCH.h" />
+    <ClInclude Include="External\XNAMath\xnamath.h" />
+    <ClInclude Include="Math\math.h" />
     <ClInclude Include="Time\beClock.h" />
     <ClInclude Include="Time\beFrameTimer.h" />
     <ClInclude Include="Time\beTimeValue.h" />
     <ClInclude Include="Window\beWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="External\XNAMath\xnamathconvert.inl" />
+    <None Include="External\XNAMath\xnamathmatrix.inl" />
+    <None Include="External\XNAMath\xnamathmisc.inl" />
+    <None Include="External\XNAMath\xnamathvector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
