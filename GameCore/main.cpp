@@ -3,6 +3,8 @@
 #include "BlakesEngine\Core\beString.h"
 #include "BlakesEngine\Core\bePrintf.h"
 #include "BlakesEngine\Core\beTypeTests.h"
+#include "BlakesEngine\Time\beFrameTimer.h"
+#include "BlakesEngine\Time\beClock.h"
 #include "BlakesEngine\Window\beWindow.h"
 
 //int main()
@@ -16,13 +18,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    int nCmdShow)
 {
 	//beTypeTests::RunTypeTests();
+	beClock::Initialise();
 
 	beString windowName("TestWindow");
 	beWindow* window = beWindow::Create(hInstance, windowName, 1024, 768, false);
 
 	beWindow::Destroy(window);
 
-	//int frameNumber = 0;
+	beFrameTimer frameTimer;
+	frameTimer.LimitFPS(120);
+
 	MSG msg;
 	while(true)
 	{
@@ -40,8 +45,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			break;
 		}
 
-		
-		//bePRINTF("frame %d", frameNumber++);
+		beTimeValue dt;
+		bool doStuff = frameTimer.StepFrame(&dt);
+
+		if (doStuff)
+		{
+			bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
+		}
 	}
 
 	// return this part of the WM_QUIT message to Windows
