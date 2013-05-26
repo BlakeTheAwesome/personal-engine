@@ -80,6 +80,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\beAssert.cpp" />
+    <ClCompile Include="Core\bePrintf.cpp" />
     <ClCompile Include="Core\beTypeTests.cpp" />
     <ClCompile Include="BlakesEngine_PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

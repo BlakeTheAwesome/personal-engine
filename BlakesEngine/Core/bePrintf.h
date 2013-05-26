@@ -1,8 +1,13 @@
 #ifndef _bePrintf_h_
 #define _bePrintf_h_
 
-#include <stdio.h>
+#define bePRINTF bePrintf::bePrintf
+//#define bePRINTF printf
 
-#define bePRINTF printf
+namespace bePrintf
+{
+
+	void bePrintf(const char* format, ...);
+};
 
 #endif
