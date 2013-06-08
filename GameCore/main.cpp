@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beString windowName("TestWindow");
 	beWindow* window = beWindow::Create(&hInstance, windowName, 1024, 768, false);
 	beRenderInterface* renderInterface = beRenderInterface::Create();
-	renderInterface->Init(window);
+	renderInterface->Init(window, 0.01f, 100.00f, true);
 
 	beFrameTimer frameTimer;
 	frameTimer.LimitFPS(120);
@@ -55,6 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (doStuff)
 		{
 			renderInterface->BeginFrame();
+			renderInterface->Update(dt.ToSeconds());
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 		}

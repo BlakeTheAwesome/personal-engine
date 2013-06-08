@@ -30,33 +30,33 @@ beWindow::Impl::Impl(HINSTANCE hInstance, const beString& windowName, int window
 	wideWindowName.assign(windowName.begin (), windowName.end ());
 
 	WNDCLASSEX wc = {0};
-    wc.cbSize = sizeof(WNDCLASSEX);
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = WindowProc;
-    wc.hInstance = hInstance;
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-    wc.lpszClassName = L"beWindowClass";
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = hInstance;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	//wc.hbrBackground = (HBRUSH)COLOR_WINDOW; // Enable to put inital colour back in
+	wc.lpszClassName = L"beWindowClass";
 
-    // register the window class
-    RegisterClassEx(&wc);
+	// register the window class
+	RegisterClassEx(&wc);
 
-    // create the window and use the result as the handle
-    m_hWnd = CreateWindowEx(NULL,
-                          L"beWindowClass",
-                          wideWindowName.c_str(),
-                          WS_OVERLAPPEDWINDOW, // window style - add noresize etc
-                          448,    // x
-                          156,    // y
-                          windowWidth, // w
-                          windowHeight, // h
-                          NULL,    // parent window
-                          NULL,    // we aren't using menus, NULL
-                          hInstance,    // application handle
-                          this);    // callback thing?
+	// create the window and use the result as the handle
+	m_hWnd = CreateWindowEx(NULL,
+							L"beWindowClass",
+							wideWindowName.c_str(),
+							WS_OVERLAPPEDWINDOW, // window style - add noresize etc
+							448,    // x
+							156,    // y
+							windowWidth, // w
+							windowHeight, // h
+							NULL,    // parent window
+							NULL,    // we aren't using menus, NULL
+							hInstance,    // application handle
+							this);    // callback thing?
 
-    // display the window on the screen
-    ShowWindow(m_hWnd, SW_SHOW);
+	// display the window on the screen
+	ShowWindow(m_hWnd, SW_SHOW);
 }
 
 beWindow::Impl::~Impl()
