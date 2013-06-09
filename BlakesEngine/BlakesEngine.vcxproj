@@ -92,6 +92,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Time\beClock.cpp" />
     <ClCompile Include="Time\beFrameTimer.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="bePCH.h" />
     <ClInclude Include="External\XNAMath\xnamath.h" />
     <ClInclude Include="Math\beMath.h" />
+    <ClInclude Include="Rendering\beModel.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Time\beClock.h" />
     <ClInclude Include="Time\beFrameTimer.h" />
@@ -123,6 +125,8 @@
     <None Include="External\XNAMath\xnamathmatrix.inl" />
     <None Include="External\XNAMath\xnamathmisc.inl" />
     <None Include="External\XNAMath\xnamathvector.inl" />
+    <None Include="Shaders\colour.ps" />
+    <None Include="Shaders\colour.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
