@@ -92,6 +92,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Rendering\beCamera.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Shaders\beShaderColour.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="bePCH.h" />
     <ClInclude Include="External\XNAMath\xnamath.h" />
     <ClInclude Include="Math\beMath.h" />
+    <ClInclude Include="Rendering\beCamera.h" />
     <ClInclude Include="Rendering\beModel.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Shaders\beShaderColour.h" />

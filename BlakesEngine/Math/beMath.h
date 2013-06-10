@@ -2,6 +2,9 @@
 #include <DirectXMath.h>
 
 #define PI 3.14159265358979f
+#define RAD_TO_DEG(r) (r * (180.0f / PI))
+#define DEG_TO_RAD(d) (d * (PI / 180.0f))
+
 using namespace DirectX;
 
 namespace beMath
@@ -70,3 +73,6 @@ beMath::Vec3 normalise(const beMath::Vec3& v)
 	XMStoreFloat3(&out, normalised);
 	return out;
 }
+
+using namespace beMath;
+
