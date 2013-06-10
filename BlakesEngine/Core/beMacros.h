@@ -20,4 +20,6 @@
 
 #define BE_MEMCPY memcpy
 
+#define BE_ARRAY_DIMENSION(x) (sizeof(x) / (sizeof(x[0])))
+
 #endif // _beMacros_h_
