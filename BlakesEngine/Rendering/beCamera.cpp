@@ -2,7 +2,7 @@
 #include "beCamera.h"
 
 beCamera::beCamera()
-	: m_pos(0.0f, 0.0f, 0.0f)
+	: m_pos(0.0f, 0.0f, -10.0f)
 	, m_rot(0.0f, 0.0f, 0.0f)
 {
 }
@@ -49,8 +49,6 @@ void beCamera::Update()
 	
 	XMVECTOR xUp = XMVector3TransformCoord(XMLoadFloat3(&up), rotationMatrix);
 	XMVECTOR xLookAt = XMVector3TransformCoord(XMLoadFloat3(&lookAt), rotationMatrix);
-
-	xLookAt += XMLoadFloat3(&m_pos);
 	
 	XMMATRIX xViewMat = XMMatrixLookAtLH(XMLoadFloat3(&m_pos), xLookAt, xUp);
 	XMStoreFloat4x4(&m_matrix, xViewMat);

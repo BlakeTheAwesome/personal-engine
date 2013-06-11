@@ -1,6 +1,7 @@
 #pragma once
 #include "core/bePimpl.h"
 #include "core/beString.h"
+#include "Math/beMath.h"
 
 struct IDXGISwapChain;
 struct ID3D11Device;
@@ -25,9 +26,9 @@ public:
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 
-	const D3DXMATRIX& GetProjectionMatrix();
-	const D3DXMATRIX& GetWorldMatrix();
-	const D3DXMATRIX& GetOrthoMatrix();
+	const Matrix& GetProjectionMatrix();
+	const Matrix& GetWorldMatrix();
+	const Matrix& GetOrthoMatrix();
 
 	void GetVideoCardInfo(beString* name, unsigned int* memorySize);
 };

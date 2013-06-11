@@ -3,6 +3,7 @@
 
 #include "Core/beMacros.h"
 #include "Core/beAssert.h"
+#include "Core/bePrintf.h"
 
 #include "Window/beWindow.h"
 
@@ -44,9 +45,9 @@ class beRenderInterface::Impl
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
-	D3DXMATRIX m_projectionMatrix;
-	D3DXMATRIX m_worldMatrix;
-	D3DXMATRIX m_orthoMatrix;
+	Matrix m_projectionMatrix;
+	Matrix m_worldMatrix;
+	Matrix m_orthoMatrix;
 };
 
 BE_PIMPL_CPP_DECLARE(beRenderInterface)
@@ -159,7 +160,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.OutputWindow = *hWnd;
 	scd.Windowed = TRUE;
-	scd.SampleDesc.Count = 4; // Antialias level
+	scd.SampleDesc.Count = 1; // Antialias level
 	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen switching
 
 	if (m_vsync_enabled)
@@ -179,10 +180,15 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 	IDXGIAdapter* adapter = NULL; // Choose default graphics card
 	D3D_DRIVER_TYPE driverType = D3D_DRIVER_TYPE_HARDWARE; // Require DX11 card
 	HMODULE software = NULL; // Not using TYPE_SOFTWARE
+
 	u32 flags = 0;
 	D3D_FEATURE_LEVEL* pFeatureLevels = &fl;
 	u32 featureLevels = 1;
 	D3D_FEATURE_LEVEL* pFeatureLevel = NULL;
+	
+	#if defined(_DEBUG)  
+		flags |= D3D11_CREATE_DEVICE_DEBUG;
+	#endif
 
 	int res = D3D11CreateDeviceAndSwapChain(
 		adapter,
@@ -266,8 +272,20 @@ void beRenderInterface::Impl::CreateBackBuffer()
 {
 	// Set back buffer as render target
 	ID3D11Texture2D* backBufferTexture = NULL;
-	m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTexture);
-	m_device->CreateRenderTargetView(backBufferTexture, NULL, &m_backBuffer);
+	HRESULT res = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTexture);
+	if (FAILED(res))
+	{
+		bePRINTF("ERROR res:0x%08x", res);
+		BE_ASSERT(false);
+	}
+	bePRINTF("m_swapChain->GetBuffer, res = 0x%08x, backBufferTexture = 0x%08x", res, backBufferTexture);
+	res = m_device->CreateRenderTargetView(backBufferTexture, NULL, &m_backBuffer);
+	if (FAILED(res))
+	{
+		bePRINTF("ERROR res:0x%08x", res);
+		BE_ASSERT(false);
+	}
+
 	m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthStencilView);
 	backBufferTexture->Release();
 }
@@ -312,10 +330,13 @@ void beRenderInterface::Impl::CreateMatrices(int width, int height, float nearPl
 {
 	float fov = (float)D3DX_PI / 4.0f;
 	float screenAspect = (float)width / (float)height;
-	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, screenAspect, nearPlane, farPlane);
+	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fov, screenAspect, nearPlane, farPlane);
+	XMMATRIX worldMatrix = XMMatrixIdentity();
+	XMMATRIX orthoMatrix = XMMatrixOrthographicLH((float)width, (float)height, nearPlane, farPlane);
 
-	D3DXMatrixIdentity(&m_worldMatrix);
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)width, (float)height, nearPlane, farPlane);
+	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
+	XMStoreFloat4x4(&m_worldMatrix, worldMatrix);
+	XMStoreFloat4x4(&m_orthoMatrix, orthoMatrix);
 }
 
 void beRenderInterface::Deinit()
@@ -361,19 +382,29 @@ void beRenderInterface::EndFrame()
 	}
 }
 
-const D3DXMATRIX& beRenderInterface::GetProjectionMatrix()
+const Matrix& beRenderInterface::GetProjectionMatrix()
 {
 	return m_impl->m_projectionMatrix;
 }
 
-const D3DXMATRIX& beRenderInterface::GetWorldMatrix()
+const Matrix& beRenderInterface::GetWorldMatrix()
 {
 	return m_impl->m_worldMatrix;
 }
 
-const D3DXMATRIX& beRenderInterface::GetOrthoMatrix()
+const Matrix& beRenderInterface::GetOrthoMatrix()
 {
 	return m_impl->m_orthoMatrix;
+}
+
+ID3D11Device* beRenderInterface::GetDevice()
+{
+	return m_impl->m_device;
+}
+
+ID3D11DeviceContext* beRenderInterface::GetDeviceContext()
+{
+	return m_impl->m_deviceContext;
 }
 
 void beRenderInterface::GetVideoCardInfo(beString* cardName, unsigned int* memory)

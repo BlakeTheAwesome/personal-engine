@@ -8,6 +8,9 @@
 #include "BlakesEngine\Time\beClock.h"
 #include "BlakesEngine\Window\beWindow.h"
 #include "BlakesEngine\Rendering\beRenderInterface.h"
+#include "BlakesEngine\Rendering\beCamera.h"
+#include "BlakesEngine\Rendering\beModel.h"
+#include "BlakesEngine\Shaders\beShaderColour.h"
 
 //int main()
 //{
@@ -29,6 +32,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	beFrameTimer frameTimer;
 	frameTimer.LimitFPS(120);
+
+	beCamera camera;
+	beModel model;
+	beShaderColour colourShader;
+	model.Init(renderInterface);
+	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 
 	MSG msg = {0};
 	while(true)
@@ -54,13 +63,20 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		if (doStuff)
 		{
-			renderInterface->BeginFrame();
 			renderInterface->Update(dt.ToSeconds());
+			camera.Update();
+			renderInterface->BeginFrame();
+			model.Render(renderInterface);
+
+			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			colourShader.Render(renderInterface, model.GetIndexCount());
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 		}
 	}
 
+	colourShader.Deinit();
+	model.Deinit();
 	renderInterface->Deinit();
 	BE_SAFE_DESTROY(beRenderInterface, renderInterface);
 	BE_SAFE_DESTROY(beWindow, window);

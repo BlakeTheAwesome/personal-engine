@@ -13,9 +13,9 @@
 
 struct MatrixBufferType
 {
-	beMath::Matrix world;
-	beMath::Matrix view;
-	beMath::Matrix projection;
+	Matrix world;
+	Matrix view;
+	Matrix projection;
 };
 
 beShaderColour::beShaderColour()
@@ -120,7 +120,7 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 	return true;
 }
 
-void beShaderColour::Unload()
+void beShaderColour::Deinit()
 {
 	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
@@ -128,9 +128,11 @@ void beShaderColour::Unload()
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderColour::SetShaderParameters(beRenderInterface* renderInterface, int indexCount, const beMath::Matrix& worldMatrix, const beMath::Matrix& viewMatrix, const beMath::Matrix& projectionMatrix)
+void beShaderColour::SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix)
 {
 	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	const Matrix& worldMatrix = renderInterface->GetWorldMatrix();
+	const Matrix& projectionMatrix = renderInterface->GetProjectionMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
 	

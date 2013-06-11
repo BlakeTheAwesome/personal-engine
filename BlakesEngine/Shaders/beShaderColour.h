@@ -17,9 +17,9 @@ public:
 	~beShaderColour();
 
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
-	void Unload();
+	void Deinit();
 
-	void SetShaderParameters(beRenderInterface* renderInterface, int indexCount, const beMath::Matrix& worldMatrix, const beMath::Matrix& viewMatrix, const beMath::Matrix& projectionMatrix);
+	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount);
 

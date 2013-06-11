@@ -67,6 +67,9 @@
     <Lib>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\lib\x86</AdditionalLibraryDirectories>
     </Lib>
+    <CustomBuild>
+      <Command>xcopy /y /d %(FullPath) $(OutDir)</Command>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -129,8 +132,17 @@
     <None Include="External\XNAMath\xnamathmatrix.inl" />
     <None Include="External\XNAMath\xnamathmisc.inl" />
     <None Include="External\XNAMath\xnamathvector.inl" />
-    <None Include="Shaders\colour.ps" />
-    <None Include="Shaders\colour.vs" />
+    <CustomBuild Include="Shaders\colour.ps">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">colour.ps</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\colour.vs">
+      <FileType>Document</FileType>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">colour.vs</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
