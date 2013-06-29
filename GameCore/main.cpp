@@ -10,7 +10,9 @@
 #include "BlakesEngine\Rendering\beRenderInterface.h"
 #include "BlakesEngine\Rendering\beCamera.h"
 #include "BlakesEngine\Rendering\beModel.h"
+#include "BlakesEngine\Rendering\beTexture.h"
 #include "BlakesEngine\Shaders\beShaderColour.h"
+#include "BlakesEngine\Shaders\beShaderTexture.h"
 
 //int main()
 //{
@@ -35,9 +37,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	beCamera camera;
 	beModel model;
+	beTexture texture;
 	beShaderColour colourShader;
+	beShaderTexture textureShader;
 	model.Init(renderInterface);
+	texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
+	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
 
 	MSG msg = {0};
 	while(true)
@@ -68,14 +74,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->BeginFrame();
 			model.Render(renderInterface);
 
-			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			colourShader.Render(renderInterface, model.GetIndexCount());
+			//colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 		}
 	}
 
+	textureShader.Deinit();
 	colourShader.Deinit();
+	texture.Deinit();
 	model.Deinit();
 	renderInterface->Deinit();
 	BE_SAFE_DESTROY(beRenderInterface, renderInterface);

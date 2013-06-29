@@ -3,6 +3,7 @@
 
 #include "Core\beAssert.h"
 #include "Rendering\beRenderInterface.h"
+#include "Rendering\beTexture.h"
 
 #include <windows.h>
 #include <windowsx.h>
@@ -13,7 +14,8 @@
 struct VertexType
 {
 	XMFLOAT3A position;
-	XMFLOAT4A color;
+	//XMFLOAT4A color;
+	XMFLOAT2A texCoord;
 };
 
 beModel::beModel()
@@ -22,11 +24,13 @@ beModel::beModel()
 	, m_vertexCount(0)
 	, m_indexCount(0)
 {
+	m_texture = new beTexture();
 }
 
 beModel::~beModel()
 {
 	BE_ASSERT(!m_vertexBuffer && !m_indexBuffer);
+	BE_SAFE_DELETE(m_texture);
 }
 
 bool beModel::Init(beRenderInterface* ri)
@@ -97,8 +101,14 @@ bool beModel::Init(beRenderInterface* ri)
 
 void beModel::Deinit()
 {
+	m_texture->Deinit();
 	BE_SAFE_RELEASE(m_indexBuffer);
 	BE_SAFE_RELEASE(m_vertexBuffer);
+}
+
+bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
+{
+	return m_texture->Init(ri, textureFilename);
 }
 
 void beModel::Render(beRenderInterface* ri)
