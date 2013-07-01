@@ -13,9 +13,8 @@
 
 struct VertexType
 {
-	XMFLOAT3A position;
-	//XMFLOAT4A color;
-	XMFLOAT2A texCoord;
+	XMFLOAT3 position;
+	XMFLOAT2 texCoord;
 };
 
 beModel::beModel()
@@ -45,25 +44,39 @@ bool beModel::Init(beRenderInterface* ri)
 
 	ID3D11Device* device = ri->GetDevice();
 
-	m_vertexCount = 3;
-	m_indexCount = 3;
+	m_vertexCount = 6;
+	m_indexCount = 6;
 
 	vertices = new VertexType[m_vertexCount];
 	indices = new unsigned int[m_indexCount];
 	
 	// Load the vertex array with data.
 	vertices[0].position = XMFLOAT3A(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].color = XMFLOAT4A(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[0].texCoord = XMFLOAT2A(0.0f, 1.0f);
+	
+	vertices[1].position = XMFLOAT3A(-1.0f, 1.0f, 0.0f);  // Top left.
+	vertices[1].texCoord = XMFLOAT2A(0.0f, 0.0f);
 
-	vertices[1].position = XMFLOAT3A(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].color = XMFLOAT4A(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[2].position = XMFLOAT3A(1.0f, 1.0f, 0.0f);  // Top right.
+	vertices[2].texCoord = XMFLOAT2A(1.0f, 0.0f);
 
-	vertices[2].position = XMFLOAT3A(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].color = XMFLOAT4A(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[3].position = XMFLOAT3A(1.0f, 1.0f, 0.0f);  // TR.
+	vertices[3].texCoord = XMFLOAT2A(1.0f, 0.0f);
+	
+	vertices[4].position = XMFLOAT3A(1.0f, -1.0f, 0.0f);  // BR.
+	vertices[4].texCoord = XMFLOAT2A(1.0f, 1.0f);
 
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+	vertices[5].position = XMFLOAT3A(-1.0f, -1.0f, 0.0f);  // BL.
+	vertices[5].texCoord = XMFLOAT2A(0.0f, 1.0f);
+
+
+
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 3;
+	indices[4] = 4;
+	indices[5] = 5;
 
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;

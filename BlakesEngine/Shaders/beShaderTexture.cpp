@@ -203,7 +203,7 @@ void beShaderTexture::Render(beRenderInterface* renderInterface, int indexCount,
 	deviceContext->PSSetShader(m_pShader, NULL, 0);
 	
 	deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->VSSetShaderResources(0, 1, &texture);
+	//deviceContext->VSSetShaderResources(0, 1, &texture);
 	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
 	deviceContext->DrawIndexed(indexCount, 0, 0);
