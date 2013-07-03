@@ -4,6 +4,7 @@
 #include "BlakesEngine\Core\bePrintf.h"
 #include "BlakesEngine\Core\beMacros.h"
 #include "BlakesEngine\Core\beTypeTests.h"
+#include "BlakesEngine\Input\beGamepad.h"
 #include "BlakesEngine\Time\beFrameTimer.h"
 #include "BlakesEngine\Time\beClock.h"
 #include "BlakesEngine\Window\beWindow.h"
@@ -45,8 +46,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
 
+	beGamepad gamepad;
+	gamepad.Init(0);
+
+	bool go = true;
 	MSG msg = {0};
-	while(true)
+	while(go)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -59,7 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			
 			if(msg.message == WM_QUIT)
 			{
-				break;
+				go = false;
 			}
 		}
 
@@ -69,6 +74,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		if (doStuff)
 		{
+			gamepad.Update(dt.ToSeconds());
+			if (gamepad.GetButtonReleased(beGamepad::B))
+			{
+				go = false;
+			}
+
 			renderInterface->Update(dt.ToSeconds());
 			camera.Update();
 			renderInterface->BeginFrame();
@@ -82,6 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		}
 	}
 
+	gamepad.Deinit();
 	textureShader.Deinit();
 	colourShader.Deinit();
 	texture.Deinit();

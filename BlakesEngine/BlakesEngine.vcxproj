@@ -95,6 +95,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Rendering\beCamera.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="Data Structures\DataStructuresConsts.h" />
     <ClInclude Include="bePCH.h" />
     <ClInclude Include="External\XNAMath\xnamath.h" />
+    <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Math\beMath.h" />
     <ClInclude Include="Rendering\beCamera.h" />
     <ClInclude Include="Rendering\beModel.h" />
