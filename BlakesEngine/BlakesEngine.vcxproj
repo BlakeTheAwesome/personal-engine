@@ -63,6 +63,7 @@
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4800</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\lib\x86</AdditionalLibraryDirectories>
@@ -82,9 +83,12 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4800</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera\beCamera.cpp" />
+    <ClCompile Include="Camera\beFlightCamera.cpp" />
     <ClCompile Include="Core\beAssert.cpp" />
     <ClCompile Include="Core\bePrintf.cpp" />
     <ClCompile Include="Core\beTypeTests.cpp" />
@@ -96,7 +100,6 @@
       </AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Input\beGamepad.cpp" />
-    <ClCompile Include="Rendering\beCamera.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Rendering\beTexture.cpp" />
@@ -108,6 +111,8 @@
     <ClCompile Include="Window\beWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera\beCamera.h" />
+    <ClInclude Include="Camera\beFlightCamera.h" />
     <ClInclude Include="Core\beAssert.h" />
     <ClInclude Include="Core\beMacros.h" />
     <ClInclude Include="Core\bePimpl.h" />
@@ -115,14 +120,13 @@
     <ClInclude Include="Core\beString.h" />
     <ClInclude Include="Core\beTypes.h" />
     <ClInclude Include="Core\beTypeTests.h" />
-    <ClInclude Include="Data Structures\beByteStreams.h" />
-    <ClInclude Include="Data Structures\beVector.h" />
-    <ClInclude Include="Data Structures\DataStructuresConsts.h" />
     <ClInclude Include="bePCH.h" />
+    <ClInclude Include="DataStructures\beByteStreams.h" />
+    <ClInclude Include="DataStructures\beVector.h" />
+    <ClInclude Include="DataStructures\DataStructuresConsts.h" />
     <ClInclude Include="External\XNAMath\xnamath.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Math\beMath.h" />
-    <ClInclude Include="Rendering\beCamera.h" />
     <ClInclude Include="Rendering\beModel.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Rendering\beTexture.h" />

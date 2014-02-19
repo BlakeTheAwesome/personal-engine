@@ -2,8 +2,8 @@
 #include "beCamera.h"
 
 beCamera::beCamera()
-	: m_pos(0.0f, 0.0f, -10.0f)
-	, m_rot(0.0f, 0.0f, 0.0f)
+	: m_pos(0.0f, 1.0f, -5.0f)
+	, m_rot(0.0f, -.5f, 0.0f)
 {
 }
 

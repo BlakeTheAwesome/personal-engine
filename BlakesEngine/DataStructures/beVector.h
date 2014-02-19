@@ -12,6 +12,7 @@ class beVector
 			: m_buffer(NULL)
 			, m_bufferLength(0)
 			, m_increaseBy(-1)
+			, m_count(0)
 		{
 			Reserve(count);
 		}
@@ -24,7 +25,7 @@ class beVector
 		void Release()
 		{
 			BE_SAFE_FREE(m_buffer);
-			count = 0;
+			m_count = 0;
 		}
 		
 		void Reserve(int length)
@@ -51,7 +52,7 @@ class beVector
 		{
 			if (m_count >= m_bufferLength)
 			{
-				switch (increaseBy)
+				switch (m_increaseBy)
 				{
 					case 0:
 					{
@@ -70,7 +71,9 @@ class beVector
 					}
 				}
 			}
-			m_buffer[m_count++] = that;
+			int index = m_count++;
+			m_buffer[index] = that;
+			return index;
 		}
 		
 	private:

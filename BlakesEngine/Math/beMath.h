@@ -12,6 +12,7 @@ namespace beMath
 	typedef XMFLOAT3 Vec3;
 	typedef XMFLOAT4 Vec4;
 	typedef XMFLOAT4X4 Matrix;
+	typedef XMFLOAT4 Quat;
 
 	inline float Length(const beMath::Vec3& v)
 	{

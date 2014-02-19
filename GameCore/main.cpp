@@ -9,7 +9,7 @@
 #include "BlakesEngine\Time\beClock.h"
 #include "BlakesEngine\Window\beWindow.h"
 #include "BlakesEngine\Rendering\beRenderInterface.h"
-#include "BlakesEngine\Rendering\beCamera.h"
+#include "BlakesEngine\Camera\beCamera.h"
 #include "BlakesEngine\Rendering\beModel.h"
 #include "BlakesEngine\Rendering\beTexture.h"
 #include "BlakesEngine\Shaders\beShaderColour.h"
