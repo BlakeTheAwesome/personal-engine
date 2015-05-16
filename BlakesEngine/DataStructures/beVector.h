@@ -50,6 +50,62 @@ class beVector
 		
 		int Insert(T& that)
 		{
+			if (!CheckRoomForAlloc())
+			{
+				return -1;
+			}
+
+			int index = m_count++;
+			m_buffer[index] = that;
+			return index;
+		}
+
+		T* AllocateNew()
+		{
+			if (!CheckRoomForAlloc())
+			{
+				return NULL;
+			}
+			int index = m_count++;
+			return &m_buffer[index];
+		}
+
+		T* AddNew()
+		{
+			T* obj = AllocateNew();
+			obj->T();
+			return obj;
+		}
+
+		T& operator[](int i)
+		{
+			return At(i);
+		}
+
+		const T& operator[](int i) const
+		{
+			return At(i);
+		}
+
+		T& At(int i)
+		{
+			BE_ASSERT(i <= m_count);
+			return m_buffer[i];
+		}
+
+		const T& At(int i) const
+		{
+			BE_ASSERT(i <= m_count);
+			return m_buffer[i];
+		}
+		
+	private:
+		beVector();
+		beVector(const beVector&);
+		beVector& operator= (const beVector&);
+
+		bool CheckRoomForAlloc()
+		{
 			if (m_count >= m_bufferLength)
 			{
 				switch (m_increaseBy)
@@ -57,29 +113,22 @@ class beVector
 					case 0:
 					{
 						BE_ASSERT(false);
-						return -1;
+						return false;
 					}
 					case -1:
 					{
 						Reserve(m_bufferLength * 2);
-						break;
+						return true;
 					}
 					default:
 					{
 						Reserve(m_bufferLength + m_increaseBy);
-						break;
+						return true;
 					}
 				}
 			}
-			int index = m_count++;
-			m_buffer[index] = that;
-			return index;
+			return true;
 		}
-		
-	private:
-		beVector();
-		beVector(const beVector&);
-		beVector& operator= (const beVector&);
 		
 	protected:
 		T* m_buffer;
