@@ -16,8 +16,6 @@ class beFlightCamera
 		const Matrix& GetViewMatrix() const;
 
 	private:
-		Vec3 m_pos;
-		Quat m_rot;
 		Matrix m_matrix;
 		beGamepad* m_gamepad;
 };

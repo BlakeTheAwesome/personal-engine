@@ -5,14 +5,18 @@
 #include "Core/bePrintf.h"
 #include "Input/beGamepad.h"
 
-static const float ROTATIONS_PER_SECOND = 1.0f;
+static const float ROTATIONS_PER_SECOND = 0.8f * (2.f * PI);
 static const float DISTANCE_PER_SECOND = 1.0f;
+static const bool INVERT_Y = true;
 
 beFlightCamera::beFlightCamera()
-	: m_pos(-5.0f, 1.0f, 0.0f)
-	, m_rot(0.0f, -.5f, 0.0f, 0.0f)
-	, m_gamepad(NULL)
+	: m_gamepad(NULL)
 {
+	XMVECTOR startingPosition = XMVectorSet(-5.f, 0.f, 0.f, 0.f);
+	XMVECTOR startingLookat = XMVectorSet(0.f, 0.f, 1.f, 0.f);
+	XMVECTOR startingUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	XMMATRIX startingMatrix = XMMatrixLookAtLH(startingPosition, startingLookat, startingUp);
+	XMStoreFloat4x4(&m_matrix, startingMatrix);
 }
 
 beFlightCamera::~beFlightCamera()
@@ -54,41 +58,19 @@ void beFlightCamera::Update(float dt)
 		return;
 	}
 
-	float extraPitch = rY * ROTATIONS_PER_SECOND * dt * 360.0f;
-	float extraYaw = rX * ROTATIONS_PER_SECOND * dt * 360.0f;
-	m_rot.x = fmodf(m_rot.x + extraYaw, 359.0f);
-	m_rot.y = fmodf(m_rot.y + extraPitch, 359.0f);
-	
+	float moveSpeedFactor = (1.f + m_gamepad->GetR2());
 
-	float forwards = lY * DISTANCE_PER_SECOND * dt * 360.0f;
-	float right = -lX * DISTANCE_PER_SECOND * dt * 360.0f;
-	
-	float pitch = DEG_TO_RAD(m_rot.x);
-	float yaw = DEG_TO_RAD(m_rot.y);
-	float roll = DEG_TO_RAD(m_rot.z);
+	float extraPitch = (INVERT_Y ? -rY : rY) * ROTATIONS_PER_SECOND * dt;
+	float extraYaw = -rX * ROTATIONS_PER_SECOND * dt;
+	float forwards = -lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+	float right = -lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
 
-	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	XMMATRIX initialMatrix = XMLoadFloat4x4(&m_matrix);
+	XMMATRIX rotX = XMMatrixRotationX(extraPitch);
+	XMMATRIX rotY = XMMatrixRotationY(extraYaw);
+	XMMATRIX translation = XMMatrixTranslation(forwards, 0.f, right);
+	XMMATRIX newMatrix = initialMatrix * rotX * rotY * translation;
 
-	Vec3 up(0.0f, 1.0f, 0.0f);
-	Vec3 lookAt(1.0f, 0.0f, 0.0f);
-	
-	XMVECTOR xUp = XMVector3TransformCoord(XMLoadFloat3(&up), rotationMatrix);
-	XMVECTOR xLookAt = XMVector3TransformCoord(XMLoadFloat3(&lookAt), rotationMatrix);
-	XMVECTOR xRight = XMVector3Cross(xUp, xLookAt);
-	XMVECTOR xCurrentPos = XMLoadFloat3(&m_pos);
-	XMVECTOR newPos = xCurrentPos + (xLookAt * forwards) + (xRight * right);
-
-	XMMATRIX xViewMat = XMMatrixLookAtLH(newPos, xLookAt, xUp);
-	XMStoreFloat4x4(&m_matrix, xViewMat);
-
-	XMFLOAT3 oldPos = m_pos;
-	XMStoreFloat3(&m_pos, newPos);
-	XMFLOAT3 lookat; XMStoreFloat3(&lookat, xLookAt);
-	XMFLOAT3 vRight; XMStoreFloat3(&vRight, xRight);
-	bePRINTF("Old pos %3.3f, %3.3f, %3.3f\n + %3.3f * (%3.3f, %3.3f, %3.3f)\n + %3.3f * (%3.3f, %3.3f, %3.3f)\n = (%3.3f, %3.3f, %3.3f)", 
-		oldPos.x, oldPos.y, oldPos.z,
-		forwards, lookat.x, lookat.y, lookat.z,
-		right, vRight.x, vRight.y, vRight.z,
-		m_pos.x, m_pos.y, m_pos.z);
+	XMStoreFloat4x4(&m_matrix, newMatrix);
 }
 
