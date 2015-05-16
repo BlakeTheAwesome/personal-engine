@@ -82,7 +82,7 @@ int beWindow::GetHeight() const
 // this is the main message handler for the program
 LRESULT CALLBACK beWindow::Impl::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Impl* pThis = (Impl*)lParam;
+	//Impl* pThis = (Impl*)lParam;
 
     // sort through and find what code to run for the message given
     switch(message)

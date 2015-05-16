@@ -11,7 +11,7 @@ class beVector
 		beVector(int count, int increaseBy=-1)
 			: m_buffer(NULL)
 			, m_bufferLength(0)
-			, m_increaseBy(-1)
+			, m_increaseBy(increaseBy)
 			, m_count(0)
 		{
 			Reserve(count);
