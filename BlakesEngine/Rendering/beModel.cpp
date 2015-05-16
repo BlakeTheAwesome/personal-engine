@@ -28,9 +28,10 @@ struct Face
 
 struct OBJFileInfo
 {
-	OBJFileInfo() : vertices(2048), vertexNormals(2048), faces(1024){}
+	OBJFileInfo() : vertices(2048), vertexNormals(2048), texCoords(2048), faces(1024){}
 	beVector<XMFLOAT3> vertices;
 	beVector<XMFLOAT3> vertexNormals;
+	beVector<XMFLOAT2> texCoords;
 	beVector<Face> faces;
 };
 
@@ -38,6 +39,13 @@ struct OBJFileInfo
 struct VertexType
 {
 	XMFLOAT3 position;
+	XMFLOAT2 texCoord;
+};
+
+struct VertexWithNormalType
+{
+	XMFLOAT3 position;
+	XMFLOAT3 normal;
 	XMFLOAT2 texCoord;
 };
 
@@ -71,7 +79,22 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 		else
 		{
 			return false;
-		} 
+		}
+	}
+	else if (line[0] == 'v' && line[1] == 't')
+	{
+		float f1, f2, f3;
+		int res = sscanf_s(line, "vt %f %f %f", &f1, &f2, &f3);
+		if (res == 3)
+		{
+			XMFLOAT2 textureCoord(f1,f2);
+			fileInfo->texCoords.Insert(textureCoord);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	else if (line[0] == 'v')
 	{
@@ -90,8 +113,58 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	}
 	else if (line[0] == 'f')
 	{
-		// sscanf when there is no middle number?
-		//f 45//27 35//26 24//35
+		const char* next = line + 2;
+		Face* face = fileInfo->faces.AllocateNew();
+		for (int i = 0; i < 3; i++)
+		{
+			// .OBJ is 1 indexed, so 0 here will be -1 for us.
+			int pos = 0;
+			int texCoord = 0;
+			int normal = 0;
+
+			int buffIndex = 0;
+			int nextThing = 0;
+			char buff[32];
+			while (true)
+			{
+				if (*next >= '0' && *next <= '9')
+				{
+					BE_ASSERT(buffIndex < 32);
+					buff[buffIndex++] = *next;
+					next++;
+					continue;
+				}
+				buff[buffIndex] = 0;
+				if (*buff != 0)
+				{
+					int thing = atoi(buff);
+					if (nextThing == 0)
+					{
+						pos = thing;
+					}
+					else if (nextThing == 1)
+					{
+						texCoord = thing;
+					}
+					else
+					{
+						normal = thing;
+					}
+				}
+				nextThing++;
+				buffIndex = 0;
+
+				if (*next++ != '/')
+				{
+					break;
+				}
+			}
+			
+			BE_ASSERT(pos != 0);
+			face->verts[i].vertex = pos - 1;
+			face->verts[i].texCoord = texCoord - 1;
+			face->verts[i].normal = normal - 1;
+		}
 	}
 
 	return true;
@@ -117,48 +190,43 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
 	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexType* vertices = NULL;
+	VertexWithNormalType* vertices = NULL;
 	unsigned int* indices;
 	HRESULT res;
 
 	ID3D11Device* device = ri->GetDevice();
 
-	m_vertexCount = 6;
-	m_indexCount = 6;
 
-	vertices = new VertexType[m_vertexCount];
+	m_vertexCount = fileInfo.faces.Count() * 3;//fileInfo.vertices.Count();
+	m_indexCount = m_vertexCount;
+	
+	vertices = new VertexWithNormalType[m_vertexCount];
 	indices = new unsigned int[m_indexCount];
-	
-	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3A(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].texCoord = XMFLOAT2A(0.0f, 1.0f);
-	
-	vertices[1].position = XMFLOAT3A(-1.0f, 1.0f, 0.0f);  // Top left.
-	vertices[1].texCoord = XMFLOAT2A(0.0f, 0.0f);
-
-	vertices[2].position = XMFLOAT3A(1.0f, 1.0f, 0.0f);  // Top right.
-	vertices[2].texCoord = XMFLOAT2A(1.0f, 0.0f);
-
-	vertices[3].position = XMFLOAT3A(1.0f, 1.0f, 0.0f);  // TR.
-	vertices[3].texCoord = XMFLOAT2A(1.0f, 0.0f);
-	
-	vertices[4].position = XMFLOAT3A(1.0f, -1.0f, 0.0f);  // BR.
-	vertices[4].texCoord = XMFLOAT2A(1.0f, 1.0f);
-
-	vertices[5].position = XMFLOAT3A(-1.0f, -1.0f, 0.0f);  // BL.
-	vertices[5].texCoord = XMFLOAT2A(0.0f, 1.0f);
+	int vertexIndex = 0;
+	for (int i = 0; i < fileInfo.faces.Count(); i++)
+	{
+		const Face* face = &fileInfo.faces[i];
+		for (int j = 0; j < 3; j++)
+		{
+			const VertInfo* vert = &face->verts[j];
+			XMFLOAT3 vertex = fileInfo.vertices[vert->vertex];
+			XMFLOAT2 texCoord = (vert->texCoord == -1) ? XMFLOAT2(0.0f, 0.0f) : fileInfo.texCoords[vert->texCoord];
+			XMFLOAT3 normal = (vert->normal == -1) ? XMFLOAT3(0.0f, 1.0f, 0.0f) : fileInfo.vertexNormals[vert->normal];
+			vertices[vertexIndex].position = vertex;
+			vertices[vertexIndex].normal = normal;
+			vertices[vertexIndex].texCoord = texCoord;
+			vertexIndex++;
+		}
+	}
 
 
-
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
-	indices[3] = 3;
-	indices[4] = 4;
-	indices[5] = 5;
+	for (int i = 0; i < m_indexCount; i++)
+	{
+		indices[i] = i;
+	}
 
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(VertexWithNormalType) * m_vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -291,6 +359,7 @@ void beModel::Render(beRenderInterface* ri)
 
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
