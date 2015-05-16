@@ -9,7 +9,7 @@
 #include "BlakesEngine\Time\beClock.h"
 #include "BlakesEngine\Window\beWindow.h"
 #include "BlakesEngine\Rendering\beRenderInterface.h"
-#include "BlakesEngine\Camera\beCamera.h"
+#include "BlakesEngine\Camera\beFlightCamera.h"
 #include "BlakesEngine\Rendering\beModel.h"
 #include "BlakesEngine\Rendering\beTexture.h"
 #include "BlakesEngine\Shaders\beShaderColour.h"
@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beFrameTimer frameTimer;
 	frameTimer.LimitFPS(120);
 
-	beCamera camera;
+	beFlightCamera camera;
 	beModel model;
 	beTexture texture;
 	beShaderColour colourShader;
@@ -48,6 +48,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	beGamepad gamepad;
 	gamepad.Init(0);
+
+	camera.AttachGamepad(&gamepad);
 
 	bool go = true;
 	MSG msg = {0};
@@ -81,7 +83,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 
 			renderInterface->Update(dt.ToSeconds());
-			camera.Update();
+			camera.Update(dt.ToSeconds());
 			renderInterface->BeginFrame();
 			model.Render(renderInterface);
 
@@ -92,6 +94,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 		}
 	}
+
+	camera.DetachGamepad();
 
 	gamepad.Deinit();
 	textureShader.Deinit();
