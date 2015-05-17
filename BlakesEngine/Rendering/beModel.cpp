@@ -2,6 +2,7 @@
 #include "beModel.h"
 
 #include "Core\beAssert.h"
+#include "Core\bePrintf.h"
 #include "DataStructures\beVector.h"
 #include "Rendering\beRenderInterface.h"
 #include "Rendering\beTexture.h"
@@ -197,7 +198,9 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 	ID3D11Device* device = ri->GetDevice();
 
 
-	m_vertexCount = fileInfo.faces.Count() * 3;//fileInfo.vertices.Count();
+	m_vertexCount = fileInfo.faces.Count() * 3; 
+	//m_vertexCount += 9; // Add an extra 3 debug tris
+
 	m_indexCount = m_vertexCount;
 	
 	vertices = new VertexWithNormalType[m_vertexCount];
@@ -206,7 +209,8 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 	for (int i = 0; i < fileInfo.faces.Count(); i++)
 	{
 		const Face* face = &fileInfo.faces[i];
-		for (int j = 0; j < 3; j++)
+		bePRINTF("face %d", i);
+		for (int j = 2; j >= 0; j--) // Read backwards to swap rhs to lhs
 		{
 			const VertInfo* vert = &face->verts[j];
 			XMFLOAT3 vertex = fileInfo.vertices[vert->vertex];
@@ -215,9 +219,41 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 			vertices[vertexIndex].position = vertex;
 			vertices[vertexIndex].normal = normal;
 			vertices[vertexIndex].texCoord = texCoord;
+
+			// Invert to swap rhs to lhs
+			vertices[vertexIndex].position.z *= -1.f;
+			vertices[vertexIndex].texCoord.y *= -1.f;
+			vertices[vertexIndex].normal.z *= -1.f;
+			bePRINTF("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
 			vertexIndex++;
 		}
 	}
+
+	// Debug tris
+	/*for (int i = 9; i > 0; i--)
+	{
+		vertices[m_vertexCount -i].texCoord = XMFLOAT2(0.0f, 0.0f);
+	}
+	vertices[m_vertexCount -9].position = XMFLOAT3(0.f, 0.f, 0.f);
+	vertices[m_vertexCount -8].position = XMFLOAT3(1.f, 0.f, 0.f);
+	vertices[m_vertexCount -7].position = XMFLOAT3(0.f, 1.f, 0.f);
+	vertices[m_vertexCount -9].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	vertices[m_vertexCount -8].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	vertices[m_vertexCount -7].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	
+	vertices[m_vertexCount -6].position = XMFLOAT3(0.f, 0.f, 0.f);
+	vertices[m_vertexCount -5].position = XMFLOAT3(1.f, 0.f, 0.f);
+	vertices[m_vertexCount -4].position = XMFLOAT3(0.f, 0.f, 1.f);
+	vertices[m_vertexCount -6].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	vertices[m_vertexCount -5].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	vertices[m_vertexCount -4].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	
+	vertices[m_vertexCount -3].position = XMFLOAT3(0.f, 0.f, 0.f);
+	vertices[m_vertexCount -2].position = XMFLOAT3(0.f, 1.f, 0.f);
+	vertices[m_vertexCount -1].position = XMFLOAT3(0.f, 0.f, 1.f);
+	vertices[m_vertexCount -3].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	vertices[m_vertexCount -2].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	vertices[m_vertexCount -1].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);*/
 
 
 	for (int i = 0; i < m_indexCount; i++)

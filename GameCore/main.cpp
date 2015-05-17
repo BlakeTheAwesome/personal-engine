@@ -41,7 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beTexture texture;
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
-	model.InitWithFilename(renderInterface, "teapot.obj");
+	model.InitWithFilename(renderInterface, "cube.obj");
 	texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
