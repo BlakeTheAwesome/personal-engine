@@ -84,7 +84,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
-	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	polygonLayout[0].InputSlot = 0;
 	polygonLayout[0].AlignedByteOffset = 0;
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;

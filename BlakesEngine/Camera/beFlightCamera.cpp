@@ -13,7 +13,7 @@ beFlightCamera::beFlightCamera()
 	: m_gamepad(NULL)
 {
 	XMVECTOR startingPosition = XMVectorSet(-5.f, 0.f, 0.f, 0.f);
-	XMVECTOR startingLookat = XMVectorSet(0.f, 0.f, 1.f, 0.f);
+	XMVECTOR startingLookat = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 	XMVECTOR startingUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	XMMATRIX startingMatrix = XMMatrixLookAtLH(startingPosition, startingLookat, startingUp);
 	XMStoreFloat4x4(&m_matrix, startingMatrix);

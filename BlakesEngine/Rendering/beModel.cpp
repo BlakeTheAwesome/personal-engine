@@ -45,7 +45,7 @@ struct VertexType
 
 struct VertexWithNormalType
 {
-	XMFLOAT3 position;
+	XMFLOAT4 position;
 	XMFLOAT3 normal;
 	XMFLOAT2 texCoord;
 };
@@ -84,9 +84,9 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	}
 	else if (line[0] == 'v' && line[1] == 't')
 	{
-		float f1, f2, f3;
-		int res = sscanf_s(line, "vt %f %f %f", &f1, &f2, &f3);
-		if (res == 3)
+		float f1, f2;
+		int res = sscanf_s(line, "vt %f %f", &f1, &f2);
+		if (res == 2)
 		{
 			XMFLOAT2 textureCoord(f1,f2);
 			fileInfo->texCoords.Insert(textureCoord);
@@ -182,6 +182,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 			std::getline(fstream, line);
 			if (!ReadLine(line.c_str(), &fileInfo))
 			{
+				BE_ASSERT(false);
 				return false;
 			}
 		}
@@ -199,7 +200,6 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 
 
 	m_vertexCount = fileInfo.faces.Count() * 3; 
-	//m_vertexCount += 9; // Add an extra 3 debug tris
 
 	m_indexCount = m_vertexCount;
 	
@@ -216,7 +216,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 			XMFLOAT3 vertex = fileInfo.vertices[vert->vertex];
 			XMFLOAT2 texCoord = (vert->texCoord == -1) ? XMFLOAT2(0.0f, 0.0f) : fileInfo.texCoords[vert->texCoord];
 			XMFLOAT3 normal = (vert->normal == -1) ? XMFLOAT3(0.0f, 1.0f, 0.0f) : fileInfo.vertexNormals[vert->normal];
-			vertices[vertexIndex].position = vertex;
+			vertices[vertexIndex].position = XMFLOAT4(vertex.x, vertex.y, vertex.z, 1.f);
 			vertices[vertexIndex].normal = normal;
 			vertices[vertexIndex].texCoord = texCoord;
 
@@ -224,36 +224,10 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 			vertices[vertexIndex].position.z *= -1.f;
 			vertices[vertexIndex].texCoord.y *= -1.f;
 			vertices[vertexIndex].normal.z *= -1.f;
-			bePRINTF("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
+			//bePRINTF("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
 			vertexIndex++;
 		}
 	}
-
-	// Debug tris
-	/*for (int i = 9; i > 0; i--)
-	{
-		vertices[m_vertexCount -i].texCoord = XMFLOAT2(0.0f, 0.0f);
-	}
-	vertices[m_vertexCount -9].position = XMFLOAT3(0.f, 0.f, 0.f);
-	vertices[m_vertexCount -8].position = XMFLOAT3(1.f, 0.f, 0.f);
-	vertices[m_vertexCount -7].position = XMFLOAT3(0.f, 1.f, 0.f);
-	vertices[m_vertexCount -9].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	vertices[m_vertexCount -8].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	vertices[m_vertexCount -7].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	
-	vertices[m_vertexCount -6].position = XMFLOAT3(0.f, 0.f, 0.f);
-	vertices[m_vertexCount -5].position = XMFLOAT3(1.f, 0.f, 0.f);
-	vertices[m_vertexCount -4].position = XMFLOAT3(0.f, 0.f, 1.f);
-	vertices[m_vertexCount -6].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	vertices[m_vertexCount -5].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	vertices[m_vertexCount -4].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	
-	vertices[m_vertexCount -3].position = XMFLOAT3(0.f, 0.f, 0.f);
-	vertices[m_vertexCount -2].position = XMFLOAT3(0.f, 1.f, 0.f);
-	vertices[m_vertexCount -1].position = XMFLOAT3(0.f, 0.f, 1.f);
-	vertices[m_vertexCount -3].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	vertices[m_vertexCount -2].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	vertices[m_vertexCount -1].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);*/
 
 
 	for (int i = 0; i < m_indexCount; i++)
@@ -301,7 +275,7 @@ bool beModel::Init(beRenderInterface* ri)
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
 	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexType* vertices = NULL;
+	VertexWithNormalType* vertices = NULL;
 	unsigned int* indices;
 	HRESULT res;
 
@@ -310,27 +284,34 @@ bool beModel::Init(beRenderInterface* ri)
 	m_vertexCount = 6;
 	m_indexCount = 6;
 
-	vertices = new VertexType[m_vertexCount];
+	vertices = new VertexWithNormalType[m_vertexCount];
 	indices = new unsigned int[m_indexCount];
 	
 	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3A(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].texCoord = XMFLOAT2A(0.0f, 1.0f);
+	float distFromCamera = -1.f;
+	float w = 1.f;
+	vertices[0].position = XMFLOAT4(distFromCamera, -1.f, 1.f, w);  // Bottom left.
+	vertices[0].texCoord = XMFLOAT2(0.f, 1.f);
 	
-	vertices[1].position = XMFLOAT3A(-1.0f, 1.0f, 0.0f);  // Top left.
-	vertices[1].texCoord = XMFLOAT2A(0.0f, 0.0f);
+	vertices[1].position = XMFLOAT4(distFromCamera, 1.f, 1.f, w);  // Top left.
+	vertices[1].texCoord = XMFLOAT2(0.f, 0.f);
 
-	vertices[2].position = XMFLOAT3A(1.0f, 1.0f, 0.0f);  // Top right.
-	vertices[2].texCoord = XMFLOAT2A(1.0f, 0.0f);
+	vertices[2].position = XMFLOAT4(distFromCamera, 1.f, -1.f, w);  // Top right.
+	vertices[2].texCoord = XMFLOAT2(1.f, 0.f);
 
-	vertices[3].position = XMFLOAT3A(1.0f, 1.0f, 0.0f);  // TR.
-	vertices[3].texCoord = XMFLOAT2A(1.0f, 0.0f);
+	vertices[3].position = XMFLOAT4(distFromCamera, 1.f, -1.f, w);  // TR.
+	vertices[3].texCoord = XMFLOAT2(1.f, 0.f);
 	
-	vertices[4].position = XMFLOAT3A(1.0f, -1.0f, 0.0f);  // BR.
-	vertices[4].texCoord = XMFLOAT2A(1.0f, 1.0f);
+	vertices[4].position = XMFLOAT4(distFromCamera, -1.f, -1.f, w);  // BR.
+	vertices[4].texCoord = XMFLOAT2(1.f, 1.f);
 
-	vertices[5].position = XMFLOAT3A(-1.0f, -1.0f, 0.0f);  // BL.
-	vertices[5].texCoord = XMFLOAT2A(0.0f, 1.0f);
+	vertices[5].position = XMFLOAT4(distFromCamera, -1.f, 1.f, w);  // BL.
+	vertices[5].texCoord = XMFLOAT2(0.f, 1.f);
+
+	for (int i = 0; i < m_vertexCount; i++)
+	{
+		vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	}
 
 
 
@@ -342,7 +323,7 @@ bool beModel::Init(beRenderInterface* ri)
 	indices[5] = 5;
 
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(decltype(*vertices)) * m_vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -356,7 +337,7 @@ bool beModel::Init(beRenderInterface* ri)
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.ByteWidth = sizeof(decltype(*indices)) * m_indexCount;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -390,7 +371,7 @@ bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilenam
 void beModel::Render(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	unsigned int stride = sizeof(VertexType);
+	unsigned int stride = sizeof(VertexWithNormalType);
 	unsigned int offset = 0;
 
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
