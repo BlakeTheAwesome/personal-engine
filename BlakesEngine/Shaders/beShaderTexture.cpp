@@ -20,7 +20,8 @@ struct MatrixBufferType
 
 struct LightBufferType
 {
-	Vec4 diffuseColor;
+	Vec4 ambientColour;
+	Vec4 diffuseColour;
 	Vec3 lightDirection;
 	float padding;
 };
@@ -225,7 +226,8 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, co
 		}
 	
 		auto dataPtr = (LightBufferType*)mappedResource.pData;
-		dataPtr->diffuseColor = Vec4(1.0f, 0.2f, 0.2f, 1.0f);
+		dataPtr->diffuseColour = Vec4(1.0f, 0.2f, 0.2f, 1.0f);
+		dataPtr->ambientColour = Vec4(0.0f, 0.1f, 0.3f, 1.0f);
 		dataPtr->lightDirection = lightDirection;
 		
 		deviceContext->Unmap(m_lightBuffer, 0);
