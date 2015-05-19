@@ -41,7 +41,7 @@ PixelInputType TextureVertexShader(VertexInputType input)
 	// Normalize the normal vector.
 	output.normal = normalize(output.normal);
 	
-	// Store the input color for the pixel shader to use.
+	// Store the input color for the pixel shader to use.	
 	output.tex = input.tex;
 
 	return output;

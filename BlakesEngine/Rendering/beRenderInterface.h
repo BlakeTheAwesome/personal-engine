@@ -26,9 +26,10 @@ public:
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 
-	const Matrix& GetProjectionMatrix();
-	const Matrix& GetWorldMatrix();
-	const Matrix& GetOrthoMatrix();
+	const Matrix& GetProjectionMatrix() const;
+	const Matrix& GetWorldMatrix() const;
+	const Matrix& GetOrthoMatrix() const;
+	const Vec3& GetLightDirection() const;
 
 	void GetVideoCardInfo(beString* name, unsigned int* memorySize);
 };

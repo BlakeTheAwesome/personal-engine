@@ -18,12 +18,20 @@ struct MatrixBufferType
 	Matrix projection;
 };
 
+struct LightBufferType
+{
+	Vec4 diffuseColor;
+	Vec3 lightDirection;
+	float padding;
+};
+
 beShaderTexture::beShaderTexture()
 	: m_pShader(NULL)
 	, m_vShader(NULL)
 	, m_sampleState(NULL)
 	, m_layout(NULL)
 	, m_matrixBuffer(NULL)
+	, m_lightBuffer(NULL)
 {
 }
 
@@ -129,7 +137,16 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	{
 		return false;
 	}
+	
+	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth = sizeof(LightBufferType);
+	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags = 0;
+	matrixBufferDesc.StructureByteStride = 0;
 
+	res = device->CreateBuffer(&matrixBufferDesc, NULL, &m_lightBuffer);
+	
 		// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -160,6 +177,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 void beShaderTexture::Deinit()
 {
 	BE_SAFE_RELEASE(m_sampleState);
+	BE_SAFE_RELEASE(m_lightBuffer);
 	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
@@ -171,34 +189,52 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, co
 	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
 	const Matrix& worldMatrix = renderInterface->GetWorldMatrix();
 	const Matrix& projectionMatrix = renderInterface->GetProjectionMatrix();
+	const Vec3& lightDirection = renderInterface->GetLightDirection();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
 	
 	// Lock the constant buffer so it can be written to.
-	HRESULT res = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(res))
 	{
-		return;
-	}
+		XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
+		XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
+		XMMATRIX xPM = XMLoadFloat4x4(&projectionMatrix);
 
-	XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
-	XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
-	XMMATRIX xPM = XMLoadFloat4x4(&projectionMatrix);
+		XMMATRIX txWorldMatrix = XMMatrixTranspose(xWM);
+		XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
+		XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
 
-	XMMATRIX txWorldMatrix = XMMatrixTranspose(xWM);
-	XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
-	XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
+		HRESULT res = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (FAILED(res))
+		{
+			return;
+		}
 	
-	MatrixBufferType* dataPtr = (MatrixBufferType*)mappedResource.pData;
+		auto dataPtr = (MatrixBufferType*)mappedResource.pData;
 
-	XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
-	XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
-	XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
+		XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
+		XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
+		XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
 
-	deviceContext->Unmap(m_matrixBuffer, 0);
+		deviceContext->Unmap(m_matrixBuffer, 0);
+	}
+	{
+		HRESULT res = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (FAILED(res))
+		{
+			return;
+		}
+	
+		auto dataPtr = (LightBufferType*)mappedResource.pData;
+		dataPtr->diffuseColor = Vec4(1.0f, 0.2f, 0.2f, 1.0f);
+		dataPtr->lightDirection = lightDirection;
+		
+		deviceContext->Unmap(m_lightBuffer, 0);
+	}
 
 	unsigned int bufferNumber = 0;
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	bufferNumber = 0;
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
 }
 
 void beShaderTexture::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture)

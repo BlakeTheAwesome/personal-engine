@@ -48,6 +48,8 @@ class beRenderInterface::Impl
 	Matrix m_projectionMatrix;
 	Matrix m_worldMatrix;
 	Matrix m_orthoMatrix;
+
+	Vec3 m_lightDirection;
 };
 
 BE_PIMPL_CPP_DECLARE(beRenderInterface)
@@ -67,6 +69,7 @@ beRenderInterface::Impl::Impl()
 	, m_depthStencilState(NULL)
 	, m_depthStencilView(NULL)
 	, m_rasterState(NULL)
+	, m_lightDirection(0.f, 0.f, 0.f)
 {
 	m_videoCardDescription[0] = '\0';
 }
@@ -357,17 +360,21 @@ static float s_offset = 0.0f;
 
 void beRenderInterface::BeginFrame()
 {
-	float r = sinf(0.0f + s_offset);
-	float g = sinf(0.2f + s_offset);
-	float b = sinf(0.4f + s_offset);
-	
-	m_impl->m_deviceContext->ClearRenderTargetView(m_impl->m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
+	//float r = sinf(0.0f + s_offset);
+	//float g = sinf(0.2f + s_offset);
+	//float b = sinf(0.4f + s_offset);
+	//m_impl->m_deviceContext->ClearRenderTargetView(m_impl->m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
+
+	m_impl->m_deviceContext->ClearRenderTargetView(m_impl->m_backBuffer, D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f));
 	m_impl->m_deviceContext->ClearDepthStencilView(m_impl->m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void beRenderInterface::Update(float dt)
 {
 	s_offset += dt;
+	XMVECTOR lightDir = XMVectorSet(sinf(s_offset* 2.f), -2.f, cosf(s_offset* 2.f), 0.f);
+	XMVECTOR normalisedDir = XMVector3Normalize(lightDir);
+	XMStoreFloat3(&m_impl->m_lightDirection, normalisedDir);
 }
 
 void beRenderInterface::EndFrame()
@@ -382,19 +389,24 @@ void beRenderInterface::EndFrame()
 	}
 }
 
-const Matrix& beRenderInterface::GetProjectionMatrix()
+const Matrix& beRenderInterface::GetProjectionMatrix() const
 {
 	return m_impl->m_projectionMatrix;
 }
 
-const Matrix& beRenderInterface::GetWorldMatrix()
+const Matrix& beRenderInterface::GetWorldMatrix() const
 {
 	return m_impl->m_worldMatrix;
 }
 
-const Matrix& beRenderInterface::GetOrthoMatrix()
+const Matrix& beRenderInterface::GetOrthoMatrix() const
 {
 	return m_impl->m_orthoMatrix;
+}
+
+const Vec3& beRenderInterface::GetLightDirection() const
+{
+	return m_impl->m_lightDirection;
 }
 
 ID3D11Device* beRenderInterface::GetDevice()
