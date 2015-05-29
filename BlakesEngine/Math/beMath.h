@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-
+#include "Core/bePrintf.h"
 #define PI XM_PI
 #define RAD_TO_DEG(r) (r * (180.0f / PI))
 #define DEG_TO_RAD(d) (d * (PI / 180.0f))
@@ -72,6 +72,33 @@ namespace beMath
 		XMStoreFloat3(&out, normalised);
 		return out;
 	}
+
+	inline beMath::Vec3 PositionFromMatrix(const beMath::Matrix& matrix)
+	{
+		XMVECTOR scale;
+		XMVECTOR rotationQuat;
+		XMVECTOR translation;
+		XMMATRIX mat = XMLoadFloat4x4(&matrix);
+		bool success = XMMatrixDecompose(&scale, &rotationQuat, &translation, mat);
+		if (!success)
+		{
+			return beMath::Vec3(0.f, 0.f, 0.f);
+		}
+		Vec3 position;
+		XMStoreFloat3(&position, translation);
+
+		bePRINTF("CameraPosition %f, %f, %f, %f", translation.m128_f32[0], translation.m128_f32[1], translation.m128_f32[2], translation.m128_f32[3]);
+		bePRINTF("CameraScale %f, %f, %f, %f", scale.m128_f32[0], scale.m128_f32[1], scale.m128_f32[2], scale.m128_f32[3]);
+		bePRINTF("CameraRotation %f, %f, %f, %f", rotationQuat.m128_f32[0], rotationQuat.m128_f32[1], rotationQuat.m128_f32[2], rotationQuat.m128_f32[3]);
+
+		XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		XMVECTOR newPos = XMVector3Transform(pos, mat);
+
+		bePRINTF("neaPos %f, %f, %f, %f", newPos.m128_f32[0], newPos.m128_f32[1], newPos.m128_f32[2], newPos.m128_f32[3]);
+
+		return position;
+	}
+
 };
 using namespace beMath;
 

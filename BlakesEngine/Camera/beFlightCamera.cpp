@@ -9,14 +9,31 @@ static const float ROTATIONS_PER_SECOND = 0.5f * (2.f * PI);
 static const float DISTANCE_PER_SECOND = 1.0f;
 static const bool INVERT_Y = true;
 
+
+
+//OK blake you need to render your axes pronto, like simple mesh with a colour per axis
+//Could even go for three basic quads with a different colour shader on each.
+
+
 beFlightCamera::beFlightCamera()
 	: m_gamepad(NULL)
+	, m_position(-5.f, 0.f, 0.f)
+	, m_yaw(0.f)
+	, m_pitch(0.f)
+	, m_roll(0.f)
 {
-	XMVECTOR startingPosition = XMVectorSet(-5.f, 0.f, 0.f, 0.f);
+	/*XMVECTOR startingPosition = XMLoadFloat3(&m_position);
 	XMVECTOR startingLookat = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 	XMVECTOR startingUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	XMMATRIX startingMatrix = XMMatrixLookAtLH(startingPosition, startingLookat, startingUp);
-	XMStoreFloat4x4(&m_matrix, startingMatrix);
+	XMStoreFloat4x4(&m_matrix, startingMatrix);*/
+
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(m_yaw, m_pitch, m_roll);
+	XMMATRIX startingOrientation = XMMatrixRotationQuaternion(quat);
+	XMStoreFloat4x4(&m_orientationMatrix, startingOrientation);
+
+	//XMMATRIX startingOrientation = XMMatrixLookToLH(XMVectorSet(0.f, 0.f, 0.f, 0.f), -XMLoadFloat3(&m_position), XMVectorSet(0.f, 1.f, 0.f, 0.f));
+	//XMStoreFloat4x4(&m_orientationMatrix, startingOrientation);
 }
 
 beFlightCamera::~beFlightCamera()
@@ -36,9 +53,14 @@ void beFlightCamera::DetachGamepad()
 	m_gamepad = NULL;
 }
 
+const Vec3& beFlightCamera::GetPosition() const
+{
+	return m_position;
+}
+
 const Matrix& beFlightCamera::GetViewMatrix() const
 {
-	return m_matrix;
+	return m_viewMatrix;
 }
 
 void beFlightCamera::Update(float dt)
@@ -60,17 +82,68 @@ void beFlightCamera::Update(float dt)
 
 	float moveSpeedFactor = (1.f + m_gamepad->GetR2());
 
-	float extraPitch = (INVERT_Y ? -rY : rY) * ROTATIONS_PER_SECOND * dt;
-	float extraYaw = -rX * ROTATIONS_PER_SECOND * dt;
-	float forwards = -lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-	float right = -lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+	float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
+	float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
+	float forwards = lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+	float right = lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
 
-	XMMATRIX initialMatrix = XMLoadFloat4x4(&m_matrix);
+	/*XMMATRIX initialMatrix = XMLoadFloat4x4(&m_matrix);
 	XMMATRIX rotX = XMMatrixRotationX(extraPitch);
 	XMMATRIX rotY = XMMatrixRotationY(extraYaw);
 	XMMATRIX translation = XMMatrixTranslation(forwards, 0.f, right);
 	XMMATRIX newMatrix = initialMatrix * rotX * rotY * translation;
 
-	XMStoreFloat4x4(&m_matrix, newMatrix);
+	XMStoreFloat4x4(&m_matrix, newMatrix);*/
+
+
+
+	// Adapted from GameDev forum
+
+	//member floats that accrue the current Yaw,Pitch and Roll
+
+	m_yaw += extraYaw;
+	m_pitch += extraPitch;
+	m_roll += 0.f;
+
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(m_yaw, m_pitch, m_roll);
+	XMMATRIX orientation = XMMatrixRotationQuaternion(quat);
+
+	//member floats that temporarily contain the current
+
+	//cycles input
+	XMVECTOR currentPosition = XMLoadFloat3(&m_position);
+	XMVECTOR translation = XMVectorSet(right, 0.f, forwards, 0.f);
+	XMVECTOR transformedTranslation = XMVector3TransformNormal(translation, orientation);
+	currentPosition += transformedTranslation;
+
+
+	//this is a hack to keep a constant level from the ground
+
+	//remove this line for a thrusting spaceship type movement
+
+	//m_vecPosition.y = m_YPos;
+
+
+			//fill the quaternion with your rotation info
+
+	//combine your new position offset with your rotation quaternion
+
+	//this yields an orientation matrix
+
+	XMVECTOR scale = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+	XMVECTOR origin = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+	XMMATRIX newMat = XMMatrixAffineTransformation(scale, origin, quat, currentPosition);
+
+
+	//the orientation matrix describes a view that stares directly at
+
+	//the camera, invert it to get your view matrix.
+
+	XMMATRIX viewMatrix = XMMatrixInverse(NULL, newMat);
+
+	XMStoreFloat4x4(&m_orientationMatrix, orientation);
+	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);
+	XMStoreFloat3(&m_position, currentPosition);
+
 }
 

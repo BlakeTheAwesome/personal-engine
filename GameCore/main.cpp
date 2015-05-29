@@ -42,8 +42,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
 	//model.Init(renderInterface);
-	model.InitWithFilename(renderInterface, "cube.obj");
-	//model.InitWithFilename(renderInterface, "cube2.obj");
+	//model.InitWithFilename(renderInterface, "cube.obj");
+	model.InitWithFilename(renderInterface, "cube2.obj");
 	//model.InitWithFilename(renderInterface, "teapot.obj");
 	texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
@@ -90,9 +90,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->BeginFrame();
 			model.Render(renderInterface);
 
-			//colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
+			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			colourShader.Render(renderInterface, model.GetIndexCount());
+			//textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
+			//textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 		}

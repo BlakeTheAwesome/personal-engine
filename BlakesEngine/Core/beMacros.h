@@ -7,7 +7,7 @@
 // Need to use 2 macros do use __LINE__ as a string
 #define _STRINGIFY(x)     #x
 #define _STRINGIFY_PT2(x) _STRINGIFY(x)
-#define LOCATION       __FILE__": Line("_STRINGIFY_PT2(__LINE__)")"
+#define LOCATION       __FILE__" : Line(" _STRINGIFY_PT2(__LINE__) ")"
 
 #define BE_NEW new
 #define BE_SAFE_DELETE(x) delete(x); x = NULL;
