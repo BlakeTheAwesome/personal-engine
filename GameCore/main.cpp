@@ -29,8 +29,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beClock::Initialise();
 
 	beString windowName("TestWindow");
-	beWindow* window = beWindow::Create(&hInstance, windowName, 1024, 768, false);
-	beRenderInterface* renderInterface = beRenderInterface::Create();
+	beWindow* window = PIMPL_NEW(beWindow)(&hInstance, windowName, 1024, 768, false);
+	beRenderInterface* renderInterface = PIMPL_NEW(beRenderInterface)();
 	renderInterface->Init(window, 0.01f, 100.00f, true);
 
 	beFrameTimer frameTimer;
@@ -107,8 +107,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	texture.Deinit();
 	model.Deinit();
 	renderInterface->Deinit();
-	BE_SAFE_DESTROY(beRenderInterface, renderInterface);
-	BE_SAFE_DESTROY(beWindow, window);
+	PIMPL_DELETE(renderInterface);
+	PIMPL_DELETE(window);
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;

@@ -13,7 +13,7 @@ class beWindow;
 class beRenderInterface
 {
 public:
-	BE_PIMPL_CREATE(beRenderInterface);
+	PIMPL_DECLARE(beRenderInterface);
 
 	void Init(beWindow* window, float nearPlane, float farPlane, bool vSync);
 	void Deinit();

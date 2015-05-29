@@ -16,7 +16,7 @@
 #define BE_SAFE_FREE(x) if (x){free(x); x = NULL;};
 
 #define BE_SAFE_RELEASE(x) if (x){ x->Release(); x = NULL;};
-#define BE_SAFE_DESTROY(_type, x) if (x){ _type::Destroy(x); x = NULL;};
+#define BE_SAFE_DESTROY(x) if (x){ x->Destroy(); x = NULL;};
 
 #define BE_MEMCPY memcpy
 

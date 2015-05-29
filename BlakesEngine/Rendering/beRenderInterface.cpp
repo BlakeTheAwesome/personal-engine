@@ -18,12 +18,7 @@
 #pragma comment (lib, "d3dx11.lib")
 #pragma comment (lib, "d3dx10.lib")
 
-class beRenderInterface::Impl
-{
-	public:
-	Impl();
-	~Impl();
-
+PIMPL_DATA(beRenderInterface)
 	void CreateDevice(HWND* hWnd, int width, int height);
 	void CreateDepthBuffer(int width, int height);
 	void CreateStencilView();
@@ -50,14 +45,9 @@ class beRenderInterface::Impl
 	Matrix m_orthoMatrix;
 
 	Vec3 m_lightDirection;
-};
+PIMPL_DATA_END
 
-BE_PIMPL_CPP_DECLARE(beRenderInterface)
-{
-	BE_PIMPL_CPP_BODY(beRenderInterface);
-}
-
-beRenderInterface::Impl::Impl()
+PIMPL_CONSTRUCT(beRenderInterface)
 	: m_swapChain(NULL)
 	, m_device(NULL)
 	, m_deviceContext(NULL)
@@ -74,24 +64,24 @@ beRenderInterface::Impl::Impl()
 	m_videoCardDescription[0] = '\0';
 }
 
-beRenderInterface::Impl::~Impl()
+PIMPL_DESTROY(beRenderInterface)
 {
 }
 
 void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, bool vSync)
 {
-	m_impl->m_vsync_enabled = vSync;
+	self.m_vsync_enabled = vSync;
 
 	HWND* hWnd = (HWND*)window->GetHWnd();
 	int width = window->GetWidth();
 	int height = window->GetHeight();
-	m_impl->CreateDevice(hWnd, width, height);
-	m_impl->CreateDepthBuffer(width, height);
-	m_impl->CreateStencilView();
-	m_impl->CreateBackBuffer();
-	m_impl->CreateRasterState();
-	m_impl->InitialiseViewport(width, height);
-	m_impl->CreateMatrices(width, height, nearPlane, farPlane);
+	self.CreateDevice(hWnd, width, height);
+	self.CreateDepthBuffer(width, height);
+	self.CreateStencilView();
+	self.CreateBackBuffer();
+	self.CreateRasterState();
+	self.InitialiseViewport(width, height);
+	self.CreateMatrices(width, height, nearPlane, farPlane);
 }
 
 void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
@@ -344,16 +334,16 @@ void beRenderInterface::Impl::CreateMatrices(int width, int height, float nearPl
 
 void beRenderInterface::Deinit()
 {
-	m_impl->m_swapChain->SetFullscreenState(FALSE, NULL); // Need to be in windowed mode to close cleanly
+	self.m_swapChain->SetFullscreenState(FALSE, NULL); // Need to be in windowed mode to close cleanly
 
-	BE_SAFE_RELEASE(m_impl->m_backBuffer);
-	BE_SAFE_RELEASE(m_impl->m_swapChain);
-	BE_SAFE_RELEASE(m_impl->m_rasterState);
-	BE_SAFE_RELEASE(m_impl->m_depthStencilView);
-	BE_SAFE_RELEASE(m_impl->m_depthStencilState);
-	BE_SAFE_RELEASE(m_impl->m_depthStencilBuffer);
-	BE_SAFE_RELEASE(m_impl->m_device);
-	BE_SAFE_RELEASE(m_impl->m_deviceContext);
+	BE_SAFE_RELEASE(self.m_backBuffer);
+	BE_SAFE_RELEASE(self.m_swapChain);
+	BE_SAFE_RELEASE(self.m_rasterState);
+	BE_SAFE_RELEASE(self.m_depthStencilView);
+	BE_SAFE_RELEASE(self.m_depthStencilState);
+	BE_SAFE_RELEASE(self.m_depthStencilBuffer);
+	BE_SAFE_RELEASE(self.m_device);
+	BE_SAFE_RELEASE(self.m_deviceContext);
 }
 
 static float s_offset = 0.0f;
@@ -363,10 +353,10 @@ void beRenderInterface::BeginFrame()
 	//float r = sinf(0.0f + s_offset);
 	//float g = sinf(0.2f + s_offset);
 	//float b = sinf(0.4f + s_offset);
-	//m_impl->m_deviceContext->ClearRenderTargetView(m_impl->m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
+	//self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
 
-	m_impl->m_deviceContext->ClearRenderTargetView(m_impl->m_backBuffer, D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f));
-	m_impl->m_deviceContext->ClearDepthStencilView(m_impl->m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f));
+	self.m_deviceContext->ClearDepthStencilView(self.m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void beRenderInterface::Update(float dt)
@@ -374,56 +364,56 @@ void beRenderInterface::Update(float dt)
 	//s_offset += dt;
 	//XMVECTOR lightDir = XMVectorSet(sinf(s_offset* 2.f), sinf(s_offset * 0.7f), cosf(s_offset* 2.f), 0.f);
 	//XMVECTOR normalisedDir = XMVector3Normalize(lightDir);
-	//XMStoreFloat3(&m_impl->m_lightDirection, normalisedDir);
-	m_impl->m_lightDirection = Vec3(0.f, 0.f, 1.f);
+	//XMStoreFloat3(&self.m_lightDirection, normalisedDir);
+	self.m_lightDirection = Vec3(0.f, 0.f, 1.f);
 }
 
 void beRenderInterface::EndFrame()
 {
-	if (m_impl->m_vsync_enabled)
+	if (self.m_vsync_enabled)
 	{
-		m_impl->m_swapChain->Present(1, 0);
+		self.m_swapChain->Present(1, 0);
 	}
 	else
 	{
-		m_impl->m_swapChain->Present(0, 0);
+		self.m_swapChain->Present(0, 0);
 	}
 }
 
 const Matrix& beRenderInterface::GetProjectionMatrix() const
 {
-	return m_impl->m_projectionMatrix;
+	return self.m_projectionMatrix;
 }
 
 const Matrix& beRenderInterface::GetWorldMatrix() const
 {
-	return m_impl->m_worldMatrix;
+	return self.m_worldMatrix;
 }
 
 const Matrix& beRenderInterface::GetOrthoMatrix() const
 {
-	return m_impl->m_orthoMatrix;
+	return self.m_orthoMatrix;
 }
 
 const Vec3& beRenderInterface::GetLightDirection() const
 {
-	return m_impl->m_lightDirection;
+	return self.m_lightDirection;
 }
 
 ID3D11Device* beRenderInterface::GetDevice()
 {
-	return m_impl->m_device;
+	return self.m_device;
 }
 
 ID3D11DeviceContext* beRenderInterface::GetDeviceContext()
 {
-	return m_impl->m_deviceContext;
+	return self.m_deviceContext;
 }
 
 void beRenderInterface::GetVideoCardInfo(beString* cardName, unsigned int* memory)
 {
-	cardName->assign(m_impl->m_videoCardDescription);
-	*memory = m_impl->m_videoCardMemory;
+	cardName->assign(self.m_videoCardDescription);
+	*memory = self.m_videoCardMemory;
 	return;
 }
 

@@ -3,7 +3,7 @@
 
 class beWindow
 {
-	BE_PIMPL_CREATE(beWindow, void* hInstance, const beString& windowName, int windowHeight, int windowWidth, bool fullscreen);
+	PIMPL_DECLARE(beWindow, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen);
 	
 	void* GetHWnd() const;
 	int GetWidth() const;
