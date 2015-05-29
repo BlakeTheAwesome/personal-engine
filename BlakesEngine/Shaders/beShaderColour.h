@@ -21,7 +21,8 @@ public:
 
 	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
-	void Render(beRenderInterface* renderInterface, int indexCount);
+	void Render(beRenderInterface* renderInterface, int indexCount, int indexOffset);
+	void RenderMore(beRenderInterface* renderInterface, int indexCount, int indexOffset);
 
 	// Todo: add async loader
 	bool IsLoaded() const;

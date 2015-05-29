@@ -100,6 +100,7 @@
       </AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Input\beGamepad.cpp" />
+    <ClCompile Include="Rendering\beDebugWorld.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Rendering\beTexture.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="External\XNAMath\xnamath.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Math\beMath.h" />
+    <ClInclude Include="Rendering\beDebugWorld.h" />
     <ClInclude Include="Rendering\beModel.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Rendering\beTexture.h" />

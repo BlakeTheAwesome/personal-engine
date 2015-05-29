@@ -10,6 +10,6 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 	//float4 outPos = float4(newPos.x * input.color.x, newPos.y * input.color.y, newPos.z * input.color.z, 1);
 	//float4 outPos = float4(input.color.x, input.color.y, input.color.z, 1);
 	//return outPos;
-	input.colour.z = 0.5f;
+	//input.colour.z = 0.5f;
 	return input.colour;
 }

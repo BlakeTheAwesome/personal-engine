@@ -79,7 +79,7 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
-	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	polygonLayout[0].InputSlot = 0;
 	polygonLayout[0].AlignedByteOffset = 0;
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
@@ -164,7 +164,7 @@ void beShaderColour::SetShaderParameters(beRenderInterface* renderInterface, con
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 }
 
-void beShaderColour::Render(beRenderInterface* renderInterface, int indexCount)
+void beShaderColour::Render(beRenderInterface* renderInterface, int indexCount, int indexOffset)
 {
 	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
 	
@@ -173,5 +173,11 @@ void beShaderColour::Render(beRenderInterface* renderInterface, int indexCount)
 	deviceContext->VSSetShader(m_vShader, NULL, 0);
 	deviceContext->PSSetShader(m_pShader, NULL, 0);
 
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
+}
+
+void beShaderColour::RenderMore(beRenderInterface* renderInterface, int indexCount, int indexOffset)
+{
+	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
 }
