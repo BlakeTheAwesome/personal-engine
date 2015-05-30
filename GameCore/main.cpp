@@ -34,17 +34,21 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	frameTimer.LimitFPS(120);
 
 	beFlightCamera camera;
-	beModel model;
-	//beModel model2;
+	beModel model1;
+	beModel model2;
+	beModel model3;
+	beModel model4;
 	beTexture texture;
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
 	beShaderLitTexture litTextureShader;
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
-	//model.Init(renderInterface);
-	//model.InitWithFilename(renderInterface, "cube.obj");
-	model.InitWithFilename(renderInterface, "cube2.obj");
-	//model.InitWithFilename(renderInterface, "teapot.obj");
+	
+	model1.Init(renderInterface);
+	model2.InitWithFilename(renderInterface, "cube.obj");
+	model3.InitWithFilename(renderInterface, "cube2.obj");
+	model4.InitWithFilename(renderInterface, "teapot.obj");
+
 	texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
@@ -56,7 +60,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	camera.AttachGamepad(&gamepad);
 
 	const int numShaders = 3;
+	const int numModels = 4;
 	int shaderToUse = 0;
+	int modelToUse = 2;
 	bool renderAxes = true;
 
 	bool go = true;
@@ -94,6 +100,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				shaderToUse++;
 				shaderToUse %= numShaders;
 			}
+			if (gamepad.GetButtonReleased(beGamepad::X))
+			{
+				modelToUse++;
+				modelToUse %= numModels;
+			}
 			if (gamepad.GetButtonReleased(beGamepad::Select))
 			{
 				renderAxes = !renderAxes;
@@ -107,12 +118,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
 			
-			model.Render(renderInterface);
+			beModel* modelToRender = nullptr;
+			switch (modelToUse)
+			{
+				case 0: modelToRender = &model1; break;
+				case 1: modelToRender = &model2; break;
+				case 2: modelToRender = &model3; break;
+				case 3: modelToRender = &model4; break;
+			}
+
+			modelToRender->Render(renderInterface);
+
 			switch (shaderToUse)
 			{
-				case 0: litTextureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture()); break;
-				case 1: textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture()); break;
-				case 2: colourShader.Render(renderInterface, model.GetIndexCount(), 0); break;
+				case 0: litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture()); break;
+				case 1: textureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture()); break;
+				case 2: colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0); break;
 			}
 			//
 			
@@ -137,8 +158,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	textureShader.Deinit();
 	colourShader.Deinit();
 	texture.Deinit();
-	//model2.Deinit();
-	model.Deinit();
+	model4.Deinit();
+	model3.Deinit();
+	model2.Deinit();
+	model1.Deinit();
 	renderInterface->Deinit();
 	PIMPL_DELETE(renderInterface);
 	PIMPL_DELETE(window);
