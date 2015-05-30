@@ -76,7 +76,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	{
 		if (errorMessage)
 		{
-			bePRINTF("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), pixelFilename.c_str(), res);
+			bePrintf::bePrintf(false, "", "%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), pixelFilename.c_str(), res);
 		}
 
 		BE_ASSERT(false);

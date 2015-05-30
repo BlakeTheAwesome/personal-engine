@@ -77,7 +77,7 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	vertices[0].position = XMFLOAT4(0.f, 0.f, 0.f, w);
 	vertices[0].colour = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
 	vertices[1].position = XMFLOAT4(AxisLength, 0.f, 0.f, w);
-	vertices[1].colour = XMFLOAT4(1.f, 1.f, 0.f, 1.f);
+	vertices[1].colour = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
 
 	vertices[2].position = XMFLOAT4(0.f, 0.f, 0.f, w);
 	vertices[2].colour = XMFLOAT4(0.f, 1.f, 0.f, 1.f);

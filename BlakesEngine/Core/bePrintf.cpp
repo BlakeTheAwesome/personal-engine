@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <Windows.h>
 
-void bePrintf::bePrintf(const char* location, const char* format, ...)
+void bePrintf::bePrintf(bool includeLocation, const char* location, const char* format, ...)
 {
 	char formatBuffer[2048];
 
@@ -16,7 +16,7 @@ void bePrintf::bePrintf(const char* location, const char* format, ...)
 
 	va_list args;
 	va_start(args, format);
-	int length = vsnprintf_s(buffer, maxChars, maxChars, formatBuffer, args);
+	int length = vsnprintf_s(buffer, maxChars, maxChars, includeLocation ? formatBuffer : format, args);
 	va_end(args);
 
 	if (length < 0)

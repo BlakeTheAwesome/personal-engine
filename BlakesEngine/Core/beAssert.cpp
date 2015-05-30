@@ -12,8 +12,7 @@ namespace beAssert
 		
 		if ( !condition )
 		{
-			bePRINTF( location );
-			bePRINTF( conditionAsString );
+			bePrintf::bePrintf(true, location, conditionAsString);
 			__asm int 3;
 		}
 	}
