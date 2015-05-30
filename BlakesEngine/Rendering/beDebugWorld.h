@@ -14,8 +14,10 @@ class beDebugWorld
 public:
 	PIMPL_DECLARE(beDebugWorld);
 
-	bool Init(beRenderInterface* ri, bool renderAxes);
+	bool Init(beRenderInterface* ri);
 	void Deinit();
+
+	void SetRenderAxes(bool renderAxes);
 	
 	void Render(beRenderInterface* ri, beShaderColour* colourShader);
 };

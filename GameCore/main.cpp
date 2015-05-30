@@ -17,11 +17,6 @@
 #include "BlakesEngine\Shaders\beShaderTexture.h"
 #include "BlakesEngine\Shaders\beShaderLitTexture.h"
 
-//int main()
-//{
-//	beTypeTests::RunTypeTests();
-//}
-
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine,
@@ -54,11 +49,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
 	litTextureShader.Init(renderInterface, beWString(L"Light.ps"), beWString(L"Light.vs"));
-	debugWorld->Init(renderInterface, true);
+	debugWorld->Init(renderInterface);
 
 	beGamepad gamepad;
 	gamepad.Init(0);
 	camera.AttachGamepad(&gamepad);
+
+	const int numShaders = 3;
+	int shaderToUse = 0;
+	bool renderAxes = true;
 
 	bool go = true;
 	MSG msg = {0};
@@ -90,6 +89,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			{
 				go = false;
 			}
+			if (gamepad.GetButtonReleased(beGamepad::Y))
+			{
+				shaderToUse++;
+				shaderToUse %= numShaders;
+			}
+			if (gamepad.GetButtonReleased(beGamepad::Select))
+			{
+				renderAxes = !renderAxes;
+			}
 
 			renderInterface->Update(dt.ToSeconds());
 			camera.Update(dt.ToSeconds());
@@ -100,15 +108,20 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
 			
 			model.Render(renderInterface);
-			textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
-			//litTextureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
-			//colourShader.Render(renderInterface, model.GetIndexCount(), 0);
+			switch (shaderToUse)
+			{
+				case 0: litTextureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture()); break;
+				case 1: textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture()); break;
+				case 2: colourShader.Render(renderInterface, model.GetIndexCount(), 0); break;
+			}
+			//
 			
 			//model2.Render(renderInterface);
 			//textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
 			//litTextureShader.Render(renderInterface, model2.GetIndexCount(), texture.GetTexture());
 			//colourShader.Render(renderInterface, model.GetIndexCount(), 0);
 
+			debugWorld->SetRenderAxes(renderAxes);
 			debugWorld->Render(renderInterface, &colourShader);
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());

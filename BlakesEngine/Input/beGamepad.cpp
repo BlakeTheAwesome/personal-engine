@@ -42,14 +42,14 @@ void beGamepad::Update(float dt)
 	XINPUT_STATE state = {0};
 	DWORD res = XInputGetState(m_index, &state);
 
+	m_lastStateFlags = m_thisStateFlags;
+
 	if(res == ERROR_SUCCESS)
 	{
 		m_connected = true;
-
 		if (m_lastPacketNumber != state.dwPacketNumber)
 		{
 			m_lastPacketNumber = state.dwPacketNumber;
-			m_lastStateFlags = m_thisStateFlags;
 			m_thisStateFlags = state.Gamepad.wButtons;
 			
 			BYTE leftTrigger = state.Gamepad.bLeftTrigger;

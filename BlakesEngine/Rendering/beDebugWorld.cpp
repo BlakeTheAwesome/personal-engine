@@ -24,33 +24,28 @@ struct VertexColourType
 
 PIMPL_DATA(beDebugWorld)
 	bool InitAxes(beRenderInterface* ri);
-	ID3D11Buffer* m_axesVertexBuffer;
-	ID3D11Buffer* m_axesIndexBuffer;
-	bool m_renderAxes;
+	ID3D11Buffer* axesVertexBuffer;
+	ID3D11Buffer* axesIndexBuffer;
+	bool renderAxes;
 PIMPL_DATA_END
 
 
 PIMPL_CONSTRUCT(beDebugWorld)
-	: m_axesVertexBuffer(nullptr)
-	, m_axesIndexBuffer(nullptr)
-	, m_renderAxes(false)
+	: axesVertexBuffer(nullptr)
+	, axesIndexBuffer(nullptr)
+	, renderAxes(false)
 {
 }
 
 PIMPL_DESTROY(beDebugWorld)
 {
-	BE_ASSERT(!m_axesVertexBuffer && !m_axesIndexBuffer);
+	BE_ASSERT(!axesVertexBuffer && !axesIndexBuffer);
 }
 
-bool beDebugWorld::Init(beRenderInterface* ri, bool renderAxes)
+bool beDebugWorld::Init(beRenderInterface* ri)
 {
 	bool success = true;
-
-	if (renderAxes)
-	{
-		self.m_renderAxes = true;
-		success |= self.InitAxes(ri);
-	}
+	success |= self.InitAxes(ri);
 	return success;
 }
 
@@ -107,7 +102,7 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	res = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_axesVertexBuffer);
+	res = device->CreateBuffer(&vertexBufferDesc, &vertexData, &axesVertexBuffer);
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -121,7 +116,7 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	res = device->CreateBuffer(&indexBufferDesc, &indexData, &m_axesIndexBuffer);
+	res = device->CreateBuffer(&indexBufferDesc, &indexData, &axesIndexBuffer);
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 
 	delete [] vertices;
@@ -132,20 +127,28 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 
 void beDebugWorld::Deinit()
 {
-	BE_SAFE_RELEASE(self.m_axesIndexBuffer);
-	BE_SAFE_RELEASE(self.m_axesVertexBuffer);
+	BE_SAFE_RELEASE(self.axesIndexBuffer);
+	BE_SAFE_RELEASE(self.axesVertexBuffer);
 }
 
 void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour)
 {
-	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	unsigned int stride = sizeof(VertexColourType);
-	unsigned int offset = 0;
+	if (self.renderAxes)
+	{
+		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+		unsigned int stride = sizeof(VertexColourType);
+		unsigned int offset = 0;
 
-	deviceContext->IASetVertexBuffers(0, 1, &self.m_axesVertexBuffer, &stride, &offset);
-	deviceContext->IASetIndexBuffer(self.m_axesIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	
-	shaderColour->Render(ri, 6, 0);
+		deviceContext->IASetVertexBuffers(0, 1, &self.axesVertexBuffer, &stride, &offset);
+		deviceContext->IASetIndexBuffer(self.axesIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+		shaderColour->Render(ri, 6, 0);
+	}
+}
+
+void beDebugWorld::SetRenderAxes(bool v)
+{
+	self.renderAxes = v;
 }
