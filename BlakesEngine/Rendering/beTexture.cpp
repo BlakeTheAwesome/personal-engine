@@ -13,7 +13,7 @@
 #include <d3dx10.h>
 
 beTexture::beTexture()
-	: m_texture(NULL)
+	: m_texture(nullptr)
 {
 }
 
@@ -23,7 +23,7 @@ beTexture::~beTexture()
 
 bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 {
-	HRESULT res = D3DX11CreateShaderResourceViewFromFile(ri->GetDevice(), textureFilename.c_str(), NULL, NULL, &m_texture, NULL);
+	HRESULT res = D3DX11CreateShaderResourceViewFromFile(ri->GetDevice(), textureFilename.c_str(), nullptr, nullptr, &m_texture, nullptr);
 	if(FAILED(res))
 	{
 		BE_ASSERT(false);

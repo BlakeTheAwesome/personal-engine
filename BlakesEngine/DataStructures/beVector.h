@@ -9,7 +9,7 @@ class beVector
 {
 	public:
 		beVector(int count, int increaseBy=-1)
-			: m_buffer(NULL)
+			: m_buffer(nullptr)
 			, m_bufferLength(0)
 			, m_increaseBy(increaseBy)
 			, m_count(0)
@@ -64,7 +64,7 @@ class beVector
 		{
 			if (!CheckRoomForAlloc())
 			{
-				return NULL;
+				return nullptr;
 			}
 			int index = m_count++;
 			return &m_buffer[index];

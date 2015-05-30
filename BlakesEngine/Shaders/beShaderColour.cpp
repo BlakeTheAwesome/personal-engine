@@ -19,8 +19,8 @@ struct MatrixBufferType
 };
 
 beShaderColour::beShaderColour()
-	: m_pShader(NULL)
-	, m_vShader(NULL)
+	: m_pShader(nullptr)
+	, m_vShader(nullptr)
 {
 }
 
@@ -34,11 +34,11 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 {
 	ID3D11Device* device = renderInterface->GetDevice();
 
-	ID3D10Blob* errorMessage = NULL;
-	ID3D10Blob* vBuffer = NULL;
-	ID3D10Blob* pBuffer = NULL;
+	ID3D10Blob* errorMessage = nullptr;
+	ID3D10Blob* vBuffer = nullptr;
+	ID3D10Blob* pBuffer = nullptr;
 
-	HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vBuffer, &errorMessage, NULL);
+	HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), nullptr, nullptr, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &vBuffer, &errorMessage, nullptr);
 	if (FAILED(res))
 	{
 		if (errorMessage)
@@ -50,7 +50,7 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 		return false;
 	}
 
-	res = D3DX11CompileFromFile(pixelFilename.c_str(), NULL, NULL, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pBuffer, &errorMessage, NULL);
+	res = D3DX11CompileFromFile(pixelFilename.c_str(), nullptr, nullptr, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &pBuffer, &errorMessage, nullptr);
 	if (FAILED(res))
 	{
 		if (errorMessage)
@@ -62,13 +62,13 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 		return false;
 	}
 
-	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), NULL, &m_vShader);
+	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
 	if (FAILED(res))
 	{
 		return false;
 	}
 
-	res = device->CreatePixelShader(pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), NULL, &m_pShader);
+	res = device->CreatePixelShader(pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), nullptr, &m_pShader);
 	if (FAILED(res))
 	{
 		return false;
@@ -111,7 +111,7 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 	matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	res = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
+	res = device->CreateBuffer(&matrixBufferDesc, nullptr, &m_matrixBuffer);
 	if (FAILED(res))
 	{
 		return false;
@@ -151,7 +151,7 @@ void beShaderColour::SetShaderParameters(beRenderInterface* renderInterface, con
 	XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
 	XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
 	
-	MatrixBufferType* dataPtr = NULL;
+	MatrixBufferType* dataPtr = nullptr;
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 
 	XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
@@ -170,8 +170,8 @@ void beShaderColour::Render(beRenderInterface* renderInterface, int indexCount, 
 	
 	deviceContext->IASetInputLayout(m_layout);
 
-	deviceContext->VSSetShader(m_vShader, NULL, 0);
-	deviceContext->PSSetShader(m_pShader, NULL, 0);
+	deviceContext->VSSetShader(m_vShader, nullptr, 0);
+	deviceContext->PSSetShader(m_pShader, nullptr, 0);
 
 	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
 }

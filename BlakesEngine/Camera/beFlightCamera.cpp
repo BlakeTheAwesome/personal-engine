@@ -16,7 +16,7 @@ static const bool INVERT_Y = true;
 
 
 beFlightCamera::beFlightCamera()
-	: m_gamepad(NULL)
+	: m_gamepad(nullptr)
 	, m_position(0.f, 0.f, -5.f)
 	, m_yaw(0.f)
 	, m_pitch(0.f)
@@ -52,7 +52,7 @@ void beFlightCamera::AttachGamepad(beGamepad* gamepad)
 void beFlightCamera::DetachGamepad()
 {
 	BE_ASSERT(m_gamepad);
-	m_gamepad = NULL;
+	m_gamepad = nullptr;
 }
 
 const Vec3& beFlightCamera::GetPosition() const
@@ -145,7 +145,7 @@ void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, floa
 
 	//the camera, invert it to get your view matrix.
 
-	XMMATRIX viewMatrix = XMMatrixInverse(NULL, newMat);
+	XMMATRIX viewMatrix = XMMatrixInverse(nullptr, newMat);
 
 	XMStoreFloat4x4(&m_orientationMatrix, orientation);
 	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);

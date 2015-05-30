@@ -4,7 +4,7 @@
 
 // Usage in other files
 #define PIMPL_NEW(_class) _class::Create
-#define PIMPL_DELETE(ptr) if (ptr) { ptr->Dispose(); } ptr = NULL
+#define PIMPL_DELETE(ptr) if (ptr) { ptr->Dispose(); } ptr = nullptr
 
 
 // Usage in header

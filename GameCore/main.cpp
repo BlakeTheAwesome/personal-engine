@@ -60,7 +60,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	MSG msg = {0};
 	while(go)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			// translate keystroke messages into the right format
 			TranslateMessage(&msg);

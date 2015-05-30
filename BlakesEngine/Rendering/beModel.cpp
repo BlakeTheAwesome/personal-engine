@@ -51,8 +51,8 @@ struct VertexWithNormalType
 };
 
 beModel::beModel()
-	: m_vertexBuffer(NULL)
-	, m_indexBuffer(NULL)
+	: m_vertexBuffer(nullptr)
+	, m_indexBuffer(nullptr)
 	, m_vertexCount(0)
 	, m_indexCount(0)
 {
@@ -192,7 +192,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
 	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexWithNormalType* vertices = NULL;
+	VertexWithNormalType* vertices = nullptr;
 	unsigned int* indices;
 	HRESULT res;
 
@@ -275,7 +275,7 @@ bool beModel::Init(beRenderInterface* ri)
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
 	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexWithNormalType* vertices = NULL;
+	VertexWithNormalType* vertices = nullptr;
 	unsigned int* indices;
 	HRESULT res;
 

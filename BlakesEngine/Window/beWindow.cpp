@@ -14,7 +14,7 @@ PIMPL_DATA_END
 PIMPL_CONSTRUCT_ARGS(beWindow, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
 PIMPL_CONSTRUCT_ARGS_VARS(beWindow, _hInstance, windowName, windowWidth, windowHeight, fullscreen)
 PIMPL_CONSTRUCT_ARGS_BODY(beWindow, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
-	: m_hWnd(NULL)
+	: m_hWnd(nullptr)
 , m_width(windowWidth)
 , m_height(windowHeight)
 {
@@ -27,7 +27,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, void* _hInstance, const beString& windowName
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	//wc.hbrBackground = (HBRUSH)COLOR_WINDOW; // Enable to put inital colour back in
 	wc.lpszClassName = L"beWindowClass";
 
@@ -35,7 +35,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, void* _hInstance, const beString& windowName
 	RegisterClassEx(&wc);
 
 	// create the window and use the result as the handle
-	m_hWnd = CreateWindowEx(NULL,
+	m_hWnd = CreateWindowEx(0,
 							L"beWindowClass",
 							wideWindowName.c_str(),
 							WS_OVERLAPPEDWINDOW, // window style - add noresize etc
@@ -43,8 +43,8 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, void* _hInstance, const beString& windowName
 							156,    // y
 							windowWidth, // w
 							windowHeight, // h
-							NULL,    // parent window
-							NULL,    // we aren't using menus, NULL
+							nullptr,    // parent window
+							nullptr,    // we aren't using menus, nullptr
 							hInstance,    // application handle
 							this);    // callback thing?
 

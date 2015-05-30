@@ -48,17 +48,17 @@ PIMPL_DATA(beRenderInterface)
 PIMPL_DATA_END
 
 PIMPL_CONSTRUCT(beRenderInterface)
-	: m_swapChain(NULL)
-	, m_device(NULL)
-	, m_deviceContext(NULL)
-	, m_backBuffer(NULL)
+	: m_swapChain(nullptr)
+	, m_device(nullptr)
+	, m_deviceContext(nullptr)
+	, m_backBuffer(nullptr)
 	
 	, m_vsync_enabled(false)
 	, m_videoCardMemory(0)
-	, m_depthStencilBuffer(NULL)
-	, m_depthStencilState(NULL)
-	, m_depthStencilView(NULL)
-	, m_rasterState(NULL)
+	, m_depthStencilBuffer(nullptr)
+	, m_depthStencilState(nullptr)
+	, m_depthStencilView(nullptr)
+	, m_rasterState(nullptr)
 	, m_lightDirection(0.f, 0.f, 0.f)
 {
 	m_videoCardDescription[0] = '\0';
@@ -92,9 +92,9 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 	// Enumerate devices
 	{
 		
-		IDXGIFactory* factory = NULL;
-		IDXGIAdapter* adapter = NULL;
-		IDXGIOutput* adapterOutput = NULL;
+		IDXGIFactory* factory = nullptr;
+		IDXGIAdapter* adapter = nullptr;
+		IDXGIOutput* adapterOutput = nullptr;
 		
 		HRESULT res = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
@@ -116,7 +116,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 
 		
 		unsigned int numModes;
-		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
+		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, nullptr);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
 		DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[numModes];
 		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
@@ -170,14 +170,14 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 
 	D3D_FEATURE_LEVEL fl = D3D_FEATURE_LEVEL_11_0;
 
-	IDXGIAdapter* adapter = NULL; // Choose default graphics card
+	IDXGIAdapter* adapter = nullptr; // Choose default graphics card
 	D3D_DRIVER_TYPE driverType = D3D_DRIVER_TYPE_HARDWARE; // Require DX11 card
-	HMODULE software = NULL; // Not using TYPE_SOFTWARE
+	HMODULE software = nullptr; // Not using TYPE_SOFTWARE
 
 	u32 flags = 0;
 	D3D_FEATURE_LEVEL* pFeatureLevels = &fl;
 	u32 featureLevels = 1;
-	D3D_FEATURE_LEVEL* pFeatureLevel = NULL;
+	D3D_FEATURE_LEVEL* pFeatureLevel = nullptr;
 	
 	#if defined(_DEBUG)  
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -216,7 +216,7 @@ void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
 	depthBufferDesc.CPUAccessFlags = 0;
 	depthBufferDesc.MiscFlags = 0;
 	
-	HRESULT res = m_device->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
+	HRESULT res = m_device->CreateTexture2D(&depthBufferDesc, nullptr, &m_depthStencilBuffer);
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 }
 
@@ -264,7 +264,7 @@ void beRenderInterface::Impl::CreateStencilView()
 void beRenderInterface::Impl::CreateBackBuffer()
 {
 	// Set back buffer as render target
-	ID3D11Texture2D* backBufferTexture = NULL;
+	ID3D11Texture2D* backBufferTexture = nullptr;
 	HRESULT res = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTexture);
 	if (FAILED(res))
 	{
@@ -272,7 +272,7 @@ void beRenderInterface::Impl::CreateBackBuffer()
 		BE_ASSERT(false);
 	}
 	//bePRINTF("m_swapChain->GetBuffer, res = 0x%08x, backBufferTexture = 0x%08x", res, backBufferTexture);
-	res = m_device->CreateRenderTargetView(backBufferTexture, NULL, &m_backBuffer);
+	res = m_device->CreateRenderTargetView(backBufferTexture, nullptr, &m_backBuffer);
 	if (FAILED(res))
 	{
 		bePRINTF("ERROR res:0x%08x", res);
@@ -334,7 +334,7 @@ void beRenderInterface::Impl::CreateMatrices(int width, int height, float nearPl
 
 void beRenderInterface::Deinit()
 {
-	self.m_swapChain->SetFullscreenState(FALSE, NULL); // Need to be in windowed mode to close cleanly
+	self.m_swapChain->SetFullscreenState(FALSE, nullptr); // Need to be in windowed mode to close cleanly
 
 	BE_SAFE_RELEASE(self.m_backBuffer);
 	BE_SAFE_RELEASE(self.m_swapChain);

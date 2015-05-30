@@ -31,8 +31,8 @@ PIMPL_DATA_END
 
 
 PIMPL_CONSTRUCT(beDebugWorld)
-	: m_axesVertexBuffer(NULL)
-	, m_axesIndexBuffer(NULL)
+	: m_axesVertexBuffer(nullptr)
+	, m_axesIndexBuffer(nullptr)
 	, m_renderAxes(false)
 {
 }
@@ -60,7 +60,7 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
 	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexColourType* vertices = NULL;
+	VertexColourType* vertices = nullptr;
 	unsigned int* indices;
 	HRESULT res;
 

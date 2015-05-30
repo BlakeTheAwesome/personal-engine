@@ -34,12 +34,12 @@ struct LightBufferType
 };
 
 beShaderTexture::beShaderTexture()
-	: m_pShader(NULL)
-	, m_vShader(NULL)
-	, m_sampleState(NULL)
-	, m_layout(NULL)
-	, m_matrixBuffer(NULL)
-	, m_lightBuffer(NULL)
+	: m_pShader(nullptr)
+	, m_vShader(nullptr)
+	, m_sampleState(nullptr)
+	, m_layout(nullptr)
+	, m_matrixBuffer(nullptr)
+	, m_lightBuffer(nullptr)
 {
 }
 
@@ -55,11 +55,11 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	ID3D11Device* device = renderInterface->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
-	ID3D10Blob* errorMessage = NULL;
-	ID3D10Blob* vBuffer = NULL;
-	ID3D10Blob* pBuffer = NULL;
+	ID3D10Blob* errorMessage = nullptr;
+	ID3D10Blob* vBuffer = nullptr;
+	ID3D10Blob* pBuffer = nullptr;
 
-	HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vBuffer, &errorMessage, NULL);
+	HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), nullptr, nullptr, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &vBuffer, &errorMessage, nullptr);
 	if (FAILED(res))
 	{
 		if (errorMessage)
@@ -71,7 +71,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 		return false;
 	}
 
-	res = D3DX11CompileFromFile(pixelFilename.c_str(), NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pBuffer, &errorMessage, NULL);
+	res = D3DX11CompileFromFile(pixelFilename.c_str(), nullptr, nullptr, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &pBuffer, &errorMessage, nullptr);
 	if (FAILED(res))
 	{
 		if (errorMessage)
@@ -83,13 +83,13 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 		return false;
 	}
 
-	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), NULL, &m_vShader);
+	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
 	if (FAILED(res))
 	{
 		return false;
 	}
 
-	res = device->CreatePixelShader(pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), NULL, &m_pShader);
+	res = device->CreatePixelShader(pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), nullptr, &m_pShader);
 	if (FAILED(res))
 	{
 		return false;
@@ -140,7 +140,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
-	res = device->CreateBuffer(&bufferDesc, NULL, &m_matrixBuffer);
+	res = device->CreateBuffer(&bufferDesc, nullptr, &m_matrixBuffer);
 	if (FAILED(res))
 	{
 		return false;
@@ -153,7 +153,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
-	res = device->CreateBuffer(&bufferDesc, NULL, &m_lightBuffer);
+	res = device->CreateBuffer(&bufferDesc, nullptr, &m_lightBuffer);
 	if (FAILED(res))
 	{
 		return false;
@@ -167,7 +167,7 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
-	res = device->CreateBuffer(&bufferDesc, NULL, &m_cameraBuffer);
+	res = device->CreateBuffer(&bufferDesc, nullptr, &m_cameraBuffer);
 	if (FAILED(res))
 	{
 		return false;
@@ -290,8 +290,8 @@ void beShaderTexture::Render(beRenderInterface* renderInterface, int indexCount,
 	
 	deviceContext->IASetInputLayout(m_layout);
 
-	deviceContext->VSSetShader(m_vShader, NULL, 0);
-	deviceContext->PSSetShader(m_pShader, NULL, 0);
+	deviceContext->VSSetShader(m_vShader, nullptr, 0);
+	deviceContext->PSSetShader(m_pShader, nullptr, 0);
 	
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 	//deviceContext->VSSetShaderResources(0, 1, &texture);
