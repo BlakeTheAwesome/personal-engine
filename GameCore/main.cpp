@@ -90,12 +90,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->Update(dt.ToSeconds());
 			camera.Update(dt.ToSeconds());
 			renderInterface->BeginFrame();
-			//model.Render(renderInterface);
 
 			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
+			
+			model.Render(renderInterface);
+			textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
 			//colourShader.Render(renderInterface, model.GetIndexCount(), 0);
-			//textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
-			//textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
 			
 			debugWorld->Render(renderInterface, &colourShader);
 			renderInterface->EndFrame();

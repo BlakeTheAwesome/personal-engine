@@ -17,7 +17,7 @@ static const bool INVERT_Y = true;
 
 beFlightCamera::beFlightCamera()
 	: m_gamepad(NULL)
-	, m_position(-5.f, 0.f, 0.f)
+	, m_position(0.f, 0.f, -5.f)
 	, m_yaw(0.f)
 	, m_pitch(0.f)
 	, m_roll(0.f)
@@ -31,6 +31,8 @@ beFlightCamera::beFlightCamera()
 	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(m_yaw, m_pitch, m_roll);
 	XMMATRIX startingOrientation = XMMatrixRotationQuaternion(quat);
 	XMStoreFloat4x4(&m_orientationMatrix, startingOrientation);
+
+	UpdateImpl(0.f, 0.f, 0.f, 0.f, 0.f);
 
 	//XMMATRIX startingOrientation = XMMatrixLookToLH(XMVectorSet(0.f, 0.f, 0.f, 0.f), -XMLoadFloat3(&m_position), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	//XMStoreFloat4x4(&m_orientationMatrix, startingOrientation);
@@ -86,7 +88,11 @@ void beFlightCamera::Update(float dt)
 	float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
 	float forwards = lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
 	float right = lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+	UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
+}
 
+void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, float extraForwards, float extraRight)
+{
 	/*XMMATRIX initialMatrix = XMLoadFloat4x4(&m_matrix);
 	XMMATRIX rotX = XMMatrixRotationX(extraPitch);
 	XMMATRIX rotY = XMMatrixRotationY(extraYaw);
@@ -111,8 +117,8 @@ void beFlightCamera::Update(float dt)
 	//member floats that temporarily contain the current
 
 	//cycles input
-	XMVECTOR currentPosition = XMLoadFloat3(&m_position);
-	XMVECTOR translation = XMVectorSet(right, 0.f, forwards, 0.f);
+	XMVECTOR currentPosition = XMVectorSet(m_position.x, m_position.y, m_position.z, 1.f);
+	XMVECTOR translation = XMVectorSet(extraRight, 0.f, extraForwards, 0.f);
 	XMVECTOR transformedTranslation = XMVector3TransformNormal(translation, orientation);
 	currentPosition += transformedTranslation;
 
@@ -131,7 +137,7 @@ void beFlightCamera::Update(float dt)
 	//this yields an orientation matrix
 
 	XMVECTOR scale = XMVectorSet(1.f, 1.f, 1.f, 1.f);
-	XMVECTOR origin = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+	XMVECTOR origin = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 	XMMATRIX newMat = XMMatrixAffineTransformation(scale, origin, quat, currentPosition);
 
 
