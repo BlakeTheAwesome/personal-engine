@@ -209,7 +209,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 	for (int i = 0; i < fileInfo.faces.Count(); i++)
 	{
 		const Face* face = &fileInfo.faces[i];
-		bePRINTF("face %d", i);
+		//bePRINTF("face %d", i);
 		for (int j = 2; j >= 0; j--) // Read backwards to swap rhs to lhs
 		{
 			const VertInfo* vert = &face->verts[j];

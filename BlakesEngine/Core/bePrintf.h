@@ -1,13 +1,12 @@
-#ifndef _bePrintf_h_
-#define _bePrintf_h_
+#pragma once
+#include "Core/beMacros.h"
 
-#define bePRINTF bePrintf::bePrintf
+#define bePRINTF(...) bePrintf::bePrintf(LOCATION, __VA_ARGS__)
 //#define bePRINTF printf
 
 namespace bePrintf
 {
 
-	void bePrintf(const char* format, ...);
+	void bePrintf(const char* location, const char* format, ...);
 };
 
-#endif

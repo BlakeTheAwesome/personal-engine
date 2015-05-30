@@ -271,7 +271,7 @@ void beRenderInterface::Impl::CreateBackBuffer()
 		bePRINTF("ERROR res:0x%08x", res);
 		BE_ASSERT(false);
 	}
-	bePRINTF("m_swapChain->GetBuffer, res = 0x%08x, backBufferTexture = 0x%08x", res, backBufferTexture);
+	//bePRINTF("m_swapChain->GetBuffer, res = 0x%08x, backBufferTexture = 0x%08x", res, backBufferTexture);
 	res = m_device->CreateRenderTargetView(backBufferTexture, NULL, &m_backBuffer);
 	if (FAILED(res))
 	{

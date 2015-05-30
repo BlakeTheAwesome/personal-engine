@@ -5,14 +5,18 @@
 #include <stdarg.h>
 #include <Windows.h>
 
-void bePrintf::bePrintf(const char* format, ...)
+void bePrintf::bePrintf(const char* location, const char* format, ...)
 {
+	char formatBuffer[2048];
+
+	sprintf_s(formatBuffer, 2048, "%s: %s", location, format);
+
 	char buffer[4096];
 	const size_t maxChars = sizeof(buffer)-3;
 
 	va_list args;
 	va_start(args, format);
-	int length = vsnprintf_s(buffer, maxChars, maxChars, format, args);
+	int length = vsnprintf_s(buffer, maxChars, maxChars, formatBuffer, args);
 	va_end(args);
 
 	if (length < 0)
