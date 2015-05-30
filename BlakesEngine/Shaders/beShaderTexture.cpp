@@ -278,10 +278,10 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, co
 
 	unsigned int bufferNumber = 0;
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	bufferNumber = 1;
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_cameraBuffer);
 	bufferNumber = 0;
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
-	bufferNumber = 1;
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_cameraBuffer);
 }
 
 void beShaderTexture::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture)
