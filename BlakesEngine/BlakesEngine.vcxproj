@@ -105,6 +105,7 @@
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Rendering\beTexture.cpp" />
     <ClCompile Include="Shaders\beShaderColour.cpp" />
+    <ClCompile Include="Shaders\beShaderLitTexture.cpp" />
     <ClCompile Include="Shaders\beShaderTexture.cpp" />
     <ClCompile Include="Time\beClock.cpp" />
     <ClCompile Include="Time\beFrameTimer.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Rendering\beTexture.h" />
     <ClInclude Include="Shaders\beShaderColour.h" />
+    <ClInclude Include="Shaders\beShaderLitTexture.h" />
     <ClInclude Include="Shaders\beShaderTexture.h" />
     <ClInclude Include="Time\beClock.h" />
     <ClInclude Include="Time\beFrameTimer.h" />
@@ -147,23 +149,33 @@
     <CustomBuild Include="Shaders\colour.ps">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">colour.ps</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
     </CustomBuild>
     <CustomBuild Include="Shaders\colour.vs">
       <FileType>Document</FileType>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">colour.vs</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
     </CustomBuild>
     <CustomBuild Include="Shaders\texture.ps">
       <FileType>Document</FileType>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">texture.ps</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
     </CustomBuild>
     <CustomBuild Include="Shaders\texture.vs">
       <FileType>Document</FileType>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">texture.vs</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\light.ps">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\light.vs">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

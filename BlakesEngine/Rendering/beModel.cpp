@@ -36,13 +36,6 @@ struct OBJFileInfo
 	beVector<Face> faces;
 };
 
-
-struct VertexType
-{
-	XMFLOAT3 position;
-	XMFLOAT2 texCoord;
-};
-
 struct VertexWithNormalType
 {
 	XMFLOAT4 position;

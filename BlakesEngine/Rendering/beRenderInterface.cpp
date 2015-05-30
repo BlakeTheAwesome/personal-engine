@@ -361,11 +361,11 @@ void beRenderInterface::BeginFrame()
 
 void beRenderInterface::Update(float dt)
 {
-	//s_offset += dt;
-	//XMVECTOR lightDir = XMVectorSet(sinf(s_offset* 2.f), sinf(s_offset * 0.7f), cosf(s_offset* 2.f), 0.f);
-	//XMVECTOR normalisedDir = XMVector3Normalize(lightDir);
-	//XMStoreFloat3(&self.m_lightDirection, normalisedDir);
-	self.m_lightDirection = Vec3(0.f, 0.f, 1.f);
+	s_offset += dt;
+	XMVECTOR lightDir = XMVectorSet(sinf(s_offset* 2.f), sinf(s_offset * 0.7f), cosf(s_offset* 2.f), 0.f);
+	XMVECTOR normalisedDir = XMVector3Normalize(lightDir);
+	XMStoreFloat3(&self.m_lightDirection, normalisedDir);
+	//self.m_lightDirection = Vec3(0.f, 0.f, 1.f);
 }
 
 void beRenderInterface::EndFrame()

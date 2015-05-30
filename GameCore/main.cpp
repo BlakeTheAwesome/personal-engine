@@ -15,6 +15,7 @@
 #include "BlakesEngine\Rendering\beTexture.h"
 #include "BlakesEngine\Shaders\beShaderColour.h"
 #include "BlakesEngine\Shaders\beShaderTexture.h"
+#include "BlakesEngine\Shaders\beShaderLitTexture.h"
 
 //int main()
 //{
@@ -39,17 +40,20 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	beFlightCamera camera;
 	beModel model;
+	//beModel model2;
 	beTexture texture;
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
+	beShaderLitTexture litTextureShader;
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
 	//model.Init(renderInterface);
 	//model.InitWithFilename(renderInterface, "cube.obj");
-	//model.InitWithFilename(renderInterface, "cube2.obj");
-	model.InitWithFilename(renderInterface, "teapot.obj");
+	model.InitWithFilename(renderInterface, "cube2.obj");
+	//model.InitWithFilename(renderInterface, "teapot.obj");
 	texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
+	litTextureShader.Init(renderInterface, beWString(L"Light.ps"), beWString(L"Light.vs"));
 	debugWorld->Init(renderInterface, true);
 
 	beGamepad gamepad;
@@ -92,12 +96,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->BeginFrame();
 
 			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
+			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
 			
 			model.Render(renderInterface);
 			textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
+			//litTextureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
 			//colourShader.Render(renderInterface, model.GetIndexCount(), 0);
 			
+			//model2.Render(renderInterface);
+			//textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
+			//litTextureShader.Render(renderInterface, model2.GetIndexCount(), texture.GetTexture());
+			//colourShader.Render(renderInterface, model.GetIndexCount(), 0);
+
 			debugWorld->Render(renderInterface, &colourShader);
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
@@ -109,9 +120,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	gamepad.Deinit();
 
 	debugWorld->Deinit();
+	litTextureShader.Deinit();
 	textureShader.Deinit();
 	colourShader.Deinit();
 	texture.Deinit();
+	//model2.Deinit();
 	model.Deinit();
 	renderInterface->Deinit();
 	PIMPL_DELETE(renderInterface);

@@ -12,16 +12,16 @@ struct ID3D11ShaderResourceView;
 
 class beRenderInterface;
 
-class beShaderTexture
+class beShaderLitTexture
 {
 public:
-	beShaderTexture();
-	~beShaderTexture();
+	beShaderLitTexture();
+	~beShaderLitTexture();
 
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 
-	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
+	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix, const Vec3& cameraPosition);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture);
 
@@ -35,4 +35,6 @@ private:
 
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_matrixBuffer;
+	ID3D11Buffer* m_lightBuffer;
+	ID3D11Buffer* m_cameraBuffer;
 };
