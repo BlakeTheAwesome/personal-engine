@@ -283,23 +283,23 @@ bool beModel::Init(beRenderInterface* ri)
 	// Load the vertex array with data.
 	float distFromCamera = -1.f;
 	float w = 1.f;
-	vertices[0].position = XMFLOAT4(-1.f, 1.f, distFromCamera, w);  // Bottom left.
-	vertices[0].texCoord = XMFLOAT2(0.f, 1.f);
+	vertices[0].position = XMFLOAT4(-1.f, 1.f, distFromCamera, w);  // TL
+	vertices[0].texCoord = XMFLOAT2(0.f, 0.f);
 	
-	vertices[1].position = XMFLOAT4(1.f, 1.f, distFromCamera, w);  // Top left.
-	vertices[1].texCoord = XMFLOAT2(0.f, 0.f);
+	vertices[1].position = XMFLOAT4(1.f, 1.f, distFromCamera, w);  // TR
+	vertices[1].texCoord = XMFLOAT2(1.f, 0.f);
 
-	vertices[2].position = XMFLOAT4(1.f, -1.f, distFromCamera, w);  // Top right.
-	vertices[2].texCoord = XMFLOAT2(1.f, 0.f);
+	vertices[2].position = XMFLOAT4(1.f, -1.f, distFromCamera, w);  // BR
+	vertices[2].texCoord = XMFLOAT2(1.f, 1.f);
 
-	vertices[3].position = XMFLOAT4(1.f, -1.f, distFromCamera, w);  // TR.
-	vertices[3].texCoord = XMFLOAT2(1.f, 0.f);
+	vertices[3].position = XMFLOAT4(1.f, -1.f, distFromCamera, w);  // BR
+	vertices[3].texCoord = XMFLOAT2(1.f, 1.f);
 	
-	vertices[4].position = XMFLOAT4(-1.f, -1.f, distFromCamera, w);  // BR.
-	vertices[4].texCoord = XMFLOAT2(1.f, 1.f);
+	vertices[4].position = XMFLOAT4(-1.f, -1.f, distFromCamera, w);  // BL.
+	vertices[4].texCoord = XMFLOAT2(0.f, 1.f);
 
-	vertices[5].position = XMFLOAT4(-1.f, 1.f, distFromCamera, w);  // BL.
-	vertices[5].texCoord = XMFLOAT2(0.f, 1.f);
+	vertices[5].position = XMFLOAT4(-1.f, 1.f, distFromCamera, w);  // TL.
+	vertices[5].texCoord = XMFLOAT2(0.f, 0.f);
 
 	for (int i = 0; i < m_vertexCount; i++)
 	{
