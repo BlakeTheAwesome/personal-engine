@@ -37,6 +37,7 @@ PIMPL_DATA(beRenderInterface)
 	unsigned int m_videoCardMemory;
 	char m_videoCardDescription[128];
 	ID3D11Texture2D* m_depthStencilBuffer;
+	ID3D11DepthStencilState* m_depthDisabledStencilState;
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
@@ -56,6 +57,7 @@ PIMPL_CONSTRUCT(beRenderInterface)
 	, m_vsync_enabled(false)
 	, m_videoCardMemory(0)
 	, m_depthStencilBuffer(nullptr)
+	, m_depthDisabledStencilState(nullptr)
 	, m_depthStencilState(nullptr)
 	, m_depthStencilView(nullptr)
 	, m_rasterState(nullptr)
@@ -222,34 +224,65 @@ void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
 
 void beRenderInterface::Impl::CreateStencilView()
 {
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {0};
+	{
+		D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {0};
 
 		// Set up the description of the stencil state.
-	depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		depthStencilDesc.DepthEnable = true;
+		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
-	depthStencilDesc.StencilEnable = true;
-	depthStencilDesc.StencilReadMask = 0xFF;
-	depthStencilDesc.StencilWriteMask = 0xFF;
+		depthStencilDesc.StencilEnable = true;
+		depthStencilDesc.StencilReadMask = 0xFF;
+		depthStencilDesc.StencilWriteMask = 0xFF;
 
-	// Stencil operations if pixel is front-facing.
-	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		// Stencil operations if pixel is front-facing.
+		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Stencil operations if pixel is back-facing.
-	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		// Stencil operations if pixel is back-facing.
+		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Create the depth stencil state.
-	HRESULT res = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
-	if(FAILED(res)) { BE_ASSERT(false); return; }
-	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
+		// Create the depth stencil state.
+		HRESULT res = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
+		if (FAILED(res)) { BE_ASSERT(false); return; }
+		m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
+	}
 
+	// State with depth disabled for toggling Z buffer
+	{
+		D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc = {0};
+
+		// Set up the description of the stencil state.
+		depthDisabledStencilDesc.DepthEnable = false;
+		depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+		depthDisabledStencilDesc.StencilEnable = true;
+		depthDisabledStencilDesc.StencilReadMask = 0xFF;
+		depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+
+		// Stencil operations if pixel is front-facing.
+		depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+		// Stencil operations if pixel is back-facing.
+		depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+		// Create the depth stencil state.
+		HRESULT res = m_device->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState);
+		if (FAILED(res)) { BE_ASSERT(false); return; }
+	}
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 	memset(&depthStencilViewDesc, 0, sizeof(depthStencilViewDesc));
@@ -257,7 +290,7 @@ void beRenderInterface::Impl::CreateStencilView()
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
-	res = m_device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+	HRESULT res = m_device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 }
 
@@ -341,6 +374,7 @@ void beRenderInterface::Deinit()
 	BE_SAFE_RELEASE(self.m_rasterState);
 	BE_SAFE_RELEASE(self.m_depthStencilView);
 	BE_SAFE_RELEASE(self.m_depthStencilState);
+	BE_SAFE_RELEASE(self.m_depthDisabledStencilState);
 	BE_SAFE_RELEASE(self.m_depthStencilBuffer);
 	BE_SAFE_RELEASE(self.m_device);
 	BE_SAFE_RELEASE(self.m_deviceContext);
@@ -378,6 +412,17 @@ void beRenderInterface::EndFrame()
 	{
 		self.m_swapChain->Present(0, 0);
 	}
+}
+
+
+void beRenderInterface::EnableZBuffer()
+{
+	self.m_deviceContext->OMSetDepthStencilState(self.m_depthStencilState, 1);
+}
+
+void beRenderInterface::DisableZBuffer()
+{
+	self.m_deviceContext->OMSetDepthStencilState(self.m_depthDisabledStencilState, 1);
 }
 
 const Matrix& beRenderInterface::GetProjectionMatrix() const

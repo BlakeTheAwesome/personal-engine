@@ -11,10 +11,12 @@
 #include "BlakesEngine\Rendering\beRenderInterface.h"
 #include "BlakesEngine\Camera\beFlightCamera.h"
 #include "BlakesEngine\Rendering\beDebugWorld.h"
+#include "BlakesEngine\Rendering\beBitmap.h"
 #include "BlakesEngine\Rendering\beModel.h"
 #include "BlakesEngine\Rendering\beTexture.h"
 #include "BlakesEngine\Shaders\beShaderColour.h"
 #include "BlakesEngine\Shaders\beShaderTexture.h"
+#include "BlakesEngine\Shaders\beShaderTexture2d.h"
 #include "BlakesEngine\Shaders\beShaderLitTexture.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -38,9 +40,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beModel model2;
 	beModel model3;
 	beModel model4;
+	beBitmap bitmap1;
 	beTexture texture;
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
+	beShaderTexture2d textureShader2d;
 	beShaderLitTexture litTextureShader;
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
 	
@@ -49,9 +53,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	model3.InitWithFilename(renderInterface, "cube2.obj");
 	model4.InitWithFilename(renderInterface, "teapot.obj");
 
+	bitmap1.Init(renderInterface, 512, 512);
+
 	texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
 	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
+	textureShader2d.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture2d.vs"));
 	litTextureShader.Init(renderInterface, beWString(L"Light.ps"), beWString(L"Light.vs"));
 	debugWorld->Init(renderInterface);
 
@@ -116,6 +123,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
 			
 			beModel* modelToRender = nullptr;
@@ -135,15 +143,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				case 1: textureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture()); break;
 				case 2: colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0); break;
 			}
-			//
-			
-			//model2.Render(renderInterface);
-			//textureShader.Render(renderInterface, model.GetIndexCount(), texture.GetTexture());
-			//litTextureShader.Render(renderInterface, model2.GetIndexCount(), texture.GetTexture());
-			//colourShader.Render(renderInterface, model.GetIndexCount(), 0);
 
 			debugWorld->SetRenderAxes(renderAxes);
 			debugWorld->Render(renderInterface, &colourShader);
+
+			renderInterface->DisableZBuffer();
+			bitmap1.Render(renderInterface);
+			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), texture.GetTexture());
+			renderInterface->EnableZBuffer();
+
 			renderInterface->EndFrame();
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 
@@ -155,9 +163,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	debugWorld->Deinit();
 	litTextureShader.Deinit();
+	textureShader2d.Deinit();
 	textureShader.Deinit();
 	colourShader.Deinit();
 	texture.Deinit();
+	bitmap1.Deinit();
 	model4.Deinit();
 	model3.Deinit();
 	model2.Deinit();

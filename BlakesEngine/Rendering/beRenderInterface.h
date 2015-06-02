@@ -23,6 +23,9 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
+	void EnableZBuffer();
+	void DisableZBuffer();
+
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 

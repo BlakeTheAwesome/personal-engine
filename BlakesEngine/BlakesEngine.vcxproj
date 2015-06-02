@@ -100,6 +100,7 @@
       </AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Input\beGamepad.cpp" />
+    <ClCompile Include="Rendering\beBitmap.cpp" />
     <ClCompile Include="Rendering\beDebugWorld.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Shaders\beShaderColour.cpp" />
     <ClCompile Include="Shaders\beShaderLitTexture.cpp" />
     <ClCompile Include="Shaders\beShaderTexture.cpp" />
+    <ClCompile Include="Shaders\beShaderTexture2d.cpp" />
     <ClCompile Include="Time\beClock.cpp" />
     <ClCompile Include="Time\beFrameTimer.cpp" />
     <ClCompile Include="Time\beTimeValue.cpp" />
@@ -129,6 +131,7 @@
     <ClInclude Include="External\XNAMath\xnamath.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Math\beMath.h" />
+    <ClInclude Include="Rendering\beBitmap.h" />
     <ClInclude Include="Rendering\beDebugWorld.h" />
     <ClInclude Include="Rendering\beModel.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
@@ -136,6 +139,7 @@
     <ClInclude Include="Shaders\beShaderColour.h" />
     <ClInclude Include="Shaders\beShaderLitTexture.h" />
     <ClInclude Include="Shaders\beShaderTexture.h" />
+    <ClInclude Include="Shaders\beShaderTexture2d.h" />
     <ClInclude Include="Time\beClock.h" />
     <ClInclude Include="Time\beFrameTimer.h" />
     <ClInclude Include="Time\beTimeValue.h" />
@@ -173,6 +177,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <CustomBuild Include="Shaders\light.vs">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\texture2d.vs">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
