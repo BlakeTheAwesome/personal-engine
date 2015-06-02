@@ -30,17 +30,17 @@ struct Face
 struct OBJFileInfo
 {
 	OBJFileInfo() : vertices(2048), vertexNormals(2048), texCoords(2048), faces(1024){}
-	beVector<XMFLOAT3> vertices;
-	beVector<XMFLOAT3> vertexNormals;
-	beVector<XMFLOAT2> texCoords;
+	beVector<Vec3> vertices;
+	beVector<Vec3> vertexNormals;
+	beVector<Vec2> texCoords;
 	beVector<Face> faces;
 };
 
 struct VertexWithNormalType
 {
-	XMFLOAT4 position;
-	XMFLOAT3 normal;
-	XMFLOAT2 texCoord;
+	Vec4 position;
+	Vec3 normal;
+	Vec2 texCoord;
 };
 
 beModel::beModel()
@@ -66,7 +66,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 		int res = sscanf_s(line, "vn %f %f %f", &f1, &f2, &f3);
 		if (res == 3)
 		{
-			XMFLOAT3 normal(f1,f2,f3);
+			Vec3 normal(f1,f2,f3);
 			fileInfo->vertexNormals.Insert(normal);
 			return true;
 		}
@@ -81,7 +81,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 		int res = sscanf_s(line, "vt %f %f", &f1, &f2);
 		if (res == 2)
 		{
-			XMFLOAT2 textureCoord(f1,f2);
+			Vec2 textureCoord(f1,f2);
 			fileInfo->texCoords.Insert(textureCoord);
 			return true;
 		}
@@ -206,10 +206,10 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 		for (int j = 2; j >= 0; j--) // Read backwards to swap rhs to lhs
 		{
 			const VertInfo* vert = &face->verts[j];
-			XMFLOAT3 vertex = fileInfo.vertices[vert->vertex];
-			XMFLOAT2 texCoord = (vert->texCoord == -1) ? XMFLOAT2(0.0f, 0.0f) : fileInfo.texCoords[vert->texCoord];
-			XMFLOAT3 normal = (vert->normal == -1) ? XMFLOAT3(0.0f, 1.0f, 0.0f) : fileInfo.vertexNormals[vert->normal];
-			vertices[vertexIndex].position = XMFLOAT4(vertex.x, vertex.y, vertex.z, 1.f);
+			Vec3 vertex = fileInfo.vertices[vert->vertex];
+			Vec2 texCoord = (vert->texCoord == -1) ? Vec2(0.0f, 0.0f) : fileInfo.texCoords[vert->texCoord];
+			Vec3 normal = (vert->normal == -1) ? Vec3(0.0f, 1.0f, 0.0f) : fileInfo.vertexNormals[vert->normal];
+			vertices[vertexIndex].position = Vec4(vertex.x, vertex.y, vertex.z, 1.f);
 			vertices[vertexIndex].normal = normal;
 			vertices[vertexIndex].texCoord = texCoord;
 
@@ -283,27 +283,27 @@ bool beModel::Init(beRenderInterface* ri)
 	// Load the vertex array with data.
 	float distFromCamera = -1.f;
 	float w = 1.f;
-	vertices[0].position = XMFLOAT4(-1.f, 1.f, distFromCamera, w);  // TL
-	vertices[0].texCoord = XMFLOAT2(0.f, 0.f);
+	vertices[0].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL
+	vertices[0].texCoord = Vec2(0.f, 0.f);
 	
-	vertices[1].position = XMFLOAT4(1.f, 1.f, distFromCamera, w);  // TR
-	vertices[1].texCoord = XMFLOAT2(1.f, 0.f);
+	vertices[1].position = Vec4(1.f, 1.f, distFromCamera, w);  // TR
+	vertices[1].texCoord = Vec2(1.f, 0.f);
 
-	vertices[2].position = XMFLOAT4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[2].texCoord = XMFLOAT2(1.f, 1.f);
+	vertices[2].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
+	vertices[2].texCoord = Vec2(1.f, 1.f);
 
-	vertices[3].position = XMFLOAT4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[3].texCoord = XMFLOAT2(1.f, 1.f);
+	vertices[3].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
+	vertices[3].texCoord = Vec2(1.f, 1.f);
 	
-	vertices[4].position = XMFLOAT4(-1.f, -1.f, distFromCamera, w);  // BL.
-	vertices[4].texCoord = XMFLOAT2(0.f, 1.f);
+	vertices[4].position = Vec4(-1.f, -1.f, distFromCamera, w);  // BL.
+	vertices[4].texCoord = Vec2(0.f, 1.f);
 
-	vertices[5].position = XMFLOAT4(-1.f, 1.f, distFromCamera, w);  // TL.
-	vertices[5].texCoord = XMFLOAT2(0.f, 0.f);
+	vertices[5].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL.
+	vertices[5].texCoord = Vec2(0.f, 0.f);
 
 	for (int i = 0; i < m_vertexCount; i++)
 	{
-		vertices[i].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);
+		vertices[i].normal = Vec3(1.0f, 0.0f, 0.0f);
 	}
 
 

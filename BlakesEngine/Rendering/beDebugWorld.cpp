@@ -18,8 +18,8 @@
 
 struct VertexColourType
 {
-	XMFLOAT4 position;
-	XMFLOAT4 colour;
+	Vec4 position;
+	Vec4 colour;
 };
 
 PIMPL_DATA(beDebugWorld)
@@ -69,20 +69,20 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	// Load the vertex array with data.
 	float AxisLength = 5.f;
 	float w = 1.f;
-	vertices[0].position = XMFLOAT4(0.f, 0.f, 0.f, w);
-	vertices[0].colour = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
-	vertices[1].position = XMFLOAT4(AxisLength, 0.f, 0.f, w);
-	vertices[1].colour = XMFLOAT4(1.f, 0.f, 0.f, 1.f);
+	vertices[0].position = Vec4(0.f, 0.f, 0.f, w);
+	vertices[0].colour = Vec4(1.f, 0.f, 0.f, 1.f);
+	vertices[1].position = Vec4(AxisLength, 0.f, 0.f, w);
+	vertices[1].colour = Vec4(1.f, 0.f, 0.f, 1.f);
 
-	vertices[2].position = XMFLOAT4(0.f, 0.f, 0.f, w);
-	vertices[2].colour = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
-	vertices[3].position = XMFLOAT4(0.f, AxisLength, 0.f, w);
-	vertices[3].colour = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+	vertices[2].position = Vec4(0.f, 0.f, 0.f, w);
+	vertices[2].colour = Vec4(0.f, 1.f, 0.f, 1.f);
+	vertices[3].position = Vec4(0.f, AxisLength, 0.f, w);
+	vertices[3].colour = Vec4(0.f, 1.f, 0.f, 1.f);
 
-	vertices[4].position = XMFLOAT4(0.f, 0.f, 0.f, w);
-	vertices[4].colour = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
-	vertices[5].position = XMFLOAT4(0.f, 0.f, AxisLength, w);
-	vertices[5].colour = XMFLOAT4(0.f, 0.f, 1.f, 1.f);
+	vertices[4].position = Vec4(0.f, 0.f, 0.f, w);
+	vertices[4].colour = Vec4(0.f, 0.f, 1.f, 1.f);
+	vertices[5].position = Vec4(0.f, 0.f, AxisLength, w);
+	vertices[5].colour = Vec4(0.f, 0.f, 1.f, 1.f);
 
 	indices[0] = 0;
 	indices[1] = 1;

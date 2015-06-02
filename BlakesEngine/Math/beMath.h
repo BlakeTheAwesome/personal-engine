@@ -9,6 +9,7 @@ using namespace DirectX;
 
 namespace beMath
 {
+	typedef XMFLOAT2 Vec2;
 	typedef XMFLOAT3 Vec3;
 	typedef XMFLOAT4 Vec4;
 	typedef XMFLOAT4X4 Matrix;
