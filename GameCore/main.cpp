@@ -21,7 +21,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
-                   LPSTR lpCmdLine,
+                   PSTR lpCmdLine,
                    int nCmdShow)
 {
 	//beTypeTests::RunTypeTests();
@@ -56,10 +56,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	bitmap1.Init(renderInterface, 512, 512);
 
 	texture.Init(renderInterface, beWString(L"boar.dds"));
-	colourShader.Init(renderInterface, beWString(L"Colour.ps"), beWString(L"Colour.vs"));
-	textureShader.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture.vs"));
-	textureShader2d.Init(renderInterface, beWString(L"Texture.ps"), beWString(L"Texture2d.vs"));
-	litTextureShader.Init(renderInterface, beWString(L"Light.ps"), beWString(L"Light.vs"));
+	colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
+	textureShader.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
+	textureShader2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
+	litTextureShader.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
 	debugWorld->Init(renderInterface);
 
 	beGamepad gamepad;
@@ -67,9 +67,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	camera.AttachGamepad(&gamepad);
 
 	const int numShaders = 3;
-	const int numModels = 4;
+	const int numModels = 5;
 	int shaderToUse = 0;
-	int modelToUse = 2;
+	int modelToUse = 3;
 	bool renderAxes = true;
 
 	bool go = true;
@@ -121,33 +121,43 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			camera.Update(dt.ToSeconds());
 			renderInterface->BeginFrame();
 
-			colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
 			
 			beModel* modelToRender = nullptr;
 			switch (modelToUse)
 			{
-				case 0: modelToRender = &model1; break;
-				case 1: modelToRender = &model2; break;
-				case 2: modelToRender = &model3; break;
-				case 3: modelToRender = &model4; break;
+				case 0: modelToRender = nullptr; break;
+				case 1: modelToRender = &model1; break;
+				case 2: modelToRender = &model2; break;
+				case 3: modelToRender = &model3; break;
+				case 4: modelToRender = &model4; break;
 			}
 
-			modelToRender->Render(renderInterface);
-
-			switch (shaderToUse)
+			if (modelToRender)
 			{
-				case 0: litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture()); break;
-				case 1: textureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture()); break;
-				case 2: colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0); break;
+				modelToRender->Render(renderInterface);
+
+				switch (shaderToUse)
+				{
+					case 0:
+						litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
+						litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture());
+					break;
+					case 1:
+						textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+						textureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture());
+					break;
+					case 2:
+						colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+						colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0);
+					break;
+				}
 			}
 
-			debugWorld->SetRenderAxes(renderAxes);
-			debugWorld->Render(renderInterface, &colourShader);
+			//debugWorld->SetRenderAxes(renderAxes);
+			//debugWorld->Render(renderInterface, &colourShader);
 
 			renderInterface->DisableZBuffer();
+			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			bitmap1.Render(renderInterface);
 			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), texture.GetTexture());
 			renderInterface->EnableZBuffer();

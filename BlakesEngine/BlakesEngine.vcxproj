@@ -48,7 +48,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(WindowsSDK_IncludePath);$(SolutionDir);$(ProjectDir);$(DXSDK_DIR)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WindowsSDK_IncludePath);$(SolutionDir);$(ProjectDir);</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -66,7 +66,7 @@
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
     </ClCompile>
     <Lib>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <CustomBuild>
       <Command>xcopy /y /d %(FullPath) $(OutDir)</Command>
@@ -128,7 +128,22 @@
     <ClInclude Include="DataStructures\beByteStreams.h" />
     <ClInclude Include="DataStructures\beVector.h" />
     <ClInclude Include="DataStructures\DataStructuresConsts.h" />
-    <ClInclude Include="External\XNAMath\xnamath.h" />
+    <ClInclude Include="External\DirectXTK\Audio.h" />
+    <ClInclude Include="External\DirectXTK\CommonStates.h" />
+    <ClInclude Include="External\DirectXTK\DDSTextureLoader.h" />
+    <ClInclude Include="External\DirectXTK\DirectXHelpers.h" />
+    <ClInclude Include="External\DirectXTK\Effects.h" />
+    <ClInclude Include="External\DirectXTK\GamePad.h" />
+    <ClInclude Include="External\DirectXTK\GeometricPrimitive.h" />
+    <ClInclude Include="External\DirectXTK\Model.h" />
+    <ClInclude Include="External\DirectXTK\PrimitiveBatch.h" />
+    <ClInclude Include="External\DirectXTK\ScreenGrab.h" />
+    <ClInclude Include="External\DirectXTK\SimpleMath.h" />
+    <ClInclude Include="External\DirectXTK\SpriteBatch.h" />
+    <ClInclude Include="External\DirectXTK\SpriteFont.h" />
+    <ClInclude Include="External\DirectXTK\VertexTypes.h" />
+    <ClInclude Include="External\DirectXTK\WICTextureLoader.h" />
+    <ClInclude Include="External\DirectXTK\XboxDDSTextureLoader.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Math\beMath.h" />
     <ClInclude Include="Rendering\beBitmap.h" />
@@ -146,46 +161,73 @@
     <ClInclude Include="Window\beWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="External\XNAMath\xnamathconvert.inl" />
-    <None Include="External\XNAMath\xnamathmatrix.inl" />
-    <None Include="External\XNAMath\xnamathmisc.inl" />
-    <None Include="External\XNAMath\xnamathvector.inl" />
-    <CustomBuild Include="Shaders\colour.ps">
+    <FxCompile Include="Shaders\colour.ps">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\colour.vs">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_p.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+    <FxCompile Include="Shaders\colour.vs">
       <FileType>Document</FileType>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\texture.ps">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_v.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+    <FxCompile Include="Shaders\texture.ps">
       <FileType>Document</FileType>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\texture.vs">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_p.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+    <FxCompile Include="Shaders\texture.vs">
       <FileType>Document</FileType>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\light.ps">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_v.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+    <FxCompile Include="Shaders\light.ps">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\light.vs">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_p.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+    <FxCompile Include="Shaders\light.vs">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\texture2d.vs">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_v.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+    <FxCompile Include="Shaders\texture2d.vs">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /y /d %(FullPath) $(OutDir)..\..\Data</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\..\Data\%(Filename)_v.cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="External\DirectXTK\SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

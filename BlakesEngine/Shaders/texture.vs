@@ -20,7 +20,7 @@ struct PixelInputType
 	float2 tex : TEXCOORD0;
 };
 
-PixelInputType TextureVertexShader(VertexInputType input)
+PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 

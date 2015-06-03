@@ -10,8 +10,6 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
 
 #include <fstream>
 
@@ -67,44 +65,31 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height)
 
 	vertices = new VertexType[m_vertexCount];
 	indices = new unsigned int[m_indexCount];
-	
+
+
+
+	//height = 1.f; width = 1.f;
+
+
+
 	// Load the vertex array with data.
 
-	//vertices[0].position = XMFLOAT2(0.f, height);  // TL
-	//vertices[0].texCoord = XMFLOAT2(0.f, 0.f);
-
-	//vertices[1].position = XMFLOAT2(width, height);  // TR
-	//vertices[1].texCoord = XMFLOAT2(1.f, 0.f);
-
-	//vertices[2].position = XMFLOAT2(width, 0.f);  // BR
-	//vertices[2].texCoord = XMFLOAT2(1.f, 1.f);
-
-	//vertices[3].position = XMFLOAT2(width, 0.f);  // BR
-	//vertices[3].texCoord = XMFLOAT2(1.f, 1.f);
-
-	//vertices[4].position = XMFLOAT2(0.f, 0.f);  // BL.
-	//vertices[4].texCoord = XMFLOAT2(0.f, 1.f);
-
-	//vertices[5].position = XMFLOAT2(0.f, height);  // TL.
-	//vertices[5].texCoord = XMFLOAT2(0.f, 0.f);
-
-
-	vertices[0].position = XMFLOAT2(0.f, 1.f);  // TL
+	vertices[0].position = XMFLOAT2(0.f, height);  // TL
 	vertices[0].texCoord = XMFLOAT2(0.f, 0.f);
-	
-	vertices[1].position = XMFLOAT2(1.f, 1.f);  // TR
+
+	vertices[1].position = XMFLOAT2(width, height);  // TR
 	vertices[1].texCoord = XMFLOAT2(1.f, 0.f);
 
-	vertices[2].position = XMFLOAT2(1.f, 0.f);  // BR
+	vertices[2].position = XMFLOAT2(width, 0.f);  // BR
 	vertices[2].texCoord = XMFLOAT2(1.f, 1.f);
 
-	vertices[3].position = XMFLOAT2(1.f, 0.f);  // BR
+	vertices[3].position = XMFLOAT2(width, 0.f);  // BR
 	vertices[3].texCoord = XMFLOAT2(1.f, 1.f);
-	
+
 	vertices[4].position = XMFLOAT2(0.f, 0.f);  // BL.
 	vertices[4].texCoord = XMFLOAT2(0.f, 1.f);
 
-	vertices[5].position = XMFLOAT2(0.f, 1.f);  // TL.
+	vertices[5].position = XMFLOAT2(0.f, height);  // TL.
 	vertices[5].texCoord = XMFLOAT2(0.f, 0.f);
 
 	indices[0] = 0;

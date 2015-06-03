@@ -32,7 +32,7 @@ struct PixelInputType
 
 
 
-PixelInputType LightVertexShader(VertexInputType input)
+PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 	float4 worldPosition = mul(input.position, worldMatrix); // CPU should be sending us w=1 on our position, if not our matrix will misbehave.

@@ -10,13 +10,14 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
+///#include <DirectXPackedVector.h>
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dx11.lib")
-#pragma comment (lib, "d3dx10.lib")
+//#pragma comment (lib, "d3dx11.lib")
+//#pragma comment (lib, "d3dx10.lib")
+#pragma comment (lib, "D3DCompiler.lib")
+#pragma comment (lib, "DirectXTK.lib")
 
 PIMPL_DATA(beRenderInterface)
 	void CreateDevice(HWND* hWnd, int width, int height);
@@ -27,23 +28,24 @@ PIMPL_DATA(beRenderInterface)
 	void InitialiseViewport(int width, int height);
 	void CreateMatrices(int width, int height, float nearPlane, float farPlane);
 
+	Matrix m_projectionMatrix;
+	Matrix m_worldMatrix;
+	Matrix m_orthoMatrix;
+
 	IDXGISwapChain* m_swapChain;
 	ID3D11Device* m_device; // Mostly memory like stuff
 	ID3D11DeviceContext* m_deviceContext; // Mostly GPUish stuff
 	ID3D11RenderTargetView *m_backBuffer;
-
-	
-	bool m_vsync_enabled;
-	unsigned int m_videoCardMemory;
-	char m_videoCardDescription[128];
 	ID3D11Texture2D* m_depthStencilBuffer;
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
-	Matrix m_projectionMatrix;
-	Matrix m_worldMatrix;
-	Matrix m_orthoMatrix;
+	float m_width;
+	float m_height;
+	unsigned int m_videoCardMemory;
+	char m_videoCardDescription[128];
+	bool m_vsync_enabled;
 
 	Vec3 m_lightDirection;
 PIMPL_DATA_END
@@ -62,6 +64,8 @@ PIMPL_CONSTRUCT(beRenderInterface)
 	, m_depthStencilView(nullptr)
 	, m_rasterState(nullptr)
 	, m_lightDirection(0.f, 0.f, 0.f)
+	, m_width(0.f)
+	, m_height(0.f)
 {
 	m_videoCardDescription[0] = '\0';
 }
@@ -77,6 +81,8 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	HWND* hWnd = (HWND*)window->GetHWnd();
 	int width = window->GetWidth();
 	int height = window->GetHeight();
+	self.m_width = (float)width;
+	self.m_height = (float)height;
 	self.CreateDevice(hWnd, width, height);
 	self.CreateDepthBuffer(width, height);
 	self.CreateStencilView();
@@ -354,7 +360,7 @@ void beRenderInterface::Impl::InitialiseViewport(int width, int height)
 
 void beRenderInterface::Impl::CreateMatrices(int width, int height, float nearPlane, float farPlane)
 {
-	float fov = (float)D3DX_PI / 4.0f;
+	float fov = (float)PI / 4.0f;
 	float screenAspect = (float)width / (float)height;
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fov, screenAspect, nearPlane, farPlane);
 	XMMATRIX worldMatrix = XMMatrixIdentity();
@@ -389,7 +395,8 @@ void beRenderInterface::BeginFrame()
 	//float b = sinf(0.4f + s_offset);
 	//self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
 
-	self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f));
+	float colour[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, colour);
 	self.m_deviceContext->ClearDepthStencilView(self.m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
@@ -423,6 +430,11 @@ void beRenderInterface::EnableZBuffer()
 void beRenderInterface::DisableZBuffer()
 {
 	self.m_deviceContext->OMSetDepthStencilState(self.m_depthDisabledStencilState, 1);
+}
+
+Vec2 beRenderInterface::GetScreenSize()
+{
+	return Vec2(self.m_width, self.m_height);
 }
 
 const Matrix& beRenderInterface::GetProjectionMatrix() const

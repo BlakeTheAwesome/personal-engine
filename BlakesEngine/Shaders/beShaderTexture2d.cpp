@@ -8,14 +8,14 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
+#include <D3Dcompiler.h>
+
 
 struct MatrixBufferType
 {
-	//Matrix world;
-	//Matrix view;
 	Matrix ortho;
+	Vec2 screenSize;
+	Vec2 padding;
 };
 
 beShaderTexture2d::beShaderTexture2d()
@@ -39,11 +39,11 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 	ID3D11Device* device = renderInterface->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
-	ID3D10Blob* errorMessage = nullptr;
+	//ID3D10Blob* errorMessage = nullptr;
 	ID3D10Blob* vBuffer = nullptr;
 	ID3D10Blob* pBuffer = nullptr;
 
-	HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), nullptr, nullptr, "Texture2dVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &vBuffer, &errorMessage, nullptr);
+	/*HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), nullptr, nullptr, "Texture2dVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &vBuffer, &errorMessage, nullptr);
 	if (FAILED(res))
 	{
 		if (errorMessage)
@@ -65,9 +65,12 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 
 		BE_ASSERT(false);
 		return false;
-	}
+	}*/
 
-	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
+	D3DReadFileToBlob(vertexFilename.c_str(), &vBuffer);
+	D3DReadFileToBlob(pixelFilename.c_str(), &pBuffer);
+
+	HRESULT res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
 	if (FAILED(res))
 	{
 		return false;
@@ -179,8 +182,7 @@ void beShaderTexture2d::SetShaderParameters(beRenderInterface* renderInterface, 
 		auto dataPtr = (MatrixBufferType*)mappedResource.pData;
 
 		XMStoreFloat4x4(&dataPtr->ortho, xOM);
-		//XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
-		//XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
+		dataPtr->screenSize = renderInterface->GetScreenSize();
 
 		deviceContext->Unmap(m_matrixBuffer, 0);
 	}

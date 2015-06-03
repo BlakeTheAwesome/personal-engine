@@ -4,7 +4,7 @@ struct PixelInputType
 	float4 colour : COLOR;
 };
 
-float4 ColorPixelShader(PixelInputType input) : SV_TARGET
+float4 main(PixelInputType input) : SV_TARGET
 {
 	//float4 newPos = frac(input.position * 4);
 	//float4 outPos = float4(newPos.x * input.color.x, newPos.y * input.color.y, newPos.z * input.color.z, 1);

@@ -8,8 +8,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
+#include <D3Dcompiler.h>
 
 struct MatrixBufferType
 {
@@ -39,35 +38,38 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	ID3D11Device* device = renderInterface->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
-	ID3D10Blob* errorMessage = nullptr;
+	//ID3D10Blob* errorMessage = nullptr;
 	ID3D10Blob* vBuffer = nullptr;
 	ID3D10Blob* pBuffer = nullptr;
 
-	HRESULT res = D3DX11CompileFromFile(vertexFilename.c_str(), nullptr, nullptr, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &vBuffer, &errorMessage, nullptr);
-	if (FAILED(res))
-	{
-		if (errorMessage)
-		{
-			bePRINTF("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), vertexFilename.c_str(), res);
-		}
+	//HRESULT res = D3DCompileFromFile(vertexFilename.c_str(), nullptr, nullptr, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vBuffer, &errorMessage);
+	//if (FAILED(res))
+	//{
+	//	if (errorMessage)
+	//	{
+	//		bePRINTF("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), vertexFilename.c_str(), res);
+	//	}
 
-		BE_ASSERT(false);
-		return false;
-	}
+	//	BE_ASSERT(false);
+	//	return false;
+	//}
 
-	res = D3DX11CompileFromFile(pixelFilename.c_str(), nullptr, nullptr, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, nullptr, &pBuffer, &errorMessage, nullptr);
-	if (FAILED(res))
-	{
-		if (errorMessage)
-		{
-			bePrintf::bePrintf(false, "", "%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), pixelFilename.c_str(), res);
-		}
+	//res = D3DCompileFromFile(pixelFilename.c_str(), nullptr, nullptr, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pBuffer, &errorMessage);
+	//if (FAILED(res))
+	//{
+	//	if (errorMessage)
+	//	{
+	//		bePrintf::bePrintf(false, "", "%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), pixelFilename.c_str(), res);
+	//	}
 
-		BE_ASSERT(false);
-		return false;
-	}
+	//	BE_ASSERT(false);
+	//	return false;
+	//}
 
-	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
+	D3DReadFileToBlob(vertexFilename.c_str(), &vBuffer);
+	D3DReadFileToBlob(pixelFilename.c_str(), &pBuffer);
+
+	HRESULT	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
 	if (FAILED(res))
 	{
 		return false;

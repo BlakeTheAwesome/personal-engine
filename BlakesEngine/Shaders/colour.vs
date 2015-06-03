@@ -20,7 +20,7 @@ struct PixelInputType
 	float4 colour : COLOR;
 };
 
-PixelInputType ColorVertexShader(VertexInputType input)
+PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 
