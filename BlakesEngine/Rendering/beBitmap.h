@@ -17,6 +17,7 @@ public:
 	bool Init(beRenderInterface* ri, float width, float height);
 	void Deinit();
 
+	Vec2 GetPosition() const;
 	void SetPosition(float x, float y);
 	void SetAnchorPoint(float x, float y); // [0-1]
 

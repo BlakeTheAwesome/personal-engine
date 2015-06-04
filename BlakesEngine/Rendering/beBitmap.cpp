@@ -159,6 +159,11 @@ bool beBitmap::LoadTexture(beRenderInterface* ri, const beWString& textureFilena
 	return m_texture->Init(ri, textureFilename);
 }
 
+Vec2 beBitmap::GetPosition() const
+{
+	return m_position;
+}
+
 void beBitmap::SetPosition(float x, float y)
 {
 	m_position = Vec2(x, y);
@@ -179,8 +184,9 @@ void beBitmap::Render(beRenderInterface* ri)
 	{
 		m_dirtyPositionBuffer = false;
 
-		float xOffset = m_position.x + (m_anchorPoint.x * 1.f);//m_size.x);
-		float yOffset = m_position.y + (m_anchorPoint.y * 1.f);//m_size.y);
+		Vec2 windowSize = ri->GetScreenSize();
+		float xOffset = m_position.x + (m_anchorPoint.x * 1.f) - (windowSize.x / 2.f);
+		float yOffset = m_position.y + (m_anchorPoint.y * 1.f) - (windowSize.y / 2.f);
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
 		HRESULT res = deviceContext->Map(m_positionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

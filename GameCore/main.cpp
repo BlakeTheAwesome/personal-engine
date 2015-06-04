@@ -116,6 +116,26 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			{
 				renderAxes = !renderAxes;
 			}
+			if (gamepad.GetButtonReleased(beGamepad::Up))
+			{
+				Vec2 bitmapPosition = bitmap1.GetPosition();
+				bitmap1.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
+			}
+			if (gamepad.GetButtonReleased(beGamepad::Down))
+			{
+				Vec2 bitmapPosition = bitmap1.GetPosition();
+				bitmap1.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
+			}
+			if (gamepad.GetButtonReleased(beGamepad::Left))
+			{
+				Vec2 bitmapPosition = bitmap1.GetPosition();
+				bitmap1.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
+			}
+			if (gamepad.GetButtonReleased(beGamepad::Right))
+			{
+				Vec2 bitmapPosition = bitmap1.GetPosition();
+				bitmap1.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
+			}
 
 			renderInterface->Update(dt.ToSeconds());
 			camera.Update(dt.ToSeconds());
