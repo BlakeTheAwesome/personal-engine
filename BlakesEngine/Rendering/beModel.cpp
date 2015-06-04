@@ -162,7 +162,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	return true;
 }
 
-bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
+bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename)
 {
 	OBJFileInfo fileInfo;
 	{
@@ -257,10 +257,10 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename)
 	delete [] vertices;
 	delete [] indices;
 
-	return true;
+	return LoadTexture(ri, textureFilename);
 }
 
-bool beModel::Init(beRenderInterface* ri)
+bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc = {0};
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
@@ -344,7 +344,7 @@ bool beModel::Init(beRenderInterface* ri)
 	delete [] vertices;
 	delete [] indices;
 
-	return true;
+	return LoadTexture(ri, textureFilename);
 }
 
 void beModel::Deinit()
@@ -369,6 +369,11 @@ void beModel::Render(beRenderInterface* ri)
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+ID3D11ShaderResourceView * beModel::GetTexture() const
+{
+	return m_texture->GetTexture();
 }
 
 int beModel::GetIndexCount()

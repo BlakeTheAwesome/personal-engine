@@ -46,7 +46,7 @@ beBitmap::~beBitmap()
 }
 
 
-bool beBitmap::Init(beRenderInterface* ri, float width, float height)
+bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc = {0};
 	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
@@ -143,7 +143,7 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height)
 	delete [] vertices;
 	delete [] indices;
 
-	return true;
+	return m_texture->Init(ri, textureFilename);
 }
 
 void beBitmap::Deinit()
@@ -211,6 +211,11 @@ void beBitmap::Render(beRenderInterface* ri)
 
 	unsigned int bufferNumber = 1; // 0 is matrix buffer set in SetShaderParameters
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_positionBuffer);
+}
+
+ID3D11ShaderResourceView * beBitmap::GetTexture() const
+{
+	return m_texture->GetTexture();
 }
 
 int beBitmap::GetIndexCount()

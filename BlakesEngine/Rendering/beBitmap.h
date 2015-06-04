@@ -14,7 +14,7 @@ public:
 	beBitmap();
 	~beBitmap();
 
-	bool Init(beRenderInterface* ri, float width, float height);
+	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
 	void Deinit();
 
 	Vec2 GetPosition() const;

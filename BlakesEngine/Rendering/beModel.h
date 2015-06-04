@@ -14,8 +14,8 @@ public:
 	beModel();
 	~beModel();
 
-	bool Init(beRenderInterface* ri);
-	bool InitWithFilename(beRenderInterface* ri, const char* filename);
+	bool Init(beRenderInterface* ri, const beWString& textureFilename);
+	bool InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename);
 	void Deinit();
 
 	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);

@@ -41,21 +41,21 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beModel model3;
 	beModel model4;
 	beBitmap bitmap1;
-	beTexture texture;
+	//beTexture texture;
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
 	beShaderTexture2d textureShader2d;
 	beShaderLitTexture litTextureShader;
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
 	
-	model1.Init(renderInterface);
-	model2.InitWithFilename(renderInterface, "cube.obj");
-	model3.InitWithFilename(renderInterface, "cube2.obj");
-	model4.InitWithFilename(renderInterface, "teapot.obj");
+	model1.Init(renderInterface, beWString(L"boar.dds"));
+	model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"));
+	model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"));
+	model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"));
 
-	bitmap1.Init(renderInterface, 512, 512);
+	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
 
-	texture.Init(renderInterface, beWString(L"boar.dds"));
+	//texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
 	textureShader.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
 	textureShader2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
@@ -160,11 +160,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				{
 					case 0:
 						litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
-						litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture());
+						litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 					break;
 					case 1:
 						textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-						textureShader.Render(renderInterface, modelToRender->GetIndexCount(), texture.GetTexture());
+						textureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 					break;
 					case 2:
 						colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
@@ -179,7 +179,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			bitmap1.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), texture.GetTexture());
+			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
 			renderInterface->EnableZBuffer();
 
 			renderInterface->EndFrame();
@@ -196,7 +196,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	textureShader2d.Deinit();
 	textureShader.Deinit();
 	colourShader.Deinit();
-	texture.Deinit();
+	//texture.Deinit();
 	bitmap1.Deinit();
 	model4.Deinit();
 	model3.Deinit();

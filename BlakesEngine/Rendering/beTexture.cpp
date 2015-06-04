@@ -21,6 +21,8 @@ beTexture::~beTexture()
 
 bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 {
+	BE_ASSERT(!m_texture);
+
 	HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), textureFilename.c_str(), nullptr, &m_texture);
 	if(FAILED(res))
 	{
