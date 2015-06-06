@@ -8,9 +8,11 @@
 #define LOCATION       __FILE__" (" _STRINGIFY_PT2(__LINE__) ")"
 
 #define BE_NEW new
+#define BE_DELETE(x) delete(x)
 #define BE_SAFE_DELETE(x) delete(x); x = nullptr;
 
 #define BE_MALLOC malloc
+#define BE_FREE(x) free(x)
 #define BE_SAFE_FREE(x) if (x){free(x); x = nullptr;};
 
 #define BE_SAFE_RELEASE(x) if (x){ x->Release(); x = nullptr;};

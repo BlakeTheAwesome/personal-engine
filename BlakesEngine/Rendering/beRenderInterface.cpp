@@ -7,8 +7,6 @@
 
 #include "Window/beWindow.h"
 
-#include <windows.h>
-#include <windowsx.h>
 #include <d3d11.h>
 ///#include <DirectXPackedVector.h>
 

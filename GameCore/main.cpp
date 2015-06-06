@@ -14,6 +14,7 @@
 #include "BlakesEngine\Rendering\beBitmap.h"
 #include "BlakesEngine\Rendering\beModel.h"
 #include "BlakesEngine\Rendering\beTexture.h"
+#include "BlakesEngine\Rendering\beFont.h"
 #include "BlakesEngine\Shaders\beShaderColour.h"
 #include "BlakesEngine\Shaders\beShaderTexture.h"
 #include "BlakesEngine\Shaders\beShaderTexture2d.h"
@@ -41,6 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beModel model3;
 	beModel model4;
 	beBitmap bitmap1;
+	beFont font;
 	//beTexture texture;
 	beShaderColour colourShader;
 	beShaderTexture textureShader;
@@ -48,6 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beShaderLitTexture litTextureShader;
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
 	
+	font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
 	model1.Init(renderInterface, beWString(L"boar.dds"));
 	model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"));
 	model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"));
@@ -202,6 +205,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	model3.Deinit();
 	model2.Deinit();
 	model1.Deinit();
+	font.Deinit();
 	renderInterface->Deinit();
 	PIMPL_DELETE(renderInterface);
 	PIMPL_DELETE(window);

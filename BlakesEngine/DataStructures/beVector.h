@@ -1,7 +1,6 @@
-#ifndef _beVector_h_
-#define _beVector_h_
-
+#pragma once
 #include "blakesengine/core/beMacros.h"
+#include "blakesengine/core/beAssert.h"
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<typename T>
@@ -98,11 +97,31 @@ class beVector
 			BE_ASSERT(i <= m_count);
 			return m_buffer[i];
 		}
+
+		T* begin()
+		{
+			return m_buffer;
+		}
+
+		T* end()
+		{
+			return m_buffer + m_count;
+		}
+
+		const T* begin() const
+		{
+			return m_buffer;
+		}
+
+		const T* end() const
+		{
+			return m_buffer + m_count;
+		}
 		
 	private:
-		beVector();
-		beVector(const beVector&);
-		beVector& operator= (const beVector&);
+		beVector() = delete;
+		beVector(const beVector&) = delete;
+		beVector& operator= (const beVector&) = delete;
 
 		bool CheckRoomForAlloc()
 		{
@@ -136,6 +155,3 @@ class beVector
 		int m_bufferLength;
 		int m_increaseBy;
 };
-
-#endif //_beVector_h_
-

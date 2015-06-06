@@ -94,6 +94,7 @@
     <ClCompile Include="Camera\beFlightCamera.cpp" />
     <ClCompile Include="Core\beAssert.cpp" />
     <ClCompile Include="Core\bePrintf.cpp" />
+    <ClCompile Include="Core\beString.cpp" />
     <ClCompile Include="Core\beTypeTests.cpp" />
     <ClCompile Include="bePCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -105,6 +106,7 @@
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Rendering\beBitmap.cpp" />
     <ClCompile Include="Rendering\beDebugWorld.cpp" />
+    <ClCompile Include="Rendering\beFont.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Rendering\beTexture.cpp" />
@@ -151,6 +153,7 @@
     <ClInclude Include="Math\beMath.h" />
     <ClInclude Include="Rendering\beBitmap.h" />
     <ClInclude Include="Rendering\beDebugWorld.h" />
+    <ClInclude Include="Rendering\beFont.h" />
     <ClInclude Include="Rendering\beModel.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Rendering\beTexture.h" />

@@ -7,8 +7,6 @@
 #include "beRenderInterface.h"
 #include "Shaders/beShaderColour.h"
 
-#include <windows.h>
-#include <windowsx.h>
 #include <d3d11.h>
 
 #include <fstream>

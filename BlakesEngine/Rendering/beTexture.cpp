@@ -6,8 +6,6 @@
 #include "Rendering\beRenderInterface.h"
 #include "External/DirectXTK/DDSTextureLoader.h"
 
-#include <windows.h>
-#include <windowsx.h>
 #include <d3d11.h>
 
 beTexture::beTexture()
