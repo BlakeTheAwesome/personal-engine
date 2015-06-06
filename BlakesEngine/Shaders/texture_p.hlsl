@@ -4,15 +4,18 @@ SamplerState SampleType;
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
+	float4 colour : COLOR0;
 	float2 tex : TEXCOORD0;
 };
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float4 textureColor;
+	float4 textureColour;
 	
-	textureColor = shaderTexture.Sample(SampleType, input.tex);
+	textureColour = shaderTexture.Sample(SampleType, input.tex);
 	
-	return textureColor;
+	textureColour *= input.colour;
+
+	return textureColour;
 }
 

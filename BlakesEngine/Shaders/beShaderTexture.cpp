@@ -17,17 +17,27 @@ struct MatrixBufferType
 	Matrix projection;
 };
 
+struct ColourBufferType
+{
+	Vec4 colour;
+};
+
 beShaderTexture::beShaderTexture()
 	: m_pShader(nullptr)
 	, m_vShader(nullptr)
 	, m_sampleState(nullptr)
 	, m_layout(nullptr)
 	, m_matrixBuffer(nullptr)
+	, m_colourBuffer(nullptr)
+	, m_colourDirty(true)
+	, m_colour(1.f, 1.f, 1.f, 1.f)
 {
 }
 
 beShaderTexture::~beShaderTexture()
 {
+	BE_ASSERT(!m_matrixBuffer);
+	BE_ASSERT(!m_colourBuffer);
 	BE_ASSERT(!m_sampleState);
 	BE_ASSERT(!m_pShader);
 	BE_ASSERT(!m_vShader);
@@ -132,6 +142,19 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 		return false;
 	}
 	
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.ByteWidth = sizeof(ColourBufferType);
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	res = device->CreateBuffer(&bufferDesc, nullptr, &m_colourBuffer);
+	if (FAILED(res))
+	{
+		return false;
+	}
+	
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -162,10 +185,17 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 void beShaderTexture::Deinit()
 {
 	BE_SAFE_RELEASE(m_sampleState);
+	BE_SAFE_RELEASE(m_colourBuffer);
 	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
+}
+
+void beShaderTexture::SetColour(const Vec4 & colour)
+{
+	m_colour = colour;
+	m_colourDirty = true;
 }
 
 void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix)
@@ -200,9 +230,22 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, co
 
 		deviceContext->Unmap(m_matrixBuffer, 0);
 	}
+
+	if (m_colourDirty)
+	{
+		HRESULT res = deviceContext->Map(m_colourBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (FAILED(res))
+		{
+			return;
+		}
+		auto dataPtr = (ColourBufferType*)mappedResource.pData;
+		dataPtr->colour = m_colour;
+		deviceContext->Unmap(m_colourBuffer, 0);
+		m_colourDirty = false;
+	}
 	
-	unsigned int bufferNumber = 0;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	ID3D11Buffer* buffers[] = {m_matrixBuffer, m_colourBuffer};
+	deviceContext->VSSetConstantBuffers(0, 2, buffers);
 }
 
 void beShaderTexture::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture)

@@ -15,6 +15,7 @@
 
 struct PositionBufferType
 {
+	Vec4 colour;
 	Vec2 positionOffset;
 	Vec2 padding;
 };
@@ -35,6 +36,7 @@ beBitmap::beBitmap()
 	, m_size(0.f, 0.f)
 	, m_position(0.f, 0.f)
 	, m_anchorPoint(0.f, 0.f)
+	, m_colour(1.f, 1.f, 1.f, 1.f)
 {
 	m_texture = new beTexture();
 }
@@ -159,6 +161,12 @@ bool beBitmap::LoadTexture(beRenderInterface* ri, const beWString& textureFilena
 	return m_texture->Init(ri, textureFilename);
 }
 
+void beBitmap::SetColour(const Vec4 & colour)
+{
+	m_colour = colour;
+	m_dirtyPositionBuffer = true;
+}
+
 Vec2 beBitmap::GetPosition() const
 {
 	return m_position;
@@ -196,6 +204,7 @@ void beBitmap::Render(beRenderInterface* ri)
 		}
 		auto dataPtr = (PositionBufferType*)mappedResource.pData;
 		dataPtr->positionOffset = Vec2(xOffset, yOffset);
+		dataPtr->colour = m_colour;
 		deviceContext->Unmap(m_positionBuffer, 0);
 	}
 

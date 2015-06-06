@@ -17,6 +17,7 @@ public:
 	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
 	void Deinit();
 
+	void SetColour(const Vec4& colour);
 	Vec2 GetPosition() const;
 	void SetPosition(float x, float y);
 	void SetAnchorPoint(float x, float y); // [0-1]
@@ -37,6 +38,7 @@ private:
 	int m_vertexCount;
 	int m_indexCount;
 
+	Vec4 m_colour;
 	Vec2 m_size;
 	Vec2 m_position;
 	Vec2 m_anchorPoint;

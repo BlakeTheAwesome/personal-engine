@@ -9,6 +9,7 @@ cbuffer MatrixBuffer
 
 cbuffer PositionBuffer
 {
+	float4 colour;
 	float2 positionOffset;
 	float2 padding2;
 };
@@ -22,6 +23,7 @@ struct VertexInputType
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
+	float4 colour : COLOR0;
 	float2 tex : TEXCOORD0;
 };
 
@@ -40,6 +42,7 @@ PixelInputType main(VertexInputType input)
 
 	output.position = position;
 	output.tex = input.tex;
+	output.colour = colour;
 	
 	return output;
 }

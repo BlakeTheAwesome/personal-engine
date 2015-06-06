@@ -21,6 +21,8 @@ public:
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 
+	void SetColour(const Vec4& colour);
+
 	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture);
@@ -35,4 +37,8 @@ private:
 
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_matrixBuffer;
+	ID3D11Buffer* m_colourBuffer;
+
+	Vec4 m_colour;
+	bool m_colourDirty;
 };
