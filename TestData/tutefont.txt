@@ -1,3 +1,6 @@
+FontInfo, lineHeight;
+F         16
+
    Type Code  U1         V1         U2         V2         PixelWidth PreKern PostKern;
                                                
  ; C    32    0.0        0.0        0.0        0.0        6          0       0

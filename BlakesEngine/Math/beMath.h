@@ -100,6 +100,18 @@ namespace beMath
 		return position;
 	}
 
+	template <typename T>
+	T Min(const T lhs, const T rhs)
+	{
+		return lhs < rhs ? lhs : rhs;
+	}
+	
+	template <typename T>
+	T Max(const T lhs, const T rhs)
+	{
+		return lhs > rhs ? lhs : rhs;
+	}
+
 };
 using namespace beMath;
 

@@ -49,10 +49,10 @@ beBitmap::~beBitmap()
 bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc = {0};
-	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
+	D3D11_BUFFER_DESC indexBufferDesc = {0};
 	D3D11_BUFFER_DESC positionBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
-	D3D11_SUBRESOURCE_DATA indexData = { 0 };
+	D3D11_SUBRESOURCE_DATA indexData = {0};
 	VertexType* vertices = nullptr;
 	unsigned int* indices;
 	HRESULT res;
@@ -74,23 +74,23 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWS
 
 	// Load the vertex array with data.
 
-	vertices[0].position = XMFLOAT2(0.f, height);  // TL
-	vertices[0].texCoord = XMFLOAT2(0.f, 0.f);
+	vertices[0].position = Vec2(0.f, height);  // TL
+	vertices[0].texCoord = Vec2(0.f, 0.f);
 
-	vertices[1].position = XMFLOAT2(width, height);  // TR
-	vertices[1].texCoord = XMFLOAT2(1.f, 0.f);
+	vertices[1].position = Vec2(width, height);  // TR
+	vertices[1].texCoord = Vec2(1.f, 0.f);
 
-	vertices[2].position = XMFLOAT2(width, 0.f);  // BR
-	vertices[2].texCoord = XMFLOAT2(1.f, 1.f);
+	vertices[2].position = Vec2(width, 0.f);  // BR
+	vertices[2].texCoord = Vec2(1.f, 1.f);
 
-	vertices[3].position = XMFLOAT2(width, 0.f);  // BR
-	vertices[3].texCoord = XMFLOAT2(1.f, 1.f);
+	vertices[3].position = Vec2(width, 0.f);  // BR
+	vertices[3].texCoord = Vec2(1.f, 1.f);
 
-	vertices[4].position = XMFLOAT2(0.f, 0.f);  // BL.
-	vertices[4].texCoord = XMFLOAT2(0.f, 1.f);
+	vertices[4].position = Vec2(0.f, 0.f);  // BL.
+	vertices[4].texCoord = Vec2(0.f, 1.f);
 
-	vertices[5].position = XMFLOAT2(0.f, height);  // TL.
-	vertices[5].texCoord = XMFLOAT2(0.f, 0.f);
+	vertices[5].position = Vec2(0.f, height);  // TL.
+	vertices[5].texCoord = Vec2(0.f, 0.f);
 
 	indices[0] = 0;
 	indices[1] = 1;

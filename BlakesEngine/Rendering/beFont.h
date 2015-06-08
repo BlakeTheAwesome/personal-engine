@@ -11,12 +11,20 @@ struct ID3D11ShaderResourceView;
 class beFont
 {
 public:
+
+	struct VertexInputType
+	{
+		Vec2 position;
+		Vec2 uv;
+	};
+
 	struct StringInfo
 	{
-		float width;
-		float height;
 		ID3D11Buffer* vertexBuffer;
 		ID3D11Buffer* indexBuffer;
+		int vertexCount;
+		float width;
+		float height;
 	};
 
 	beFont();
@@ -26,18 +34,16 @@ public:
 	void Deinit();
 
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
-	bool CreateString(float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo);
+	bool CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo);
 	
 	ID3D11ShaderResourceView* GetTexture() const;
 
 private:
-	bool ReadLine(const std::string & line);
-	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);
 	
 	struct CharacterInfo
 	{
 		Vec2 textureTopLeft;
-		Vec2 textureBottomRight;
+		Vec2 textureBtmRight;
 		int width;
 		int prekerning;
 		int postkerning;
@@ -49,9 +55,16 @@ private:
 		int offset;
 	};
 
+	bool ReadLine(const std::string & line);
+	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);
+	const CharacterInfo* FindCharacterInfo(u32 c);
+	static bool CompareExtraKerning(const beFont::ExtraKerning* lhs, const beFont::ExtraKerning* rhs, int* res);
+	int GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar);
+
 	beVector<CharacterInfo> m_characterInfo;
 	beVector<u64> m_characterIndices; // Binary search for character in here. Top 32 bits are character code, bottom 32 are index into characterInfo.
 
 	beVector<ExtraKerning> m_extraKerning; // Parse all then sortm, then binary search through this
 	beTexture* m_texture;
+	int m_lineHeight;
 };

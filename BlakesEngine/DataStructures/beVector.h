@@ -117,6 +117,52 @@ class beVector
 		{
 			return m_buffer + m_count;
 		}
+
+		typedef bool (*CompareFn)(const T*, const T*, int*);
+		template <CompareFn fn> //CompareFn return true if match, else arg3 will be <0 if lhs<rhs or >0 if lhs<rhs
+		bool BinarySearch(const T* target, const T** result) const
+		{
+			*result = nullptr;
+			if (m_count == 0)
+			{
+				return false;
+			}
+
+			int lowerBound = -1;
+			int upperBound = m_count;
+			int index = upperBound / 2;
+			while (true)
+			{
+				const T* entry = &m_buffer[index];
+				
+				int diff;
+				bool res = fn(target, entry, &diff);
+				if (res)
+				{
+					*result = entry;
+					return true;
+				}
+				if (diff > 0)
+				{
+					upperBound = index;
+				}
+				else
+				{
+					lowerBound = index;
+				}
+		
+				if (upperBound == lowerBound)
+				{
+					return false;
+				}
+				int newIndex = (lowerBound + upperBound) / 2;
+				if (index == newIndex)
+				{
+					newIndex++;
+				}
+				index = newIndex;
+			}
+		}
 		
 	private:
 		beVector() = delete;

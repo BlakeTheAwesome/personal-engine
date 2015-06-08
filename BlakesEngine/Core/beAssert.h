@@ -14,7 +14,7 @@
 	#define BE_ASSERT_CODE(x)
 #endif
 
-#define BA_ASSERT_COMPILETIME(x) {int i = 0; switch(i){case 0: case(x):;}}
+#define BE_ASSERT_COMPILETIME(x) {int i = 0; switch(i){case 0: case(x):;}}
 
 namespace beAssert
 {

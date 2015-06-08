@@ -6,15 +6,16 @@
 #include "Rendering\beRenderInterface.h"
 #include "External/DirectXTK/DDSTextureLoader.h"
 
-#include <d3d11.h>
-
 beTexture::beTexture()
 	: m_texture(nullptr)
+	, m_texture2d(nullptr)
 {
 }
 
 beTexture::~beTexture()
 {
+	BE_SAFE_RELEASE(m_texture2d);
+	BE_SAFE_RELEASE(m_texture);
 }
 
 bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
@@ -28,12 +29,26 @@ bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 		return false;
 	}
 
+	m_texture->QueryInterface<ID3D11Texture2D>(&m_texture2d);
+	m_texture2d->GetDesc(&m_desc);
+
+
 	return true;
 }
 
 void beTexture::Deinit()
 {
 	BE_SAFE_RELEASE(m_texture);
+}
+
+int beTexture::GetWidth() const
+{
+	return (int)m_desc.Width;
+}
+
+int beTexture::GetHeight() const
+{
+	return (int)m_desc.Height;
 }
 
 ID3D11ShaderResourceView* beTexture::GetTexture()
