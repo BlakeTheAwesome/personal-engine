@@ -124,6 +124,7 @@
     <ClInclude Include="Camera\beFlightCamera.h" />
     <ClInclude Include="Core\beAssert.h" />
     <ClInclude Include="Core\beMacros.h" />
+    <ClInclude Include="Core\beNonCopiable.h" />
     <ClInclude Include="Core\bePimpl.h" />
     <ClInclude Include="Core\bePrintf.h" />
     <ClInclude Include="Core\beString.h" />

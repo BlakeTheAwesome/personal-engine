@@ -127,6 +127,7 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWS
 	res = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 
+
 	positionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	positionBufferDesc.ByteWidth = sizeof(PositionBufferType);
 	positionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -152,6 +153,39 @@ void beBitmap::Deinit()
 	BE_SAFE_RELEASE(m_positionBuffer);
 	BE_SAFE_RELEASE(m_indexBuffer);
 	BE_SAFE_RELEASE(m_vertexBuffer);
+}
+
+#include "beFont.h"
+bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beString& string, float maxWidth, u32 invalidStringCharacter)
+{
+	beFont::StringInfo info = {0};
+	if (!font->CreateString(ri, string, maxWidth, invalidStringCharacter, &info))
+	{
+		return false;
+	}
+	m_vertexBuffer = info.vertexBuffer;
+	m_indexBuffer = info.indexBuffer;
+	m_vertexCount = info.vertexCount;
+	m_indexCount = info.vertexCount;
+	m_texture->Set(*font->GetTexture());
+	
+	D3D11_BUFFER_DESC positionBufferDesc = {0};
+
+	positionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	positionBufferDesc.ByteWidth = sizeof(PositionBufferType);
+	positionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	positionBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	positionBufferDesc.MiscFlags = 0;
+	positionBufferDesc.StructureByteStride = 0;
+
+	ID3D11Device* device = ri->GetDevice();
+	HRESULT res = device->CreateBuffer(&positionBufferDesc, nullptr, &m_positionBuffer);
+	if (FAILED(res))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool beBitmap::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
@@ -185,14 +219,17 @@ void beBitmap::SetAnchorPoint(float x, float y)
 void beBitmap::Render(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	BE_ASSERT(m_positionBuffer);
+	BE_ASSERT(m_vertexBuffer);
+	BE_ASSERT(m_indexBuffer);
 
 	if (m_dirtyPositionBuffer)
 	{
 		m_dirtyPositionBuffer = false;
 
 		Vec2 windowSize = ri->GetScreenSize();
-		float xOffset = m_position.x + (m_anchorPoint.x * 1.f) - (windowSize.x / 2.f);
-		float yOffset = m_position.y + (m_anchorPoint.y * 1.f) - (windowSize.y / 2.f);
+		float xOffset = m_position.x + (m_anchorPoint.x * 1.f);// - (windowSize.x / 2.f);
+		float yOffset = m_position.y + (m_anchorPoint.y * 1.f);// - (windowSize.y / 2.f);
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
 		HRESULT res = deviceContext->Map(m_positionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

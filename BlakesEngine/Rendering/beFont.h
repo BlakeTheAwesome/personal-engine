@@ -34,9 +34,9 @@ public:
 	void Deinit();
 
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
-	bool CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo);
+	bool CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const;
 	
-	ID3D11ShaderResourceView* GetTexture() const;
+	beTexture* GetTexture() const;
 
 private:
 	
@@ -57,9 +57,9 @@ private:
 
 	bool ReadLine(const std::string & line);
 	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);
-	const CharacterInfo* FindCharacterInfo(u32 c);
+	const CharacterInfo* FindCharacterInfo(u32 c) const;
 	static bool CompareExtraKerning(const beFont::ExtraKerning* lhs, const beFont::ExtraKerning* rhs, int* res);
-	int GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar);
+	int GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar) const;
 
 	beVector<CharacterInfo> m_characterInfo;
 	beVector<u64> m_characterIndices; // Binary search for character in here. Top 32 bits are character code, bottom 32 are index into characterInfo.

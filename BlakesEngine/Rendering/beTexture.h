@@ -5,7 +5,7 @@
 class beRenderInterface;
 struct ID3D11ShaderResourceView;
 
-class beTexture
+class beTexture : NonCopiable
 {
 public:
 
@@ -14,6 +14,8 @@ public:
 
 	bool Init(beRenderInterface* ri, const beWString& textureFilename);
 	void Deinit();
+
+	void Set(const beTexture& that); // inc refs.
 
 	int GetWidth() const;
 	int GetHeight() const;

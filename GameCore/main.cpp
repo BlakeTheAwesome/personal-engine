@@ -1,5 +1,5 @@
-#include <windows.h>
 
+#include "BlakesEngine\bePCH.h"
 #include "BlakesEngine\Core\beString.h"
 #include "BlakesEngine\Core\bePrintf.h"
 #include "BlakesEngine\Core\beMacros.h"
@@ -20,6 +20,7 @@
 #include "BlakesEngine\Shaders\beShaderTexture2d.h"
 #include "BlakesEngine\Shaders\beShaderLitTexture.h"
 
+#include <windows.h>
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    PSTR lpCmdLine,
@@ -42,6 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beModel model3;
 	beModel model4;
 	beBitmap bitmap1;
+	beBitmap bitmap2;
 	beFont font;
 	//beTexture texture;
 	beShaderColour colourShader;
@@ -57,6 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"));
 
 	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
+	bitmap2.InitText(renderInterface, &font, "Test string", 512.f, 0);
 
 	//texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
@@ -72,7 +75,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	const int numShaders = 3;
 	const int numModels = 5;
 	int shaderToUse = 0;
-	int modelToUse = 3;
+	int modelToUse = 0;
 	bool renderAxes = true;
 
 	bool go = true;
@@ -181,8 +184,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			bitmap1.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+			//bitmap1.Render(renderInterface);
+			//textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+			
+			bitmap2.Render(renderInterface);
+			textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());
+			
 			renderInterface->EnableZBuffer();
 
 			renderInterface->EndFrame();
@@ -200,6 +207,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	textureShader.Deinit();
 	colourShader.Deinit();
 	//texture.Deinit();
+	bitmap2.Deinit();
 	bitmap1.Deinit();
 	model4.Deinit();
 	model3.Deinit();

@@ -128,8 +128,8 @@ class beVector
 				return false;
 			}
 
-			int lowerBound = -1;
-			int upperBound = m_count;
+			int lowerBound = 0;
+			int upperBound = m_count-1;
 			int index = upperBound / 2;
 			while (true)
 			{
@@ -144,11 +144,11 @@ class beVector
 				}
 				if (diff > 0)
 				{
-					upperBound = index;
+					lowerBound = index;
 				}
 				else
 				{
-					lowerBound = index;
+					upperBound = index;
 				}
 		
 				if (upperBound == lowerBound)

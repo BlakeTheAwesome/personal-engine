@@ -1,8 +1,7 @@
-#ifndef _beAssert_h_
-#define _beAssert_h_
+#pragma once
 
-#include "blakesengine/Core/beTypes.h"
-#include "blakesengine/Core/beMacros.h"
+#include "beTypes.h"
+#include "beMacros.h"
 
 #define ENABLE_ASSERTS 1
 
@@ -21,4 +20,3 @@ namespace beAssert
 	void DebugBreak( bool condition, const char* conditionAsString, s8 warningLevel, const char* location );
 }
 
-#endif

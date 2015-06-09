@@ -4,6 +4,7 @@
 
 class beRenderInterface;
 class beTexture;
+class beFont;
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
@@ -16,6 +17,8 @@ public:
 
 	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
 	void Deinit();
+
+	bool InitText(beRenderInterface* ri, const beFont* font, const beString& string, float maxWidth, u32 invalidStringCharacter);
 
 	void SetColour(const Vec4& colour);
 	Vec2 GetPosition() const;

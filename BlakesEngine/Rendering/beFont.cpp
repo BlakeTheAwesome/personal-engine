@@ -165,13 +165,13 @@ static bool CompareTop32(const u64* _lhs, const u64* _rhs, int* comparison)
 	}
 }
 
-const beFont::CharacterInfo* beFont::FindCharacterInfo(u32 c)
+const beFont::CharacterInfo* beFont::FindCharacterInfo(u32 c) const
 {
-	u64 searchKey = (u64)c;
+	u64 searchKey = ((u64)c) << 32;
 	const u64* entry = nullptr;
 	if (m_characterIndices.BinarySearch<CompareTop32>(&searchKey, &entry))
 	{
-		return &m_characterInfo[(u32)entry];
+		return &m_characterInfo[(u32)*entry];
 	}
 
 	//int lowerBound = -1;
@@ -231,7 +231,7 @@ bool beFont::CompareExtraKerning(const beFont::ExtraKerning* _lhs, const beFont:
 	}
 }
 
-int beFont::GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar)
+int beFont::GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar) const
 {
 	ExtraKerning searchKey;
 	searchKey.pair = ((u64)lhs) << 32 | (u64)rhs;
@@ -248,10 +248,11 @@ int beFont::GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const Ch
 	return kerning;
 }
 
-bool beFont::CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo)
+bool beFont::CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const
 {
-	float textureWidth = (float)m_texture->GetWidth();
-	float textureHeight = (float)m_texture->GetHeight();
+	//float textureWidth = (float)m_texture->GetWidth();
+	//float textureHeight = (float)m_texture->GetHeight();
+	float scale = 6.f;
 
 	beWString wstring;
 	beStringConversion::UTF8ToWide(string, &wstring);
@@ -299,17 +300,8 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	u32 lastChar = 0;
 	bool newLine = true;
 
-	
-	struct _CharacterInfo
-	{
-		Vec2 textureTopLeft;
-		Vec2 textureBtmRight;
-		int width;
-		int prekerning;
-		int postkerning;
-	};
-
-	for (int i = 0; i < numVerts; i++)
+	int vertIndex = 0;
+	for (int i = 0; i < numChars; i++)
 	{
 		wchar_t nextChar = wstring[i];
 		const CharacterInfo* charInfo = FindCharacterInfo(nextChar);
@@ -363,34 +355,37 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 
 
 		float uvLeft = charInfo->textureTopLeft.x;
-		float uvTop = charInfo->textureTopLeft.y;
+		float uvTop = charInfo->textureBtmRight.y;
 		float uvRight = charInfo->textureBtmRight.x;
-		float uvBottom = charInfo->textureBtmRight.y;
-		float posLeft = (float)lineWidth / textureWidth;
-		float posRight = (float)newLineWidth / textureWidth;
-		float posTop = (float)currentHeight / textureHeight;
-		float posBtm = (float)totalHeight / textureHeight;
+		float uvBottom = charInfo->textureTopLeft.y;
+		float posLeft = (float)lineWidth * scale;// / textureWidth;
+		float posRight = (float)newLineWidth * scale;// / textureWidth;
+		float posTop = (float)currentHeight * scale;// / textureHeight;
+		float posBtm = (float)totalHeight * scale;// / textureHeight;
 
-		int vertIndex = numChars * 6;
 		vertices[vertIndex+0].uv = Vec2(uvLeft, uvTop);
-		vertices[vertIndex+1].uv = Vec2(uvRight, uvTop);
+		vertices[vertIndex+1].uv = Vec2(uvLeft, uvBottom);
 		vertices[vertIndex+2].uv = Vec2(uvRight, uvBottom);
 		vertices[vertIndex+3].uv = Vec2(uvRight, uvBottom);
-		vertices[vertIndex+4].uv = Vec2(uvLeft, uvBottom);
+		vertices[vertIndex+4].uv = Vec2(uvRight, uvTop);
 		vertices[vertIndex+5].uv = Vec2(uvLeft, uvTop);
 		vertices[vertIndex+0].position = Vec2(posLeft, posTop);
-		vertices[vertIndex+1].position = Vec2(posRight, posTop);
+		vertices[vertIndex+1].position = Vec2(posLeft, posBtm);
 		vertices[vertIndex+2].position = Vec2(posRight, posBtm);
 		vertices[vertIndex+3].position = Vec2(posRight, posBtm);
-		vertices[vertIndex+4].position = Vec2(posLeft, posBtm);
+		vertices[vertIndex+4].position = Vec2(posRight, posTop);
 		vertices[vertIndex+5].position = Vec2(posLeft, posTop);
-
+		vertIndex += 6;
 
 		lineWidth = newLineWidth;
 		lastChar = nextChar;
 		newLine = false;
 	}
+	numVerts = vertIndex;
 
+	outStringInfo->height = (float)totalHeight;
+	outStringInfo->width = (float)totalWidth;
+	outStringInfo->vertexCount = numVerts;
 
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(decltype(*vertices)) * numVerts;
@@ -420,13 +415,18 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	res = device->CreateBuffer(&indexBufferDesc, &indexData, &outStringInfo->indexBuffer);
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 
+	for (int i = 0; i < numVerts; i++)
+	{
+		
+		bePRINTF("Pos: %f, %f, uv: %f, %f", vertices[i].position.x, vertices[i].position.y, vertices[i].uv.x, vertices[i].uv.y);
+	}
 	delete [] vertices;
 	delete [] indices;
 
-	return false;
+	return true;
 }
 
-ID3D11ShaderResourceView * beFont::GetTexture() const
+beTexture * beFont::GetTexture() const
 {
-	return m_texture->GetTexture();
+	return m_texture;
 }
