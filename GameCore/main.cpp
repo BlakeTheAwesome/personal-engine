@@ -104,6 +104,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (doStuff)
 		{
 			gamepad.Update(dt.ToSeconds());
+			if (gamepad.GetButtonReleased(beGamepad::A))
+			{
+				renderInterface->ToggleWireframe();
+			}
 			if (gamepad.GetButtonReleased(beGamepad::B))
 			{
 				go = false;
@@ -184,8 +188,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			//bitmap1.Render(renderInterface);
-			//textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+			
+			bitmap1.Render(renderInterface);
+			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
 			
 			bitmap2.Render(renderInterface);
 			textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());

@@ -39,13 +39,15 @@ PIMPL_DATA(beRenderInterface)
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
+	ID3D11RasterizerState* m_wireframeRasterState;
+	Vec3 m_lightDirection;
 	float m_width;
 	float m_height;
 	unsigned int m_videoCardMemory;
 	char m_videoCardDescription[128];
 	bool m_vsync_enabled;
+	bool m_wireframe;
 
-	Vec3 m_lightDirection;
 PIMPL_DATA_END
 
 PIMPL_CONSTRUCT(beRenderInterface)
@@ -61,9 +63,11 @@ PIMPL_CONSTRUCT(beRenderInterface)
 	, m_depthStencilState(nullptr)
 	, m_depthStencilView(nullptr)
 	, m_rasterState(nullptr)
+	, m_wireframeRasterState(nullptr)
 	, m_lightDirection(0.f, 0.f, 0.f)
 	, m_width(0.f)
 	, m_height(0.f)
+	, m_wireframe(false)
 {
 	m_videoCardDescription[0] = '\0';
 }
@@ -339,6 +343,21 @@ void beRenderInterface::Impl::CreateRasterState()
 	HRESULT res = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 
+	
+	memset(&rasterDesc, 0, sizeof(rasterDesc));
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	res = m_device->CreateRasterizerState(&rasterDesc, &m_wireframeRasterState);
+	if(FAILED(res)) { BE_ASSERT(false); return; }
+
 	m_deviceContext->RSSetState(m_rasterState);
 }
 
@@ -375,6 +394,7 @@ void beRenderInterface::Deinit()
 
 	BE_SAFE_RELEASE(self.m_backBuffer);
 	BE_SAFE_RELEASE(self.m_swapChain);
+	BE_SAFE_RELEASE(self.m_wireframeRasterState);
 	BE_SAFE_RELEASE(self.m_rasterState);
 	BE_SAFE_RELEASE(self.m_depthStencilView);
 	BE_SAFE_RELEASE(self.m_depthStencilState);
@@ -433,6 +453,19 @@ void beRenderInterface::DisableZBuffer()
 Vec2 beRenderInterface::GetScreenSize()
 {
 	return Vec2(self.m_width, self.m_height);
+}
+
+void beRenderInterface::ToggleWireframe()
+{
+	self.m_wireframe = !self.m_wireframe;
+	if (self.m_wireframe)
+	{
+		self.m_deviceContext->RSSetState(self.m_wireframeRasterState);
+	}
+	else
+	{
+		self.m_deviceContext->RSSetState(self.m_rasterState);
+	}
 }
 
 const Matrix& beRenderInterface::GetProjectionMatrix() const
