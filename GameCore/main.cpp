@@ -59,8 +59,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"));
 
 	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
-	bitmap2.InitText(renderInterface, &font, "Test string", 512.f, 0);
-
+	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 384.f, 0);
+ 
 	//texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
 	textureShader.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));

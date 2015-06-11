@@ -252,13 +252,14 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 {
 	//float textureWidth = (float)m_texture->GetWidth();
 	//float textureHeight = (float)m_texture->GetHeight();
-	float scale = 6.f;
+	int scale = 6;
 
 	beWString wstring;
 	beStringConversion::UTF8ToWide(string, &wstring);
 
+	const int vertsPerChar = 6;
 	int numChars = wstring.size();
-	int numVerts = numChars * 6;
+	int numVerts = numChars * vertsPerChar;
 	outStringInfo->vertexCount = numVerts;
 
 	struct StringInfo
@@ -298,12 +299,25 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	int wordWidth = 0;
 	int wordChars = 0;
 	u32 lastChar = 0;
-	bool newLine = true;
+
+	auto onNewLine = [&]() {
+		currentHeight = totalHeight;
+		lineWidth = 0;
+		wordWidth = 0;
+		wordChars = 0;
+		lastChar = 0;
+	};
 
 	int vertIndex = 0;
 	for (int i = 0; i < numChars; i++)
 	{
 		wchar_t nextChar = wstring[i];
+		if (nextChar == '\n')
+		{
+			onNewLine();
+			continue;
+		}
+
 		const CharacterInfo* charInfo = FindCharacterInfo(nextChar);
 		if (!charInfo)
 		{
@@ -318,27 +332,25 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 		}
 
 		int kerning = GetKerning(lastChar, nextChar, lastCharacterInfo, charInfo);
-		int newLineWidth = lineWidth + kerning + charInfo->width;
+		int newLineWidth = lineWidth + ((kerning + charInfo->width) * scale);
 		if (newLineWidth > maxWidth)
 		{
 			if (lineWidth == wordWidth)
 			{
-					// Only word, line break here
-				newLineWidth = charInfo->width;
-				newLine = true;
+					// Only word, line break here.
+				onNewLine();
+				newLineWidth = charInfo->width * scale;
 			}
 			else
 			{
 				// Move current word onto new line
-				////////////////////
-				newLine = true;
+				i -= (wordChars + 1);
+				vertIndex -= vertsPerChar * wordChars;
+				onNewLine();
+				continue;
 			}
 		}
 
-		if (newLine)
-		{
-			currentHeight = totalHeight;
-		}
 		if (nextChar == ' ')
 		{
 			wordWidth = 0;
@@ -347,7 +359,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 		else
 		{
 			wordChars++;
-			wordWidth += charInfo->width;
+			wordWidth += charInfo->width * scale;
 		}
 		totalWidth = beMath::Max(totalWidth, newLineWidth);
 		totalHeight = beMath::Max(totalHeight, currentHeight + m_lineHeight);
@@ -355,31 +367,30 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 
 
 		float uvLeft = charInfo->textureTopLeft.x;
-		float uvTop = charInfo->textureBtmRight.y;
+		float uvTop = charInfo->textureTopLeft.y;
 		float uvRight = charInfo->textureBtmRight.x;
-		float uvBottom = charInfo->textureTopLeft.y;
-		float posLeft = (float)lineWidth * scale;// / textureWidth;
-		float posRight = (float)newLineWidth * scale;// / textureWidth;
-		float posTop = (float)currentHeight * scale;// / textureHeight;
-		float posBtm = (float)totalHeight * scale;// / textureHeight;
+		float uvBottom = charInfo->textureBtmRight.y;
+		float posLeft = (float)lineWidth;// / textureWidth;
+		float posRight = (float)newLineWidth;// / textureWidth;
+		float posTop = (float)(m_lineHeight - currentHeight) * scale;// / textureHeight;
+		float posBtm = (float)(m_lineHeight - totalHeight) * scale;// / textureHeight;
 
 		vertices[vertIndex+0].uv = Vec2(uvLeft, uvTop);
-		vertices[vertIndex+1].uv = Vec2(uvLeft, uvBottom);
+		vertices[vertIndex+4].uv = Vec2(uvLeft, uvBottom);
 		vertices[vertIndex+2].uv = Vec2(uvRight, uvBottom);
 		vertices[vertIndex+3].uv = Vec2(uvRight, uvBottom);
-		vertices[vertIndex+4].uv = Vec2(uvRight, uvTop);
+		vertices[vertIndex+1].uv = Vec2(uvRight, uvTop);
 		vertices[vertIndex+5].uv = Vec2(uvLeft, uvTop);
 		vertices[vertIndex+0].position = Vec2(posLeft, posTop);
-		vertices[vertIndex+1].position = Vec2(posLeft, posBtm);
+		vertices[vertIndex+4].position = Vec2(posLeft, posBtm);
 		vertices[vertIndex+2].position = Vec2(posRight, posBtm);
 		vertices[vertIndex+3].position = Vec2(posRight, posBtm);
-		vertices[vertIndex+4].position = Vec2(posRight, posTop);
+		vertices[vertIndex+1].position = Vec2(posRight, posTop);
 		vertices[vertIndex+5].position = Vec2(posLeft, posTop);
-		vertIndex += 6;
+		vertIndex += vertsPerChar;
 
 		lineWidth = newLineWidth;
 		lastChar = nextChar;
-		newLine = false;
 	}
 	numVerts = vertIndex;
 
