@@ -25,7 +25,7 @@ PIMPL_DATA(beRenderInterface)
 	void CreateBackBuffer();
 	void CreateRasterState();
 	void InitialiseViewport(int width, int height);
-	void CreateMatrices(int width, int height, float nearPlane, float farPlane);
+	void CreateMatrices(float width, float height, float nearPlane, float farPlane);
 
 	Matrix m_projectionMatrix;
 	Matrix m_worldMatrix;
@@ -47,6 +47,8 @@ PIMPL_DATA(beRenderInterface)
 	Vec3 m_lightDirection;
 	float m_width;
 	float m_height;
+	float m_near;
+	float m_far;
 	unsigned int m_videoCardMemory;
 	char m_videoCardDescription[128];
 	bool m_vsync_enabled;
@@ -73,6 +75,8 @@ PIMPL_CONSTRUCT(beRenderInterface)
 	, m_lightDirection(0.f, 0.f, 0.f)
 	, m_width(0.f)
 	, m_height(0.f)
+	, m_near(0.f)
+	, m_far(0.f)
 	, m_wireframe(false)
 {
 	m_videoCardDescription[0] = '\0';
@@ -92,6 +96,8 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	int height = window->GetHeight();
 	self.m_width = (float)width;
 	self.m_height = (float)height;
+	self.m_near = nearPlane;
+	self.m_far = farPlane;
 	self.CreateDevice(hWnd, width, height);
 	self.CreateDepthBuffer(width, height);
 	self.CreateStencilView();
@@ -99,7 +105,7 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	self.CreateBackBuffer();
 	self.CreateRasterState();
 	self.InitialiseViewport(width, height);
-	self.CreateMatrices(width, height, nearPlane, farPlane);
+	self.CreateMatrices((float)width, (float)height, nearPlane, farPlane);
 }
 
 void beRenderInterface::Deinit()
@@ -258,9 +264,8 @@ void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
 
 void beRenderInterface::Impl::CreateStencilView()
 {
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {0};
 	{
-		D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {0};
-
 		// Set up the description of the stencil state.
 		depthStencilDesc.DepthEnable = true;
 		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -290,31 +295,8 @@ void beRenderInterface::Impl::CreateStencilView()
 
 	// State with depth disabled for toggling Z buffer
 	{
-		D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc = {0};
-
-		// Set up the description of the stencil state.
-		depthDisabledStencilDesc.DepthEnable = false;
-		depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-		depthDisabledStencilDesc.StencilEnable = true;
-		depthDisabledStencilDesc.StencilReadMask = 0xFF;
-		depthDisabledStencilDesc.StencilWriteMask = 0xFF;
-
-		// Stencil operations if pixel is front-facing.
-		depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Stencil operations if pixel is back-facing.
-		depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Create the depth stencil state.
-		HRESULT res = m_device->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState);
+		depthStencilDesc.DepthEnable = false;
+		HRESULT res = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthDisabledStencilState);
 		if (FAILED(res)) { BE_ASSERT(false); return; }
 	}
 
@@ -378,7 +360,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	memset(&rasterDesc, 0, sizeof(rasterDesc));
 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_NONE;//D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
@@ -394,7 +376,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	
 	memset(&rasterDesc, 0, sizeof(rasterDesc));
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_NONE;//D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
@@ -423,13 +405,13 @@ void beRenderInterface::Impl::InitialiseViewport(int width, int height)
 	m_deviceContext->RSSetViewports(1, &viewport);
 }
 
-void beRenderInterface::Impl::CreateMatrices(int width, int height, float nearPlane, float farPlane)
+void beRenderInterface::Impl::CreateMatrices(float width, float height, float nearPlane, float farPlane)
 {
 	float fov = (float)PI / 4.0f;
-	float screenAspect = (float)width / (float)height;
+	float screenAspect = width / height;
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fov, screenAspect, nearPlane, farPlane);
 	XMMATRIX worldMatrix = XMMatrixIdentity();
-	XMMATRIX orthoMatrix = XMMatrixOrthographicLH((float)width, (float)height, nearPlane, farPlane);
+	XMMATRIX orthoMatrix = XMMatrixOrthographicLH(width, height, nearPlane, farPlane);
 
 	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
 	XMStoreFloat4x4(&m_worldMatrix, worldMatrix);
@@ -512,6 +494,18 @@ void beRenderInterface::ToggleWireframe()
 	}
 }
 
+void beRenderInterface::SetRenderTarget(ID3D11RenderTargetView* renderTarget, ID3D11DepthStencilView* depthStencilView, float width, float height, float nearPlane, float farPlane)
+{
+	self.m_deviceContext->OMSetRenderTargets(1, &renderTarget, depthStencilView);
+	self.CreateMatrices(width, height, nearPlane, farPlane);
+}
+
+void beRenderInterface::RestoreRenderTarget()
+{
+	self.m_deviceContext->OMSetRenderTargets(1, &self.m_backBuffer, self.m_depthStencilView);
+	self.CreateMatrices(self.m_width, self.m_height, self.m_near, self.m_far);
+}
+
 const Matrix& beRenderInterface::GetProjectionMatrix() const
 {
 	return self.m_projectionMatrix;
@@ -540,6 +534,11 @@ ID3D11Device* beRenderInterface::GetDevice()
 ID3D11DeviceContext* beRenderInterface::GetDeviceContext()
 {
 	return self.m_deviceContext;
+}
+
+ID3D11DepthStencilView* beRenderInterface::GetDepthStencilView()
+{
+	return self.m_depthStencilView;
 }
 
 void beRenderInterface::GetVideoCardInfo(beString* cardName, unsigned int* memory)

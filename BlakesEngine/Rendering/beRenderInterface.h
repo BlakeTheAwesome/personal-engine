@@ -3,10 +3,10 @@
 #include "core/beString.h"
 #include "Math/beMath.h"
 
-struct IDXGISwapChain;
 struct ID3D11Device;
 struct ID3D11DeviceContext;
-struct D3DXMATRIX;
+struct ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
 
 class beWindow;
 
@@ -33,8 +33,12 @@ public:
 
 	void ToggleWireframe();
 
+	void SetRenderTarget(ID3D11RenderTargetView* renderTarget, ID3D11DepthStencilView* depthStencilView, float height, float width, float nearPlane, float farPlane);
+	void RestoreRenderTarget();
+
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
+	ID3D11DepthStencilView* GetDepthStencilView();
 
 	const Matrix& GetProjectionMatrix() const;
 	const Matrix& GetWorldMatrix() const;

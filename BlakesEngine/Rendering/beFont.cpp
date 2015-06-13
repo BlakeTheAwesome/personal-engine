@@ -426,11 +426,11 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	res = device->CreateBuffer(&indexBufferDesc, &indexData, &outStringInfo->indexBuffer);
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 
-	for (int i = 0; i < numVerts; i++)
-	{
-		
-		bePRINTF("Pos: %f, %f, uv: %f, %f", vertices[i].position.x, vertices[i].position.y, vertices[i].uv.x, vertices[i].uv.y);
-	}
+	//for (int i = 0; i < numVerts; i++)
+	//{
+	//	bePRINTF("Pos: %f, %f, uv: %f, %f", vertices[i].position.x, vertices[i].position.y, vertices[i].uv.x, vertices[i].uv.y);
+	//}
+
 	delete [] vertices;
 	delete [] indices;
 

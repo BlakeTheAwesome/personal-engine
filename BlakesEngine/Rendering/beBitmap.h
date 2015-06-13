@@ -15,6 +15,7 @@ public:
 	beBitmap();
 	~beBitmap();
 
+	bool Init(beRenderInterface* ri, const beTexture& texture);
 	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
 	void Deinit();
 
@@ -34,6 +35,8 @@ public:
 	int GetIndexCount();
 
 private:
+	bool InitCommon(beRenderInterface* ri, float width, float height);
+
 	beTexture* m_texture;
 	ID3D11Buffer* m_vertexBuffer;
 	ID3D11Buffer* m_indexBuffer;

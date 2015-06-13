@@ -46,7 +46,28 @@ beBitmap::~beBitmap()
 }
 
 
+bool beBitmap::Init(beRenderInterface* ri, const beTexture& texture)
+{
+	float width = (float)texture.GetWidth();
+	float height = (float)texture.GetHeight();
+	if (!InitCommon(ri, width, height))
+	{
+		return false;
+	}
+	m_texture->Set(texture);
+	return true;
+}
+
 bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename)
+{
+	if (!InitCommon(ri, width, height))
+	{
+		return false;
+	}
+	return m_texture->Init(ri, textureFilename);
+}
+
+bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc = {0};
 	D3D11_BUFFER_DESC indexBufferDesc = {0};
@@ -143,8 +164,7 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWS
 
 	delete [] vertices;
 	delete [] indices;
-
-	return m_texture->Init(ri, textureFilename);
+	return true;
 }
 
 void beBitmap::Deinit()
@@ -266,3 +286,4 @@ int beBitmap::GetIndexCount()
 {
 	return m_indexCount;
 }
+
