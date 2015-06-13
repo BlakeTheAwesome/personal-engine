@@ -21,6 +21,7 @@ PIMPL_DATA(beRenderInterface)
 	void CreateDevice(HWND* hWnd, int width, int height);
 	void CreateDepthBuffer(int width, int height);
 	void CreateStencilView();
+	void CreateBlendStates();
 	void CreateBackBuffer();
 	void CreateRasterState();
 	void InitialiseViewport(int width, int height);
@@ -40,6 +41,9 @@ PIMPL_DATA(beRenderInterface)
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
 	ID3D11RasterizerState* m_wireframeRasterState;
+	ID3D11BlendState* m_alphaEnableBlendingState;
+	ID3D11BlendState* m_alphaDisableBlendingState;
+
 	Vec3 m_lightDirection;
 	float m_width;
 	float m_height;
@@ -64,6 +68,8 @@ PIMPL_CONSTRUCT(beRenderInterface)
 	, m_depthStencilView(nullptr)
 	, m_rasterState(nullptr)
 	, m_wireframeRasterState(nullptr)
+	, m_alphaEnableBlendingState(nullptr)
+	, m_alphaDisableBlendingState(nullptr)
 	, m_lightDirection(0.f, 0.f, 0.f)
 	, m_width(0.f)
 	, m_height(0.f)
@@ -74,6 +80,7 @@ PIMPL_CONSTRUCT(beRenderInterface)
 
 PIMPL_DESTROY(beRenderInterface)
 {
+	BE_ASSERT(!m_device);
 }
 
 void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, bool vSync)
@@ -88,10 +95,29 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	self.CreateDevice(hWnd, width, height);
 	self.CreateDepthBuffer(width, height);
 	self.CreateStencilView();
+	self.CreateBlendStates();
 	self.CreateBackBuffer();
 	self.CreateRasterState();
 	self.InitialiseViewport(width, height);
 	self.CreateMatrices(width, height, nearPlane, farPlane);
+}
+
+void beRenderInterface::Deinit()
+{
+	self.m_swapChain->SetFullscreenState(FALSE, nullptr); // Need to be in windowed mode to close cleanly
+	
+	BE_SAFE_RELEASE(self.m_alphaEnableBlendingState);
+	BE_SAFE_RELEASE(self.m_alphaDisableBlendingState);
+	BE_SAFE_RELEASE(self.m_backBuffer);
+	BE_SAFE_RELEASE(self.m_swapChain);
+	BE_SAFE_RELEASE(self.m_wireframeRasterState);
+	BE_SAFE_RELEASE(self.m_rasterState);
+	BE_SAFE_RELEASE(self.m_depthStencilView);
+	BE_SAFE_RELEASE(self.m_depthStencilState);
+	BE_SAFE_RELEASE(self.m_depthDisabledStencilState);
+	BE_SAFE_RELEASE(self.m_depthStencilBuffer);
+	BE_SAFE_RELEASE(self.m_device);
+	BE_SAFE_RELEASE(self.m_deviceContext);
 }
 
 void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
@@ -302,6 +328,28 @@ void beRenderInterface::Impl::CreateStencilView()
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 }
 
+void beRenderInterface::Impl::CreateBlendStates()
+{
+	D3D11_BLEND_DESC blendDesc = {0};
+	
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	HRESULT res = m_device->CreateBlendState(&blendDesc, &m_alphaEnableBlendingState);
+	if(FAILED(res)) { BE_ASSERT(false); return; }
+
+	blendDesc.RenderTarget[0].BlendEnable = false;
+	// Create the blend state using the description.
+	res = m_device->CreateBlendState(&blendDesc, &m_alphaDisableBlendingState);
+	if(FAILED(res)) { BE_ASSERT(false); return; }
+}
+
 void beRenderInterface::Impl::CreateBackBuffer()
 {
 	// Set back buffer as render target
@@ -388,22 +436,6 @@ void beRenderInterface::Impl::CreateMatrices(int width, int height, float nearPl
 	XMStoreFloat4x4(&m_orthoMatrix, orthoMatrix);
 }
 
-void beRenderInterface::Deinit()
-{
-	self.m_swapChain->SetFullscreenState(FALSE, nullptr); // Need to be in windowed mode to close cleanly
-
-	BE_SAFE_RELEASE(self.m_backBuffer);
-	BE_SAFE_RELEASE(self.m_swapChain);
-	BE_SAFE_RELEASE(self.m_wireframeRasterState);
-	BE_SAFE_RELEASE(self.m_rasterState);
-	BE_SAFE_RELEASE(self.m_depthStencilView);
-	BE_SAFE_RELEASE(self.m_depthStencilState);
-	BE_SAFE_RELEASE(self.m_depthDisabledStencilState);
-	BE_SAFE_RELEASE(self.m_depthStencilBuffer);
-	BE_SAFE_RELEASE(self.m_device);
-	BE_SAFE_RELEASE(self.m_deviceContext);
-}
-
 static float s_offset = 0.0f;
 
 void beRenderInterface::BeginFrame()
@@ -448,6 +480,18 @@ void beRenderInterface::EnableZBuffer()
 void beRenderInterface::DisableZBuffer()
 {
 	self.m_deviceContext->OMSetDepthStencilState(self.m_depthDisabledStencilState, 1);
+}
+
+void beRenderInterface::EnableAlpha()
+{
+	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
+	self.m_deviceContext->OMSetBlendState(self.m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+}
+
+void beRenderInterface::DisableAlpha()
+{
+	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
+	self.m_deviceContext->OMSetBlendState(self.m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 }
 
 Vec2 beRenderInterface::GetScreenSize()

@@ -26,6 +26,9 @@ public:
 	void EnableZBuffer();
 	void DisableZBuffer();
 
+	void EnableAlpha();
+	void DisableAlpha();
+
 	Vec2 GetScreenSize();
 
 	void ToggleWireframe();

@@ -15,6 +15,12 @@ class beRenderInterface;
 class beShaderTexture2d
 {
 public:
+	enum class TextureMode
+	{
+		Wrapped,
+		Clamped,
+	};
+
 	beShaderTexture2d();
 	~beShaderTexture2d();
 
@@ -23,7 +29,7 @@ public:
 
 	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
-	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture);
+	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode=TextureMode::Wrapped);
 
 	// Todo: add async loader
 	bool IsLoaded() const;
@@ -31,7 +37,8 @@ public:
 private:
 	ID3D11PixelShader* m_pShader;
 	ID3D11VertexShader* m_vShader;
-	ID3D11SamplerState* m_sampleState;
+	ID3D11SamplerState* m_wrappedSampleState;
+	ID3D11SamplerState* m_clampedSampleState;
 
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_matrixBuffer;

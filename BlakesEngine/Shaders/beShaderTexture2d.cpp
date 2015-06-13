@@ -21,7 +21,8 @@ struct MatrixBufferType
 beShaderTexture2d::beShaderTexture2d()
 	: m_pShader(nullptr)
 	, m_vShader(nullptr)
-	, m_sampleState(nullptr)
+	, m_wrappedSampleState(nullptr)
+	, m_clampedSampleState(nullptr)
 	, m_layout(nullptr)
 	, m_matrixBuffer(nullptr)
 {
@@ -29,7 +30,8 @@ beShaderTexture2d::beShaderTexture2d()
 
 beShaderTexture2d::~beShaderTexture2d()
 {
-	BE_ASSERT(!m_sampleState);
+	BE_ASSERT(!m_clampedSampleState);
+	BE_ASSERT(!m_wrappedSampleState);
 	BE_ASSERT(!m_pShader);
 	BE_ASSERT(!m_vShader);
 }
@@ -141,20 +143,31 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	// Create the texture sampler state.
-	res = device->CreateSamplerState(&samplerDesc, &m_sampleState);
+	res = device->CreateSamplerState(&samplerDesc, &m_wrappedSampleState);
 	if(FAILED(res))
 	{
 		BE_ASSERT(false);
 		return false;
 	}
 
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	res = device->CreateSamplerState(&samplerDesc, &m_clampedSampleState);
+	if(FAILED(res))
+	{
+		BE_ASSERT(false);
+		return false;
+	}
 
 	return true;
 }
 
 void beShaderTexture2d::Deinit()
 {
-	BE_SAFE_RELEASE(m_sampleState);
+	BE_SAFE_RELEASE(m_clampedSampleState);
+	BE_SAFE_RELEASE(m_wrappedSampleState);
 	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
@@ -191,7 +204,7 @@ void beShaderTexture2d::SetShaderParameters(beRenderInterface* renderInterface, 
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 }
 
-void beShaderTexture2d::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture)
+void beShaderTexture2d::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode)
 {
 	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
 	
@@ -201,7 +214,14 @@ void beShaderTexture2d::Render(beRenderInterface* renderInterface, int indexCoun
 	deviceContext->PSSetShader(m_pShader, nullptr, 0);
 	
 	deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
+	switch (textureMode)
+	{
+		case TextureMode::Wrapped: deviceContext->PSSetSamplers(0, 1, &m_wrappedSampleState); break;
+		case TextureMode::Clamped: deviceContext->PSSetSamplers(0, 1, &m_clampedSampleState); break;
+		default: BE_ASSERT(false);
+	}
+	
+		
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 }

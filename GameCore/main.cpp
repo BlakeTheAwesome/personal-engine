@@ -60,6 +60,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
 	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 384.f, 0);
+	bitmap2.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
  
 	//texture.Init(renderInterface, beWString(L"boar.dds"));
 	colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
@@ -192,8 +193,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			bitmap1.Render(renderInterface);
 			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
 			
+			renderInterface->EnableAlpha();
 			bitmap2.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());
+			textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+			renderInterface->DisableAlpha();
 			
 			renderInterface->EnableZBuffer();
 
