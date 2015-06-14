@@ -24,7 +24,7 @@ PIMPL_DATA(beRenderInterface)
 	void CreateBlendStates();
 	void CreateBackBuffer();
 	void CreateRasterState();
-	void InitialiseViewport(int width, int height);
+	void InitialiseViewport(float width, float height);
 	void CreateMatrices(float width, float height, float nearPlane, float farPlane);
 
 	Matrix m_projectionMatrix;
@@ -94,8 +94,11 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	HWND* hWnd = (HWND*)window->GetHWnd();
 	int width = window->GetWidth();
 	int height = window->GetHeight();
-	self.m_width = (float)width;
-	self.m_height = (float)height;
+	float fWidth = (float)width;
+	float fHeight = (float)height;
+
+	self.m_width = fWidth;
+	self.m_height = fHeight;
 	self.m_near = nearPlane;
 	self.m_far = farPlane;
 	self.CreateDevice(hWnd, width, height);
@@ -104,8 +107,8 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	self.CreateBlendStates();
 	self.CreateBackBuffer();
 	self.CreateRasterState();
-	self.InitialiseViewport(width, height);
-	self.CreateMatrices((float)width, (float)height, nearPlane, farPlane);
+	self.InitialiseViewport(fWidth, fHeight);
+	self.CreateMatrices(fWidth, fHeight, nearPlane, farPlane);
 }
 
 void beRenderInterface::Deinit()
@@ -360,7 +363,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	memset(&rasterDesc, 0, sizeof(rasterDesc));
 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_NONE;//D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
@@ -376,7 +379,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	
 	memset(&rasterDesc, 0, sizeof(rasterDesc));
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_NONE;//D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
@@ -391,7 +394,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	m_deviceContext->RSSetState(m_rasterState);
 }
 
-void beRenderInterface::Impl::InitialiseViewport(int width, int height)
+void beRenderInterface::Impl::InitialiseViewport(float width, float height)
 {
 	// top left is -1,-1
 	D3D11_VIEWPORT viewport = {0};
@@ -399,8 +402,8 @@ void beRenderInterface::Impl::InitialiseViewport(int width, int height)
 	viewport.TopLeftY = 0.0f;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 0.0f;
-	viewport.Width = (float)width;
-	viewport.Height = (float)height;
+	viewport.Width = width;
+	viewport.Height = height;
 
 	m_deviceContext->RSSetViewports(1, &viewport);
 }
@@ -498,12 +501,14 @@ void beRenderInterface::SetRenderTarget(ID3D11RenderTargetView* renderTarget, ID
 {
 	self.m_deviceContext->OMSetRenderTargets(1, &renderTarget, depthStencilView);
 	self.CreateMatrices(width, height, nearPlane, farPlane);
+	self.InitialiseViewport(width, height);
 }
 
 void beRenderInterface::RestoreRenderTarget()
 {
 	self.m_deviceContext->OMSetRenderTargets(1, &self.m_backBuffer, self.m_depthStencilView);
 	self.CreateMatrices(self.m_width, self.m_height, self.m_near, self.m_far);
+	self.InitialiseViewport(self.m_width, self.m_height);
 }
 
 const Matrix& beRenderInterface::GetProjectionMatrix() const

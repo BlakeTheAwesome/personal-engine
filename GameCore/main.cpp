@@ -159,7 +159,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			if (!haveWrittenToTexture)
 			{
-			//	haveWrittenToTexture = true;
+				haveWrittenToTexture = true;
 				writeTexture.SetAsTarget(renderInterface);
 				writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 1.f, 0.3f));
 						model4.Render(renderInterface);
@@ -167,20 +167,18 @@ int WINAPI WinMain(HINSTANCE hInstance,
 						colourShader.Render(renderInterface, model4.GetIndexCount(), 0);
 				
 				renderInterface->DisableZBuffer();
-				//renderInterface->BeginFrame();
-					textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+				textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			
-					bitmap1.Render(renderInterface);
-					textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+				bitmap1.Render(renderInterface);
+				textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
 
-					renderInterface->EnableAlpha();
-					bitmap2.Render(renderInterface);
-					textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());
-					renderInterface->DisableAlpha();
-				//renderInterface->EndFrame();
+				renderInterface->EnableAlpha();
+				bitmap2.Render(renderInterface);
+				textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());
+				renderInterface->DisableAlpha();
 				renderInterface->EnableZBuffer();
 				renderInterface->RestoreRenderTarget();
-				//writeTexture.FinaliseTarget();
+				writeTexture.FinaliseTarget();
 			}
 
 			renderInterface->BeginFrame();

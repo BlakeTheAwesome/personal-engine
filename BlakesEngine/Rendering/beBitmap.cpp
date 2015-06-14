@@ -247,7 +247,7 @@ void beBitmap::Render(beRenderInterface* ri)
 	{
 		m_dirtyPositionBuffer = false;
 
-		Vec2 windowSize = ri->GetScreenSize();
+		//Vec2 windowSize = ri->GetScreenSize();
 		float xOffset = m_position.x + (m_anchorPoint.x * 1.f);// - (windowSize.x / 2.f);
 		float yOffset = m_position.y + (m_anchorPoint.y * 1.f);// - (windowSize.y / 2.f);
 
