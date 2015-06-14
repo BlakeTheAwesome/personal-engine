@@ -196,27 +196,27 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			if (modelToRender)
 			{
-				//modelToRender->Render(renderInterface);
+				modelToRender->Render(renderInterface);
 
 				switch (shaderToUse)
 				{
 					case 0:
-						//litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
-						//litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
+						litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
+						litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 					break;
 					case 1:
-						//textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-						//textureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
+						textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+						textureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 					break;
 					case 2:
-						//colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-						//colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0);
+						colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+						colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0);
 					break;
 				}
 			}
 
-			//debugWorld->SetRenderAxes(renderAxes);
-			//debugWorld->Render(renderInterface, &colourShader);
+			debugWorld->SetRenderAxes(renderAxes);
+			debugWorld->Render(renderInterface, &colourShader);
 
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
