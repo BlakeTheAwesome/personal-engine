@@ -3,6 +3,7 @@
 #include "Core\beAssert.h"
 #include "Core\bePrintf.h"
 #include "Core\beMacros.h"
+#include "Core\beDeferred.h"
 #include "Rendering\beRenderInterface.h"
 
 #include <windows.h>
@@ -71,19 +72,18 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 
 	D3DReadFileToBlob(vertexFilename.c_str(), &vBuffer);
 	D3DReadFileToBlob(pixelFilename.c_str(), &pBuffer);
+	DeferredCall d1([&vBuffer]() { BE_SAFE_RELEASE(vBuffer);});
+	DeferredCall d2([&pBuffer]() { BE_SAFE_RELEASE(pBuffer);});
+
 
 	HRESULT res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
-	if (FAILED(res))
-	{
-		return false;
-	}
+	if (FAILED(res)) { return false; }
+
 
 	res = device->CreatePixelShader(pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), nullptr, &m_pShader);
-	if (FAILED(res))
-	{
-		return false;
-	}
+	if (FAILED(res)) { return false; }
 	
+
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	D3D11_BUFFER_DESC bufferDesc = {0};
 
@@ -106,13 +106,7 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 	unsigned int numElements = BE_ARRAY_DIMENSION(polygonLayout);
 
 	res = device->CreateInputLayout(polygonLayout, numElements, vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), &m_layout);
-	if (FAILED(res))
-	{
-		return false;
-	}
-
-	BE_SAFE_RELEASE(vBuffer);
-	BE_SAFE_RELEASE(pBuffer);
+	if (FAILED(res)) { return false; }
 
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.ByteWidth = sizeof(MatrixBufferType);
@@ -122,11 +116,8 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 	bufferDesc.StructureByteStride = 0;
 
 	res = device->CreateBuffer(&bufferDesc, nullptr, &m_matrixBuffer);
-	if (FAILED(res))
-	{
-		return false;
-	}
-	
+	if (FAILED(res)) { return false; }
+
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -144,22 +135,14 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 
 	// Create the texture sampler state.
 	res = device->CreateSamplerState(&samplerDesc, &m_wrappedSampleState);
-	if(FAILED(res))
-	{
-		BE_ASSERT(false);
-		return false;
-	}
+	if (FAILED(res)) { return false; }
 
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
 	res = device->CreateSamplerState(&samplerDesc, &m_clampedSampleState);
-	if(FAILED(res))
-	{
-		BE_ASSERT(false);
-		return false;
-	}
+	if (FAILED(res)) { return false; }
 
 	return true;
 }
