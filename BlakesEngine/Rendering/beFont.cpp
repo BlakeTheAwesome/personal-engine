@@ -1,11 +1,11 @@
 #include "bePCH.h"
 #include "beFont.h"
 
-#include "Core\beAssert.h"
-#include "Core\bePrintf.h"
-#include "DataStructures\beVector.h"
-#include "Rendering\beRenderInterface.h"
-#include "Rendering\beTexture.h"
+#include "BlakesEngine\Core\beAssert.h"
+#include "BlakesEngine\Core\bePrintf.h"
+#include "BlakesEngine\DataStructures\beVector.h"
+#include "BlakesEngine\Rendering\beRenderInterface.h"
+#include "BlakesEngine\Rendering\beTexture.h"
 
 #include <d3d11.h>
 

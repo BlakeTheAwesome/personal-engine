@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/beString.h"
-#include "Math/beMath.h"
+#include "BlakesEngine\Core/beString.h"
+#include "BlakesEngine\Math\beMath.h"
 #include <d3d11.h>
 
 class beRenderInterface;

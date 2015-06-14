@@ -1,13 +1,13 @@
 #ifndef _bePCH_h_
 #define _bePCH_h_
 
-//#include "core/beMacros.h"
-#include "Core/bePimpl.h"
-#include "core/beTypes.h"
-#include "core/beNonCopiable.h"
-#include "core/bePrintf.h"
-#include "core/beAssert.h"
+//#include "BlakesEngine\Core/beMacros.h"
+#include "BlakesEngine\Core\bePimpl.h"
+#include "BlakesEngine\Core\beTypes.h"
+#include "BlakesEngine\Core\beNonCopiable.h"
+#include "BlakesEngine\Core\bePrintf.h"
+#include "BlakesEngine\Core\beAssert.h"
 
-//#include "core/beTypeTests.h"
+//#include "BlakesEngine\Core/beTypeTests.h"
 
 #endif

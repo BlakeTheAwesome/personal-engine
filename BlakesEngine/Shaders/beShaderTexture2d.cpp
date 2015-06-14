@@ -1,10 +1,10 @@
 #include "bePCH.h"
 #include "beShaderTexture2d.h"
-#include "Core\beAssert.h"
-#include "Core\bePrintf.h"
-#include "Core\beMacros.h"
-#include "Core\beDeferred.h"
-#include "Rendering\beRenderInterface.h"
+#include "BlakesEngine\Core\beAssert.h"
+#include "BlakesEngine\Core\bePrintf.h"
+#include "BlakesEngine\Core\beMacros.h"
+#include "BlakesEngine\Core\beDeferred.h"
+#include "BlakesEngine\Rendering\beRenderInterface.h"
 
 #include <windows.h>
 #include <windowsx.h>

@@ -1,7 +1,7 @@
 #include "bePCH.h"
 #include "beWindow.h"
 
-#include "Core/beMacros.h"
+#include "BlakesEngine\Core/beMacros.h"
 #include <windows.h>
 
 PIMPL_DATA(beWindow, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)

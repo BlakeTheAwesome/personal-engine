@@ -1,6 +1,6 @@
 #pragma once
-#include "Core\beString.h"
-#include "Math\beMath.h"
+#include "BlakesEngine\Core\beString.h"
+#include "BlakesEngine\Math\beMath.h"
 
 class beRenderInterface;
 class beTexture;

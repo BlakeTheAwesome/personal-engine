@@ -1,9 +1,9 @@
 #include "bePCH.h"
 #include "beFlightCamera.h"
 
-#include "Core/beAssert.h"
-#include "Core/bePrintf.h"
-#include "Input/beGamepad.h"
+#include "BlakesEngine\Core/beAssert.h"
+#include "BlakesEngine\Core/bePrintf.h"
+#include "BlakesEngine\Input/beGamepad.h"
 
 static const float ROTATIONS_PER_SECOND = 0.5f * (2.f * PI);
 static const float DISTANCE_PER_SECOND = 1.0f;

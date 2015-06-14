@@ -1,7 +1,7 @@
 #pragma once
-#include "core/bePimpl.h"
-#include "core/beString.h"
-#include "Math/beMath.h"
+#include "BlakesEngine\Core/bePimpl.h"
+#include "BlakesEngine\Core/beString.h"
+#include "BlakesEngine\Math\beMath.h"
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/beMacros.h"
+#include "BlakesEngine\Core/beMacros.h"
 
 #define bePRINTF(...) bePrintf::bePrintf(true, LOCATION, __VA_ARGS__)
 //#define bePRINTF printf

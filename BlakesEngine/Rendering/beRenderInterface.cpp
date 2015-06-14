@@ -1,12 +1,12 @@
 #include "bePCH.h"
 #include "beRenderInterface.h"
 
-#include "Core/beMacros.h"
-#include "Core/beAssert.h"
-#include "Core/bePrintf.h"
-#include "Core/beDeferred.h"
+#include "BlakesEngine\Core/beMacros.h"
+#include "BlakesEngine\Core/beAssert.h"
+#include "BlakesEngine\Core/bePrintf.h"
+#include "BlakesEngine\Core/beDeferred.h"
 
-#include "Window/beWindow.h"
+#include "BlakesEngine\Window/beWindow.h"
 
 #include <d3d11.h>
 ///#include <DirectXPackedVector.h>

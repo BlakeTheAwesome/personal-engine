@@ -1,5 +1,5 @@
 #pragma once
-#include "Math\beMath.h"
+#include "BlakesEngine\Math\beMath.h"
 
 class beCamera
 {

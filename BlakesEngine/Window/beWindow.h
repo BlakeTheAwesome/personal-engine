@@ -1,5 +1,5 @@
-#include "Core/beString.h"
-#include "Core/bePimpl.h"
+#include "BlakesEngine\Core/beString.h"
+#include "BlakesEngine\Core/bePimpl.h"
 
 class beWindow
 {
