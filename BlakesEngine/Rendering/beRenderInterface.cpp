@@ -4,6 +4,7 @@
 #include "Core/beMacros.h"
 #include "Core/beAssert.h"
 #include "Core/bePrintf.h"
+#include "Core/beDeferred.h"
 
 #include "Window/beWindow.h"
 
@@ -143,10 +144,12 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 		
 		HRESULT res = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
+		DeferredCall d1([factory]{ factory->Release(); });
 
 		res = factory->EnumAdapters(0, &adapter);
 		//res = factory->EnumAdapters(1, &adapter);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
+		DeferredCall d2([adapter]{ adapter->Release(); });
 		
 		DXGI_ADAPTER_DESC adapterDesc = {0};
 		res = adapter->GetDesc(&adapterDesc);
@@ -158,12 +161,16 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 
 		res = adapter->EnumOutputs(0, &adapterOutput);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
+		DeferredCall d3([adapterOutput]{ adapterOutput->Release(); });
 
 		
 		unsigned int numModes;
 		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, nullptr);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
+
 		DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[numModes];
+		DeferredCall d4([displayModeList]{ delete [] displayModeList; });
+
 		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
 
@@ -182,11 +189,6 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 			}
 		}
 		BE_ASSERT(found);
-		delete [] displayModeList;
-
-		BE_SAFE_RELEASE(adapterOutput);
-		BE_SAFE_RELEASE(adapter);
-		BE_SAFE_RELEASE(factory);
 	}
 
 

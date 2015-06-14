@@ -3,6 +3,7 @@
 #include "Core\beAssert.h"
 #include "Core\bePrintf.h"
 #include "Core\beMacros.h"
+#include "Core\beDeferred.h"
 #include "Rendering\beRenderInterface.h"
 
 #include <windows.h>
@@ -85,6 +86,8 @@ bool beShaderLitTexture::Init(beRenderInterface* renderInterface, const beWStrin
 
 	D3DReadFileToBlob(vertexFilename.c_str(), &vBuffer);
 	D3DReadFileToBlob(pixelFilename.c_str(), &pBuffer);
+	DeferredCall d1([&vBuffer] {BE_SAFE_RELEASE(vBuffer);});
+	DeferredCall d2([&pBuffer] {BE_SAFE_RELEASE(pBuffer);});
 
 	HRESULT res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
 	if (FAILED(res))
@@ -132,9 +135,6 @@ bool beShaderLitTexture::Init(beRenderInterface* renderInterface, const beWStrin
 	{
 		return false;
 	}
-
-	BE_SAFE_RELEASE(vBuffer);
-	BE_SAFE_RELEASE(pBuffer);
 
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.ByteWidth = sizeof(MatrixBufferType);
