@@ -252,7 +252,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 {
 	//float textureWidth = (float)m_texture->GetWidth();
 	//float textureHeight = (float)m_texture->GetHeight();
-	int scale = 6;
+	const int scale = 1;
 
 	beWString wstring;
 	beStringConversion::UTF8ToWide(string, &wstring);
@@ -294,7 +294,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	const CharacterInfo* lastCharacterInfo = nullptr;
 	int totalHeight = 0;
 	int totalWidth = 0;
-	int currentHeight = 0;
+	int currentHeight = m_lineHeight;
 	int lineWidth = 0;
 	int wordWidth = 0;
 	int wordChars = 0;

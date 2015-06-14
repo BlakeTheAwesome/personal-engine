@@ -63,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	writeTexture.InitAsTarget(renderInterface, 512, 512);
 
 	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
-	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 384.f, 0);
+	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 512.f, 0);
 	bitmap2.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	bitmap3.Init(renderInterface, writeTexture);
 	bitmap3.SetPosition(-400, -400);
@@ -161,7 +161,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			{
 				haveWrittenToTexture = true;
 				writeTexture.SetAsTarget(renderInterface);
-				writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 1.f, 0.3f));
+				writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
 						model4.Render(renderInterface);
 						colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 						colourShader.Render(renderInterface, model4.GetIndexCount(), 0);
@@ -169,10 +169,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				renderInterface->DisableZBuffer();
 				textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			
-				bitmap1.Render(renderInterface);
-				textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+				//bitmap1.Render(renderInterface);
+				//textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
 
 				renderInterface->EnableAlpha();
+				bitmap2.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
 				bitmap2.Render(renderInterface);
 				textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());
 				renderInterface->DisableAlpha();
@@ -223,13 +224,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			bitmap1.Render(renderInterface);
 			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
 	
-			//renderInterface->EnableAlpha();
 			//bitmap2.Render(renderInterface);
 			//textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
-			//renderInterface->DisableAlpha();
 			
+			renderInterface->EnableAlpha();
 			bitmap3.Render(renderInterface);
 			textureShader2d.Render(renderInterface, bitmap3.GetIndexCount(), bitmap3.GetTexture());
+			renderInterface->DisableAlpha();
 			
 			renderInterface->EnableZBuffer();
 

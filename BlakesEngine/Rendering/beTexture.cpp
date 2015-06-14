@@ -139,6 +139,8 @@ void beTexture::Set(const beTexture& that)
 	if (m_renderTargetView)
 	{
 		m_renderTargetView->AddRef();
+		m_depthStencilView->AddRef();
+		m_depthStencilBuffer->AddRef();
 	}
 }
 
