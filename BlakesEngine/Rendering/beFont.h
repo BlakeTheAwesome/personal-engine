@@ -1,4 +1,5 @@
 #pragma once
+#include "beRenderBuffer.h"
 #include "BlakesEngine\Core\beString.h"
 #include "BlakesEngine\DataStructures/beVector.h"
 #include "BlakesEngine\Math\beMath.h"
@@ -20,9 +21,9 @@ public:
 
 	struct StringInfo
 	{
-		ID3D11Buffer* vertexBuffer;
-		ID3D11Buffer* indexBuffer;
-		int vertexCount;
+		StringInfo() : width(0.f), height(0.f) {}
+		beRenderBuffer vertexBuffer;
+		beRenderBuffer indexBuffer;
 		float width;
 		float height;
 	};

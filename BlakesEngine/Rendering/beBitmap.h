@@ -1,11 +1,11 @@
 #pragma once
+#include "beRenderBuffer.h"
 #include "BlakesEngine\Core\beString.h"
 #include "BlakesEngine\Math\beMath.h"
 
 class beRenderInterface;
 class beTexture;
 class beFont;
-struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
 class beBitmap
@@ -38,11 +38,9 @@ private:
 	bool InitCommon(beRenderInterface* ri, float width, float height);
 
 	beTexture* m_texture;
-	ID3D11Buffer* m_vertexBuffer;
-	ID3D11Buffer* m_indexBuffer;
-	ID3D11Buffer* m_positionBuffer;
-	int m_vertexCount;
-	int m_indexCount;
+	beRenderBuffer m_vertexBuffer;
+	beRenderBuffer m_indexBuffer;
+	beRenderBuffer m_positionBuffer;
 
 	Vec4 m_colour;
 	Vec2 m_size;

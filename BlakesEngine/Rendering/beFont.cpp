@@ -260,30 +260,9 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	const int vertsPerChar = 6;
 	int numChars = wstring.size();
 	int numVerts = numChars * vertsPerChar;
-	outStringInfo->vertexCount = numVerts;
 
-	struct StringInfo
-	{
-		float width;
-		float height;
-		ID3D11Buffer* vertexBuffer;
-		ID3D11Buffer* indexBuffer;
-	};
-
-
-
-	D3D11_BUFFER_DESC vertexBufferDesc = {0};
-	D3D11_BUFFER_DESC indexBufferDesc = {0};
-	D3D11_SUBRESOURCE_DATA vertexData = {0};
-	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexInputType* vertices = nullptr;
-	unsigned int* indices = nullptr;
-	HRESULT res;
-
-	ID3D11Device* device = ri->GetDevice();
-
-	vertices = new VertexInputType[numVerts];
-	indices = new unsigned int[numVerts];
+	beVector<VertexInputType> vertices(numVerts, numVerts, 0);
+	beVector<u32> indices(numVerts, numVerts, 0);
 
 	for (int i = 0; i < numVerts; i++)
 	{
@@ -396,43 +375,17 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 
 	outStringInfo->height = (float)totalHeight;
 	outStringInfo->width = (float)totalWidth;
-	outStringInfo->vertexCount = numVerts;
 
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(decltype(*vertices)) * numVerts;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
-
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&vertexBufferDesc, &vertexData, &outStringInfo->vertexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(decltype(*indices)) * numVerts;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&indexBufferDesc, &indexData, &outStringInfo->indexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
+	bool success = outStringInfo->vertexBuffer.Allocate(ri, decltype(vertices)::element_size, numVerts, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
+	
+	success = outStringInfo->indexBuffer.Allocate(ri, decltype(indices)::element_size, numVerts, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
 
 	//for (int i = 0; i < numVerts; i++)
 	//{
 	//	bePRINTF("Pos: %f, %f, uv: %f, %f", vertices[i].position.x, vertices[i].position.y, vertices[i].uv.x, vertices[i].uv.y);
 	//}
-
-	delete [] vertices;
-	delete [] indices;
 
 	return true;
 }

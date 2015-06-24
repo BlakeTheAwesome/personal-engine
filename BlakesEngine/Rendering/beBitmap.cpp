@@ -25,12 +25,7 @@ struct VertexType
 };
 
 beBitmap::beBitmap()
-	: m_vertexBuffer(nullptr)
-	, m_indexBuffer(nullptr)
-	, m_positionBuffer(nullptr)
-	, m_vertexCount(0)
-	, m_indexCount(0)
-	, m_dirtyPositionBuffer(true)
+	: m_dirtyPositionBuffer(true)
 	, m_size(0.f, 0.f)
 	, m_position(0.f, 0.f)
 	, m_anchorPoint(0.f, 0.f)
@@ -41,7 +36,7 @@ beBitmap::beBitmap()
 
 beBitmap::~beBitmap()
 {
-	BE_ASSERT(!m_vertexBuffer && !m_indexBuffer);
+	BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid());
 	BE_SAFE_DELETE(m_texture);
 }
 
@@ -74,27 +69,16 @@ bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 	D3D11_BUFFER_DESC positionBufferDesc = {0};
 	D3D11_SUBRESOURCE_DATA vertexData = {0};
 	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexType* vertices = nullptr;
-	unsigned int* indices;
-	HRESULT res;
-
-	ID3D11Device* device = ri->GetDevice();
 
 	m_size = Vec2(width, height);
-	m_vertexCount = 6;
-	m_indexCount = 6;
 
-	vertices = new VertexType[m_vertexCount];
-	indices = new unsigned int[m_indexCount];
-
-
-
-	//height = 1.f; width = 1.f;
-
-
+	int vertexCount = 6;
+	int indexCount = 6;
+	beVector<VertexType> vertices(vertexCount, vertexCount, 0);
+	beVector<u32> indices(indexCount, indexCount, 0);
 
 	// Load the vertex array with data.
-
+	//height = 1.f; width = 1.f;
 	vertices[0].position = Vec2(0.f, height);  // TL
 	vertices[0].texCoord = Vec2(0.f, 0.f);
 
@@ -120,90 +104,40 @@ bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 	indices[4] = 4;
 	indices[5] = 5;
 
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(decltype(*vertices)) * m_vertexCount;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	auto success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	if(!success) { BE_ASSERT(false); return false; }
 
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	if(!success) { BE_ASSERT(false); return false; }
 
-	res = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(decltype(*indices)) * m_indexCount;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-
-	positionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	positionBufferDesc.ByteWidth = sizeof(PositionBufferType);
-	positionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	positionBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	positionBufferDesc.MiscFlags = 0;
-	positionBufferDesc.StructureByteStride = 0;
-
-	res = device->CreateBuffer(&positionBufferDesc, nullptr, &m_positionBuffer);
-	if (FAILED(res))
-	{
-		return false;
-	}
-
-	delete [] vertices;
-	delete [] indices;
+	success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if(!success) { BE_ASSERT(false); return false; }
+	
 	return true;
 }
 
 void beBitmap::Deinit()
 {
 	m_texture->Deinit();
-	BE_SAFE_RELEASE(m_positionBuffer);
-	BE_SAFE_RELEASE(m_indexBuffer);
-	BE_SAFE_RELEASE(m_vertexBuffer);
+	m_positionBuffer.Release();
+	m_indexBuffer.Release();
+	m_vertexBuffer.Release();
 }
 
 #include "beFont.h"
 bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beString& string, float maxWidth, u32 invalidStringCharacter)
 {
-	beFont::StringInfo info = {0};
+	beFont::StringInfo info;
 	if (!font->CreateString(ri, string, maxWidth, invalidStringCharacter, &info))
 	{
 		return false;
 	}
-	m_vertexBuffer = info.vertexBuffer;
-	m_indexBuffer = info.indexBuffer;
-	m_vertexCount = info.vertexCount;
-	m_indexCount = info.vertexCount;
+	m_vertexBuffer.Set(info.vertexBuffer);
+	m_indexBuffer.Set(info.indexBuffer);
 	m_texture->Set(*font->GetTexture());
 	
-	D3D11_BUFFER_DESC positionBufferDesc = {0};
-
-	positionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	positionBufferDesc.ByteWidth = sizeof(PositionBufferType);
-	positionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	positionBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	positionBufferDesc.MiscFlags = 0;
-	positionBufferDesc.StructureByteStride = 0;
-
-	ID3D11Device* device = ri->GetDevice();
-	HRESULT res = device->CreateBuffer(&positionBufferDesc, nullptr, &m_positionBuffer);
-	if (FAILED(res))
-	{
-		return false;
-	}
+	auto success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if(!success) { BE_ASSERT(false); return false; }
 
 	return true;
 }
@@ -239,9 +173,9 @@ void beBitmap::SetAnchorPoint(float x, float y)
 void beBitmap::Render(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	BE_ASSERT(m_positionBuffer);
-	BE_ASSERT(m_vertexBuffer);
-	BE_ASSERT(m_indexBuffer);
+	BE_ASSERT(m_positionBuffer.IsValid());
+	BE_ASSERT(m_vertexBuffer.IsValid());
+	BE_ASSERT(m_indexBuffer.IsValid());
 
 	if (m_dirtyPositionBuffer)
 	{
@@ -251,16 +185,14 @@ void beBitmap::Render(beRenderInterface* ri)
 		float xOffset = m_position.x + (m_anchorPoint.x * 1.f);// - (windowSize.x / 2.f);
 		float yOffset = m_position.y + (m_anchorPoint.y * 1.f);// - (windowSize.y / 2.f);
 
-		D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
-		HRESULT res = deviceContext->Map(m_positionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		PositionBufferType* dataPtr = (PositionBufferType*)m_positionBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
-		auto dataPtr = (PositionBufferType*)mappedResource.pData;
 		dataPtr->positionOffset = Vec2(xOffset, yOffset);
 		dataPtr->colour = m_colour;
-		deviceContext->Unmap(m_positionBuffer, 0);
+		m_positionBuffer.Unmap(ri);
 	}
 
 
@@ -268,13 +200,15 @@ void beBitmap::Render(beRenderInterface* ri)
 	unsigned int stride = sizeof(VertexType);
 	unsigned int offset = 0;
 
-	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	
+	ID3D11Buffer* vertexBuffers[1] = {m_vertexBuffer.GetBuffer()};
+	ID3D11Buffer* constantBuffers[1] = {m_positionBuffer.GetBuffer()};
+
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
+	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
 	unsigned int bufferNumber = 1; // 0 is matrix buffer set in SetShaderParameters
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_positionBuffer);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, constantBuffers);
 }
 
 ID3D11ShaderResourceView * beBitmap::GetTexture() const
@@ -284,6 +218,6 @@ ID3D11ShaderResourceView * beBitmap::GetTexture() const
 
 int beBitmap::GetIndexCount()
 {
-	return m_indexCount;
+	return m_indexBuffer.NumElements();
 }
 

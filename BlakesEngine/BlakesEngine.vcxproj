@@ -108,6 +108,7 @@
     <ClCompile Include="Rendering\beDebugWorld.cpp" />
     <ClCompile Include="Rendering\beFont.cpp" />
     <ClCompile Include="Rendering\beModel.cpp" />
+    <ClCompile Include="Rendering\beRenderBuffer.cpp" />
     <ClCompile Include="Rendering\beRenderInterface.cpp" />
     <ClCompile Include="Rendering\beTexture.cpp" />
     <ClCompile Include="Shaders\beShaderColour.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Rendering\beDebugWorld.h" />
     <ClInclude Include="Rendering\beFont.h" />
     <ClInclude Include="Rendering\beModel.h" />
+    <ClInclude Include="Rendering\beRenderBuffer.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Rendering\beTexture.h" />
     <ClInclude Include="Shaders\beShaderColour.h" />
