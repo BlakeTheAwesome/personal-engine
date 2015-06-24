@@ -103,7 +103,8 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	}
 	else if (line[0] == 'f')
 	{
-		const char* next = line + 2;
+		const char* next = line + 1;
+		while (*next == ' ') { next++; }
 		Face* face = fileInfo->faces.AllocateNew();
 		for (int i = 0; i < 3; i++)
 		{

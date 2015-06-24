@@ -42,6 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beModel model2;
 	beModel model3;
 	beModel model4;
+	beModel model5;
 	beBitmap bitmap1;
 	beBitmap bitmap2;
 	beBitmap bitmap3;
@@ -59,7 +60,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"));
 	model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"));
 	model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"));
-
+	model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"));
+	
 	writeTexture.InitAsTarget(renderInterface, 512, 512);
 
 	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
@@ -79,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	camera.AttachGamepad(&gamepad);
 
 	const int numShaders = 3;
-	const int numModels = 5;
+	const int numModels = 6;
 	int shaderToUse = 0;
 	int modelToUse = 2;
 	bool renderAxes = true;
@@ -192,6 +194,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				case 2: modelToRender = &model2; break;
 				case 3: modelToRender = &model3; break;
 				case 4: modelToRender = &model4; break;
+				case 5: modelToRender = &model5; break;
 			}
 
 			if (modelToRender)
@@ -253,6 +256,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	bitmap2.Deinit();
 	bitmap1.Deinit();
 	writeTexture.Deinit();
+	model5.Deinit();
 	model4.Deinit();
 	model3.Deinit();
 	model2.Deinit();
