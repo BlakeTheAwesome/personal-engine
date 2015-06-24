@@ -2,18 +2,32 @@
 #include "blakesengine/core/beMacros.h"
 #include "blakesengine/core/beAssert.h"
 
+#include <type_traits>
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<typename T>
-class beVector
+class beVector : public NonCopiable
 {
 	public:
-		beVector(int count, int increaseBy=-1)
+		typedef T value_type;
+		enum { element_size = sizeof(T) };
+
+		explicit beVector(int capacity, int increaseBy=-1)
 			: m_buffer(nullptr)
-			, m_bufferLength(0)
+			, m_capacity(0)
 			, m_increaseBy(increaseBy)
 			, m_count(0)
 		{
-			Reserve(count);
+			Reserve(capacity);
+		}
+		
+		beVector(int capacity, int count, int increaseBy)
+			: m_buffer(nullptr)
+			, m_capacity(0)
+			, m_increaseBy(increaseBy)
+			, m_count(0)
+		{
+			Reserve(capacity);
+			SetCount(count);
 		}
 		
 		~beVector()
@@ -23,23 +37,44 @@ class beVector
 		
 		void Release()
 		{
+			DestructElements(0, m_capacity);
 			BE_SAFE_FREE(m_buffer);
 			m_count = 0;
 		}
 		
-		void Reserve(int length)
+		void Reserve(int count)
 		{
-			if (length > m_bufferLength)
+			if (count > m_capacity)
 			{
-				T* newBuffer = (T*)BE_MALLOC(sizeof(T)*length);
+				T* newBuffer = (T*)BE_MALLOC(sizeof(T)*count);
 				if (m_count > 0)
 				{
 					BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
 					BE_SAFE_FREE(m_buffer);
 				}
 				m_buffer = newBuffer;
-				m_bufferLength = length;
+				m_capacity = count;
 			}
+		}
+		
+		void ReserveAndSetCount(int count)
+		{
+			Reserve(count);
+			SetCount(count);
+		}
+
+		void SetCount(int count)
+		{
+			BE_ASSERT(count <= m_capacity);
+			if (count > m_capacity) // growing
+			{
+				ConstructElements(m_capacity, count);
+			}
+			else if (count < m_capacity) // shrinking
+			{
+				DestructElements(count, m_capacity);
+			}
+			m_count = count;
 		}
 		
 		int Count() const
@@ -166,12 +201,30 @@ class beVector
 		
 	private:
 		beVector() = delete;
-		beVector(const beVector&) = delete;
-		beVector& operator= (const beVector&) = delete;
+
+		template <bool isPod=std::is_pod<T>::value> void ConstructElements(int startElement, int endElement);
+		template<> void ConstructElements<true>(int startElement, int endElement) {}
+		template<> void ConstructElements<false>(int startElement, int endElement)
+		{
+			for (int i = startElement; i < endElement; i++)
+			{
+				BE_NEW(m_buffer + i) T();
+			}
+		}
+		
+		template <bool isPod=std::is_pod<T>::value> void DestructElements(int startElement, int endElement);
+		template<> void DestructElements<true>(int startElement, int endElement) {}
+		template<> void DestructElements<false>(int startElement, int endElement)
+		{
+			for (int i = startElement; i < endElement; i++)
+			{
+					m_buffer[i].~T();
+			}
+		}
 
 		bool CheckRoomForAlloc()
 		{
-			if (m_count >= m_bufferLength)
+			if (m_count >= m_capacity)
 			{
 				switch (m_increaseBy)
 				{
@@ -182,12 +235,12 @@ class beVector
 					}
 					case -1:
 					{
-						Reserve(m_bufferLength * 2);
+						Reserve(m_capacity * 2);
 						return true;
 					}
 					default:
 					{
-						Reserve(m_bufferLength + m_increaseBy);
+						Reserve(m_capacity + m_increaseBy);
 						return true;
 					}
 				}
@@ -198,6 +251,6 @@ class beVector
 	protected:
 		T* m_buffer;
 		int m_count;
-		int m_bufferLength;
+		int m_capacity;
 		int m_increaseBy;
 };
