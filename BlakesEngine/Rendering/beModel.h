@@ -1,6 +1,7 @@
 #pragma once
 #include "BlakesEngine\Core\beString.h"
 #include "BlakesEngine\Math\beMath.h"
+#include "beRenderBuffer.h"
 
 class beRenderInterface;
 class beTexture;
@@ -28,8 +29,6 @@ public:
 
 private:
 	beTexture* m_texture;
-	ID3D11Buffer* m_vertexBuffer;
-	ID3D11Buffer* m_indexBuffer;
-	int m_vertexCount;
-	int m_indexCount;
+	beRenderBuffer m_vertexBuffer;
+	beRenderBuffer m_indexBuffer;
 };

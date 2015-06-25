@@ -38,9 +38,6 @@ beShaderLitTexture::beShaderLitTexture()
 	, m_vShader(nullptr)
 	, m_sampleState(nullptr)
 	, m_layout(nullptr)
-	, m_matrixBuffer(nullptr)
-	, m_lightBuffer(nullptr)
-	, m_cameraBuffer(nullptr)
 {
 }
 
@@ -51,9 +48,9 @@ beShaderLitTexture::~beShaderLitTexture()
 	BE_ASSERT(!m_vShader);
 }
 
-bool beShaderLitTexture::Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename)
+bool beShaderLitTexture::Init(beRenderInterface* ri, const beWString& pixelFilename, const beWString& vertexFilename)
 {
-	ID3D11Device* device = renderInterface->GetDevice();
+	ID3D11Device* device = ri->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
 	//ID3D10Blob* errorMessage = nullptr;
@@ -136,47 +133,26 @@ bool beShaderLitTexture::Init(beRenderInterface* renderInterface, const beWStrin
 		return false;
 	}
 
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	res = device->CreateBuffer(&bufferDesc, nullptr, &m_matrixBuffer);
-	if (FAILED(res))
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success)
 	{
 		return false;
 	}
 	
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(LightBufferType);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	res = device->CreateBuffer(&bufferDesc, nullptr, &m_lightBuffer);
-	if (FAILED(res))
+	success = m_lightBuffer.Allocate(ri, sizeof(LightBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success)
 	{
 		return false;
 	}
-	
-	
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(CameraBufferType);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
 
-	res = device->CreateBuffer(&bufferDesc, nullptr, &m_cameraBuffer);
-	if (FAILED(res))
+	success = m_cameraBuffer.Allocate(ri, sizeof(CameraBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success)
 	{
 		return false;
 	}
-	
-		// Create a texture sampler state description.
+
+
+	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -205,25 +181,22 @@ bool beShaderLitTexture::Init(beRenderInterface* renderInterface, const beWStrin
 
 void beShaderLitTexture::Deinit()
 {
+	m_cameraBuffer.Release();
+	m_lightBuffer.Release();
+	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_sampleState);
-	BE_SAFE_RELEASE(m_cameraBuffer);
-	BE_SAFE_RELEASE(m_lightBuffer);
-	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderLitTexture::SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix, const Vec3& cameraPosition)
+void beShaderLitTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
-	const Matrix& worldMatrix = renderInterface->GetWorldMatrix();
-	const Matrix& projectionMatrix = renderInterface->GetProjectionMatrix();
-	const Vec3& lightDirection = renderInterface->GetLightDirection();
-
-	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
-	
-	// Lock the constant buffer so it can be written to.
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	const Matrix& worldMatrix = ri->GetWorldMatrix();
+	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
+	const Vec3& lightDirection = ri->GetLightDirection();
+		
 	{
 		XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
 		XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
@@ -233,63 +206,60 @@ void beShaderLitTexture::SetShaderParameters(beRenderInterface* renderInterface,
 		XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
 		XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
 
-		HRESULT res = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
-	
-		auto dataPtr = (MatrixBufferType*)mappedResource.pData;
-
 		XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
 		XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
 		XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
 
-		deviceContext->Unmap(m_matrixBuffer, 0);
+		m_matrixBuffer.Unmap(ri);
 	}
+
 	{
-		HRESULT res = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		auto dataPtr = (LightBufferType*)m_lightBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
 	
-		auto dataPtr = (LightBufferType*)mappedResource.pData;
 		dataPtr->diffuseColour = Vec4(1.0f, 0.2f, 0.2f, 1.0f);
 		dataPtr->ambientColour = Vec4(0.0f, 0.1f, 0.3f, 1.0f);
 		dataPtr->lightDirection = lightDirection;
-
 		
 		dataPtr->specularPower = 32.f;
 		dataPtr->specularColor = Vec4(1.f, 1.f, 1.f, 1.f);
 		
-		deviceContext->Unmap(m_lightBuffer, 0);
+		m_lightBuffer.Unmap(ri);
 	}
+
 	{
-		HRESULT res = deviceContext->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		auto dataPtr = (CameraBufferType*)m_cameraBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
 	
-		auto dataPtr = (CameraBufferType*)mappedResource.pData;
 		dataPtr->pos = cameraPosition;
 		dataPtr->padding = 0.f;
 		
-		deviceContext->Unmap(m_cameraBuffer, 0);
+		m_cameraBuffer.Unmap(ri);
 	}
 
+	ID3D11Buffer* vsConstantBuffers[] = { m_matrixBuffer.GetBuffer(), m_cameraBuffer.GetBuffer() };
 	unsigned int bufferNumber = 0;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
-	bufferNumber = 1;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_cameraBuffer);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 2, vsConstantBuffers);
+
+	ID3D11Buffer* psConstantBuffers[] = { m_lightBuffer.GetBuffer() };
 	bufferNumber = 0;
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, psConstantBuffers);
 }
 
-void beShaderLitTexture::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture)
+void beShaderLitTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	
 	deviceContext->IASetInputLayout(m_layout);
 

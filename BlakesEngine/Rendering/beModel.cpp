@@ -40,17 +40,13 @@ struct VertexWithNormalType
 };
 
 beModel::beModel()
-	: m_vertexBuffer(nullptr)
-	, m_indexBuffer(nullptr)
-	, m_vertexCount(0)
-	, m_indexCount(0)
 {
 	m_texture = new beTexture();
 }
 
 beModel::~beModel()
 {
-	BE_ASSERT(!m_vertexBuffer && !m_indexBuffer);
+	BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid());
 	BE_SAFE_DELETE(m_texture);
 }
 
@@ -178,23 +174,18 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 		}
 	}
 
-	D3D11_BUFFER_DESC vertexBufferDesc = {0};
-	D3D11_BUFFER_DESC indexBufferDesc = {0};
-	D3D11_SUBRESOURCE_DATA vertexData = {0};
-	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexWithNormalType* vertices = nullptr;
-	unsigned int* indices;
-	HRESULT res;
 
-	ID3D11Device* device = ri->GetDevice();
-
-
-	m_vertexCount = fileInfo.faces.Count() * 3; 
-
-	m_indexCount = m_vertexCount;
+	int vertexCount = fileInfo.faces.Count() * 3; 
+	int indexCount = vertexCount;
 	
-	vertices = new VertexWithNormalType[m_vertexCount];
-	indices = new unsigned int[m_indexCount];
+	beVector<VertexWithNormalType> vertices(vertexCount, vertexCount, 0);
+	beVector<u32> indices(indexCount, indexCount, 0);
+
+	for (int i = 0; i < indices.Count(); i++)
+	{
+		indices[i] = i;
+	}
+
 	int vertexIndex = 0;
 	for (int i = 0; i < fileInfo.faces.Count(); i++)
 	{
@@ -219,63 +210,26 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 		}
 	}
 
+	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
 
-	for (int i = 0; i < m_indexCount; i++)
-	{
-		indices[i] = i;
-	}
-
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexWithNormalType) * m_vertexCount;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
-
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-	delete [] vertices;
-	delete [] indices;
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, textureFilename);
 }
 
 bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 {
-	D3D11_BUFFER_DESC vertexBufferDesc = {0};
-	D3D11_BUFFER_DESC indexBufferDesc = {0};
-	D3D11_SUBRESOURCE_DATA vertexData = {0};
-	D3D11_SUBRESOURCE_DATA indexData = {0};
-	VertexWithNormalType* vertices = nullptr;
-	unsigned int* indices;
-	HRESULT res;
-
-	ID3D11Device* device = ri->GetDevice();
-
-	m_vertexCount = 6;
-	m_indexCount = 6;
-
-	vertices = new VertexWithNormalType[m_vertexCount];
-	indices = new unsigned int[m_indexCount];
+	int vertexCount = 6; 
+	int indexCount = vertexCount;
+	
+	beVector<VertexWithNormalType> vertices(vertexCount, vertexCount, 0);
+	beVector<u32> indices(indexCount, indexCount, 0);
+	for (int i = 0; i < indices.Count(); i++)
+	{
+		vertices[i].normal = Vec3(1.0f, 0.0f, 0.0f);
+	}
 	
 	// Load the vertex array with data.
 	float distFromCamera = -1.f;
@@ -297,13 +251,7 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 
 	vertices[5].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL.
 	vertices[5].texCoord = Vec2(0.f, 0.f);
-
-	for (int i = 0; i < m_vertexCount; i++)
-	{
-		vertices[i].normal = Vec3(1.0f, 0.0f, 0.0f);
-	}
-
-
+	
 
 	indices[0] = 0;
 	indices[1] = 1;
@@ -312,36 +260,12 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 	indices[4] = 4;
 	indices[5] = 5;
 
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(decltype(*vertices)) * m_vertexCount;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	
+	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
 
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(decltype(*indices)) * m_indexCount;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	indexData.pSysMem = indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
-
-	res = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if(FAILED(res)) { BE_ASSERT(false); return false; }
-
-	delete [] vertices;
-	delete [] indices;
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, textureFilename);
 }
@@ -349,8 +273,8 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 void beModel::Deinit()
 {
 	m_texture->Deinit();
-	BE_SAFE_RELEASE(m_indexBuffer);
-	BE_SAFE_RELEASE(m_vertexBuffer);
+	m_indexBuffer.Release();
+	m_vertexBuffer.Release();
 }
 
 bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
@@ -361,11 +285,12 @@ bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilenam
 void beModel::Render(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	unsigned int stride = sizeof(VertexWithNormalType);
+	unsigned int stride = m_vertexBuffer.ElementSize();
 	unsigned int offset = 0;
 
-	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
+	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 	
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -377,5 +302,5 @@ ID3D11ShaderResourceView * beModel::GetTexture() const
 
 int beModel::GetIndexCount()
 {
-	return m_indexCount;
+	return m_indexBuffer.NumElements();
 }

@@ -30,9 +30,9 @@ beShaderColour::~beShaderColour()
 	BE_ASSERT(!m_vShader);
 }
 
-bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename)
+bool beShaderColour::Init(beRenderInterface* ri, const beWString& pixelFilename, const beWString& vertexFilename)
 {
-	ID3D11Device* device = renderInterface->GetDevice();
+	ID3D11Device* device = ri->GetDevice();
 
 	//ID3D10Blob* errorMessage = nullptr;
 	ID3D10Blob* vBuffer = nullptr;
@@ -109,15 +109,9 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 		return false;
 	}
 
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags = 0;
-	matrixBufferDesc.StructureByteStride = 0;
 
-	res = device->CreateBuffer(&matrixBufferDesc, nullptr, &m_matrixBuffer);
-	if (FAILED(res))
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success)
 	{
 		return false;
 	}
@@ -127,27 +121,21 @@ bool beShaderColour::Init(beRenderInterface* renderInterface, const beWString& p
 
 void beShaderColour::Deinit()
 {
-	BE_SAFE_RELEASE(m_matrixBuffer);
+	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderColour::SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix)
+void beShaderColour::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
-	const Matrix& worldMatrix = renderInterface->GetWorldMatrix();
-	const Matrix& projectionMatrix = renderInterface->GetProjectionMatrix();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	const Matrix& worldMatrix = ri->GetWorldMatrix();
+	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
 	
-	// Lock the constant buffer so it can be written to.
-	HRESULT res = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(res))
-	{
-		return;
-	}
-
+	
 	XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
 	XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
 	XMMATRIX xPM = XMLoadFloat4x4(&projectionMatrix);
@@ -155,23 +143,27 @@ void beShaderColour::SetShaderParameters(beRenderInterface* renderInterface, con
 	XMMATRIX txWorldMatrix = XMMatrixTranspose(xWM);
 	XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
 	XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
-	
-	MatrixBufferType* dataPtr = nullptr;
-	dataPtr = (MatrixBufferType*)mappedResource.pData;
 
+	auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
+	if (!dataPtr)
+	{
+		BE_ASSERT(false);
+		return;
+	}
 	XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
 	XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
 	XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
 
-	deviceContext->Unmap(m_matrixBuffer, 0);
+	m_matrixBuffer.Unmap(ri);
 
+	ID3D11Buffer* constantBuffers[] = {m_matrixBuffer.GetBuffer()};
 	unsigned int bufferNumber = 0;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, constantBuffers);
 }
 
-void beShaderColour::Render(beRenderInterface* renderInterface, int indexCount, int indexOffset)
+void beShaderColour::Render(beRenderInterface* ri, int indexCount, int indexOffset)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	
 	deviceContext->IASetInputLayout(m_layout);
 
@@ -181,8 +173,8 @@ void beShaderColour::Render(beRenderInterface* renderInterface, int indexCount, 
 	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
 }
 
-void beShaderColour::RenderMore(beRenderInterface* renderInterface, int indexCount, int indexOffset)
+void beShaderColour::RenderMore(beRenderInterface* ri, int indexCount, int indexOffset)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
 }

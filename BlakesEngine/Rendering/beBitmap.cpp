@@ -197,11 +197,11 @@ void beBitmap::Render(beRenderInterface* ri)
 
 
 
-	unsigned int stride = sizeof(VertexType);
+	unsigned int stride = m_vertexBuffer.ElementSize();
 	unsigned int offset = 0;
 
-	ID3D11Buffer* vertexBuffers[1] = {m_vertexBuffer.GetBuffer()};
-	ID3D11Buffer* constantBuffers[1] = {m_positionBuffer.GetBuffer()};
+	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
+	ID3D11Buffer* constantBuffers[] = {m_positionBuffer.GetBuffer()};
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);

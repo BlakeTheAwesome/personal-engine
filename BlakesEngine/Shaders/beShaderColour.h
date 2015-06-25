@@ -1,6 +1,7 @@
 #pragma once
 #include "BlakesEngine\Core\beString.h"
 #include "BlakesEngine\Math\beMath.h"
+#include "BlakesEngine/Rendering/beRenderBuffer.h"
 
 struct ID3D10Blob;
 struct ID3D11VertexShader;
@@ -32,5 +33,5 @@ private:
 	ID3D11VertexShader* m_vShader;
 	
 	ID3D11InputLayout* m_layout;
-	ID3D11Buffer* m_matrixBuffer;
+	beRenderBuffer m_matrixBuffer;
 };

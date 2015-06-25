@@ -28,8 +28,6 @@ beShaderTexture::beShaderTexture()
 	, m_vShader(nullptr)
 	, m_sampleState(nullptr)
 	, m_layout(nullptr)
-	, m_matrixBuffer(nullptr)
-	, m_colourBuffer(nullptr)
 	, m_colourDirty(true)
 	, m_colour(1.f, 1.f, 1.f, 1.f)
 {
@@ -37,16 +35,16 @@ beShaderTexture::beShaderTexture()
 
 beShaderTexture::~beShaderTexture()
 {
-	BE_ASSERT(!m_matrixBuffer);
-	BE_ASSERT(!m_colourBuffer);
+	BE_ASSERT(!m_matrixBuffer.IsValid());
+	BE_ASSERT(!m_colourBuffer.IsValid());
 	BE_ASSERT(!m_sampleState);
 	BE_ASSERT(!m_pShader);
 	BE_ASSERT(!m_vShader);
 }
 
-bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename)
+bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename, const beWString& vertexFilename)
 {
-	ID3D11Device* device = renderInterface->GetDevice();
+	ID3D11Device* device = ri->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
 	//ID3D10Blob* errorMessage = nullptr;
@@ -128,32 +126,13 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 	{
 		return false;
 	}
-
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	res = device->CreateBuffer(&bufferDesc, nullptr, &m_matrixBuffer);
-	if (FAILED(res))
-	{
-		return false;
-	}
 	
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(ColourBufferType);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER,  D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success) { return false; }
 
-	res = device->CreateBuffer(&bufferDesc, nullptr, &m_colourBuffer);
-	if (FAILED(res))
-	{
-		return false;
-	}
+	success = m_colourBuffer.Allocate(ri, sizeof(ColourBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER,  D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success) { return false; }
+
 	
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -184,9 +163,9 @@ bool beShaderTexture::Init(beRenderInterface* renderInterface, const beWString& 
 
 void beShaderTexture::Deinit()
 {
+	m_colourBuffer.Release();
+	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_sampleState);
-	BE_SAFE_RELEASE(m_colourBuffer);
-	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
@@ -198,15 +177,12 @@ void beShaderTexture::SetColour(const Vec4 & colour)
 	m_colourDirty = true;
 }
 
-void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix)
+void beShaderTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
-	const Matrix& worldMatrix = renderInterface->GetWorldMatrix();
-	const Matrix& projectionMatrix = renderInterface->GetProjectionMatrix();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	const Matrix& worldMatrix = ri->GetWorldMatrix();
+	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
-	
-	// Lock the constant buffer so it can be written to.
 	{
 		XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
 		XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
@@ -216,41 +192,38 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* renderInterface, co
 		XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
 		XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
 
-		HRESULT res = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
-	
-		auto dataPtr = (MatrixBufferType*)mappedResource.pData;
 
 		XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
 		XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
 		XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
 
-		deviceContext->Unmap(m_matrixBuffer, 0);
+		m_matrixBuffer.Unmap(ri);
 	}
 
 	if (m_colourDirty)
 	{
-		HRESULT res = deviceContext->Map(m_colourBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		auto dataPtr = (ColourBufferType*)m_colourBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
-		auto dataPtr = (ColourBufferType*)mappedResource.pData;
 		dataPtr->colour = m_colour;
-		deviceContext->Unmap(m_colourBuffer, 0);
+		m_colourBuffer.Unmap(ri);
 		m_colourDirty = false;
 	}
 	
-	ID3D11Buffer* buffers[] = {m_matrixBuffer, m_colourBuffer};
+	ID3D11Buffer* buffers[] = {m_matrixBuffer.GetBuffer(), m_colourBuffer.GetBuffer()};
 	deviceContext->VSSetConstantBuffers(0, 2, buffers);
 }
 
-void beShaderTexture::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture)
+void beShaderTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	
 	deviceContext->IASetInputLayout(m_layout);
 

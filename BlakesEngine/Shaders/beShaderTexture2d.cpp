@@ -25,7 +25,6 @@ beShaderTexture2d::beShaderTexture2d()
 	, m_wrappedSampleState(nullptr)
 	, m_clampedSampleState(nullptr)
 	, m_layout(nullptr)
-	, m_matrixBuffer(nullptr)
 {
 }
 
@@ -37,9 +36,9 @@ beShaderTexture2d::~beShaderTexture2d()
 	BE_ASSERT(!m_vShader);
 }
 
-bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename)
+bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilename, const beWString& vertexFilename)
 {
-	ID3D11Device* device = renderInterface->GetDevice();
+	ID3D11Device* device = ri->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
 	//ID3D10Blob* errorMessage = nullptr;
@@ -108,15 +107,8 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 	res = device->CreateInputLayout(polygonLayout, numElements, vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), &m_layout);
 	if (FAILED(res)) { return false; }
 
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	res = device->CreateBuffer(&bufferDesc, nullptr, &m_matrixBuffer);
-	if (FAILED(res)) { return false; }
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER,  D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success) { return false; }
 
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -149,47 +141,43 @@ bool beShaderTexture2d::Init(beRenderInterface* renderInterface, const beWString
 
 void beShaderTexture2d::Deinit()
 {
+	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_clampedSampleState);
 	BE_SAFE_RELEASE(m_wrappedSampleState);
-	BE_SAFE_RELEASE(m_matrixBuffer);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderTexture2d::SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix)
+void beShaderTexture2d::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
-	const Matrix& orthoMatrix = renderInterface->GetOrthoMatrix();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	const Matrix& orthoMatrix = ri->GetOrthoMatrix();
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
-	
-	// Lock the constant buffer so it can be written to.
 	{
 		XMMATRIX xOM = XMLoadFloat4x4(&orthoMatrix);
 		XMMATRIX txOrthoMatrix = XMMatrixTranspose(xOM);
 
-		HRESULT res = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(res))
+		auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
+		if (!dataPtr)
 		{
 			return;
 		}
-	
-		auto dataPtr = (MatrixBufferType*)mappedResource.pData;
 
 		XMStoreFloat4x4(&dataPtr->ortho, xOM);
-		dataPtr->screenSize = renderInterface->GetScreenSize();
+		dataPtr->screenSize = ri->GetScreenSize();
 
-		deviceContext->Unmap(m_matrixBuffer, 0);
+		m_matrixBuffer.Unmap(ri);
 	}
 	
+	ID3D11Buffer* vsConstantBuffers[] = { m_matrixBuffer.GetBuffer() };
 	unsigned int bufferNumber = 0;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, vsConstantBuffers);
 }
 
-void beShaderTexture2d::Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode)
+void beShaderTexture2d::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode)
 {
-	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	
 	deviceContext->IASetInputLayout(m_layout);
 
