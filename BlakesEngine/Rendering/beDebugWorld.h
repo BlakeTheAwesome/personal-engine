@@ -18,6 +18,7 @@ public:
 	void Deinit();
 
 	void SetRenderAxes(bool renderAxes);
+	void SetRenderGrid(bool renderAxes);
 	
 	void Render(beRenderInterface* ri, beShaderColour* colourShader);
 };

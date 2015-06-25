@@ -64,7 +64,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	writeTexture.InitAsTarget(renderInterface, 512, 512);
 
-	bitmap1.Init(renderInterface, 512, 512, beWString(L"boar.dds"));
+	bitmap1.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
+	bitmap1.SetPosition(1024/2-128, 768/2-128);
 	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 512.f, 0);
 	bitmap2.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	bitmap3.Init(renderInterface, writeTexture);
