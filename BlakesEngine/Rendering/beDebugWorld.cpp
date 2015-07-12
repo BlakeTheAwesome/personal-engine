@@ -7,6 +7,8 @@
 #include "beRenderInterface.h"
 #include "beRenderBuffer.h"
 #include "BlakesEngine\Shaders/beShaderColour.h"
+#include "BlakesEngine/Math/beRandom.h"
+#include "BlakesEngine/Math/bePerlinNoise.h"
 
 #include <d3d11.h>
 
@@ -117,6 +119,15 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 	int triCount = quadCount * 2;
 	int triVertexCount = triCount * 3;
 
+
+	float noiseScale = 5.f;
+	beRandom rng;
+	rng.InitFromSystemTime();
+	bePerlinNoise2D noise;
+	noise.Initialise((int)(gridRadius / noiseScale), (int)(gridRadius / noiseScale), rng.Next());
+	noise.Precompute();
+
+
 	beVector<VertexColourType> vertices(vertexCount, vertexCount, 0);
 	beVector<u32> lineIndices(vertexCount, vertexCount, 0);
 	beVector<u32> triIndices(triVertexCount, triVertexCount, 0);
@@ -142,26 +153,38 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 	int vertexIndex = 0;
 	for (float x = -gridOffset; x < gridOffset; x += gridSize)
 	{
-		float xPos = x + xzOffset;
+		float xPos0 = x + xzOffset;
+		float xPos1 = xPos0+gridSize;
 		for (float z = -gridOffset; z < gridOffset; z += gridSize)
 		{
-			float zPos = z + xzOffset;
-			vertices[vertexIndex+0].position = Vec4(xPos, 0.f, zPos, 1.f);
-			vertices[vertexIndex+1].position = Vec4(xPos, 0.f, zPos+gridSize, 1.f);
-			vertices[vertexIndex+2].position = Vec4(xPos, 0.f, zPos+gridSize, 1.f);
-			vertices[vertexIndex+3].position = Vec4(xPos+gridSize, 0.f, zPos+gridSize, 1.f);
-			vertices[vertexIndex+4].position = Vec4(xPos+gridSize, 0.f, zPos+gridSize, 1.f);
-			vertices[vertexIndex+5].position = Vec4(xPos+gridSize, 0.f, zPos, 1.f);
-			vertices[vertexIndex+6].position = Vec4(xPos+gridSize, 0.f, zPos, 1.f);
-			vertices[vertexIndex+7].position = Vec4(xPos, 0.f, zPos, 1.f);
-			vertices[vertexIndex+0].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+1].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+2].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+3].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+4].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+5].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+6].colour = Vec4(1.f, 1.f, 1.f, 1.f);
-			vertices[vertexIndex+7].colour = Vec4(1.f, 1.f, 1.f, 1.f);
+			float zPos0 = z + xzOffset;
+			float zPos1 = zPos0+gridSize;
+
+			float yPos0 = noise.Get(xPos0/noiseScale, zPos0/noiseScale);
+			float yPos1 = noise.Get(xPos0/noiseScale, zPos1/noiseScale);
+			float yPos2 = noise.Get(xPos1/noiseScale, zPos1/noiseScale);
+			float yPos3 = noise.Get(xPos1/noiseScale, zPos0/noiseScale);
+			Vec4 pos0(xPos0, yPos0, zPos0, 1.f);
+			Vec4 pos1(xPos0, yPos1, zPos1, 1.f);
+			Vec4 pos2(xPos1, yPos2, zPos1, 1.f);
+			Vec4 pos3(xPos1, yPos3, zPos0, 1.f);
+
+			vertices[vertexIndex+0].position = pos0;
+			vertices[vertexIndex+1].position = pos1;
+			vertices[vertexIndex+2].position = pos1;
+			vertices[vertexIndex+3].position = pos2;
+			vertices[vertexIndex+4].position = pos2;
+			vertices[vertexIndex+5].position = pos3;
+			vertices[vertexIndex+6].position = pos3;
+			vertices[vertexIndex+7].position = pos0;
+			vertices[vertexIndex+0].colour = Vec4(yPos0, yPos0, 1.f, 1.f);
+			vertices[vertexIndex+1].colour = Vec4(yPos1, yPos1, 1.f, 1.f);
+			vertices[vertexIndex+2].colour = Vec4(yPos1, yPos1, 1.f, 1.f);
+			vertices[vertexIndex+3].colour = Vec4(yPos2, yPos2, 1.f, 1.f);
+			vertices[vertexIndex+4].colour = Vec4(yPos2, yPos2, 1.f, 1.f);
+			vertices[vertexIndex+5].colour = Vec4(yPos3, yPos3, 1.f, 1.f);
+			vertices[vertexIndex+6].colour = Vec4(yPos3, yPos3, 1.f, 1.f);
+			vertices[vertexIndex+7].colour = Vec4(yPos0, yPos0, 1.f, 1.f);
 			vertexIndex += 8;
 		}
 	}
@@ -191,9 +214,9 @@ void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, c
 		ID3D11Buffer* vertexBuffers[] = {self.gridVertexBuffer.GetBuffer()};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
 
-		/*deviceContext->IASetIndexBuffer(self.gridFilledIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetIndexBuffer(self.gridFilledIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		shaderColour->Render(ri, self.gridFilledIndexBuffer.NumElements(), 0);*/
+		shaderColour->Render(ri, self.gridFilledIndexBuffer.NumElements(), 0);
 
 		deviceContext->IASetIndexBuffer(self.gridLinesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);

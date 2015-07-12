@@ -14,6 +14,7 @@ void bePerlinNoise2D::Initialise(int maxX, int maxY, int randomSeed)
 	BE_ASSERT(m_precomputedGradients.Count() == 0);
 	m_maxX = maxX;
 	m_maxY = maxY;
+	m_randomSeed = randomSeed;
 }
 
 void bePerlinNoise2D::Precompute()
@@ -25,7 +26,7 @@ void bePerlinNoise2D::Precompute()
 	beRandom rng;
 	for (int i = 0; i < numEntries; i++)
 	{
-		rng.Init(seed + 1);
+		rng.Init(seed + i);
 		m_precomputedGradients[i] = Vec2(rng.NextFloat(-1.f, 1.f), rng.NextFloat(-1.f, 1.f));
 	}
 }
@@ -59,6 +60,17 @@ void bePerlinNoise2D::GetGradients(float x, float y, Vec2* g00, Vec2* g01, Vec2*
 	double xIntPart, xFractPart, yIntPart, yFractPart;
 	xFractPart = modf(x, &xIntPart);
 	yFractPart = modf(y, &yIntPart);
+
+	if (xFractPart < 0.0)
+	{
+		xIntPart -= 1.0;
+		xFractPart += 1.0;
+	}
+	if (yFractPart < 0.0)
+	{
+		yIntPart -= 1.0;
+		yFractPart += 1.0;
+	}
 
 	int x0 = (int)xIntPart;
 	int y0 = (int)yIntPart;

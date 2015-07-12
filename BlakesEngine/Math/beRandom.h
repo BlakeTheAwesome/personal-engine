@@ -22,6 +22,11 @@ public:
 		b = seed << 16;
 		c = 2654435769u;
 		d = 1367130551u;
+
+		for (int i = 0; i < 20; i++)
+		{
+			Next();
+		}
 	}
 
 	void InitFromSystemTime();
