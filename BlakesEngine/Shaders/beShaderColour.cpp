@@ -11,13 +11,6 @@
 #include <d3d11.h>
 #include <D3Dcompiler.h>
 
-struct MatrixBufferType
-{
-	Matrix world;
-	Matrix view;
-	Matrix projection;
-};
-
 beShaderColour::beShaderColour()
 	: m_pShader(nullptr)
 	, m_vShader(nullptr)
@@ -134,7 +127,6 @@ void beShaderColour::SetShaderParameters(beRenderInterface* ri, const Matrix& vi
 	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
-	
 	
 	XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
 	XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);

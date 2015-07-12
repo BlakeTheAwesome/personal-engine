@@ -27,7 +27,8 @@ PIMPL_DATA(beDebugWorld)
 	beRenderBuffer axesIndexBuffer;
 	
 	beRenderBuffer gridVertexBuffer;
-	beRenderBuffer gridIndexBuffer;
+	beRenderBuffer gridLinesIndexBuffer;
+	beRenderBuffer gridFilledIndexBuffer;
 	bool renderAxes;
 	bool renderGrid;
 PIMPL_DATA_END
@@ -54,7 +55,8 @@ bool beDebugWorld::Init(beRenderInterface* ri)
 
 void beDebugWorld::Deinit()
 {
-	self.gridIndexBuffer.Release();
+	self.gridFilledIndexBuffer.Release();
+	self.gridLinesIndexBuffer.Release();
 	self.gridVertexBuffer.Release();
 
 	self.axesIndexBuffer.Release();
@@ -107,31 +109,51 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 {
 	int gridRadius = 100;
 	float gridSize = 1.f;
-	float gridOffset = (float)gridRadius / 2.f;
+	float xzOffset = gridSize / 2.f; // Don't draw on same spot as renderAxes
+	float gridOffset = ((float)gridRadius / 2.f);
 
-	int vertexCount = gridRadius * gridRadius * 8;
+	int quadCount = gridRadius * gridRadius;
+	int vertexCount = quadCount * 8;
+	int triCount = quadCount * 2;
+	int triVertexCount = triCount * 3;
 
 	beVector<VertexColourType> vertices(vertexCount, vertexCount, 0);
-	beVector<u32> indices(vertexCount, vertexCount, 0);
+	beVector<u32> lineIndices(vertexCount, vertexCount, 0);
+	beVector<u32> triIndices(triVertexCount, triVertexCount, 0);
 	
-	for (int i = 0; i < indices.Count(); i++)
+	for (int i = 0; i < lineIndices.Count(); i++)
 	{
-		indices[i] = i;
+		lineIndices[i] = i;
+	}
+
+	for (int i = 0; i < quadCount; i++)
+	{
+		int triListIndex = i * 6;
+		int lineListIndex = i * 8;
+		triIndices[triListIndex+0] = lineListIndex+0;
+		triIndices[triListIndex+1] = lineListIndex+2;
+		triIndices[triListIndex+2] = lineListIndex+4;
+		
+		triIndices[triListIndex+3] = lineListIndex+4;
+		triIndices[triListIndex+4] = lineListIndex+6;
+		triIndices[triListIndex+5] = lineListIndex+0;
 	}
 
 	int vertexIndex = 0;
 	for (float x = -gridOffset; x < gridOffset; x += gridSize)
 	{
+		float xPos = x + xzOffset;
 		for (float z = -gridOffset; z < gridOffset; z += gridSize)
 		{
-			vertices[vertexIndex+0].position = Vec4(x, 0.f, z, 1.f);
-			vertices[vertexIndex+1].position = Vec4(x+gridSize, 0.f, z, 1.f);
-			vertices[vertexIndex+2].position = Vec4(x+gridSize, 0.f, z, 1.f);
-			vertices[vertexIndex+3].position = Vec4(x+gridSize, 0.f, z+gridSize, 1.f);
-			vertices[vertexIndex+4].position = Vec4(x+gridSize, 0.f, z+gridSize, 1.f);
-			vertices[vertexIndex+5].position = Vec4(x, 0.f, z+gridSize, 1.f);
-			vertices[vertexIndex+6].position = Vec4(x, 0.f, z+gridSize, 1.f);
-			vertices[vertexIndex+7].position = Vec4(x, 0.f, z, 1.f);
+			float zPos = z + xzOffset;
+			vertices[vertexIndex+0].position = Vec4(xPos, 0.f, zPos, 1.f);
+			vertices[vertexIndex+1].position = Vec4(xPos, 0.f, zPos+gridSize, 1.f);
+			vertices[vertexIndex+2].position = Vec4(xPos, 0.f, zPos+gridSize, 1.f);
+			vertices[vertexIndex+3].position = Vec4(xPos+gridSize, 0.f, zPos+gridSize, 1.f);
+			vertices[vertexIndex+4].position = Vec4(xPos+gridSize, 0.f, zPos+gridSize, 1.f);
+			vertices[vertexIndex+5].position = Vec4(xPos+gridSize, 0.f, zPos, 1.f);
+			vertices[vertexIndex+6].position = Vec4(xPos+gridSize, 0.f, zPos, 1.f);
+			vertices[vertexIndex+7].position = Vec4(xPos, 0.f, zPos, 1.f);
 			vertices[vertexIndex+0].colour = Vec4(1.f, 1.f, 1.f, 1.f);
 			vertices[vertexIndex+1].colour = Vec4(1.f, 1.f, 1.f, 1.f);
 			vertices[vertexIndex+2].colour = Vec4(1.f, 1.f, 1.f, 1.f);
@@ -147,27 +169,35 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 	bool success = gridVertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = gridIndexBuffer.Allocate(ri, decltype(indices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	success = gridLinesIndexBuffer.Allocate(ri, decltype(lineIndices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, lineIndices.begin());
+	if (!success) { BE_ASSERT(false); return false; }
+
+	success = gridFilledIndexBuffer.Allocate(ri, decltype(triIndices)::element_size, triVertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, triIndices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 	
 	return true;
 }
 
-void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour)
+void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
 	if (self.renderGrid)
 	{
+		shaderColour->SetShaderParameters(ri, viewMatrix);
+
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 		unsigned int stride = self.gridVertexBuffer.ElementSize();
 		unsigned int offset = 0;
 
 		ID3D11Buffer* vertexBuffers[] = {self.gridVertexBuffer.GetBuffer()};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
-		deviceContext->IASetIndexBuffer(self.gridIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
+		/*deviceContext->IASetIndexBuffer(self.gridFilledIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		shaderColour->Render(ri, self.gridFilledIndexBuffer.NumElements(), 0);*/
+
+		deviceContext->IASetIndexBuffer(self.gridLinesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-
-		shaderColour->Render(ri, self.gridIndexBuffer.NumElements(), 0);
+		shaderColour->Render(ri, self.gridLinesIndexBuffer.NumElements(), 0);
 	}
 	if (self.renderAxes)
 	{

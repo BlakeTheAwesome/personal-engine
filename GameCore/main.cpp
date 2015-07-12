@@ -197,7 +197,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				case 4: modelToRender = &model4; break;
 				case 5: modelToRender = &model5; break;
 			}
-
+			
 			if (modelToRender)
 			{
 				modelToRender->Render(renderInterface);
@@ -220,7 +220,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 
 			debugWorld->SetRenderAxes(renderAxes);
-			debugWorld->Render(renderInterface, &colourShader);
+			debugWorld->Render(renderInterface, &colourShader, camera.GetViewMatrix(), camera.GetPosition());
 
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());

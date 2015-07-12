@@ -29,6 +29,13 @@ public:
 	bool IsLoaded() const;
 
 private:
+	struct MatrixBufferType
+	{
+		Matrix world;
+		Matrix view;
+		Matrix projection;
+	};
+
 	ID3D11PixelShader* m_pShader;
 	ID3D11VertexShader* m_vShader;
 	

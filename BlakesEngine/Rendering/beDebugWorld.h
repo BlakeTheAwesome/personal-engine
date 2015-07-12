@@ -20,5 +20,5 @@ public:
 	void SetRenderAxes(bool renderAxes);
 	void SetRenderGrid(bool renderAxes);
 	
-	void Render(beRenderInterface* ri, beShaderColour* colourShader);
+	void Render(beRenderInterface* ri, beShaderColour* colourShader, const Matrix& viewMatrix, const Vec3& cameraPosition);
 };

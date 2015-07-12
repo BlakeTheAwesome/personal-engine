@@ -378,18 +378,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	HRESULT res = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 
-	
-	memset(&rasterDesc, 0, sizeof(rasterDesc));
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
-	rasterDesc.FrontCounterClockwise = false;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
 	res = m_device->CreateRasterizerState(&rasterDesc, &m_wireframeRasterState);
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 
@@ -403,7 +392,7 @@ void beRenderInterface::Impl::InitialiseViewport(float width, float height)
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
 	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
 	viewport.Width = width;
 	viewport.Height = height;
 
