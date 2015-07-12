@@ -235,6 +235,12 @@ class beVector : public NonCopiable
 					}
 					case -1:
 					{
+						if (m_capacity == 0)
+						{
+							Reserve(1);
+							return true;
+						}
+
 						Reserve(m_capacity * 2);
 						return true;
 					}

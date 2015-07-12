@@ -55,6 +55,16 @@ namespace beMath
 		return out;
 	}
 
+	inline float Dot(const beMath::Vec2& a, const beMath::Vec2& b)
+	{
+		return (a.x * b.x) + (a.y * b.y);
+	}
+	
+	inline float Dot(const beMath::Vec3& a, const beMath::Vec3& b)
+	{
+		return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+	}
+
 	inline bool operator==(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
 		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
@@ -64,6 +74,24 @@ namespace beMath
 	{
 		return !(lhs==rhs);
 	}
+
+	inline float SmoothStep(float v)
+	{
+		// x = 3(v^2) - 2(v^3)
+		return v*v*(3-(2*v));
+	}
+
+	inline float Lerp(float min, float max, float lerp)
+	{
+		float range = max-min;
+		return min + lerp*range;
+	}
+
+	inline float SmoothLerp(float min, float max, float lerp)
+	{
+		return Lerp(min, max, SmoothStep(lerp));
+	}
+
 
 	inline beMath::Vec3 normalise(const beMath::Vec3& v)
 	{
@@ -112,6 +140,16 @@ namespace beMath
 		return lhs > rhs ? lhs : rhs;
 	}
 
+	template <typename T>
+	static inline T rotl32(T x, const int n)
+	{
+		return (x << n) | (x >> (32 - n));
+	}
+	template <typename T>
+	static inline T rotr32(T x, const int n)
+	{
+		return (x << n) | (x >> (32 - n));
+	}
 };
 using namespace beMath;
 

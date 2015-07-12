@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstring> // memcpy
+
 #define BE_UNUSED(x) void(sizeof(x))
 
 // Need to use 2 macros do use __LINE__ as a string
