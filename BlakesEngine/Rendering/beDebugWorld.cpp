@@ -124,9 +124,7 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 	beRandom rng;
 	rng.InitFromSystemTime();
 	bePerlinNoise2D noise;
-	noise.Initialise((int)(gridRadius / noiseScale), (int)(gridRadius / noiseScale), rng.Next());
-	noise.Precompute();
-
+	noise.Initialise(rng.Next());
 
 	beVector<VertexColourType> vertices(vertexCount, vertexCount, 0);
 	beVector<u32> lineIndices(vertexCount, vertexCount, 0);

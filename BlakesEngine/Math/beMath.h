@@ -80,6 +80,12 @@ namespace beMath
 		// x = 3(v^2) - 2(v^3)
 		return v*v*(3-(2*v));
 	}
+	
+	inline float SmootherStep(float t)
+	{
+		// From Perlin's improved noise function
+		return t * t * t * (t * (t * 6 - 15) + 10);			// 6t^5 - 15t^4 + 10t^3
+	}
 
 	inline float Lerp(float min, float max, float lerp)
 	{
@@ -90,6 +96,11 @@ namespace beMath
 	inline float SmoothLerp(float min, float max, float lerp)
 	{
 		return Lerp(min, max, SmoothStep(lerp));
+	}
+
+	inline float SmootherLerp(float min, float max, float lerp)
+	{
+		return Lerp(min, max, SmootherStep(lerp));
 	}
 
 

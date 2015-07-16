@@ -82,7 +82,7 @@ void beFlightCamera::Update(float dt)
 		return;
 	}
 
-	float moveSpeedFactor = (1.f + m_gamepad->GetR2());
+	float moveSpeedFactor = (5.f + m_gamepad->GetR2());
 
 	float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
 	float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;

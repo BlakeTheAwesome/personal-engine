@@ -3,25 +3,20 @@
 #include "beRandom.h"
 #include "BlakesEngine/DataStructures/beVector.h"
 
-// Calculates 1 gradient at each whole number, if you need higher fidelity, then we need to scale either here or there.
+// Currently loops at 256.0, might be better to go for 3d and have z = 0, have to test and see.
 class bePerlinNoise2D
 {
 	public:
 	bePerlinNoise2D();
 	~bePerlinNoise2D(){}
 
-	void Initialise(int maxX, int maxY, int randomSeed);
-	void Precompute();
+	void Initialise(int randomSeed);
 
 	float Get(float x, float y);
+	float GetOctave(float x, float y, int octaves, float persistence = 0.5f); // Persistence 1 means take full value of every octave, Persistance 0 means only take first.
 
 	private:
-	void GetGradients(float x, float y, Vec2* g00, Vec2* g01, Vec2* g10, Vec2* g11, float* xOffset, float* yOffset); // x and y offset are values between 0 and 1 for lerping
-
-	beVector<Vec2> m_precomputedGradients;
-	int m_randomSeed;
-	int m_maxX;
-	int m_maxY;
-	bool m_precomputed;
+	float Grad(int hash, float x, float y);
+	beVector<u8> m_hashTable;
 };
 
