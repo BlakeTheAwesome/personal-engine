@@ -16,7 +16,7 @@ class bePerlinNoise2D
 	float GetOctave(float x, float y, int octaves, float persistence = 0.5f); // Persistence 1 means take full value of every octave, Persistance 0 means only take first.
 
 	private:
-	float Grad(int hash, float x, float y);
+	float Grad(int hash, float x, float y, float z);
 	beVector<u8> m_hashTable;
 };
 

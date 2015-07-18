@@ -121,6 +121,7 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 
 
 	float noiseScale = 5.f;
+	float noiseHeight = 8.f;
 	beRandom rng;
 	rng.InitFromSystemTime();
 	bePerlinNoise2D noise;
@@ -158,10 +159,10 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 			float zPos0 = z + xzOffset;
 			float zPos1 = zPos0+gridSize;
 
-			float yPos0 = noise.Get(xPos0/noiseScale, zPos0/noiseScale);
-			float yPos1 = noise.Get(xPos0/noiseScale, zPos1/noiseScale);
-			float yPos2 = noise.Get(xPos1/noiseScale, zPos1/noiseScale);
-			float yPos3 = noise.Get(xPos1/noiseScale, zPos0/noiseScale);
+			float yPos0 = noiseHeight * noise.GetOctave(xPos0/noiseScale, zPos0/noiseScale, 4);
+			float yPos1 = noiseHeight * noise.GetOctave(xPos0/noiseScale, zPos1/noiseScale, 4);
+			float yPos2 = noiseHeight * noise.GetOctave(xPos1/noiseScale, zPos1/noiseScale, 4);
+			float yPos3 = noiseHeight * noise.GetOctave(xPos1/noiseScale, zPos0/noiseScale, 4);
 			Vec4 pos0(xPos0, yPos0, zPos0, 1.f);
 			Vec4 pos1(xPos0, yPos1, zPos1, 1.f);
 			Vec4 pos2(xPos1, yPos2, zPos1, 1.f);
@@ -175,14 +176,14 @@ bool beDebugWorld::Impl::InitGrid(beRenderInterface* ri)
 			vertices[vertexIndex+5].position = pos3;
 			vertices[vertexIndex+6].position = pos3;
 			vertices[vertexIndex+7].position = pos0;
-			vertices[vertexIndex+0].colour = Vec4(yPos0, yPos0, 1.f, 1.f);
-			vertices[vertexIndex+1].colour = Vec4(yPos1, yPos1, 1.f, 1.f);
-			vertices[vertexIndex+2].colour = Vec4(yPos1, yPos1, 1.f, 1.f);
-			vertices[vertexIndex+3].colour = Vec4(yPos2, yPos2, 1.f, 1.f);
-			vertices[vertexIndex+4].colour = Vec4(yPos2, yPos2, 1.f, 1.f);
-			vertices[vertexIndex+5].colour = Vec4(yPos3, yPos3, 1.f, 1.f);
-			vertices[vertexIndex+6].colour = Vec4(yPos3, yPos3, 1.f, 1.f);
-			vertices[vertexIndex+7].colour = Vec4(yPos0, yPos0, 1.f, 1.f);
+			vertices[vertexIndex+0].colour = Vec4(yPos0 / noiseHeight, yPos0 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+1].colour = Vec4(yPos1 / noiseHeight, yPos1 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+2].colour = Vec4(yPos1 / noiseHeight, yPos1 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+3].colour = Vec4(yPos2 / noiseHeight, yPos2 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+4].colour = Vec4(yPos2 / noiseHeight, yPos2 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+5].colour = Vec4(yPos3 / noiseHeight, yPos3 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+6].colour = Vec4(yPos3 / noiseHeight, yPos3 / noiseHeight, 1.f, 1.f);
+			vertices[vertexIndex+7].colour = Vec4(yPos0 / noiseHeight, yPos0 / noiseHeight, 1.f, 1.f);
 			vertexIndex += 8;
 		}
 	}
