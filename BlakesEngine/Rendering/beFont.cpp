@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <algorithm>
+#include <string>
 
 struct VertexWithNormalType
 {
@@ -103,7 +104,7 @@ bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& 
 {
 	std::string line;
 	std::ifstream fstream(filename);
-	while (!fstream.eof())
+	while (fstream && !fstream.eof())
 	{
 		std::getline(fstream, line);
 		if (!ReadLine(line))
@@ -111,6 +112,14 @@ bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& 
 			BE_ASSERT(false);
 			return false;
 		}
+	}
+
+	if (!fstream)
+	{
+		char errmsg[256];
+		strerror_s(errmsg, sizeof(errmsg), errno);
+		bePRINTF("Error %s", errmsg);
+		return false;
 	}
 
 	std::sort(m_characterIndices.begin(), m_characterIndices.end());
