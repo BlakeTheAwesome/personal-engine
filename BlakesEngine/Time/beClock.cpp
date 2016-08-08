@@ -1,5 +1,6 @@
 #include "bePCH.h"
 #include "beClock.h"
+#include "blakesengine/core/beAssert.h"
 
 #include <windows.h>
 
@@ -11,7 +12,7 @@ void beClock::Initialise()
 	LARGE_INTEGER li;
 	if(!QueryPerformanceFrequency(&li))
 	{
-		__asm int 3;
+		BE_ASSERT(false);
 	}
 	__int64 ticksPerSecond = li.QuadPart;
 	s_frequency = 1.0 / (double)(ticksPerSecond);

@@ -13,7 +13,7 @@ namespace beAssert
 		if ( !condition )
 		{
 			bePrintf::bePrintf(true, location, conditionAsString);
-			__asm int 3;
+			__debugbreak();
 		}
 	}
 }

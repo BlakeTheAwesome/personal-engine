@@ -12,8 +12,8 @@ class beStringView
 
 	int Length() const
 	{
-		if (m_beStr) { return m_beStr->size(); } 
-		return strlen(m_cstr);
+		if (m_beStr) { return (int)m_beStr->size(); } 
+		return (int)strlen(m_cstr);
 	}
 
 	const char* c_str() const

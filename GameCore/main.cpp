@@ -268,5 +268,5 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	PIMPL_DELETE(window);
 
 	// return this part of the WM_QUIT message to Windows
-	return msg.wParam;
+	return (int)msg.wParam;
 }

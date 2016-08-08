@@ -45,5 +45,5 @@ public:
 	const Matrix& GetOrthoMatrix() const;
 	const Vec3& GetLightDirection() const;
 
-	void GetVideoCardInfo(beString* name, unsigned int* memorySize);
+	void GetVideoCardInfo(beString* name, size_t* memorySize);
 };

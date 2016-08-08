@@ -267,7 +267,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	beStringConversion::UTF8ToWide(string, &wstring);
 
 	const int vertsPerChar = 6;
-	int numChars = wstring.size();
+	int numChars = (int)wstring.size();
 	int numVerts = numChars * vertsPerChar;
 
 	beVector<VertexInputType> vertices(numVerts, numVerts, 0);

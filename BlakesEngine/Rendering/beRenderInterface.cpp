@@ -50,7 +50,7 @@ PIMPL_DATA(beRenderInterface)
 	float m_height;
 	float m_near;
 	float m_far;
-	unsigned int m_videoCardMemory;
+	size_t m_videoCardMemory;
 	char m_videoCardDescription[128];
 	bool m_vsync_enabled;
 	bool m_wireframe;
@@ -537,7 +537,7 @@ ID3D11DepthStencilView* beRenderInterface::GetDepthStencilView()
 	return self.m_depthStencilView;
 }
 
-void beRenderInterface::GetVideoCardInfo(beString* cardName, unsigned int* memory)
+void beRenderInterface::GetVideoCardInfo(beString* cardName, size_t* memory)
 {
 	cardName->assign(self.m_videoCardDescription);
 	*memory = self.m_videoCardMemory;
