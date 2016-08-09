@@ -6,11 +6,7 @@
 
 class beByteStreamBase
 {
-	#ifdef BYTESTREAMS_AS_U16
-		typedef u16 dataSize;
-	#else
-		typedef u32 dataSize;
-	#endif
+	typedef u32 dataSize;
 	
 	public:
 		void Reset();
