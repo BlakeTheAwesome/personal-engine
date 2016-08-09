@@ -223,7 +223,6 @@
     <ClInclude Include="DataStructures\beArray.h" />
     <ClInclude Include="DataStructures\beByteStreams.h" />
     <ClInclude Include="DataStructures\beVector.h" />
-    <ClInclude Include="DataStructures\DataStructuresConsts.h" />
     <ClInclude Include="External\DirectXTK\Audio.h" />
     <ClInclude Include="External\DirectXTK\CommonStates.h" />
     <ClInclude Include="External\DirectXTK\DDSTextureLoader.h" />
@@ -231,7 +230,10 @@
     <ClInclude Include="External\DirectXTK\Effects.h" />
     <ClInclude Include="External\DirectXTK\GamePad.h" />
     <ClInclude Include="External\DirectXTK\GeometricPrimitive.h" />
+    <ClInclude Include="External\DirectXTK\GraphicsMemory.h" />
+    <ClInclude Include="External\DirectXTK\Keyboard.h" />
     <ClInclude Include="External\DirectXTK\Model.h" />
+    <ClInclude Include="External\DirectXTK\Mouse.h" />
     <ClInclude Include="External\DirectXTK\PrimitiveBatch.h" />
     <ClInclude Include="External\DirectXTK\ScreenGrab.h" />
     <ClInclude Include="External\DirectXTK\SimpleMath.h" />
