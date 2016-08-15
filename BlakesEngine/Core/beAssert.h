@@ -13,8 +13,6 @@
 	#define BE_ASSERT_CODE(x)
 #endif
 
-#define BE_ASSERT_COMPILETIME(x) {int i = 0; switch(i){case 0: case(x):;}}
-
 namespace beAssert
 {
 	void DebugBreak( bool condition, const char* conditionAsString, s8 warningLevel, const char* location );
