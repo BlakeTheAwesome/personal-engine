@@ -62,10 +62,10 @@ private:
 	static bool CompareExtraKerning(const beFont::ExtraKerning* lhs, const beFont::ExtraKerning* rhs, int* res);
 	int GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar) const;
 
-	beVector<CharacterInfo> m_characterInfo;
-	beVector<u64> m_characterIndices; // Binary search for character in here. Top 32 bits are character code, bottom 32 are index into characterInfo.
+	beVector<CharacterInfo> m_characterInfo{128};
+	beVector<u64> m_characterIndices{128}; // Binary search for character in here. Top 32 bits are character code, bottom 32 are index into characterInfo.
 
-	beVector<ExtraKerning> m_extraKerning; // Parse all then sortm, then binary search through this
-	beTexture* m_texture;
-	int m_lineHeight;
+	beVector<ExtraKerning> m_extraKerning{8}; // Parse all then sortm, then binary search through this
+	beTexture* m_texture = nullptr;
+	int m_lineHeight = 0;
 };

@@ -9,24 +9,6 @@
 
 #pragma comment(lib, "xinput.lib")
 
-beGamepad::beGamepad()
-	: m_leftX(0.0f)
-	, m_leftY(0.0f)
-	, m_rightX(0.0f)
-	, m_rightY(0.0f)
-	, m_l2(0.0f)
-	, m_r2(0.0f)
-	, m_index(-1)
-	, m_lastPacketNumber(0)
-	, m_lastStateFlags(0)
-	, m_thisStateFlags(0)
-{
-}
-
-beGamepad::~beGamepad()
-{
-}
-
 bool beGamepad::Init(char index)
 {
 	m_index = index;

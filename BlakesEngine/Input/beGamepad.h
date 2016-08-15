@@ -24,8 +24,8 @@ public:
 		ButtonCount,
 	};
 
-	beGamepad();
-	~beGamepad();
+	beGamepad() = default;
+	~beGamepad() = default;
 
 	bool Init(char index);
 	void Deinit();
@@ -46,17 +46,17 @@ public:
 	bool GetButtonReleased(Button button) const;
 
 private:
-	float m_leftX;
-	float m_leftY;
-	float m_rightX;
-	float m_rightY;
-	float m_l2;
-	float m_r2;
+	float m_leftX = 0.f;
+	float m_leftY = 0.f;
+	float m_rightX = 0.f;
+	float m_rightY = 0.f;
+	float m_l2 = 0.f;
+	float m_r2 = 0.f;
 
-	u32 m_lastPacketNumber;
-	u32 m_lastStateFlags;
-	u32 m_thisStateFlags;
-	char m_index;
-	bool m_connected;
+	u32 m_lastPacketNumber = 0;
+	u32 m_lastStateFlags = 0;
+	u32 m_thisStateFlags = 0;
+	char m_index = -1;
+	bool m_connected = false;
 };
 

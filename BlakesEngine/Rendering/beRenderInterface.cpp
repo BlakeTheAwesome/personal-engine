@@ -32,53 +32,32 @@ PIMPL_DATA(beRenderInterface)
 	Matrix m_worldMatrix;
 	Matrix m_orthoMatrix;
 
-	IDXGISwapChain* m_swapChain;
-	ID3D11Device* m_device; // Mostly memory like stuff
-	ID3D11DeviceContext* m_deviceContext; // Mostly GPUish stuff
-	ID3D11RenderTargetView *m_backBuffer;
-	ID3D11Texture2D* m_depthStencilBuffer;
-	ID3D11DepthStencilState* m_depthDisabledStencilState;
-	ID3D11DepthStencilState* m_depthStencilState;
-	ID3D11DepthStencilView* m_depthStencilView;
-	ID3D11RasterizerState* m_rasterState;
-	ID3D11RasterizerState* m_wireframeRasterState;
-	ID3D11BlendState* m_alphaEnableBlendingState;
-	ID3D11BlendState* m_alphaDisableBlendingState;
+	IDXGISwapChain* m_swapChain = nullptr;
+	ID3D11Device* m_device = nullptr; // Mostly memory like stuff
+	ID3D11DeviceContext* m_deviceContext = nullptr; // Mostly GPUish stuff
+	ID3D11RenderTargetView *m_backBuffer = nullptr;
+	ID3D11Texture2D* m_depthStencilBuffer = nullptr;
+	ID3D11DepthStencilState* m_depthDisabledStencilState = nullptr;
+	ID3D11DepthStencilState* m_depthStencilState = nullptr;
+	ID3D11DepthStencilView* m_depthStencilView = nullptr;
+	ID3D11RasterizerState* m_rasterState = nullptr;
+	ID3D11RasterizerState* m_wireframeRasterState = nullptr;
+	ID3D11BlendState* m_alphaEnableBlendingState = nullptr;
+	ID3D11BlendState* m_alphaDisableBlendingState = nullptr;
 
-	Vec3 m_lightDirection;
-	float m_width;
-	float m_height;
-	float m_near;
-	float m_far;
-	size_t m_videoCardMemory;
+	Vec3 m_lightDirection {0.f, 0.f, 0.f};
+	float m_width = 0.f;
+	float m_height = 0.f;
+	float m_near = 0.f;
+	float m_far = 0.f;
+	size_t m_videoCardMemory = 0;
 	char m_videoCardDescription[128];
-	bool m_vsync_enabled;
-	bool m_wireframe;
+	bool m_vsync_enabled = false;
+	bool m_wireframe = false;
 
 PIMPL_DATA_END
 
 PIMPL_CONSTRUCT(beRenderInterface)
-	: m_swapChain(nullptr)
-	, m_device(nullptr)
-	, m_deviceContext(nullptr)
-	, m_backBuffer(nullptr)
-	
-	, m_vsync_enabled(false)
-	, m_videoCardMemory(0)
-	, m_depthStencilBuffer(nullptr)
-	, m_depthDisabledStencilState(nullptr)
-	, m_depthStencilState(nullptr)
-	, m_depthStencilView(nullptr)
-	, m_rasterState(nullptr)
-	, m_wireframeRasterState(nullptr)
-	, m_alphaEnableBlendingState(nullptr)
-	, m_alphaDisableBlendingState(nullptr)
-	, m_lightDirection(0.f, 0.f, 0.f)
-	, m_width(0.f)
-	, m_height(0.f)
-	, m_near(0.f)
-	, m_far(0.f)
-	, m_wireframe(false)
 {
 	m_videoCardDescription[0] = '\0';
 }

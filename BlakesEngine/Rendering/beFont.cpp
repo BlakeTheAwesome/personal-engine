@@ -21,11 +21,6 @@ struct VertexWithNormalType
 };
 
 beFont::beFont()
-	: m_characterInfo(128)
-	, m_characterIndices(128)
-	, m_extraKerning(8)
-	, m_texture(nullptr)
-	, m_lineHeight(0)
 {
 	m_texture = new beTexture();
 }
