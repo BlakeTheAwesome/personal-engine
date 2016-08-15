@@ -19,8 +19,12 @@
 #include "BlakesEngine\Shaders\beShaderTexture.h"
 #include "BlakesEngine\Shaders\beShaderTexture2d.h"
 #include "BlakesEngine\Shaders\beShaderLitTexture.h"
+#include "BlakesEngine\External\DirectXTK\Keyboard.h"
 
 #include <windows.h>
+
+DirectX::Keyboard s_keyboard;
+
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    PSTR lpCmdLine,
@@ -53,6 +57,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beShaderTexture textureShader;
 	beShaderTexture2d textureShader2d;
 	beShaderLitTexture litTextureShader;
+
+	DirectX::Keyboard::KeyboardStateTracker keyboard;
+
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
 	
 	font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
@@ -114,7 +121,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (doStuff)
 		{
 			gamepad.Update(dt.ToSeconds());
-			if (gamepad.GetButtonReleased(beGamepad::A))
+			keyboard.Update(s_keyboard.GetState());
+
+			if (gamepad.GetButtonReleased(beGamepad::A) || keyboard.IsKeyPressed(DirectX::Keyboard::W))
 			{
 				renderInterface->ToggleWireframe();
 			}
@@ -269,4 +278,23 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// return this part of the WM_QUIT message to Windows
 	return (int)msg.wParam;
+}
+
+
+bool GameWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, int* returnCode)
+{
+	switch(message)
+	{
+		case WM_DESTROY:
+		{
+			// close the application entirely
+			PostQuitMessage(0);
+			*returnCode = 0;
+			return true;
+		} break;
+	}
+
+	s_keyboard.ProcessMessage(message, wParam, lParam);
+
+	return false;
 }

@@ -72,23 +72,16 @@ int beWindow::GetHeight() const
 	return self.m_height;
 }
 
-// this is the main message handler for the program
+extern bool GameWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, int* returnCode);
+
 LRESULT CALLBACK beWindow::Impl::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//Impl* pThis = (Impl*)lParam;
+	int retCode = 0;
+	if (GameWindowProc(hWnd, message, wParam, lParam, &retCode))
+	{
+		return retCode;
+	}
 
-    // sort through and find what code to run for the message given
-    switch(message)
-    {
-        // this message is read when the window is closed
-        case WM_DESTROY:
-            {
-                // close the application entirely
-                PostQuitMessage(0);
-                return 0;
-            } break;
-    }
-
-    // Handle any messages the switch statement didn't
+    // Handle any messages the game didn't
     return DefWindowProc (hWnd, message, wParam, lParam);
 }
