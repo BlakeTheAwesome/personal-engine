@@ -8,14 +8,11 @@
 // Updated with improved Perlin noise, found at: http://flafla2.github.io/2014/08/09/perlinnoise.html
 
 bePerlinNoise2D::bePerlinNoise2D()
-	: m_hashTable(512, 0)
 {
 }
 
 void bePerlinNoise2D::Initialise(int randomSeed)
 {
-	BE_ASSERT(m_hashTable.Count() == 0);
-
 	u8 hashTable[256];
 	for (int i = 0; i < 256; i++)
 	{
@@ -24,7 +21,6 @@ void bePerlinNoise2D::Initialise(int randomSeed)
 	std::shuffle(hashTable, hashTable + 256, std::default_random_engine(randomSeed));
 
 	// We have this at double the size so that the p[p[p[x0]+y0]+z0]; code doesn't run off the end (could also mask it with 0xff at each step).
-	m_hashTable.ReserveAndSetCount(512);
 	for (int i = 0; i < 512; i++)
 	{
 		m_hashTable[i] = hashTable[i & 0xff];
@@ -83,8 +79,6 @@ float bePerlinNoise2D::Get(float x, float y)
 	float u = beMath::SmootherStep(xf);
 	float v = beMath::SmootherStep(yf);
 	float w = beMath::SmootherStep(zf);
-
-	BE_ASSERT(m_hashTable.Count());
 
 	u8* p = m_hashTable.begin();
 	

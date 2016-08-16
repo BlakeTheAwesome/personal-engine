@@ -5,7 +5,11 @@ template<typename T, int CAPACITY>
 class beArray
 {
 	public:
+		typedef T value_type;
+		enum { element_size = sizeof(T) };
+
 		beArray() = default;
+		beArray(const std::initializer_list<T>& list) : m_buffer{list} {}
 		~beArray() = default;
 		
 		void SetAll(const T& v)

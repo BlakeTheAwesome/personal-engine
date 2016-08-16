@@ -3,6 +3,7 @@
 
 #include "BlakesEngine\Core\beAssert.h"
 #include "BlakesEngine\Core\bePrintf.h"
+#include "BlakesEngine\DataStructures\beArray.h"
 #include "BlakesEngine\DataStructures\beVector.h"
 #include "beRenderInterface.h"
 #include "beRenderBuffer.h"
@@ -67,10 +68,13 @@ void beDebugWorld::Deinit()
 
 bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 {
-	int vertexCount = 6;
+	enum
+	{
+		vertexCount = 6,
+	};
 
-	beVector<VertexColourType> vertices(vertexCount, vertexCount, 0);
-	beVector<u32> indices(vertexCount, vertexCount, 0);
+	beArray<VertexColourType, vertexCount> vertices;
+	beArray<u32, vertexCount> indices;
 	
 	// Load the vertex array with data.
 	float AxisLength = 5.f;

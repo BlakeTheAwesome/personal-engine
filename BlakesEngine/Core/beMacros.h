@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstring> // memcpy
+#include <malloc.h> // aligned_alloc
 
 #define BE_UNUSED(x) void(sizeof(x))
 
@@ -14,6 +15,7 @@
 #define BE_SAFE_DELETE(x) delete(x); x = nullptr;
 
 #define BE_MALLOC malloc
+#define BE_MALLOC_ALIGNED(alignment, size) _aligned_malloc(size, alignment) // aligned_alloc not found?
 #define BE_FREE(x) free(x)
 #define BE_SAFE_FREE(x) if (x){free(x); x = nullptr;};
 

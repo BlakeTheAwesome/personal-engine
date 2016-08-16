@@ -3,58 +3,150 @@
 #include "blakesengine/core/beAssert.h"
 
 #include <type_traits>
+
+template <typename T, int CAPACITY>
+struct beVectorFixedPolicy
+{
+	beVectorFixedPolicy() = default;
+	beVectorFixedPolicy(int capacity, int increaseBy, const std::initializer_list<T>& list) 
+		: m_buffer{list}
+		, m_count{(int)list.size()}
+	{
+		BE_ASSERT(increaseBy == 0);
+		BE_ASSERT(capacity <= CAPACITY); 
+		BE_ASSERT(m_count <= CAPACITY);
+	}
+	beVectorFixedPolicy(int capacity, int increaseBy)
+	{
+		BE_ASSERT(increaseBy == 0);
+		BE_ASSERT(capacity <= CAPACITY)
+	}
+
+	void Reserve(int capacity)
+	{
+		BE_ASSERT(capacity <= CAPACITY);
+	}
+	void Release(){}
+	bool CheckRoomForAlloc() const
+	{
+		return m_count < CAPACITY;
+	}
+
+	int Capacity() const { return CAPACITY; }
+
+	int m_count = 0;
+	T m_buffer[CAPACITY];
+};
+
+template <typename T>
+struct beVectorMallocPolicy : public NonCopiable
+{
+	beVectorMallocPolicy() = delete;
+	beVectorMallocPolicy(int capacity, int increaseBy, const std::initializer_list<T>& list)
+	{
+		BE_ASSERT((int)list.size() <= capacity);
+		Reserve(capacity);
+		for (const T& iter : list)
+		{
+			BE_NEW(m_buffer+m_count++) T(iter);
+		}
+	}
+
+	beVectorMallocPolicy(int capacity, int increaseBy)
+		: m_increaseBy(increaseBy)
+	{
+		Reserve(capacity);
+	}
+
+	void Reserve(int capacity)
+	{
+		if (capacity > m_capacity)
+		{
+			T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*capacity);
+			if (m_count > 0)
+			{
+				BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
+				BE_SAFE_FREE(m_buffer);
+			}
+			m_buffer = newBuffer;
+			m_capacity = capacity;
+		}
+	}
+	void Release()
+	{
+		BE_SAFE_FREE(m_buffer);
+	}
+
+	bool CheckRoomForAlloc()
+	{
+		if (m_count >= m_capacity)
+		{
+			switch (m_increaseBy)
+			{
+				case 0:
+				{
+					BE_ASSERT(false);
+					return false;
+				}
+				case -1:
+				{
+					if (m_capacity == 0)
+					{
+						Reserve(1);
+						return true;
+					}
+
+					Reserve(m_capacity * 2);
+					return true;
+				}
+				default:
+				{
+					Reserve(m_capacity + m_increaseBy);
+					return true;
+				}
+			}
+		}
+		return true;
+	}
+
+	int Capacity() const { return m_capacity; }
+
+	T* m_buffer = nullptr;
+	int m_count = 0;
+	int m_increaseBy = -1;
+	int m_capacity = 0;
+};
+
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
-template<typename T>
-class beVector : public NonCopiable
+template<typename T, typename Policy>
+class beVectorBase : Policy
 {
 	public:
 		typedef T value_type;
 		enum { element_size = sizeof(T) };
-
-		explicit beVector(int capacity, int increaseBy=-1)
-			: m_buffer(nullptr)
-			, m_capacity(0)
-			, m_increaseBy(increaseBy)
-			, m_count(0)
+		
+		beVectorBase() = default;
+		beVectorBase(int capacity, int increaseBy, const std::initializer_list<T>& list) : Policy(capacity, increaseBy, list) {}
+		beVectorBase(int capacity, int increaseBy)
+			: Policy(capacity, increaseBy)
 		{
-			Reserve(capacity);
 		}
 		
-		beVector(int capacity, int count, int increaseBy)
-			: m_buffer(nullptr)
-			, m_capacity(0)
-			, m_increaseBy(increaseBy)
-			, m_count(0)
-		{
-			Reserve(capacity);
-			SetCount(count);
-		}
-		
-		~beVector()
+		~beVectorBase()
 		{
 			Release();
 		}
 		
 		void Release()
 		{
-			DestructElements(0, m_capacity);
-			BE_SAFE_FREE(m_buffer);
+			DestructElements(0, Capacity());
 			m_count = 0;
+			Policy::Release();
 		}
 		
-		void Reserve(int count)
+		void Reserve(int capacity)
 		{
-			if (count > m_capacity)
-			{
-				T* newBuffer = (T*)BE_MALLOC(sizeof(T)*count);
-				if (m_count > 0)
-				{
-					BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
-					BE_SAFE_FREE(m_buffer);
-				}
-				m_buffer = newBuffer;
-				m_capacity = count;
-			}
+			Policy::Reserve(capacity);
 		}
 		
 		void ReserveAndSetCount(int count)
@@ -65,14 +157,15 @@ class beVector : public NonCopiable
 
 		void SetCount(int count)
 		{
-			BE_ASSERT(count <= m_capacity);
-			if (count > m_capacity) // growing
+			const int capacity = Capacity();
+			BE_ASSERT(count <= capacity);
+			if (count > capacity) // growing
 			{
-				ConstructElements(m_capacity, count);
+				ConstructElements(capacity, count);
 			}
-			else if (count < m_capacity) // shrinking
+			else if (count < capacity) // shrinking
 			{
-				DestructElements(count, m_capacity);
+				DestructElements(count, capacity);
 			}
 			m_count = count;
 		}
@@ -80,6 +173,11 @@ class beVector : public NonCopiable
 		int Count() const
 		{
 			return m_count;
+		}
+		
+		int Capacity() const
+		{
+			return Policy::Capacity();
 		}
 		
 		int Insert(T& that)
@@ -200,8 +298,6 @@ class beVector : public NonCopiable
 		}
 		
 	private:
-		beVector() = delete;
-
 		template <bool isPod=std::is_pod<T>::value> void ConstructElements(int startElement, int endElement);
 		template<> void ConstructElements<true>(int startElement, int endElement) {}
 		template<> void ConstructElements<false>(int startElement, int endElement)
@@ -224,39 +320,23 @@ class beVector : public NonCopiable
 
 		bool CheckRoomForAlloc()
 		{
-			if (m_count >= m_capacity)
-			{
-				switch (m_increaseBy)
-				{
-					case 0:
-					{
-						BE_ASSERT(false);
-						return false;
-					}
-					case -1:
-					{
-						if (m_capacity == 0)
-						{
-							Reserve(1);
-							return true;
-						}
-
-						Reserve(m_capacity * 2);
-						return true;
-					}
-					default:
-					{
-						Reserve(m_capacity + m_increaseBy);
-						return true;
-					}
-				}
-			}
-			return true;
+			return Policy::CheckRoomForAlloc();
 		}
-		
-	protected:
-		T* m_buffer;
-		int m_count;
-		int m_capacity;
-		int m_increaseBy;
+};
+
+template <typename T>
+class beVector : public beVectorBase<T, beVectorMallocPolicy<T>>
+{
+	public:
+	explicit beVector(int capacity, int increaseBy=-1) : beVectorBase(capacity, increaseBy) {}
+	explicit beVector(int capacity, int count, int increaseBy) : beVectorBase(capacity, increaseBy) { SetCount(count); }
+	beVector(int capacity, int increaseBy, const std::initializer_list<T>& list) : beVectorBase(capacity, increaseBy, list) {}
+};
+
+template <typename T, int Capacity>
+class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, Capacity>>
+{
+	public:
+	beFixedVector() = default;
+	beFixedVector(const std::initializer_list<T>& list) : beVectorBase(Capacity, 0, list) {}
 };

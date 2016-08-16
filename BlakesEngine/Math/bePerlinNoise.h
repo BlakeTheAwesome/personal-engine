@@ -1,7 +1,7 @@
 #pragma once
 #include "beMath.h"
 #include "beRandom.h"
-#include "BlakesEngine/DataStructures/beVector.h"
+#include "BlakesEngine/DataStructures/beArray.h"
 
 // Currently loops at 256.0, might be better to go for 3d and have z = 0, have to test and see.
 class bePerlinNoise2D
@@ -17,6 +17,6 @@ class bePerlinNoise2D
 
 	private:
 	float Grad(int hash, float x, float y, float z);
-	beVector<u8> m_hashTable;
+	beArray<u8, 512> m_hashTable;
 };
 

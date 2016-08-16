@@ -3,7 +3,7 @@
 
 #include "BlakesEngine\Core\beAssert.h"
 #include "BlakesEngine\Core\bePrintf.h"
-#include "BlakesEngine\DataStructures\beVector.h"
+#include "BlakesEngine\DataStructures\beArray.h"
 #include "BlakesEngine\Rendering\beRenderInterface.h"
 #include "BlakesEngine\Rendering\beTexture.h"
 
@@ -72,10 +72,12 @@ bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 
 	m_size = Vec2(width, height);
 
-	int vertexCount = 6;
-	int indexCount = 6;
-	beVector<VertexType> vertices(vertexCount, vertexCount, 0);
-	beVector<u32> indices(indexCount, indexCount, 0);
+	enum {
+		vertexCount = 6,
+		indexCount = 6,
+	};
+	beArray<VertexType, vertexCount> vertices;
+	beArray<u32, indexCount> indices;
 
 	// Load the vertex array with data.
 	//height = 1.f; width = 1.f;
