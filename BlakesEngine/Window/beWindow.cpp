@@ -1,20 +1,22 @@
 #include "bePCH.h"
 #include "beWindow.h"
 
-#include "BlakesEngine\Core/beMacros.h"
+#include "BlakesEngine/Core/beMacros.h"
+#include "BlakesEngine/Platform/beSystemEventManager.h"
 #include <windows.h>
 
-PIMPL_DATA(beWindow, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		HWND m_hWnd;
+		beSystemEventManager* m_systemEventManager;
+		HWND m_hWnd{nullptr};
 		int m_width;
 		int m_height;
 PIMPL_DATA_END
 
-PIMPL_CONSTRUCT_ARGS(beWindow, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
-PIMPL_CONSTRUCT_ARGS_VARS(beWindow, _hInstance, windowName, windowWidth, windowHeight, fullscreen)
-PIMPL_CONSTRUCT_ARGS_BODY(beWindow, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
-	: m_hWnd(nullptr)
+PIMPL_CONSTRUCT_ARGS(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+PIMPL_CONSTRUCT_ARGS_VARS(beWindow, systemEventManager, _hInstance, windowName, windowWidth, windowHeight, fullscreen)
+PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+: m_systemEventManager(systemEventManager)
 , m_width(windowWidth)
 , m_height(windowHeight)
 {
@@ -46,7 +48,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, void* _hInstance, const beString& windowName
 							nullptr,    // parent window
 							nullptr,    // we aren't using menus, nullptr
 							hInstance,    // application handle
-							this);    // callback thing?
+							this);
 
 	// display the window on the screen
 	ShowWindow(m_hWnd, SW_SHOW);
@@ -72,16 +74,17 @@ int beWindow::GetHeight() const
 	return self.m_height;
 }
 
-extern bool GameWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, int* returnCode);
-
 LRESULT CALLBACK beWindow::Impl::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int retCode = 0;
-	if (GameWindowProc(hWnd, message, wParam, lParam, &retCode))
-	{
-		return retCode;
-	}
+	//switch (message)
+	//{
+	//	case WM_INITDIALOG:
+	//	{
+	//		auto pThis = (Impl*)lParam;
+	//		SetWindowLongPtr(hWnd, DWLP_USER, (LONG_PTR)pThis->m_systemEventManager);
+	//		return TRUE;
+	//	}
+	//}
 
-    // Handle any messages the game didn't
-    return DefWindowProc (hWnd, message, wParam, lParam);
+	return beSystemEventManager::WindowProc(hWnd, message, wParam, lParam);
 }

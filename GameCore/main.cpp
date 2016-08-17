@@ -31,11 +31,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    PSTR lpCmdLine,
                    int nCmdShow)
 {
+	beSystemEventManager* systemEventManager = PIMPL_NEW(beSystemEventManager)();
+
 	//beTypeTests::RunTypeTests();
 	beClock::Initialise();
 
 	beString windowName("TestWindow");
-	auto window = PIMPL_NEW(beWindow)(&hInstance, windowName, 1024, 768, false);
+	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1024, 768, false);
 	auto renderInterface = PIMPL_NEW(beRenderInterface)();
 	renderInterface->Init(window, 0.01f, 100.00f, true);
 
@@ -96,25 +98,50 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	bool renderAxes = true;
 	bool haveWrittenToTexture = false;
 
-	bool go = true;
-	MSG msg = {0};
-	while(go)
-	{
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-		{
-			// translate keystroke messages into the right format
-			TranslateMessage(&msg);
+	struct Win32Callback {
+		bool quit = false;
+		int retCode = 0;
+	} win32Callback;
 
-			// send the message to the WindowProc function
-			DispatchMessage(&msg);
-			//bePRINTF("recieved message:0x%08x", msg.message);
-			
-			if(msg.message == WM_QUIT)
+	beSystemEventManager::CallbackId win32CallbackId = systemEventManager->RegisterCallbackWin32Pump(&win32Callback, [](const MSG& msg, void* userdata) {
+		auto* win32Callback = (Win32Callback*)userdata;
+		if(msg.message == WM_QUIT)
+		{
+			win32Callback->quit = true;
+			win32Callback->retCode = (int)msg.wParam;
+		}
+	});
+
+	struct WinProcCallback {
+		HWND hWnd;
+	} winProcCallback {*(HWND*)window->GetHWnd()};
+
+	beSystemEventManager::CallbackId winProcCallbackId = systemEventManager->RegisterCallbackWinProc(&winProcCallback, [](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, void* userdata, LRESULT* result) -> bool {
+		auto* winProcCallback = (WinProcCallback*)userdata;
+		if (hWnd != winProcCallback->hWnd)
+		{
+			return false;
+		}
+		switch(message)
+		{
+			case WM_DESTROY:
 			{
-				go = false;
-			}
+				// close the application entirely
+				PostQuitMessage(0);
+				*result = 0;
+				return true;
+			} break;
 		}
 
+		s_keyboard.ProcessMessage(message, wParam, lParam);
+
+		return false;
+	});
+
+
+	while(!win32Callback.quit)
+	{
+		systemEventManager->Update();
 
 		beTimeValue dt;
 		bool doStuff = frameTimer.StepFrame(&dt);
@@ -130,7 +157,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 			if (gamepad.GetButtonReleased(beGamepad::B))
 			{
-				go = false;
+				win32Callback.quit = true;
 			}
 			if (gamepad.GetButtonReleased(beGamepad::Y))
 			{
@@ -253,6 +280,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		}
 	}
+	systemEventManager->DeregisterCallbackWinProc(winProcCallbackId);
+	systemEventManager->DeregisterCallbackWin32Pump(win32CallbackId);
 
 	camera.DetachGamepad();
 	gamepad.Deinit();
@@ -276,26 +305,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	renderInterface->Deinit();
 	PIMPL_DELETE(renderInterface);
 	PIMPL_DELETE(window);
+	PIMPL_DELETE(systemEventManager);
 
 	// return this part of the WM_QUIT message to Windows
-	return (int)msg.wParam;
+	return win32Callback.retCode;
 }
 
-
-bool GameWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, int* returnCode)
-{
-	switch(message)
-	{
-		case WM_DESTROY:
-		{
-			// close the application entirely
-			PostQuitMessage(0);
-			*returnCode = 0;
-			return true;
-		} break;
-	}
-
-	s_keyboard.ProcessMessage(message, wParam, lParam);
-
-	return false;
-}

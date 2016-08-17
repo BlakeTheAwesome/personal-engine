@@ -189,6 +189,7 @@
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Math\bePerlinNoise.cpp" />
     <ClCompile Include="Math\beRandom.cpp" />
+    <ClCompile Include="Platform\beSystemEventManager.cpp" />
     <ClCompile Include="Rendering\beBitmap.cpp" />
     <ClCompile Include="Rendering\beDebugWorld.cpp" />
     <ClCompile Include="Rendering\beFont.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="Math\beMath.h" />
     <ClInclude Include="Math\bePerlinNoise.h" />
     <ClInclude Include="Math\beRandom.h" />
+    <ClInclude Include="Platform\beSystemEventManager.h" />
     <ClInclude Include="Rendering\beBitmap.h" />
     <ClInclude Include="Rendering\beDebugWorld.h" />
     <ClInclude Include="Rendering\beFont.h" />
