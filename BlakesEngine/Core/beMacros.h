@@ -18,6 +18,7 @@
 #define BE_MALLOC_ALIGNED(alignment, size) _aligned_malloc(size, alignment) // aligned_alloc not found?
 #define BE_FREE(x) free(x)
 #define BE_SAFE_FREE(x) if (x){free(x); x = nullptr;};
+#define BE_FREE_ALIGNED(x) if (x){_aligned_free(x); x = nullptr;};
 
 #define BE_SAFE_RELEASE(x) if (x){ x->Release(); x = nullptr;};
 #define BE_SAFE_DESTROY(x) if (x){ x->Destroy(); x = nullptr;};

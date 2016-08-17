@@ -8,13 +8,16 @@ template <typename T, int CAPACITY>
 struct beVectorFixedPolicy
 {
 	beVectorFixedPolicy() = default;
-	beVectorFixedPolicy(int capacity, int increaseBy, const std::initializer_list<T>& list) 
-		: m_buffer{list}
-		, m_count{(int)list.size()}
+	beVectorFixedPolicy(int capacity, int increaseBy, const std::initializer_list<T>& list)
 	{
 		BE_ASSERT(increaseBy == 0);
 		BE_ASSERT(capacity <= CAPACITY); 
-		BE_ASSERT(m_count <= CAPACITY);
+		BE_ASSERT((int)list.size() <= capacity);
+
+		for (const T& iter : list)
+		{
+			BE_NEW(m_buffer+m_count++) T(iter);
+		}
 	}
 	beVectorFixedPolicy(int capacity, int increaseBy)
 	{
@@ -35,7 +38,7 @@ struct beVectorFixedPolicy
 	int Capacity() const { return CAPACITY; }
 
 	int m_count = 0;
-	T m_buffer[CAPACITY];
+	typename std::aligned_storage<sizeof(T), alignof(T)>::type m_buffer[CAPACITY];
 };
 
 template <typename T>
@@ -66,7 +69,7 @@ struct beVectorMallocPolicy : public NonCopiable
 			if (m_count > 0)
 			{
 				BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
-				BE_SAFE_FREE(m_buffer);
+				BE_FREE_ALIGNED(m_buffer);
 			}
 			m_buffer = newBuffer;
 			m_capacity = capacity;
@@ -74,7 +77,7 @@ struct beVectorMallocPolicy : public NonCopiable
 	}
 	void Release()
 	{
-		BE_SAFE_FREE(m_buffer);
+		BE_FREE_ALIGNED(m_buffer);
 	}
 
 	bool CheckRoomForAlloc()
@@ -139,7 +142,7 @@ class beVectorBase : Policy
 		
 		void Release()
 		{
-			DestructElements(0, Capacity());
+			DestructElements(0, m_count-1);
 			m_count = 0;
 			Policy::Release();
 		}
@@ -165,7 +168,7 @@ class beVectorBase : Policy
 			}
 			else if (count < capacity) // shrinking
 			{
-				DestructElements(count, capacity);
+				DestructElements(count, m_count-1);
 			}
 			m_count = count;
 		}
@@ -188,8 +191,50 @@ class beVectorBase : Policy
 			}
 
 			int index = m_count++;
-			m_buffer[index] = that;
+			BE_NEW(&m_buffer[index]) T(that);
 			return index;
+		}
+
+		bool Contains(T* ptr) const
+		{
+			return ptr >= begin() && ptr < end();
+		}
+
+		void Remove(T* ptr)
+		{
+			BE_ASSERT(Contains(ptr));
+			Remove(ptr - begin());
+		}
+
+		void QuickRemove(T* ptr)
+		{
+			BE_ASSERT(Contains(ptr));
+			QuickRemove((int)(ptr - begin()));
+		}
+		
+		void Remove(int index)
+		{
+			BE_ASSERT(index >= 0 && index < m_count);
+			DestructElements(index, index);
+			const int endIndex = m_count - 1;
+			const int numToMove = endIndex - index;
+			if (numToMove > 0)
+			{
+				memmove(&m_buffer[index], &m_buffer[index+1], sizeof(T) * numToMove);
+			}
+			m_count--;
+		}
+
+		void QuickRemove(int index)
+		{
+			BE_ASSERT(index >= 0 && index < m_count);
+			DestructElements(index, index);
+			const int endIndex = m_count - 1;
+			if (index < endIndex)
+			{
+				memcpy(&m_buffer[index], &m_buffer[endIndex], sizeof(T));
+			}
+			m_count--;
 		}
 
 		T* AllocateNew()
@@ -199,14 +244,14 @@ class beVectorBase : Policy
 				return nullptr;
 			}
 			int index = m_count++;
-			return &m_buffer[index];
+			return (T*)&m_buffer[index];
 		}
 
-		T* AddNew()
+		template<class ...Args>
+		T* AddNew(Args... args)
 		{
 			T* obj = AllocateNew();
-			obj->T();
-			return obj;
+			return BE_NEW(obj) T{args...};
 		}
 
 		T& operator[](int i)
@@ -222,33 +267,33 @@ class beVectorBase : Policy
 		T& At(int i)
 		{
 			BE_ASSERT(i <= m_count);
-			return m_buffer[i];
+			return *(T*)&m_buffer[i];
 		}
 
 		const T& At(int i) const
 		{
 			BE_ASSERT(i <= m_count);
-			return m_buffer[i];
+			return *(T*)&m_buffer[i];
 		}
 
 		T* begin()
 		{
-			return m_buffer;
+			return (T*)m_buffer;
 		}
 
 		T* end()
 		{
-			return m_buffer + m_count;
+			return (T*)m_buffer + m_count;
 		}
 
 		const T* begin() const
 		{
-			return m_buffer;
+			return (const T*)m_buffer;
 		}
 
 		const T* end() const
 		{
-			return m_buffer + m_count;
+			return (const T*)m_buffer + m_count;
 		}
 
 		typedef bool (*CompareFn)(const T*, const T*, int*);
@@ -266,7 +311,7 @@ class beVectorBase : Policy
 			int index = upperBound / 2;
 			while (true)
 			{
-				const T* entry = &m_buffer[index];
+				const T* entry = &At(index);
 				
 				int diff;
 				bool res = fn(target, entry, &diff);
@@ -312,9 +357,9 @@ class beVectorBase : Policy
 		template<> void DestructElements<true>(int startElement, int endElement) {}
 		template<> void DestructElements<false>(int startElement, int endElement)
 		{
-			for (int i = startElement; i < endElement; i++)
+			for (int i = startElement; i <= endElement; i++)
 			{
-					m_buffer[i].~T();
+					At(i).~T();
 			}
 		}
 
@@ -333,10 +378,10 @@ class beVector : public beVectorBase<T, beVectorMallocPolicy<T>>
 	beVector(int capacity, int increaseBy, const std::initializer_list<T>& list) : beVectorBase(capacity, increaseBy, list) {}
 };
 
-template <typename T, int Capacity>
-class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, Capacity>>
+template <typename T, int CAPACITY>
+class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 {
 	public:
 	beFixedVector() = default;
-	beFixedVector(const std::initializer_list<T>& list) : beVectorBase(Capacity, 0, list) {}
+	beFixedVector(const std::initializer_list<T>& list) : beVectorBase(CAPACITY, 0, list) {}
 };
