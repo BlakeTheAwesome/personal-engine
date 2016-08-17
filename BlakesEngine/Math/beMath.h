@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#include "BlakesEngine\Core/bePrintf.h"
+#include "BlakesEngine/Core/bePrintf.h"
 #define PI XM_PI
 #define RAD_TO_DEG(r) (r * (180.0f / PI))
 #define DEG_TO_RAD(d) (d * (PI / 180.0f))

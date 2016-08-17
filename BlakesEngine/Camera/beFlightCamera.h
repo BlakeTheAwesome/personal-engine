@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine\Math\beMath.h"
+#include "BlakesEngine/Math/beMath.h"
 
 class beGamepad;
 

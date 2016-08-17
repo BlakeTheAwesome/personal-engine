@@ -1,7 +1,7 @@
 #pragma once
 #include "beRenderBuffer.h"
-#include "BlakesEngine\Core\beString.h"
-#include "BlakesEngine\Math\beMath.h"
+#include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Math/beMath.h"
 
 class beRenderInterface;
 class beTexture;

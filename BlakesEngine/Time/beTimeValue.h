@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BlakesEngine\Core/beTypes.h"
+#include "BlakesEngine/Core/beTypes.h"
 
 class beTimeValue
 {

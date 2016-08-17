@@ -1,6 +1,6 @@
 #pragma once
-#include "BlakesEngine\Core\beString.h"
-#include "BlakesEngine\Math\beMath.h"
+#include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Math/beMath.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
 
 struct ID3D10Blob;

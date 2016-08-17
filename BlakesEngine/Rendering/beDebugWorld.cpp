@@ -1,13 +1,13 @@
 #include "bePCH.h"
 #include "beDebugWorld.h"
 
-#include "BlakesEngine\Core\beAssert.h"
-#include "BlakesEngine\Core\bePrintf.h"
-#include "BlakesEngine\DataStructures\beArray.h"
-#include "BlakesEngine\DataStructures\beVector.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/bePrintf.h"
+#include "BlakesEngine/DataStructures/beArray.h"
+#include "BlakesEngine/DataStructures/beVector.h"
 #include "beRenderInterface.h"
 #include "beRenderBuffer.h"
-#include "BlakesEngine\Shaders/beShaderColour.h"
+#include "BlakesEngine/Shaders/beShaderColour.h"
 #include "BlakesEngine/Math/beRandom.h"
 #include "BlakesEngine/Math/bePerlinNoise.h"
 

@@ -1,11 +1,11 @@
 #include "bePCH.h"
 #include "beBitmap.h"
 
-#include "BlakesEngine\Core\beAssert.h"
-#include "BlakesEngine\Core\bePrintf.h"
-#include "BlakesEngine\DataStructures\beArray.h"
-#include "BlakesEngine\Rendering\beRenderInterface.h"
-#include "BlakesEngine\Rendering\beTexture.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/bePrintf.h"
+#include "BlakesEngine/DataStructures/beArray.h"
+#include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/Rendering/beTexture.h"
 
 #include <d3d11.h>
 

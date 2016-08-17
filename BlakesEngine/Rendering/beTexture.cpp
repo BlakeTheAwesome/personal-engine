@@ -1,10 +1,10 @@
 #include "bePCH.h"
 #include "beTexture.h"
 
-#include "BlakesEngine\Core\beAssert.h"
-#include "BlakesEngine\Core\beString.h"
-#include "BlakesEngine\Rendering\beRenderInterface.h"
-#include "BlakesEngine\External/DirectXTK/DDSTextureLoader.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 
 beTexture::beTexture()
 	: m_texture(nullptr)
