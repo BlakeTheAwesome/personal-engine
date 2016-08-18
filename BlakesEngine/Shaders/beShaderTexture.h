@@ -16,7 +16,7 @@ class beRenderInterface;
 class beShaderTexture
 {
 public:
-	beShaderTexture();
+	beShaderTexture() = default;
 	~beShaderTexture();
 
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
@@ -32,14 +32,13 @@ public:
 	bool IsLoaded() const;
 
 private:
-	ID3D11PixelShader* m_pShader;
-	ID3D11VertexShader* m_vShader;
-	ID3D11SamplerState* m_sampleState;
-
-	ID3D11InputLayout* m_layout;
+	ID3D11PixelShader* m_pShader = nullptr;
+	ID3D11VertexShader* m_vShader = nullptr;
+	ID3D11SamplerState* m_sampleState = nullptr;
+	ID3D11InputLayout* m_layout = nullptr;
 	beRenderBuffer m_matrixBuffer;
 	beRenderBuffer m_colourBuffer;
 
-	Vec4 m_colour;
-	bool m_colourDirty;
+	Vec4 m_colour{1.f,1.f,1.f,1.f};
+	bool m_colourDirty = true;
 };

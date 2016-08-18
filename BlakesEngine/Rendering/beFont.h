@@ -1,11 +1,11 @@
 #pragma once
 #include "beRenderBuffer.h"
+#include "beTexture.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Math/beMath.h"
 
 class beRenderInterface;
-class beTexture;
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
@@ -28,8 +28,8 @@ public:
 		float height;
 	};
 
-	beFont();
-	~beFont();
+	beFont() = default;
+	~beFont() = default;
 
 	bool Init(beRenderInterface* ri, const char* filename, const beWString& textureFilename);
 	void Deinit();
@@ -37,7 +37,7 @@ public:
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
 	bool CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const;
 	
-	beTexture* GetTexture() const;
+	const beTexture* GetTexture() const;
 
 private:
 	
@@ -66,6 +66,6 @@ private:
 	beFixedVector<u64, 128> m_characterIndices; // Binary search for character in here. Top 32 bits are character code, bottom 32 are index into characterInfo.
 
 	beFixedVector<ExtraKerning, 8> m_extraKerning; // Parse all then sortm, then binary search through this
-	beTexture* m_texture = nullptr;
+	beTexture m_texture;
 	int m_lineHeight = 0;
 };

@@ -10,7 +10,7 @@ class beTexture : NonCopiable
 {
 public:
 
-	beTexture();
+	beTexture() = default;
 	~beTexture();
 
 	bool Init(beRenderInterface* ri, const beWString& textureFilename);
@@ -23,18 +23,18 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 
-	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView* GetTexture() const;
 
 	void SetAsTarget(beRenderInterface* ri);
 	void Clear(beRenderInterface* ri, Vec4 clearColour);
 
 private:
 	D3D11_TEXTURE2D_DESC m_desc;
-	ID3D11ShaderResourceView* m_texture;
-	ID3D11Texture2D* m_texture2d;
+	mutable ID3D11ShaderResourceView* m_texture = nullptr;
+	ID3D11Texture2D* m_texture2d = nullptr;
 
 	// When writable
-	ID3D11RenderTargetView* m_renderTargetView;
-	ID3D11Texture2D* m_depthStencilBuffer;
-	ID3D11DepthStencilView* m_depthStencilView;
+	ID3D11RenderTargetView* m_renderTargetView = nullptr;
+	ID3D11Texture2D* m_depthStencilBuffer = nullptr;
+	ID3D11DepthStencilView* m_depthStencilView = nullptr;
 };

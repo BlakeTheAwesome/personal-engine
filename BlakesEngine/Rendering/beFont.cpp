@@ -20,16 +20,6 @@ struct VertexWithNormalType
 	Vec2 texCoord;
 };
 
-beFont::beFont()
-{
-	m_texture = new beTexture();
-}
-
-beFont::~beFont()
-{
-	BE_SAFE_DELETE(m_texture);
-}
-
 bool beFont::ReadLine(const std::string& line)
 {
 	// Ignore everything before the first semi-colon
@@ -140,12 +130,12 @@ bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& 
 
 void beFont::Deinit()
 {
-	m_texture->Deinit();
+	m_texture.Deinit();
 }
 
 bool beFont::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
 {
-	return m_texture->Init(ri, textureFilename);
+	return m_texture.Init(ri, textureFilename);
 }
 
 static bool CompareTop32(const u64* _lhs, const u64* _rhs, int* comparison)
@@ -394,7 +384,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beString& string, float m
 	return true;
 }
 
-beTexture * beFont::GetTexture() const
+const beTexture* beFont::GetTexture() const
 {
-	return m_texture;
+	return &m_texture;
 }

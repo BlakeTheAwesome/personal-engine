@@ -24,20 +24,9 @@ struct VertexType
 	Vec2 texCoord;
 };
 
-beBitmap::beBitmap()
-	: m_dirtyPositionBuffer(true)
-	, m_size(0.f, 0.f)
-	, m_position(0.f, 0.f)
-	, m_anchorPoint(0.f, 0.f)
-	, m_colour(1.f, 1.f, 1.f, 1.f)
-{
-	m_texture = new beTexture();
-}
-
 beBitmap::~beBitmap()
 {
 	BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid());
-	BE_SAFE_DELETE(m_texture);
 }
 
 
@@ -49,7 +38,7 @@ bool beBitmap::Init(beRenderInterface* ri, const beTexture& texture)
 	{
 		return false;
 	}
-	m_texture->Set(texture);
+	m_texture.Set(texture);
 	return true;
 }
 
@@ -59,7 +48,7 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWS
 	{
 		return false;
 	}
-	return m_texture->Init(ri, textureFilename);
+	return m_texture.Init(ri, textureFilename);
 }
 
 bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
@@ -120,7 +109,7 @@ bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 
 void beBitmap::Deinit()
 {
-	m_texture->Deinit();
+	m_texture.Deinit();
 	m_positionBuffer.Release();
 	m_indexBuffer.Release();
 	m_vertexBuffer.Release();
@@ -136,7 +125,7 @@ bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStrin
 	}
 	m_vertexBuffer.Set(info.vertexBuffer);
 	m_indexBuffer.Set(info.indexBuffer);
-	m_texture->Set(*font->GetTexture());
+	m_texture.Set(*font->GetTexture());
 	
 	auto success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if(!success) { BE_ASSERT(false); return false; }
@@ -146,7 +135,7 @@ bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStrin
 
 bool beBitmap::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
 {
-	return m_texture->Init(ri, textureFilename);
+	return m_texture.Init(ri, textureFilename);
 }
 
 void beBitmap::SetColour(const Vec4 & colour)
@@ -213,9 +202,9 @@ void beBitmap::Render(beRenderInterface* ri)
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, constantBuffers);
 }
 
-ID3D11ShaderResourceView * beBitmap::GetTexture() const
+ID3D11ShaderResourceView* beBitmap::GetTexture() const
 {
-	return m_texture->GetTexture();
+	return m_texture.GetTexture();
 }
 
 int beBitmap::GetIndexCount()

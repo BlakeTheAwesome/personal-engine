@@ -23,16 +23,6 @@ struct ColourBufferType
 	Vec4 colour;
 };
 
-beShaderTexture::beShaderTexture()
-	: m_pShader(nullptr)
-	, m_vShader(nullptr)
-	, m_sampleState(nullptr)
-	, m_layout(nullptr)
-	, m_colourDirty(true)
-	, m_colour(1.f, 1.f, 1.f, 1.f)
-{
-}
-
 beShaderTexture::~beShaderTexture()
 {
 	BE_ASSERT(!m_matrixBuffer.IsValid());

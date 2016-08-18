@@ -19,15 +19,6 @@ struct MatrixBufferType
 	Vec2 padding;
 };
 
-beShaderTexture2d::beShaderTexture2d()
-	: m_pShader(nullptr)
-	, m_vShader(nullptr)
-	, m_wrappedSampleState(nullptr)
-	, m_clampedSampleState(nullptr)
-	, m_layout(nullptr)
-{
-}
-
 beShaderTexture2d::~beShaderTexture2d()
 {
 	BE_ASSERT(!m_clampedSampleState);

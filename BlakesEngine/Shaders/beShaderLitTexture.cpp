@@ -33,14 +33,6 @@ struct LightBufferType
     Vec4 specularColor;
 };
 
-beShaderLitTexture::beShaderLitTexture()
-	: m_pShader(nullptr)
-	, m_vShader(nullptr)
-	, m_sampleState(nullptr)
-	, m_layout(nullptr)
-{
-}
-
 beShaderLitTexture::~beShaderLitTexture()
 {
 	BE_ASSERT(!m_sampleState);

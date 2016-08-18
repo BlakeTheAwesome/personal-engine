@@ -11,12 +11,6 @@
 #include <d3d11.h>
 #include <D3Dcompiler.h>
 
-beShaderColour::beShaderColour()
-	: m_pShader(nullptr)
-	, m_vShader(nullptr)
-{
-}
-
 beShaderColour::~beShaderColour()
 {
 	BE_ASSERT(!m_pShader);

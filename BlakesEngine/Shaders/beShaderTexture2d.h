@@ -22,7 +22,7 @@ public:
 		Clamped,
 	};
 
-	beShaderTexture2d();
+	beShaderTexture2d() = default;
 	~beShaderTexture2d();
 
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
@@ -36,11 +36,10 @@ public:
 	bool IsLoaded() const;
 
 private:
-	ID3D11PixelShader* m_pShader;
-	ID3D11VertexShader* m_vShader;
-	ID3D11SamplerState* m_wrappedSampleState;
-	ID3D11SamplerState* m_clampedSampleState;
-
-	ID3D11InputLayout* m_layout;
+	ID3D11PixelShader* m_pShader = nullptr;
+	ID3D11VertexShader* m_vShader = nullptr;
+	ID3D11SamplerState* m_wrappedSampleState = nullptr;
+	ID3D11SamplerState* m_clampedSampleState = nullptr;
+	ID3D11InputLayout* m_layout = nullptr;
 	beRenderBuffer m_matrixBuffer;
 };

@@ -6,15 +6,6 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 
-beTexture::beTexture()
-	: m_texture(nullptr)
-	, m_texture2d(nullptr)
-	, m_renderTargetView(nullptr)
-	, m_depthStencilView(nullptr)
-	, m_depthStencilBuffer(nullptr)
-{
-}
-
 beTexture::~beTexture()
 {
 	Deinit();
@@ -154,7 +145,7 @@ int beTexture::GetHeight() const
 	return (int)m_desc.Height;
 }
 
-ID3D11ShaderResourceView* beTexture::GetTexture()
+ID3D11ShaderResourceView* beTexture::GetTexture() const
 {
 	return m_texture;
 }

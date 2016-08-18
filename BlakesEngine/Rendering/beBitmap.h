@@ -1,5 +1,6 @@
 #pragma once
 #include "beRenderBuffer.h"
+#include "beTexture.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 
@@ -11,8 +12,7 @@ struct ID3D11ShaderResourceView;
 class beBitmap
 {
 public:
-
-	beBitmap();
+	beBitmap() = default;
 	~beBitmap();
 
 	bool Init(beRenderInterface* ri, const beTexture& texture);
@@ -37,14 +37,14 @@ public:
 private:
 	bool InitCommon(beRenderInterface* ri, float width, float height);
 
-	beTexture* m_texture;
+	beTexture m_texture;
 	beRenderBuffer m_vertexBuffer;
 	beRenderBuffer m_indexBuffer;
 	beRenderBuffer m_positionBuffer;
 
-	Vec4 m_colour;
-	Vec2 m_size;
-	Vec2 m_position;
-	Vec2 m_anchorPoint;
-	bool m_dirtyPositionBuffer;
+	Vec4 m_colour{1.f, 1.f, 1.f, 1.f};
+	Vec2 m_size{0.f, 0.f};
+	Vec2 m_position{0.f, 0.f};
+	Vec2 m_anchorPoint{0.f, 0.f};
+	bool m_dirtyPositionBuffer = true;
 };

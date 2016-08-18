@@ -14,7 +14,7 @@ class beRenderInterface;
 class beShaderColour
 {
 public:
-	beShaderColour();
+	beShaderColour() = default;
 	~beShaderColour();
 
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
@@ -36,9 +36,8 @@ private:
 		Matrix projection;
 	};
 
-	ID3D11PixelShader* m_pShader;
-	ID3D11VertexShader* m_vShader;
-	
-	ID3D11InputLayout* m_layout;
+	ID3D11PixelShader* m_pShader = nullptr;
+	ID3D11VertexShader* m_vShader = nullptr;
+	ID3D11InputLayout* m_layout = nullptr;
 	beRenderBuffer m_matrixBuffer;
 };

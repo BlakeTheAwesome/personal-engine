@@ -16,7 +16,7 @@ class beRenderInterface;
 class beShaderLitTexture
 {
 public:
-	beShaderLitTexture();
+	beShaderLitTexture() = default;
 	~beShaderLitTexture();
 
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
@@ -30,11 +30,11 @@ public:
 	bool IsLoaded() const;
 
 private:
-	ID3D11PixelShader* m_pShader;
-	ID3D11VertexShader* m_vShader;
-	ID3D11SamplerState* m_sampleState;
-
-	ID3D11InputLayout* m_layout;
+	ID3D11PixelShader* m_pShader = nullptr;
+	ID3D11VertexShader* m_vShader = nullptr;
+	ID3D11SamplerState* m_sampleState = nullptr;
+	ID3D11InputLayout* m_layout = nullptr;
+	
 	beRenderBuffer m_matrixBuffer;
 	beRenderBuffer m_lightBuffer;
 	beRenderBuffer m_cameraBuffer;
