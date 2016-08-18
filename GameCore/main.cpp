@@ -5,6 +5,7 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
 #include "BlakesEngine/Input/beGamepad.h"
+#include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Time/beFrameTimer.h"
 #include "BlakesEngine/Time/beClock.h"
 #include "BlakesEngine/Window/beWindow.h"
@@ -19,12 +20,9 @@
 #include "BlakesEngine/Shaders/beShaderTexture.h"
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/Shaders/beShaderLitTexture.h"
-#include "BlakesEngine/External/DirectXTK/Keyboard.h"
 #include "BlakesEngine/platform/beSystemEventManager.h"
 
 #include <windows.h>
-
-DirectX::Keyboard s_keyboard;
 
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
@@ -61,8 +59,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beShaderTexture2d textureShader2d;
 	beShaderLitTexture litTextureShader;
 
-	DirectX::Keyboard::KeyboardStateTracker keyboard;
-
 	auto debugWorld = PIMPL_NEW(beDebugWorld)();
 	
 	font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
@@ -90,6 +86,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beGamepad gamepad;
 	gamepad.Init(0);
 	camera.AttachGamepad(&gamepad);
+
+	beKeyboard keyboard;
+	keyboard.Init(systemEventManager);
 
 	const int numShaders = 3;
 	const int numModels = 6;
@@ -133,8 +132,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			} break;
 		}
 
-		s_keyboard.ProcessMessage(message, wParam, lParam);
-
 		return false;
 	});
 
@@ -149,13 +146,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (doStuff)
 		{
 			gamepad.Update(dt.ToSeconds());
-			keyboard.Update(s_keyboard.GetState());
+			keyboard.Update(dt.ToSeconds());
 
-			if (gamepad.GetButtonReleased(beGamepad::A) || keyboard.IsKeyPressed(DirectX::Keyboard::W))
+			if (gamepad.GetButtonReleased(beGamepad::A) || keyboard.IsPressed(beKeyboard::Button::W))
 			{
 				renderInterface->ToggleWireframe();
 			}
-			if (gamepad.GetButtonReleased(beGamepad::B))
+			if (gamepad.GetButtonReleased(beGamepad::B) || keyboard.IsPressed(beKeyboard::Button::Escape))
 			{
 				win32Callback.quit = true;
 			}
@@ -283,6 +280,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	systemEventManager->DeregisterCallbackWinProc(winProcCallbackId);
 	systemEventManager->DeregisterCallbackWin32Pump(win32CallbackId);
 
+	keyboard.Deinit();
 	camera.DetachGamepad();
 	gamepad.Deinit();
 
