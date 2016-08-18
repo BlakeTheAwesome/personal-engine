@@ -10,6 +10,9 @@
 #define _STRINGIFY_PT2(x) _STRINGIFY(x)
 #define LOCATION       __FILE__" (" _STRINGIFY_PT2(__LINE__) ")"
 
+#define CONCAT_IMPL( x, y ) x##y
+#define MACRO_CONCAT( x, y ) CONCAT_IMPL( x, y )
+
 #define BE_NEW new
 #define BE_DELETE(x) delete(x)
 #define BE_SAFE_DELETE(x) delete(x); x = nullptr;

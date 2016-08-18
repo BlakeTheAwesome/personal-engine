@@ -4,6 +4,7 @@
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Time/beFrameTimer.h"
@@ -21,6 +22,7 @@
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/Shaders/beShaderLitTexture.h"
 #include "BlakesEngine/platform/beSystemEventManager.h"
+#include "BlakesEngine/platform/beSystemEventManager.h"
 
 #include <windows.h>
 
@@ -30,65 +32,100 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    int nCmdShow)
 {
 	beSystemEventManager* systemEventManager = PIMPL_NEW(beSystemEventManager)();
+	defer(PIMPL_DELETE(systemEventManager));
 
 	//beTypeTests::RunTypeTests();
 	beClock::Initialise();
+	
+	beFrameTimer frameTimer;
+	frameTimer.LimitFPS(120);
 
 	beString windowName("TestWindow");
 	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1024, 768, false);
 	auto renderInterface = PIMPL_NEW(beRenderInterface)();
 	renderInterface->Init(window, 0.01f, 100.00f, true);
+	defer(
+		renderInterface->Deinit();
+		PIMPL_DELETE(renderInterface);
+		PIMPL_DELETE(window);
+	);
 
-	beFrameTimer frameTimer;
-	frameTimer.LimitFPS(120);
-
-	beFlightCamera camera;
+	auto debugWorld = PIMPL_NEW(beDebugWorld)();
+	debugWorld->Init(renderInterface);
+	defer(
+		debugWorld->Deinit();
+		PIMPL_DELETE(debugWorld);
+	);
+	
+	beFont font;
 	beModel model1;
 	beModel model2;
 	beModel model3;
 	beModel model4;
 	beModel model5;
-	beBitmap bitmap1;
-	beBitmap bitmap2;
-	beBitmap bitmap3;
-	beFont font;
-	beTexture writeTexture;
-
-	beShaderColour colourShader;
-	beShaderTexture textureShader;
-	beShaderTexture2d textureShader2d;
-	beShaderLitTexture litTextureShader;
-
-	auto debugWorld = PIMPL_NEW(beDebugWorld)();
-	
 	font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
 	model1.Init(renderInterface, beWString(L"boar.dds"));
 	model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"));
 	model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"));
 	model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"));
 	model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"));
-	
-	writeTexture.InitAsTarget(renderInterface, 512, 512);
+	defer(
+		model5.Deinit();
+		model4.Deinit();
+		model3.Deinit();
+		model2.Deinit();
+		model1.Deinit();
+		font.Deinit();
+	);
 
+	beTexture writeTexture;
+	writeTexture.InitAsTarget(renderInterface, 512, 512);
+	defer(
+		writeTexture.Deinit();
+	);
+
+	beBitmap bitmap2;
+	beBitmap bitmap3;
+	beBitmap bitmap1;
 	bitmap1.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
 	bitmap1.SetPosition(1024/2-128, 768/2-128);
 	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 512.f, 0);
 	bitmap2.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	bitmap3.Init(renderInterface, writeTexture);
 	bitmap3.SetPosition(-400, -400);
- 
+	defer(
+		bitmap3.Deinit();
+		bitmap2.Deinit();
+		bitmap1.Deinit();
+	);
+	
+	beShaderColour colourShader;
+	beShaderTexture textureShader;
+	beShaderTexture2d textureShader2d;
+	beShaderLitTexture litTextureShader;
 	colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
 	textureShader.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
 	textureShader2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
 	litTextureShader.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
-	debugWorld->Init(renderInterface);
-
-	beGamepad gamepad;
-	gamepad.Init(0);
-	camera.AttachGamepad(&gamepad);
-
+	defer(
+		litTextureShader.Deinit();
+		textureShader2d.Deinit();
+		textureShader.Deinit();
+		colourShader.Deinit();
+	);
+	
 	beKeyboard keyboard;
 	keyboard.Init(systemEventManager);
+	beGamepad gamepad;
+	gamepad.Init(0);
+	beFlightCamera camera;
+	camera.AttachGamepad(&gamepad);
+	defer(
+		camera.DetachGamepad();
+		gamepad.Deinit();
+		keyboard.Deinit();
+	);
+
 
 	const int numShaders = 3;
 	const int numModels = 6;
@@ -110,6 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			win32Callback->retCode = (int)msg.wParam;
 		}
 	});
+	defer(systemEventManager->DeregisterCallbackWin32Pump(win32CallbackId));
 
 	struct WinProcCallback {
 		HWND hWnd;
@@ -134,7 +172,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		return false;
 	});
+	defer(systemEventManager->DeregisterCallbackWinProc(winProcCallbackId));
+	
 
+
+
+
+	// ACTUAL MAIN LOOP
 
 	while(!win32Callback.quit)
 	{
@@ -277,33 +321,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		}
 	}
-	systemEventManager->DeregisterCallbackWinProc(winProcCallbackId);
-	systemEventManager->DeregisterCallbackWin32Pump(win32CallbackId);
-
-	keyboard.Deinit();
-	camera.DetachGamepad();
-	gamepad.Deinit();
-
-	debugWorld->Deinit();
-	litTextureShader.Deinit();
-	textureShader2d.Deinit();
-	textureShader.Deinit();
-	colourShader.Deinit();
-	//texture.Deinit();
-	bitmap3.Deinit();
-	bitmap2.Deinit();
-	bitmap1.Deinit();
-	writeTexture.Deinit();
-	model5.Deinit();
-	model4.Deinit();
-	model3.Deinit();
-	model2.Deinit();
-	model1.Deinit();
-	font.Deinit();
-	renderInterface->Deinit();
-	PIMPL_DELETE(renderInterface);
-	PIMPL_DELETE(window);
-	PIMPL_DELETE(systemEventManager);
 
 	// return this part of the WM_QUIT message to Windows
 	return win32Callback.retCode;

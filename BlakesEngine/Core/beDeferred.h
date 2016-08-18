@@ -1,12 +1,15 @@
 #pragma once
 #include "beFunction.h"
 
+#define defer(body) DeferredCall MACRO_CONCAT(_deferredCall, __COUNTER__) ([&](){body;})
+
 class DeferredCall
 {
 	public:
 		typedef func::function<void()> FnType;
 
-		DeferredCall() {}
+		DeferredCall() = default;
+		DeferredCall(DeferredCall&& that) : m_fn(std::move(that.m_fn)) { that.Clear(); }
 		DeferredCall(FnType fn) : m_fn(fn) {}
 		~DeferredCall()
 		{
