@@ -1,8 +1,8 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beClock.h"
 #include "blakesengine/core/beAssert.h"
 
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 static double s_frequency = 0;
 static __int64 s_startTime = 0;

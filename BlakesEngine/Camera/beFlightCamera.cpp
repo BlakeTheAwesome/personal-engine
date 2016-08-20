@@ -1,4 +1,4 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beFlightCamera.h"
 
 #include "BlakesEngine/Core/beAssert.h"
@@ -16,12 +16,7 @@ static const bool INVERT_Y = true;
 
 
 beFlightCamera::beFlightCamera()
-	: m_gamepad(nullptr)
-	, m_position(0.f, 0.f, -5.f)
-	, m_yaw(0.f)
-	, m_pitch(0.f)
-	, m_roll(0.f)
-{
+	{
 	/*XMVECTOR startingPosition = XMLoadFloat3(&m_position);
 	XMVECTOR startingLookat = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 	XMVECTOR startingUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);

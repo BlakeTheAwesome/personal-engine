@@ -24,7 +24,7 @@
 #include "BlakesEngine/platform/beSystemEventManager.h"
 #include "BlakesEngine/platform/beSystemEventManager.h"
 
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,

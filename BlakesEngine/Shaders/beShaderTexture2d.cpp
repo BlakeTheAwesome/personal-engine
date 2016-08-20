@@ -1,4 +1,4 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beShaderTexture2d.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
@@ -6,7 +6,7 @@
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>

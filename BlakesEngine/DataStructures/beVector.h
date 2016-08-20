@@ -22,7 +22,7 @@ struct beVectorFixedPolicy
 	beVectorFixedPolicy(int capacity, int increaseBy)
 	{
 		BE_ASSERT(increaseBy == 0);
-		BE_ASSERT(capacity <= CAPACITY)
+		BE_ASSERT(capacity <= CAPACITY);
 	}
 
 	void Reserve(int capacity)
@@ -124,6 +124,9 @@ struct beVectorMallocPolicy : public NonCopiable
 template<typename T, typename Policy>
 class beVectorBase : Policy
 {
+	using Policy::m_count;
+	using Policy::m_buffer;
+
 	public:
 		typedef T value_type;
 		enum { element_size = sizeof(T) };
@@ -372,16 +375,18 @@ class beVectorBase : Policy
 template <typename T>
 class beVector : public beVectorBase<T, beVectorMallocPolicy<T>>
 {
+	typedef beVectorBase<T, beVectorMallocPolicy<T>> Base;
 	public:
-	explicit beVector(int capacity, int increaseBy=-1) : beVectorBase(capacity, increaseBy) {}
-	explicit beVector(int capacity, int count, int increaseBy) : beVectorBase(capacity, increaseBy) { SetCount(count); }
-	beVector(int capacity, int increaseBy, const std::initializer_list<T>& list) : beVectorBase(capacity, increaseBy, list) {}
+	explicit beVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
+	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
+	beVector(int capacity, int increaseBy, const std::initializer_list<T>& list) : Base(capacity, increaseBy, list) {}
 };
 
 template <typename T, int CAPACITY>
 class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 {
+	typedef beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>> Base;
 	public:
 	beFixedVector() = default;
-	beFixedVector(const std::initializer_list<T>& list) : beVectorBase(CAPACITY, 0, list) {}
+	beFixedVector(const std::initializer_list<T>& list) : Base(CAPACITY, 0, list) {}
 };

@@ -1,7 +1,7 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beString.h"
 #include "beAssert.h"
-#include <Windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 void beStringConversion::UTF8ToWide(const beStringView& utf8, beWString * outWStr)
 {

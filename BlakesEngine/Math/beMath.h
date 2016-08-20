@@ -18,7 +18,8 @@ namespace beMath
 	inline float Length(const beMath::Vec3& v)
 	{
 		XMVECTOR xv = XMLoadFloat3(&v);
-		return XMVector3Length(xv).m128_f32[0];
+		XMFLOAT4A out; XMStoreFloat4A(&out, xv);
+		return out.x;
 	}
 
 	inline beMath::Vec3 To2DVec(const beMath::Vec3& v)
@@ -127,14 +128,14 @@ namespace beMath
 		Vec3 position;
 		XMStoreFloat3(&position, translation);
 
-		bePRINTF("CameraPosition %f, %f, %f, %f", translation.m128_f32[0], translation.m128_f32[1], translation.m128_f32[2], translation.m128_f32[3]);
-		bePRINTF("CameraScale %f, %f, %f, %f", scale.m128_f32[0], scale.m128_f32[1], scale.m128_f32[2], scale.m128_f32[3]);
-		bePRINTF("CameraRotation %f, %f, %f, %f", rotationQuat.m128_f32[0], rotationQuat.m128_f32[1], rotationQuat.m128_f32[2], rotationQuat.m128_f32[3]);
+		//bePRINTF("CameraPosition %f, %f, %f, %f", translation.m128_f32[0], translation.m128_f32[1], translation.m128_f32[2], translation.m128_f32[3]);
+		//bePRINTF("CameraScale %f, %f, %f, %f", scale.m128_f32[0], scale.m128_f32[1], scale.m128_f32[2], scale.m128_f32[3]);
+		//bePRINTF("CameraRotation %f, %f, %f, %f", rotationQuat.m128_f32[0], rotationQuat.m128_f32[1], rotationQuat.m128_f32[2], rotationQuat.m128_f32[3]);
 
-		XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 0.f);
-		XMVECTOR newPos = XMVector3Transform(pos, mat);
+		//XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		//XMVECTOR newPos = XMVector3Transform(pos, mat);
 
-		bePRINTF("neaPos %f, %f, %f, %f", newPos.m128_f32[0], newPos.m128_f32[1], newPos.m128_f32[2], newPos.m128_f32[3]);
+		//bePRINTF("neaPos %f, %f, %f, %f", newPos.m128_f32[0], newPos.m128_f32[1], newPos.m128_f32[2], newPos.m128_f32[3]);
 
 		return position;
 	}

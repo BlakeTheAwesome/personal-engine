@@ -6,4 +6,5 @@ namespace beTypeTests
 	bool RunTypeTests();
 };
 
-#endif;
+#endif
+

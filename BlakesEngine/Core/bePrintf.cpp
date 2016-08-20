@@ -1,9 +1,9 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "bePrintf.h"
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <Windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 void bePrintf::bePrintf(bool includeLocation, const char* location, const char* format, ...)
 {

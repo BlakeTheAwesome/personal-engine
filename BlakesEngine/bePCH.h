@@ -1,6 +1,6 @@
 #pragma once
 
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 //#include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/bePimpl.h"

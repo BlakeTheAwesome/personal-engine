@@ -1,10 +1,10 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beGamepad.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 
 //#define DIRECTINPUT_VERSION 0x0800
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 #include <xinput.h>
 
 #pragma comment(lib, "xinput.lib")
@@ -150,6 +150,10 @@ bool beGamepad::GetPressed(Button button) const
 		case Down: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0;
 		case Left: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0;
 		case Right: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0;
+		case L2: return m_l2 > 0.f;
+		case R2: return m_r2 > 0.f;
+		
+		case ButtonCount: break;
 	}
 
 	BE_ASSERT(false);
@@ -172,6 +176,10 @@ bool beGamepad::GetButtonReleased(Button button) const
 		case Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0);
 		case Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0);
 		case Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0);
+		case L2: return m_l2 == 0.f;
+		case R2: return m_r2 == 0.f;
+		
+		case ButtonCount: break;
 	}
 
 	BE_ASSERT(false);

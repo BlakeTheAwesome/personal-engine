@@ -1,4 +1,4 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beBitmap.h"
 
 #include "BlakesEngine/Core/beAssert.h"
@@ -53,12 +53,6 @@ bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWS
 
 bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 {
-	D3D11_BUFFER_DESC vertexBufferDesc = {0};
-	D3D11_BUFFER_DESC indexBufferDesc = {0};
-	D3D11_BUFFER_DESC positionBufferDesc = {0};
-	D3D11_SUBRESOURCE_DATA vertexData = {0};
-	D3D11_SUBRESOURCE_DATA indexData = {0};
-
 	m_size = Vec2(width, height);
 
 	enum {

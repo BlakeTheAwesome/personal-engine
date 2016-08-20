@@ -1,9 +1,9 @@
-#include "bePCH.h"
+#include "BlakesEngine/bePCH.h"
 #include "beWindow.h"
 
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Platform/beSystemEventManager.h"
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

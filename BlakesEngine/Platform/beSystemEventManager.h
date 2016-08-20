@@ -3,7 +3,7 @@
 #include "BlakesEngine/Core/bePrimitiveType.h"
 #include "BlakesEngine/Core/bePimpl.h"
 
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 
 class beSystemEventManager
