@@ -248,10 +248,10 @@ class beVectorBase : Policy
 		}
 
 		template<class ...Args>
-		T* AddNew(Args... args)
+		T* AddNew(Args&&... args)
 		{
 			T* obj = AllocateNew();
-			return BE_NEW(obj) T{args...};
+			return BE_NEW(obj) T{std::forward<Args>(args)...};
 		}
 
 		T& operator[](int i)
