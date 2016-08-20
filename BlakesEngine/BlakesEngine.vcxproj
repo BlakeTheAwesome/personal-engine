@@ -257,6 +257,7 @@
     </ClCompile>
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Input\beKeyboard.cpp" />
+    <ClCompile Include="Input\beMouse.cpp" />
     <ClCompile Include="Math\bePerlinNoise.cpp" />
     <ClCompile Include="Math\beRandom.cpp" />
     <ClCompile Include="Platform\beSystemEventManager.cpp" />
@@ -315,6 +316,7 @@
     <ClInclude Include="External\DirectXTK\XboxDDSTextureLoader.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Input\beKeyboard.h" />
+    <ClInclude Include="Input\beMouse.h" />
     <ClInclude Include="Math\beMath.h" />
     <ClInclude Include="Math\bePerlinNoise.h" />
     <ClInclude Include="Math\beRandom.h" />
