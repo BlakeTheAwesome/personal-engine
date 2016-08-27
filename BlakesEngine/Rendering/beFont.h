@@ -35,7 +35,7 @@ public:
 	void Deinit();
 
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
-	bool CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const;
+	bool CreateString(beRenderInterface* ri, const beStringView& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const;
 	
 	const beTexture* GetTexture() const;
 

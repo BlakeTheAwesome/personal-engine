@@ -242,14 +242,14 @@ int beFont::GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const Ch
 	return kerning;
 }
 
-bool beFont::CreateString(beRenderInterface* ri, const beString& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const
+bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const
 {
 	//float textureWidth = (float)m_texture->GetWidth();
 	//float textureHeight = (float)m_texture->GetHeight();
 	const int scale = 1;
 
 	beWString wstring;
-	beStringConversion::UTF8ToWide(string, &wstring);
+	beStringConversion::UTF8ToWide(string.c_str(), &wstring);
 
 	const int vertsPerChar = 6;
 	int numChars = (int)wstring.size();
