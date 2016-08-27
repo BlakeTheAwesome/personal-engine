@@ -107,6 +107,6 @@ LRESULT CALLBACK beSystemEventManager::WindowProc(HWND hWnd, UINT message, WPARA
 		}
 	}
 
-    // Handle any messages the game didn't
-    return DefWindowProc(hWnd, message, wParam, lParam);
+	// Handle any messages the game didn't
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }

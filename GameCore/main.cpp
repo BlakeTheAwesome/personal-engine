@@ -7,6 +7,7 @@
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
+#include "BlakesEngine/Input/beMouse.h"
 #include "BlakesEngine/Time/beFrameTimer.h"
 #include "BlakesEngine/Time/beClock.h"
 #include "BlakesEngine/Window/beWindow.h"
@@ -116,13 +117,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	beKeyboard keyboard;
 	keyboard.Init(systemEventManager);
+	beMouse mouse;
+	mouse.Init(systemEventManager, window);
 	beGamepad gamepad;
 	gamepad.Init(0);
 	beFlightCamera camera;
 	camera.AttachGamepad(&gamepad);
+	camera.AttachMouse(&mouse);
 	defer(
 		camera.DetachGamepad();
 		gamepad.Deinit();
+		mouse.Deinit();
 		keyboard.Deinit();
 	);
 
@@ -189,8 +194,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		if (doStuff)
 		{
-			gamepad.Update(dt.ToSeconds());
 			keyboard.Update(dt.ToSeconds());
+			mouse.Update(dt.ToSeconds());
+			gamepad.Update(dt.ToSeconds());
 
 			if (gamepad.GetButtonReleased(beGamepad::A) || keyboard.IsPressed(beKeyboard::Button::W))
 			{
@@ -205,7 +211,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				shaderToUse++;
 				shaderToUse %= numShaders;
 			}
-			if (gamepad.GetButtonReleased(beGamepad::X))
+			if (gamepad.GetButtonReleased(beGamepad::X) || mouse.IsPressed(beMouse::Button::RightButton))
 			{
 				modelToUse++;
 				modelToUse %= numModels;

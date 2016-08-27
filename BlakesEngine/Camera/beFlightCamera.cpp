@@ -4,6 +4,7 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Input/beGamepad.h"
+#include "BlakesEngine/Input/beMouse.h"
 
 static const float ROTATIONS_PER_SECOND = 0.5f * (2.f * PI);
 static const float DISTANCE_PER_SECOND = 1.0f;
@@ -50,6 +51,18 @@ void beFlightCamera::DetachGamepad()
 	m_gamepad = nullptr;
 }
 
+void beFlightCamera::AttachMouse(beMouse* mouse)
+{
+	BE_ASSERT(!m_mouse);
+	m_mouse = mouse;
+}
+
+void beFlightCamera::DetachMouse()
+{
+	BE_ASSERT(m_mouse);
+	m_mouse = nullptr;
+}
+
 const Vec3& beFlightCamera::GetPosition() const
 {
 	return m_position;
@@ -62,28 +75,35 @@ const Matrix& beFlightCamera::GetViewMatrix() const
 
 void beFlightCamera::Update(float dt)
 {
-	if (!m_gamepad)
+	if (m_gamepad)
 	{
-		return;
+		float lX = m_gamepad->GetLeftX();
+		float lY = m_gamepad->GetLeftY();
+		float rX = m_gamepad->GetRightX();
+		float rY = m_gamepad->GetRightY();
+
+		if (lX == 0.f && lY == 0.f && rX == 0.f && rY == 0.f)
+		{
+			return;
+		}
+
+		float moveSpeedFactor = (5.f + m_gamepad->GetR2());
+
+		float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
+		float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
+		float forwards = lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+		float right = lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+		UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 	}
 
-	float lX = m_gamepad->GetLeftX();
-	float lY = m_gamepad->GetLeftY();
-	float rX = m_gamepad->GetRightX();
-	float rY = m_gamepad->GetRightY();
-
-	if (lX == 0.f && lY == 0.f && rX == 0.f && rY == 0.f)
+	if (m_mouse && m_mouse->IsDown(beMouse::Button::LeftButton))
 	{
-		return;
+		float extraPitch = m_mouse->GetY() * dt;
+		float extraYaw = m_mouse->GetX() * dt;
+		float forwards = 0.f;
+		float right = 0.f;
+		UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 	}
-
-	float moveSpeedFactor = (5.f + m_gamepad->GetR2());
-
-	float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
-	float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
-	float forwards = lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-	float right = lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-	UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 }
 
 void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, float extraForwards, float extraRight)
