@@ -4,13 +4,9 @@
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Window/beWindow.h"
 
-#include <mutex>
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
 
-DirectX::Mouse s_mouse;
-static int s_instanceCount = 0;
-static beSystemEventManager::CallbackId s_systemCallbackId;
-static HWND s_hWnd;
-static std::mutex s_mutex;
 
 beMouse::~beMouse()
 {
@@ -19,95 +15,81 @@ beMouse::~beMouse()
 
 void beMouse::Init(beSystemEventManager* systemEventManager, const beWindow* window)
 {
-	m_systemEventManager = systemEventManager;
-	s_hWnd = *(HWND*)window->GetHWnd();
+	m_windowHeight = window->GetHeight();
+	m_windowWidth = window->GetWidth();
+	
+	auto hinstance = (HINSTANCE*)window->GetHInstance();
+	auto hWnd = *(HWND*)window->GetHWnd();
+	auto result = DirectInput8Create(*hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, nullptr);
+	BE_ASSERT(result >= 0);
+	result = m_directInput->CreateDevice(GUID_SysMouse, &m_mouse, nullptr);
+	BE_ASSERT(result >= 0);
+	result = m_mouse->SetDataFormat(&c_dfDIMouse2);
+	BE_ASSERT(result >= 0);
+	result = m_mouse->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	BE_ASSERT(result >= 0);
 
-	std::lock_guard<decltype(s_mutex)> lock(s_mutex);
-	if (++s_instanceCount == 1)
-	{
-		s_systemCallbackId = systemEventManager->RegisterCallbackWinProc(nullptr, [](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, void* userdata, LRESULT* result) -> bool {
-			if (hWnd == s_hWnd)
-			{
-				s_mouse.ProcessMessage(message, wParam, lParam);
-			}
-			return false;
-		});
-
-		s_mouse.SetWindow(s_hWnd);
-		s_mouse.SetMode(DirectX::Mouse::MODE_RELATIVE);
-		//s_mouse.SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-	}
+	m_mouse->Acquire();
 }
 
 void beMouse::Deinit()
 {
-	std::lock_guard<decltype(s_mutex)> lock(s_mutex);
-	if (--s_instanceCount == 0)
-	{
-		m_systemEventManager->DeregisterCallbackWinProc(s_systemCallbackId);
-	}
-	m_systemEventManager = nullptr;
+	m_mouse->Unacquire();
+	m_mouse->Release();
+	m_mouse = nullptr;
+	
+	m_directInput->Release();
+	m_directInput = nullptr;
+
 }
 
 void beMouse::Update(float dt)
 {
-	m_tracker.Update(s_mouse.GetState());
+	m_lastState = m_currentState;
+	
+	auto result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE2), (LPVOID)&m_currentState.mouseState);
+	if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED))
+	{
+		result = m_mouse->Acquire();
+		if (result >= 0)
+		{
+			result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE2), (LPVOID)&m_currentState.mouseState);
+		}
+	}
+	if (result < 0)
+	{
+		return;
+	}
+	
+	m_currentState.x += m_currentState.mouseState.lX;
+	m_currentState.y += m_currentState.mouseState.lY;
+
+	// Clamp
+	if (m_currentState.x < 0) { m_currentState.x = 0; }
+	if (m_currentState.y < 0) { m_currentState.y = 0; }
+	if (m_currentState.x > m_windowWidth)  { m_currentState.x = m_windowWidth; }
+	if (m_currentState.y > m_windowHeight) { m_currentState.y = m_windowHeight; }
+}
+
+static inline bool isDown(const DIMOUSESTATE2& mouseState, beMouse::Button button)
+{
+	u8 buttonState = mouseState.rgbButtons[button];
+	return (buttonState & 0x80) != 0;
 }
 
 bool beMouse::IsPressed(Button button) const
 {
-	switch (button)
-	{
-		case Button::LeftButton: return m_tracker.leftButton == DirectX::Mouse::ButtonStateTracker::PRESSED;
-		case Button::MiddleButton: return m_tracker.middleButton == DirectX::Mouse::ButtonStateTracker::PRESSED;
-		case Button::RightButton: return m_tracker.rightButton == DirectX::Mouse::ButtonStateTracker::PRESSED;
-		case Button::XButton1: return m_tracker.xButton1 == DirectX::Mouse::ButtonStateTracker::PRESSED;
-		case Button::XButton2: return m_tracker.xButton2 == DirectX::Mouse::ButtonStateTracker::PRESSED;
-	}
-	BE_ASSERT(false);
-	return false;
+	return isDown(m_currentState.mouseState, button) && !isDown(m_lastState.mouseState, button);
 }
 
 bool beMouse::IsReleased(Button button) const
 {
-	switch (button)
-	{
-		case Button::LeftButton: return m_tracker.leftButton == DirectX::Mouse::ButtonStateTracker::RELEASED;
-		case Button::MiddleButton: return m_tracker.middleButton == DirectX::Mouse::ButtonStateTracker::RELEASED;
-		case Button::RightButton: return m_tracker.rightButton == DirectX::Mouse::ButtonStateTracker::RELEASED;
-		case Button::XButton1: return m_tracker.xButton1 == DirectX::Mouse::ButtonStateTracker::RELEASED;
-		case Button::XButton2: return m_tracker.xButton2 == DirectX::Mouse::ButtonStateTracker::RELEASED;
-	}
-	BE_ASSERT(false);
-	return false;
+	return isDown(m_lastState.mouseState, button) && !isDown(m_currentState.mouseState, button);
 }
 
 bool beMouse::IsDown(Button button) const
 {
-	switch (button)
-	{
-		case Button::LeftButton: return m_tracker.leftButton == DirectX::Mouse::ButtonStateTracker::HELD;
-		case Button::MiddleButton: return m_tracker.middleButton == DirectX::Mouse::ButtonStateTracker::HELD;
-		case Button::RightButton: return m_tracker.rightButton == DirectX::Mouse::ButtonStateTracker::HELD;
-		case Button::XButton1: return m_tracker.xButton1 == DirectX::Mouse::ButtonStateTracker::HELD;
-		case Button::XButton2: return m_tracker.xButton2 == DirectX::Mouse::ButtonStateTracker::HELD;
-	}
-	BE_ASSERT(false);
-	return false;
+	return isDown(m_currentState.mouseState, button);
 }
 
-int beMouse::GetX() const
-{
-	return m_tracker.GetLastState().x;
-}
-
-int beMouse::GetY() const
-{
-	return m_tracker.GetLastState().y;
-}
-
-int beMouse::GetScrollWheelValue() const
-{
-	return m_tracker.GetLastState().scrollWheelValue;
-}
 

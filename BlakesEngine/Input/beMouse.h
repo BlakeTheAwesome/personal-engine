@@ -1,6 +1,10 @@
 #pragma once
 #include "BlakesEngine/Core/beTypes.h"
-#include "BlakesEngine/External/DirectXTK/Mouse.h"
+#include "BlakesEngine/DataStructures/beArray.h"
+#include "BlakesEngine/Platform/beSystemEventManager.h"
+
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 
 class beSystemEventManager;
 class beWindow;
@@ -8,14 +12,22 @@ class beWindow;
 class beMouse
 {
 public:
-	using Mode = DirectX::Mouse::Mode;
-
-	enum class Button {
+	enum Mode
+	{
+		MODE_ABSOLUTE = 0,
+		MODE_RELATIVE,
+	};
+	enum Button {
 		LeftButton,
-		MiddleButton,
 		RightButton,
-		XButton1,
-		XButton2,
+		MiddleButton,
+		Button4,
+		Button5,
+		Button6,
+		Button7,
+		Button8,
+
+		ButtonCount
 	};
 
 	beMouse() = default;
@@ -30,12 +42,29 @@ public:
 	bool IsReleased(Button button) const;
 	bool IsDown(Button button) const;
 
-	int GetX() const;
-	int GetY() const;
-	int GetScrollWheelValue() const;
+	int GetX() const { return m_currentState.x; };
+	int GetY() const { return m_currentState.y; };
+	//int GetScrollWheelValue() const;
 
 private:
 	beSystemEventManager* m_systemEventManager = nullptr;
-	DirectX::Mouse::ButtonStateTracker m_tracker;
+	beSystemEventManager::CallbackId m_systemCallbackId;
+
+	struct State
+	{
+		int x{0};
+		int y{0};
+		DIMOUSESTATE2 mouseState{0};
+	};
+	
+
+	IDirectInput8* m_directInput{nullptr};
+	IDirectInputDevice8* m_mouse{nullptr};
+
+	State m_currentState;
+	State m_lastState;
+	int m_windowWidth;
+	int m_windowHeight;
+	Mode m_currentMode{MODE_RELATIVE};
 };
 

@@ -9,6 +9,7 @@ PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, 
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		beSystemEventManager* m_systemEventManager;
 		HWND m_hWnd{nullptr};
+		HINSTANCE m_hInstance{nullptr};
 		int m_width;
 		int m_height;
 PIMPL_DATA_END
@@ -21,6 +22,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 , m_height(windowHeight)
 {
 	auto hInstance = *(HINSTANCE*)_hInstance;
+	m_hInstance = hInstance;
 	std::wstring wideWindowName;
 	wideWindowName.assign(windowName.begin (), windowName.end ());
 
@@ -57,6 +59,11 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 PIMPL_DESTROY(beWindow)
 {
 	DestroyWindow(m_hWnd);
+}
+
+void * beWindow::GetHInstance() const
+{
+	return &self.m_hInstance;
 }
 
 void* beWindow::GetHWnd() const
