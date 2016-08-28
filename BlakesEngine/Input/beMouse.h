@@ -44,7 +44,11 @@ public:
 
 	int GetX() const { return m_currentState.x; };
 	int GetY() const { return m_currentState.y; };
-	//int GetScrollWheelValue() const;
+	int GetScrollWheel() const { return m_currentState.z; }
+
+	int GetXMovement() const { return m_currentState.mouseState.lX; };
+	int GetYMovement() const { return m_currentState.mouseState.lY; };
+	int GetScrollWheelMovement() const { return m_currentState.mouseState.lZ; }
 
 private:
 	beSystemEventManager* m_systemEventManager = nullptr;
@@ -54,6 +58,7 @@ private:
 	{
 		int x{0};
 		int y{0};
+		int z{0};
 		DIMOUSESTATE2 mouseState{0};
 	};
 	

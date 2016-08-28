@@ -211,7 +211,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				shaderToUse++;
 				shaderToUse %= numShaders;
 			}
-			if (gamepad.GetButtonReleased(beGamepad::X) || mouse.IsPressed(beMouse::Button::RightButton))
+			if (gamepad.GetButtonReleased(beGamepad::X) || mouse.IsPressed(beMouse::Button::MiddleButton))
 			{
 				modelToUse++;
 				modelToUse %= numModels;

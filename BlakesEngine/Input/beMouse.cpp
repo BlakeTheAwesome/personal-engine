@@ -63,6 +63,7 @@ void beMouse::Update(float dt)
 	
 	m_currentState.x += m_currentState.mouseState.lX;
 	m_currentState.y += m_currentState.mouseState.lY;
+	m_currentState.z += m_currentState.mouseState.lZ;
 
 	// Clamp
 	if (m_currentState.x < 0) { m_currentState.x = 0; }

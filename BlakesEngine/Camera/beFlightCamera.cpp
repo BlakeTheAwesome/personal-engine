@@ -8,6 +8,7 @@
 
 static const float ROTATIONS_PER_SECOND = 0.5f * (2.f * PI);
 static const float DISTANCE_PER_SECOND = 1.0f;
+static const float MOUSE_SPEED_MULTIPLIER = 0.01f;
 static const bool INVERT_Y = true;
 
 
@@ -82,26 +83,26 @@ void beFlightCamera::Update(float dt)
 		float rX = m_gamepad->GetRightX();
 		float rY = m_gamepad->GetRightY();
 
-		if (lX == 0.f && lY == 0.f && rX == 0.f && rY == 0.f)
+		if (lX != 0.f || lY != 0.f || rX != 0.f || rY != 0.f)
 		{
-			return;
+			float moveSpeedFactor = (5.f + m_gamepad->GetR2());
+
+			float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
+			float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
+			float forwards = lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+			float right = lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+			UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 		}
-
-		float moveSpeedFactor = (5.f + m_gamepad->GetR2());
-
-		float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
-		float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
-		float forwards = lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-		float right = lX * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-		UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 	}
 
-	if (m_mouse && m_mouse->IsDown(beMouse::Button::LeftButton))
+	if (m_mouse)
 	{
-		float extraPitch = m_mouse->GetY() * dt;
-		float extraYaw = m_mouse->GetX() * dt;
-		float forwards = 0.f;
-		float right = 0.f;
+		bool lDown = m_mouse->IsDown(beMouse::Button::LeftButton);
+		bool rDown = m_mouse->IsDown(beMouse::Button::RightButton);
+		float extraPitch = lDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		float extraYaw = lDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		float forwards = rDown ? -m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		float right = rDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 		UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 	}
 }
