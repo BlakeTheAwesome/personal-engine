@@ -40,7 +40,7 @@ class beStringView
 
 	int Length() const
 	{
-		if (m_cstr) { (int)strlen(m_cstr); } 
+		if (m_cstr) { return (int)strlen(m_cstr); } 
 		if (m_beStr) { return (int)m_beStr->size(); } 
 		return (int)m_ownedStr.size();
 	}

@@ -10,7 +10,7 @@ class beSystemEventManager
 {
 	PIMPL_DECLARE(beSystemEventManager);
 
-	PrimitiveType(CallbackId, u8);
+	PrimitiveType(CallbackId, u8, (u8)-1);
 
 	void Update();
 

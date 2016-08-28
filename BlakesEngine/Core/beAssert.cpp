@@ -7,7 +7,7 @@ namespace beAssert
 {
 	void DebugBreak( bool condition, const char* conditionAsString, s8 warningLevel, const char* location )
 	{
-		static_assert(sizeof(char)==1, "");
+		STATIC_ASSERT(sizeof(char)==1);
 		BE_UNUSED( warningLevel );
 		
 		if ( !condition )

@@ -5,6 +5,7 @@
 
 #define ENABLE_ASSERTS 1
 
+#define STATIC_ASSERT(x) static_assert(x, #x)
 #ifdef ENABLE_ASSERTS
 	#define BE_ASSERT(x) beAssert::DebugBreak((x), #x, 3, LOCATION )
 	#define BE_ASSERT_CODE(x) x

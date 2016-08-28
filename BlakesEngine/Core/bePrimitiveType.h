@@ -11,9 +11,9 @@ struct bePrimitiveType
 	T operator++(int) { return value++; }
 };
 
-#define PrimitiveType(name, T) struct name : bePrimitiveType<u8>\
+#define PrimitiveType(name, T, def) struct name : bePrimitiveType<u8>\
 {\
-	name() = default;\
+	name() : bePrimitiveType{def} {};\
 	name(T val) : bePrimitiveType{val} {};\
 	bool operator==(const name& that) const {return value == that.value;}\
 	bool operator!=(const name& that) const {return value != that.value;}\

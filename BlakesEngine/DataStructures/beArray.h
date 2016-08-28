@@ -9,7 +9,23 @@ class beArray
 		enum { element_size = sizeof(T) };
 
 		beArray() = default;
-		beArray(const std::initializer_list<T>& list) : m_buffer{list} {}
+		beArray(const T& def) { SetAll(def); }
+		beArray(std::initializer_list<T> list)// : m_buffer{list} Todo: fix this
+		{
+			BE_ASSERT(list.size() == 1 || list.size() == CAPACITY);
+			if (list.size() == 1)
+			{
+				SetAll(*list.begin());
+			}
+			else
+			{
+				const T* buf = list.begin();
+				for (int i = 0; i < CAPACITY; i++)
+				{
+					m_buffer[i] = buf[i];
+				}
+			}
+		}
 		~beArray() = default;
 		
 		void SetAll(const T& v)

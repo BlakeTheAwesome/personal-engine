@@ -8,7 +8,7 @@ template <typename T, int CAPACITY>
 struct beVectorFixedPolicy
 {
 	beVectorFixedPolicy() = default;
-	beVectorFixedPolicy(int capacity, int increaseBy, const std::initializer_list<T>& list)
+	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
 		BE_ASSERT(increaseBy == 0);
 		BE_ASSERT(capacity <= CAPACITY); 
@@ -45,7 +45,7 @@ template <typename T>
 struct beVectorMallocPolicy : public NonCopiable
 {
 	beVectorMallocPolicy() = delete;
-	beVectorMallocPolicy(int capacity, int increaseBy, const std::initializer_list<T>& list)
+	beVectorMallocPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
 		BE_ASSERT((int)list.size() <= capacity);
 		Reserve(capacity);
@@ -132,7 +132,7 @@ class beVectorBase : Policy
 		enum { element_size = sizeof(T) };
 		
 		beVectorBase() = default;
-		beVectorBase(int capacity, int increaseBy, const std::initializer_list<T>& list) : Policy(capacity, increaseBy, list) {}
+		beVectorBase(int capacity, int increaseBy, std::initializer_list<T> list) : Policy(capacity, increaseBy, list) {}
 		beVectorBase(int capacity, int increaseBy)
 			: Policy(capacity, increaseBy)
 		{
@@ -379,7 +379,7 @@ class beVector : public beVectorBase<T, beVectorMallocPolicy<T>>
 	public:
 	explicit beVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
-	beVector(int capacity, int increaseBy, const std::initializer_list<T>& list) : Base(capacity, increaseBy, list) {}
+	beVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
 };
 
 template <typename T, int CAPACITY>
@@ -388,5 +388,5 @@ class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 	typedef beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>> Base;
 	public:
 	beFixedVector() = default;
-	beFixedVector(const std::initializer_list<T>& list) : Base(CAPACITY, 0, list) {}
+	beFixedVector(std::initializer_list<T> list) : Base(CAPACITY, 0, list) {}
 };
