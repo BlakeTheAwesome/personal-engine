@@ -32,7 +32,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
 	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	//wc.hbrBackground = (HBRUSH)COLOR_WINDOW; // Enable to put inital colour back in
+	wc.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
 	wc.lpszClassName = L"beWindowClass";
 
 	// register the window class
