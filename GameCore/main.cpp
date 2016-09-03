@@ -78,21 +78,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		model1.Deinit();
 		font.Deinit();
 	);
-
-	beTexture writeTexture;
-	writeTexture.InitAsTarget(renderInterface, 512, 512);
+	
+	beTexture screenGrabTexture;
+	screenGrabTexture.InitAsTarget(renderInterface, 512, 512);
+	bool writingToScreenGrabTexture = false;
 	defer(
-		writeTexture.Deinit();
+		screenGrabTexture.FinaliseTarget();
+		screenGrabTexture.Deinit();
 	);
 
 	beBitmap bitmapTexQuad;
 	beBitmap bitmapTextDynamic;
 	beBitmap bitmapTextPreRendered;
+	beBitmap bitmapScreenGrab;
 	bitmapTexQuad.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
 	bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
 	bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
-	bitmapTextPreRendered.Init(renderInterface, writeTexture);
-	bitmapTextPreRendered.SetPosition(-400, -400);
 	defer(
 		bitmapTextPreRendered.Deinit();
 		bitmapTextDynamic.Deinit();
@@ -245,6 +246,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			if (!haveWrittenToTexture)
 			{
+				beTexture writeTexture;
+				writeTexture.InitAsTarget(renderInterface, 512, 512);
+				defer(
+					writeTexture.Deinit();
+				);
 				haveWrittenToTexture = true;
 				writeTexture.SetAsTarget(renderInterface);
 				writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
@@ -267,6 +273,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				renderInterface->EnableZBuffer();
 				renderInterface->RestoreRenderTarget();
 				writeTexture.FinaliseTarget();
+				
+				bitmapTextPreRendered.Init(renderInterface, writeTexture);
+				bitmapTextPreRendered.SetPosition(-400, -400);
+			}
+
+			if (writingToScreenGrabTexture)
+			{
+				renderInterface->RestoreRenderTarget();
+				bitmapScreenGrab.Init(renderInterface, screenGrabTexture);
+				writingToScreenGrabTexture = false;
+			}
+			bool doScreenGrab = keyboard.IsPressed(beKeyboard::Button::Space);
+			if (doScreenGrab)
+			{
+				screenGrabTexture.SetAsTarget(renderInterface);
+				writingToScreenGrabTexture = true;
 			}
 
 			renderInterface->BeginFrame();
@@ -308,6 +330,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			
+			if (bitmapScreenGrab.GetTexture() && !writingToScreenGrabTexture)
+			{
+				bitmapScreenGrab.Render(renderInterface);
+				textureShader2d.Render(renderInterface, bitmapScreenGrab.GetIndexCount(), bitmapScreenGrab.GetTexture());
+			}
 			
 			bitmapTexQuad.Render(renderInterface);
 			textureShader2d.Render(renderInterface, bitmapTexQuad.GetIndexCount(), bitmapTexQuad.GetTexture());
