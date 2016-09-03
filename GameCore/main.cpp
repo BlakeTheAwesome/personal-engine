@@ -85,19 +85,18 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		writeTexture.Deinit();
 	);
 
-	beBitmap bitmap1;
-	beBitmap bitmap2;
-	beBitmap bitmap3;
-	bitmap1.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
-	bitmap1.SetPosition(1024/2-128, 768/2-128);
-	bitmap2.InitText(renderInterface, &font, "Test string\ntestyTest StringTestStringTestStringTestStringTestStringTestString", 512.f, 0);
-	bitmap2.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
-	bitmap3.Init(renderInterface, writeTexture);
-	bitmap3.SetPosition(-400, -400);
+	beBitmap bitmapTexQuad;
+	beBitmap bitmapTextDynamic;
+	beBitmap bitmapTextPreRendered;
+	bitmapTexQuad.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
+	bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
+	bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
+	bitmapTextPreRendered.Init(renderInterface, writeTexture);
+	bitmapTextPreRendered.SetPosition(-400, -400);
 	defer(
-		bitmap3.Deinit();
-		bitmap2.Deinit();
-		bitmap1.Deinit();
+		bitmapTextPreRendered.Deinit();
+		bitmapTextDynamic.Deinit();
+		bitmapTexQuad.Deinit();
 	);
 	
 	beShaderColour colourShader;
@@ -222,23 +221,23 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 			if (gamepad.GetButtonReleased(beGamepad::Up))
 			{
-				Vec2 bitmapPosition = bitmap1.GetPosition();
-				bitmap1.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
+				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+				bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
 			}
 			if (gamepad.GetButtonReleased(beGamepad::Down))
 			{
-				Vec2 bitmapPosition = bitmap1.GetPosition();
-				bitmap1.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
+				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+				bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
 			}
 			if (gamepad.GetButtonReleased(beGamepad::Left))
 			{
-				Vec2 bitmapPosition = bitmap1.GetPosition();
-				bitmap1.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
+				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+				bitmapTexQuad.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
 			}
 			if (gamepad.GetButtonReleased(beGamepad::Right))
 			{
-				Vec2 bitmapPosition = bitmap1.GetPosition();
-				bitmap1.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
+				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+				bitmapTexQuad.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
 			}
 
 			renderInterface->Update(dt.ToSeconds());
@@ -256,13 +255,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				renderInterface->DisableZBuffer();
 				textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			
-				//bitmap1.Render(renderInterface);
-				//textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+				//bitmapTexQuad.Render(renderInterface);
+				//textureShader2d.Render(renderInterface, bitmapTexQuad.GetIndexCount(), bitmapTexQuad.GetTexture());
 
 				renderInterface->EnableAlpha();
-				bitmap2.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
-				bitmap2.Render(renderInterface);
-				textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture());
+				bitmapTextDynamic.InitText(renderInterface, &font, "Pre-RenderedText", 512.f, 0);
+				bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
+				bitmapTextDynamic.Render(renderInterface);
+				textureShader2d.Render(renderInterface, bitmapTextDynamic.GetIndexCount(), bitmapTextDynamic.GetTexture());
 				renderInterface->DisableAlpha();
 				renderInterface->EnableZBuffer();
 				renderInterface->RestoreRenderTarget();
@@ -309,15 +309,18 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->DisableZBuffer();
 			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
 			
-			bitmap1.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmap1.GetIndexCount(), bitmap1.GetTexture());
+			bitmapTexQuad.Render(renderInterface);
+			textureShader2d.Render(renderInterface, bitmapTexQuad.GetIndexCount(), bitmapTexQuad.GetTexture());
 	
-			//bitmap2.Render(renderInterface);
-			//textureShader2d.Render(renderInterface, bitmap2.GetIndexCount(), bitmap2.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
-			
 			renderInterface->EnableAlpha();
-			bitmap3.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmap3.GetIndexCount(), bitmap3.GetTexture());
+			beStringBuilder sb;
+			sb << "Dynamic Text\nMouseX:"<<mouse.GetX()<<"\nMouseY:"<<mouse.GetY();
+			bitmapTextDynamic.InitText(renderInterface, &font, sb, 512.f, 0);
+			bitmapTextDynamic.Render(renderInterface);
+			textureShader2d.Render(renderInterface, bitmapTextDynamic.GetIndexCount(), bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+			
+			bitmapTextPreRendered.Render(renderInterface);
+			textureShader2d.Render(renderInterface, bitmapTextPreRendered.GetIndexCount(), bitmapTextPreRendered.GetTexture());
 			renderInterface->DisableAlpha();
 			
 			renderInterface->EnableZBuffer();
