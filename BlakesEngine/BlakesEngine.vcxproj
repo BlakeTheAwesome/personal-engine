@@ -255,6 +255,10 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\..</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'">$(ProjectDir)\..</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="External\RenderDoc-Manager\RenderDocManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Input\beKeyboard.cpp" />
     <ClCompile Include="Input\beMouse.cpp" />
@@ -314,6 +318,8 @@
     <ClInclude Include="External\DirectXTK\VertexTypes.h" />
     <ClInclude Include="External\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="External\DirectXTK\XboxDDSTextureLoader.h" />
+    <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
+    <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Input\beKeyboard.h" />
     <ClInclude Include="Input\beMouse.h" />

@@ -26,6 +26,13 @@
 #include "BlakesEngine/platform/beSystemEventManager.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
+#include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
+
+#ifdef DEBUG
+#define ENABLE_RENDERDOC
+#define RENDERDOC_PATH L"d:/Dev/Renderdoc/renderdoc.dll"
+#define RENDERDOC_CAPTURE_PATH "d:/temp/renderdoc/capture"
+#endif
 
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
@@ -40,9 +47,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	beFrameTimer frameTimer;
 	frameTimer.LimitFPS(120);
-
+	
 	beString windowName("TestWindow");
 	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1024, 768, false);
+	
+	#ifdef ENABLE_RENDERDOC
+		RenderDocManager renderdoc(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
+	#endif
+
 	auto renderInterface = PIMPL_NEW(beRenderInterface)();
 	renderInterface->Init(window, 0.01f, 100.00f, true);
 	defer(
@@ -285,11 +297,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				writingToScreenGrabTexture = false;
 			}
 			bool doScreenGrab = keyboard.IsPressed(beKeyboard::Button::Space);
+			bool renderDocCapture = keyboard.IsPressed(beKeyboard::Button::F11);
 			if (doScreenGrab)
 			{
 				screenGrabTexture.SetAsTarget(renderInterface);
 				writingToScreenGrabTexture = true;
+				renderDocCapture = true;
 			}
+
+			#ifdef ENABLE_RENDERDOC
+			if (renderDocCapture) { renderdoc.StartFrameCapture(); }
+			#endif
 
 			renderInterface->BeginFrame();
 			
@@ -354,6 +372,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->EnableZBuffer();
 
 			renderInterface->EndFrame();
+			
+			#ifdef ENABLE_RENDERDOC
+			if (renderDocCapture) { renderdoc.EndFrameCapture(); }
+			#endif
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 
 		}

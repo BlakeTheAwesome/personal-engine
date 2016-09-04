@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined _DEBUG && !defined DEBUG
+#define DEBUG
+#endif
+
 #include "BlakesEngine/Platform/beWindows.h"
 
 //#include "BlakesEngine/Core/beMacros.h"
