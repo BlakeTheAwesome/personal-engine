@@ -29,9 +29,9 @@
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 
 #ifdef DEBUG
-#define ENABLE_RENDERDOC
-#define RENDERDOC_PATH L"d:/Dev/Renderdoc/renderdoc.dll"
-#define RENDERDOC_CAPTURE_PATH "d:/temp/renderdoc/capture"
+//#define ENABLE_RENDERDOC
+#define RENDERDOC_PATH L"d:/Dev/Renderdoc/renderDoc.dll"
+#define RENDERDOC_CAPTURE_PATH "d:/temp/renderDoc/capture"
 #endif
 
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1024, 768, false);
 	
 	#ifdef ENABLE_RENDERDOC
-		RenderDocManager renderdoc(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
+		RenderDocManager renderDoc(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
 	#endif
 
 	auto renderInterface = PIMPL_NEW(beRenderInterface)();
@@ -92,8 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	);
 	
 	beTexture screenGrabTexture;
-	screenGrabTexture.InitAsTarget(renderInterface, 512, 512);
-	bool writingToScreenGrabTexture = false;
+	screenGrabTexture.InitAsTarget(renderInterface, 256, 256);
 	defer(
 		screenGrabTexture.FinaliseTarget();
 		screenGrabTexture.Deinit();
@@ -107,6 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
 	bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	defer(
+		bitmapScreenGrab.Deinit();
 		bitmapTextPreRendered.Deinit();
 		bitmapTextDynamic.Deinit();
 		bitmapTexQuad.Deinit();
@@ -209,49 +209,53 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			keyboard.Update(dt.ToSeconds());
 			mouse.Update(dt.ToSeconds());
 			gamepad.Update(dt.ToSeconds());
+			auto handleInput = [&]()
+			{
+				if (gamepad.GetButtonReleased(beGamepad::A) || keyboard.IsPressed(beKeyboard::Button::W))
+				{
+					renderInterface->ToggleWireframe();
+				}
+				if (gamepad.GetButtonReleased(beGamepad::B) || keyboard.IsPressed(beKeyboard::Button::Escape))
+				{
+					win32Callback.quit = true;
+				}
+				if (gamepad.GetButtonReleased(beGamepad::Y))
+				{
+					shaderToUse++;
+					shaderToUse %= numShaders;
+				}
+				if (gamepad.GetButtonReleased(beGamepad::X) || mouse.IsPressed(beMouse::Button::MiddleButton))
+				{
+					modelToUse++;
+					modelToUse %= numModels;
+				}
+				if (gamepad.GetButtonReleased(beGamepad::Select))
+				{
+					renderAxes = !renderAxes;
+				}
+				if (gamepad.GetButtonReleased(beGamepad::Up))
+				{
+					Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+					bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
+				}
+				if (gamepad.GetButtonReleased(beGamepad::Down))
+				{
+					Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+					bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
+				}
+				if (gamepad.GetButtonReleased(beGamepad::Left))
+				{
+					Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+					bitmapTexQuad.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
+				}
+				if (gamepad.GetButtonReleased(beGamepad::Right))
+				{
+					Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
+					bitmapTexQuad.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
+				}
+			};
 
-			if (gamepad.GetButtonReleased(beGamepad::A) || keyboard.IsPressed(beKeyboard::Button::W))
-			{
-				renderInterface->ToggleWireframe();
-			}
-			if (gamepad.GetButtonReleased(beGamepad::B) || keyboard.IsPressed(beKeyboard::Button::Escape))
-			{
-				win32Callback.quit = true;
-			}
-			if (gamepad.GetButtonReleased(beGamepad::Y))
-			{
-				shaderToUse++;
-				shaderToUse %= numShaders;
-			}
-			if (gamepad.GetButtonReleased(beGamepad::X) || mouse.IsPressed(beMouse::Button::MiddleButton))
-			{
-				modelToUse++;
-				modelToUse %= numModels;
-			}
-			if (gamepad.GetButtonReleased(beGamepad::Select))
-			{
-				renderAxes = !renderAxes;
-			}
-			if (gamepad.GetButtonReleased(beGamepad::Up))
-			{
-				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
-				bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
-			}
-			if (gamepad.GetButtonReleased(beGamepad::Down))
-			{
-				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
-				bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
-			}
-			if (gamepad.GetButtonReleased(beGamepad::Left))
-			{
-				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
-				bitmapTexQuad.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
-			}
-			if (gamepad.GetButtonReleased(beGamepad::Right))
-			{
-				Vec2 bitmapPosition = bitmapTexQuad.GetPosition();
-				bitmapTexQuad.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
-			}
+			handleInput();
 
 			renderInterface->Update(dt.ToSeconds());
 			camera.Update(dt.ToSeconds());
@@ -266,9 +270,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				haveWrittenToTexture = true;
 				writeTexture.SetAsTarget(renderInterface);
 				writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
-						model4.Render(renderInterface);
-						colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-						colourShader.Render(renderInterface, model4.GetIndexCount(), 0);
+				model4.Render(renderInterface);
+				colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+				colourShader.Render(renderInterface, model4.GetIndexCount(), 0);
 				
 				renderInterface->DisableZBuffer();
 				textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
@@ -289,92 +293,99 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				bitmapTextPreRendered.Init(renderInterface, writeTexture);
 				bitmapTextPreRendered.SetPosition(-400, -400);
 			}
-
-			if (writingToScreenGrabTexture)
+			
+			auto renderFrame = [&](bool writingToScreenGrabTexture)
 			{
-				renderInterface->RestoreRenderTarget();
-				bitmapScreenGrab.Init(renderInterface, screenGrabTexture);
-				writingToScreenGrabTexture = false;
-			}
+				beModel* modelToRender = nullptr;
+				switch (modelToUse)
+				{
+					case 0: modelToRender = nullptr; break;
+					case 1: modelToRender = &model1; break;
+					case 2: modelToRender = &model2; break;
+					case 3: modelToRender = &model3; break;
+					case 4: modelToRender = &model4; break;
+					case 5: modelToRender = &model5; break;
+				}
+			
+				if (modelToRender)
+				{
+					modelToRender->Render(renderInterface);
+
+					switch (shaderToUse)
+					{
+						case 0:
+							litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
+							litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
+						break;
+						case 1:
+							textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+							textureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
+						break;
+						case 2:
+							colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+							colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0);
+						break;
+					}
+				}
+
+				debugWorld->SetRenderAxes(renderAxes);
+				debugWorld->Render(renderInterface, &colourShader, camera.GetViewMatrix(), camera.GetPosition());
+
+				renderInterface->DisableZBuffer();
+				textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
+			
+				if (bitmapScreenGrab.GetTexture() && !writingToScreenGrabTexture)
+				{
+					bitmapScreenGrab.Render(renderInterface);
+					textureShader2d.Render(renderInterface, bitmapScreenGrab.GetIndexCount(), bitmapScreenGrab.GetTexture());
+				}
+			
+				bitmapTexQuad.Render(renderInterface);
+				textureShader2d.Render(renderInterface, bitmapTexQuad.GetIndexCount(), bitmapTexQuad.GetTexture());
+	
+				renderInterface->EnableAlpha();
+				beStringBuilder sb;
+				sb << "Dynamic Text\nMouseX:"<<mouse.GetX()<<"\nMouseY:"<<mouse.GetY();
+				bitmapTextDynamic.InitText(renderInterface, &font, sb, 512.f, 0);
+				bitmapTextDynamic.Render(renderInterface);
+				textureShader2d.Render(renderInterface, bitmapTextDynamic.GetIndexCount(), bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+			
+				//bitmapTextPreRendered.Render(renderInterface);
+				//textureShader2d.Render(renderInterface, bitmapTextPreRendered.GetIndexCount(), bitmapTextPreRendered.GetTexture());
+				renderInterface->DisableAlpha();
+			
+				renderInterface->EnableZBuffer();
+			};
+			
 			bool doScreenGrab = keyboard.IsPressed(beKeyboard::Button::Space);
-			bool renderDocCapture = keyboard.IsPressed(beKeyboard::Button::F11);
+			#ifdef ENABLE_RENDERDOC
+			bool singleCapture = keyboard.IsPressed(beKeyboard::Button::F11) || doScreenGrab;// || keyboard.IsDown(beKeyboard::Button::Space);
+			if (keyboard.IsPressed(beKeyboard::Button::F1)) { renderDoc.ToggleOverlay(); }
+			if (singleCapture)
+			{
+				renderDoc.StartFrameCapture();
+			}
+			#endif
+			
+			renderInterface->BeginFrame();
+			
 			if (doScreenGrab)
 			{
 				screenGrabTexture.SetAsTarget(renderInterface);
-				writingToScreenGrabTexture = true;
-				renderDocCapture = true;
+				screenGrabTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.f));
+				renderFrame(true);
+				renderInterface->RestoreRenderTarget();
+				bitmapScreenGrab.Init(renderInterface, screenGrabTexture);
 			}
-
-			#ifdef ENABLE_RENDERDOC
-			if (renderDocCapture) { renderdoc.StartFrameCapture(); }
-			#endif
-
-			renderInterface->BeginFrame();
-			
-			beModel* modelToRender = nullptr;
-			switch (modelToUse)
-			{
-				case 0: modelToRender = nullptr; break;
-				case 1: modelToRender = &model1; break;
-				case 2: modelToRender = &model2; break;
-				case 3: modelToRender = &model3; break;
-				case 4: modelToRender = &model4; break;
-				case 5: modelToRender = &model5; break;
-			}
-			
-			if (modelToRender)
-			{
-				modelToRender->Render(renderInterface);
-
-				switch (shaderToUse)
-				{
-					case 0:
-						litTextureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix(), camera.GetPosition());
-						litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
-					break;
-					case 1:
-						textureShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-						textureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
-					break;
-					case 2:
-						colourShader.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-						colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0);
-					break;
-				}
-			}
-
-			debugWorld->SetRenderAxes(renderAxes);
-			debugWorld->Render(renderInterface, &colourShader, camera.GetViewMatrix(), camera.GetPosition());
-
-			renderInterface->DisableZBuffer();
-			textureShader2d.SetShaderParameters(renderInterface, camera.GetViewMatrix());
-			
-			if (bitmapScreenGrab.GetTexture() && !writingToScreenGrabTexture)
-			{
-				bitmapScreenGrab.Render(renderInterface);
-				textureShader2d.Render(renderInterface, bitmapScreenGrab.GetIndexCount(), bitmapScreenGrab.GetTexture());
-			}
-			
-			bitmapTexQuad.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmapTexQuad.GetIndexCount(), bitmapTexQuad.GetTexture());
-	
-			renderInterface->EnableAlpha();
-			beStringBuilder sb;
-			sb << "Dynamic Text\nMouseX:"<<mouse.GetX()<<"\nMouseY:"<<mouse.GetY();
-			bitmapTextDynamic.InitText(renderInterface, &font, sb, 512.f, 0);
-			bitmapTextDynamic.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmapTextDynamic.GetIndexCount(), bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
-			
-			bitmapTextPreRendered.Render(renderInterface);
-			textureShader2d.Render(renderInterface, bitmapTextPreRendered.GetIndexCount(), bitmapTextPreRendered.GetTexture());
-			renderInterface->DisableAlpha();
-			
-			renderInterface->EnableZBuffer();
+			renderFrame(false);
 
 			renderInterface->EndFrame();
 			
 			#ifdef ENABLE_RENDERDOC
-			if (renderDocCapture) { renderdoc.EndFrameCapture(); }
+			if (singleCapture)
+			{
+				renderDoc.EndFrameCapture();
+			}
 			#endif
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 

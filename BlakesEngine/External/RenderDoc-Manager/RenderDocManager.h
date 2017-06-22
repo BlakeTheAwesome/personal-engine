@@ -29,17 +29,22 @@
 class RenderDocManager
 {
 public:
-    RenderDocManager(HWND p_Handle, LPCWSTR pRenderDocPath, const char* pCapturePath);
-    ~RenderDocManager(void);
-    void StartFrameCapture();
-    void EndFrameCapture();
+	RenderDocManager(HWND p_Handle, LPCWSTR pRenderDocPath, const char* pCapturePath);
+	~RenderDocManager(void);
+	void StartFrameCapture();
+	void EndFrameCapture();
 
-private:
-    HINSTANCE m_RenderDocDLL;
-    //UINT32 m_SocketPort;
-    HWND m_Handle;
-    bool m_CaptureStarted;
+	void TriggerMultiFrameCapture(int numFrames);
 
-    RENDERDOC_API_1_1_1* m_renderDocFns = nullptr;
+	void SetOverlay(RENDERDOC_OverlayBits overlayBits);
+	void ToggleOverlay();
+
+	private:
+	HINSTANCE m_RenderDocDLL;
+	//UINT32 m_SocketPort;
+	HWND m_Handle;
+	bool m_CaptureStarted;
+
+	RENDERDOC_API_1_1_1* m_renderDocFns = nullptr;
 };
 

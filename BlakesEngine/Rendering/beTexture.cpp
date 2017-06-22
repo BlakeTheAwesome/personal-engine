@@ -161,6 +161,5 @@ void beTexture::Clear(beRenderInterface* ri, Vec4 clearColour)
 	auto context = ri->GetDeviceContext();
 	context->ClearRenderTargetView(m_renderTargetView, &clearColour.x);
 
-	// Maybe?
-	//context->ClearDepthStencilView(ri->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	context->ClearDepthStencilView(ri->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }

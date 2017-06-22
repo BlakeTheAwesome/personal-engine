@@ -69,15 +69,34 @@ RenderDocManager::RenderDocManager(HWND p_Handle, LPCWSTR pRenderDocPath, const 
 
 
 	m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_CaptureCallstacks, true);
-	//m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_CaptureAllCmdLists, true);
-	//m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_SaveAllInitials, true);
+	m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_CaptureAllCmdLists, true);
+	m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_SaveAllInitials, true);
+	m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_APIValidation, true);
+	
 
 	// Init remote access.
 	//m_SocketPort = 0;
 	//m_RenderDocFns->LaunchReplayUI(&m_SocketPort, 0);
 
-	RENDERDOC_OverlayBits overlayBits = eRENDERDOC_Overlay_Default;
-	m_renderDocFns->MaskOverlayBits(0, overlayBits);
+	SetOverlay(eRENDERDOC_Overlay_Default);
+}
+
+void RenderDocManager::SetOverlay(RENDERDOC_OverlayBits overlayBits)
+{
+	m_renderDocFns->MaskOverlayBits(eRENDERDOC_Overlay_None, overlayBits);
+}
+
+void RenderDocManager::ToggleOverlay()
+{
+	uint32_t currentBits = m_renderDocFns->GetOverlayBits();
+	if ((currentBits & eRENDERDOC_Overlay_Enabled) != 0)
+	{
+		m_renderDocFns->MaskOverlayBits((uint32_t)~eRENDERDOC_Overlay_Enabled, 0);
+	}
+	else
+	{
+		m_renderDocFns->MaskOverlayBits((uint32_t)~0, eRENDERDOC_Overlay_Enabled);
+	}
 }
 
 void RenderDocManager::StartFrameCapture()
@@ -121,6 +140,12 @@ void RenderDocManager::EndFrameCapture()
 	m_CaptureStarted = false;
 	return;
 }
+
+void RenderDocManager::TriggerMultiFrameCapture(int numFrames)
+{
+	m_renderDocFns->TriggerMultiFrameCapture(numFrames);
+}
+
 
 RenderDocManager::~RenderDocManager()
 {
