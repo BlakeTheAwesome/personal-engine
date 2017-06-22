@@ -38,7 +38,7 @@ struct beVectorFixedPolicy
 	int Capacity() const { return CAPACITY; }
 
 	int m_count = 0;
-	typename std::aligned_storage<sizeof(T), alignof(T)>::type m_buffer[CAPACITY];
+	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer[CAPACITY];
 };
 
 template <typename T>
@@ -346,7 +346,7 @@ class beVectorBase : Policy
 		}
 		
 	private:
-		template <bool isPod=std::is_pod<T>::value> void ConstructElements(int startElement, int endElement);
+		template <bool isPod=std::is_pod_v<T>> void ConstructElements(int startElement, int endElement);
 		template<> void ConstructElements<true>(int startElement, int endElement) {}
 		template<> void ConstructElements<false>(int startElement, int endElement)
 		{
@@ -356,7 +356,7 @@ class beVectorBase : Policy
 			}
 		}
 		
-		template <bool isPod=std::is_pod<T>::value> void DestructElements(int startElement, int endElement);
+		template <bool isPod=std::is_pod_v<T>> void DestructElements(int startElement, int endElement);
 		template<> void DestructElements<true>(int startElement, int endElement) {}
 		template<> void DestructElements<false>(int startElement, int endElement)
 		{

@@ -53,7 +53,7 @@ For more information, please refer to <http://unlicense.org/>
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-#define FUNC_MOVE(value) static_cast<typename std::remove_reference<decltype(value)>::type &&>(value)
+#define FUNC_MOVE(value) static_cast<typename std::remove_reference_t<decltype(value)> &&>(value)
 #define FUNC_FORWARD(type, value) static_cast<type &&>(value)
 
 #pragma warning(push, 3)
@@ -75,6 +75,9 @@ struct force_function_heap_allocation
 	: std::false_type
 {
 };
+
+template <typename T>
+constexpr bool force_function_heap_allocation_v = force_function_heap_allocation<T>::value;
 
 template<typename>
 class function;
@@ -109,12 +112,15 @@ namespace detail
 			// so that it fits
 			= sizeof(T) <= sizeof(functor_padding)
 			// so that it will be aligned
-			&& std::alignment_of<functor_padding>::value % std::alignment_of<T>::value == 0
+			&& std::alignment_of_v<functor_padding> % std::alignment_of_v<T> == 0
 			// so that we can offer noexcept move
-			&& std::is_nothrow_move_constructible<T>::value
+			&& std::is_nothrow_move_constructible_v<T>
 			// so that the user can override it
-			&& !force_function_heap_allocation<T>::value;
+			&& !force_function_heap_allocation_v<T>;
 	};
+
+	template<typename T, typename Allocator>
+	constexpr bool is_inplace_allocated_v = is_inplace_allocated<T, Allocator>::value;
 
 	template<typename T>
 	T to_functor(T && func)
@@ -137,6 +143,9 @@ namespace detail
 	{
 		typedef decltype(to_functor(std::declval<T>())) type;
 	};
+
+	template <typename T>
+	using functor_type_t = typename functor_type<T>::type;
 
 	template<typename T>
 	bool is_null(const T &)
@@ -183,9 +192,12 @@ namespace detail
 			template<typename>
 			static empty_struct check(...);
 
-			static const bool value = std::is_convertible<decltype(check<T>(nullptr)), Result>::value;
+			static const bool value = std::is_convertible_v<decltype(check<T>(nullptr)), Result>;
 #		endif
 	};
+
+	template<typename T, typename Result, typename... Arguments>
+	constexpr bool is_valid_function_argument_v = is_valid_function_argument<T, Result, Arguments...>::value;
 
 	typedef const function_manager * manager_type;
 
@@ -235,7 +247,7 @@ namespace detail
 		}
 	};
 	template<typename T, typename Allocator>
-	struct function_manager_inplace_specialization<T, Allocator, typename std::enable_if<!is_inplace_allocated<T, Allocator>::value>::type>
+	struct function_manager_inplace_specialization<T, Allocator, typename std::enable_if_t<!is_inplace_allocated_v<T, Allocator>>>
 	{
 		template<typename Result, typename... Arguments>
 		static Result call(const functor_padding & storage, Arguments... arguments)
@@ -254,7 +266,7 @@ namespace detail
 		}
 		static void move_functor(manager_storage_type & lhs, manager_storage_type && rhs) FUNC_NOEXCEPT
 		{
-			static_assert(std::is_nothrow_move_constructible<typename std::allocator_traits<Allocator>::pointer>::value, "we can't offer a noexcept swap if the pointer type is not nothrow move constructible");
+			static_assert(std::is_nothrow_move_constructible_v<typename std::allocator_traits<Allocator>::pointer>, "we can't offer a noexcept swap if the pointer type is not nothrow move constructible");
 			new (&get_functor_ptr_ref(lhs)) typename std::allocator_traits<Allocator>::pointer(FUNC_MOVE(get_functor_ptr_ref(rhs)));
 			// this next assignment makes the destroy function easier
 			get_functor_ptr_ref(rhs) = nullptr;
@@ -424,7 +436,7 @@ public:
 	}
 	template<typename T>
 	function(T functor,
-			typename std::enable_if<detail::is_valid_function_argument<T, Result (Arguments...)>::value, detail::empty_struct>::type = detail::empty_struct()) FUNC_TEMPLATE_NOEXCEPT(T, std::allocator<typename detail::functor_type<T>::type>)
+			typename std::enable_if_t<detail::is_valid_function_argument_v<T, Result (Arguments...)>, detail::empty_struct> = detail::empty_struct()) FUNC_TEMPLATE_NOEXCEPT(T, std::allocator<typename detail::functor_type_t<T>>)
 	{
 		if (detail::is_null(functor))
 		{
@@ -432,7 +444,7 @@ public:
 		}
 		else
 		{
-			typedef typename detail::functor_type<T>::type functor_type;
+			typedef typename detail::functor_type_t<T> functor_type;
 			initialize(detail::to_functor(FUNC_FORWARD(T, functor)), std::allocator<functor_type>());
 		}
 	}
@@ -450,7 +462,7 @@ public:
 	}
 	template<typename Allocator, typename T>
 	function(std::allocator_arg_t, const Allocator & allocator, T functor,
-			typename std::enable_if<detail::is_valid_function_argument<T, Result (Arguments...)>::value, detail::empty_struct>::type = detail::empty_struct())
+			typename std::enable_if_t<detail::is_valid_function_argument_v<T, Result (Arguments...)>, detail::empty_struct> = detail::empty_struct())
 			FUNC_TEMPLATE_NOEXCEPT(T, Allocator)
 	{
 		if (detail::is_null(functor))
@@ -469,10 +481,10 @@ public:
 		typedef typename std::allocator_traits<Allocator>::template rebind_alloc<function> MyAllocator;
 
 		// first try to see if the allocator matches the target type
-		detail::manager_type manager_for_allocator = &detail::get_default_manager<typename std::allocator_traits<Allocator>::value_type, Allocator>();
+		detail::manager_type manager_for_allocator = &detail::get_default_manager_v<typename std::allocator_traits<Allocator>, Allocator>();
 		if (other.manager_storage.manager == manager_for_allocator)
 		{
-			detail::create_manager<typename std::allocator_traits<Allocator>::value_type, Allocator>(manager_storage, Allocator(allocator));
+			detail::create_manager<typename std::allocator_traits_v<Allocator>, Allocator>(manager_storage, Allocator(allocator));
 			manager_for_allocator->call_copy_functor_only(manager_storage, other.manager_storage);
 		}
 		// if it does not, try to see if the target contains my type. this
@@ -576,7 +588,7 @@ private:
 	void initialize_empty() FUNC_NOEXCEPT
 	{
 		typedef std::allocator<Empty_Function_Type> Allocator;
-		static_assert(detail::is_inplace_allocated<Empty_Function_Type, Allocator>::value, "The empty function should benefit from small functor optimization");
+		static_assert(detail::is_inplace_allocated_v<Empty_Function_Type, Allocator>, "The empty function should benefit from small functor optimization");
 
 		detail::create_manager<Empty_Function_Type, Allocator>(manager_storage, Allocator());
 		detail::function_manager_inplace_specialization<Empty_Function_Type, Allocator>::store_functor(manager_storage, nullptr);
