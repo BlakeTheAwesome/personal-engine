@@ -23,13 +23,16 @@
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/Shaders/beShaderLitTexture.h"
 #include "BlakesEngine/platform/beSystemEventManager.h"
-#include "BlakesEngine/platform/beSystemEventManager.h"
+#include "BlakesEngine/platform/beEnvironment.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 
+#include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
+#include <shellapi.h>
+
 #ifdef DEBUG
-//#define ENABLE_RENDERDOC
+#define ENABLE_RENDERDOC
 #define RENDERDOC_PATH L"d:/Dev/Renderdoc/renderDoc.dll"
 #define RENDERDOC_CAPTURE_PATH "d:/temp/renderDoc/capture"
 #endif
@@ -39,6 +42,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    PSTR lpCmdLine,
                    int nCmdShow)
 {
+
+	Cout2VisualStudioDebugOutput c2v;
+	beEnvironment environment;
+	environment.Initialise(GetCommandLineA());
+
 	beSystemEventManager* systemEventManager = PIMPL_NEW(beSystemEventManager)();
 	defer(PIMPL_DELETE(systemEventManager));
 
@@ -52,7 +60,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1024, 768, false);
 	
 	#ifdef ENABLE_RENDERDOC
-		RenderDocManager renderDoc(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
+	bool usingRenderDoc = environment.Get("r");
+	RenderDocManager* renderDoc = nullptr;
+	if (usingRenderDoc)
+	{
+		renderDoc = BE_NEW RenderDocManager(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
+	}
+	defer(BE_SAFE_DELETE(renderDoc));
 	#endif
 
 	auto renderInterface = PIMPL_NEW(beRenderInterface)();
@@ -359,11 +373,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			
 			bool doScreenGrab = keyboard.IsPressed(beKeyboard::Button::Space);
 			#ifdef ENABLE_RENDERDOC
-			bool singleCapture = keyboard.IsPressed(beKeyboard::Button::F11) || doScreenGrab;// || keyboard.IsDown(beKeyboard::Button::Space);
-			if (keyboard.IsPressed(beKeyboard::Button::F1)) { renderDoc.ToggleOverlay(); }
-			if (singleCapture)
+			bool singleCapture = false;
+			if (usingRenderDoc)
 			{
-				renderDoc.StartFrameCapture();
+				singleCapture = keyboard.IsPressed(beKeyboard::Button::F11) || doScreenGrab;// || keyboard.IsDown(beKeyboard::Button::Space);
+				if (keyboard.IsPressed(beKeyboard::Button::F1)) { renderDoc->ToggleOverlay(); }
+				if (singleCapture)
+				{
+					renderDoc->StartFrameCapture();
+				}
 			}
 			#endif
 			
@@ -382,9 +400,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			renderInterface->EndFrame();
 			
 			#ifdef ENABLE_RENDERDOC
-			if (singleCapture)
+			if (usingRenderDoc && singleCapture)
 			{
-				renderDoc.EndFrameCapture();
+				renderDoc->EndFrameCapture();
 			}
 			#endif
 			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());

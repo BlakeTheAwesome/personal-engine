@@ -61,4 +61,5 @@ class beStringView
 namespace beStringConversion
 {
 	void UTF8ToWide(const beStringView& utf8, beWString* outWStr);
+	void UTF8FromWide(const beWString& wStr, beString* outStr);
 };

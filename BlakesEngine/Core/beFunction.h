@@ -196,10 +196,7 @@ namespace detail
 #		endif
 	};
 
-	template<typename T, typename Result, typename... Arguments>
-	constexpr bool is_valid_function_argument_v = is_valid_function_argument<T, Result, Arguments...>::value;
-
-	typedef const function_manager * manager_type;
+	using manager_type = const function_manager*;
 
 	struct manager_storage_type
 	{
@@ -436,7 +433,7 @@ public:
 	}
 	template<typename T>
 	function(T functor,
-			typename std::enable_if_t<detail::is_valid_function_argument_v<T, Result (Arguments...)>, detail::empty_struct> = detail::empty_struct()) FUNC_TEMPLATE_NOEXCEPT(T, std::allocator<typename detail::functor_type_t<T>>)
+			typename std::enable_if_t<detail::is_valid_function_argument<T, Result (Arguments...)>::value, detail::empty_struct> = detail::empty_struct()) FUNC_TEMPLATE_NOEXCEPT(T, std::allocator<typename detail::functor_type_t<T>>)
 	{
 		if (detail::is_null(functor))
 		{
@@ -462,7 +459,7 @@ public:
 	}
 	template<typename Allocator, typename T>
 	function(std::allocator_arg_t, const Allocator & allocator, T functor,
-			typename std::enable_if_t<detail::is_valid_function_argument_v<T, Result (Arguments...)>, detail::empty_struct> = detail::empty_struct())
+			typename std::enable_if_t<detail::is_valid_function_argument<T, Result (Arguments...)>::value, detail::empty_struct> = detail::empty_struct())
 			FUNC_TEMPLATE_NOEXCEPT(T, Allocator)
 	{
 		if (detail::is_null(functor))
@@ -481,10 +478,10 @@ public:
 		typedef typename std::allocator_traits<Allocator>::template rebind_alloc<function> MyAllocator;
 
 		// first try to see if the allocator matches the target type
-		detail::manager_type manager_for_allocator = &detail::get_default_manager_v<typename std::allocator_traits<Allocator>, Allocator>();
+		detail::manager_type manager_for_allocator = &detail::get_default_manager<typename std::allocator_traits<Allocator>, Allocator>();
 		if (other.manager_storage.manager == manager_for_allocator)
 		{
-			detail::create_manager<typename std::allocator_traits_v<Allocator>, Allocator>(manager_storage, Allocator(allocator));
+			detail::create_manager<typename std::allocator_traits<Allocator>, Allocator>(manager_storage, Allocator(allocator));
 			manager_for_allocator->call_copy_functor_only(manager_storage, other.manager_storage);
 		}
 		// if it does not, try to see if the target contains my type. this

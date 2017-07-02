@@ -293,7 +293,7 @@ typedef void(RENDERDOC_CC *pRENDERDOC_SetFocusToggleKeys)(RENDERDOC_InputButton 
 // If keys is NULL or num is 0, captures keys will be disabled
 typedef void(RENDERDOC_CC *pRENDERDOC_SetCaptureKeys)(RENDERDOC_InputButton *keys, int num);
 
-typedef enum {
+typedef enum : unsigned int {
   // This single bit controls whether the overlay is enabled or disabled globally
   eRENDERDOC_Overlay_Enabled = 0x1,
 

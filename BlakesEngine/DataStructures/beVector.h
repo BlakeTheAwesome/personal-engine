@@ -4,9 +4,13 @@
 
 #include <type_traits>
 
+// Policies do not need to handle constructing/destructing elements, vector base does that. Default vector is hybrid<16>
+
+
 template <typename T, int CAPACITY>
 struct beVectorFixedPolicy
 {
+	protected:
 	beVectorFixedPolicy() = default;
 	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
@@ -29,7 +33,11 @@ struct beVectorFixedPolicy
 	{
 		BE_ASSERT(capacity <= CAPACITY);
 	}
-	void Release(){}
+	
+	void Release()
+	{
+	}
+
 	bool CheckRoomForAlloc() const
 	{
 		return m_count < CAPACITY;
@@ -41,10 +49,12 @@ struct beVectorFixedPolicy
 	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer[CAPACITY];
 };
 
-template <typename T>
+
+template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
 struct beVectorMallocPolicy : public NonCopiable
 {
-	beVectorMallocPolicy() = delete;
+	protected:
+	beVectorMallocPolicy() : beVectorMallocPolicy(INITIAL_SIZE, -1) {}
 	beVectorMallocPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
 		BE_ASSERT((int)list.size() <= capacity);
@@ -61,6 +71,7 @@ struct beVectorMallocPolicy : public NonCopiable
 		Reserve(capacity);
 	}
 
+
 	void Reserve(int capacity)
 	{
 		if (capacity > m_capacity)
@@ -75,6 +86,7 @@ struct beVectorMallocPolicy : public NonCopiable
 			m_capacity = capacity;
 		}
 	}
+
 	void Release()
 	{
 		BE_FREE_ALIGNED(m_buffer);
@@ -120,12 +132,107 @@ struct beVectorMallocPolicy : public NonCopiable
 	int m_capacity = 0;
 };
 
+
+template <typename T, int RESERVED_SIZE = 16>
+struct beVectorHybridPolicy : public NonCopiable
+{
+	protected:
+	beVectorHybridPolicy() : beVectorHybridPolicy(0, -1) {}
+	beVectorHybridPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
+	{
+		BE_ASSERT((int)list.size() <= capacity);
+		Reserve(capacity);
+		for (const T& iter : list)
+		{
+			BE_NEW(m_buffer+m_count++) T(iter);
+		}
+	}
+
+	beVectorHybridPolicy(int capacity, int increaseBy)
+		: m_increaseBy(increaseBy)
+	{
+		Reserve(capacity);
+	}
+
+	void Reserve(int capacity)
+	{
+		if (capacity > m_capacity)
+		{
+			if (capacity <= RESERVED_SIZE)
+			{
+				m_buffer = (T*)m_storage;
+			}
+			else
+			{
+				T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*capacity);
+				if (m_count > 0)
+				{
+					BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
+					if (m_buffer != (T*)m_storage)
+					{
+						BE_FREE_ALIGNED(m_buffer);
+					}
+				}
+				m_buffer = newBuffer;
+			}
+			m_capacity = capacity;
+		}
+	}
+	void Release()
+	{
+		if (m_buffer != (T*)m_storage)
+		{
+			BE_FREE_ALIGNED(m_buffer);
+		}
+	}
+
+	bool CheckRoomForAlloc()
+	{
+		if (m_count >= m_capacity)
+		{
+			switch (m_increaseBy)
+			{
+				case 0:
+				{
+					BE_ASSERT(false);
+					return false;
+				}
+				case -1:
+				{
+					if (m_capacity == 0)
+					{
+						Reserve(1);
+						return true;
+					}
+
+					Reserve(m_capacity * 2);
+					return true;
+				}
+				default:
+				{
+					Reserve(m_capacity + m_increaseBy);
+					return true;
+				}
+			}
+		}
+		return true;
+	}
+
+	int Capacity() const { return m_capacity; }
+
+	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_storage[RESERVED_SIZE];
+
+	T* m_buffer = nullptr;
+	int m_count = 0;
+	int m_increaseBy = -1;
+	int m_capacity = 0;
+};
+
+
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<typename T, typename Policy>
-class beVectorBase : Policy
+class beVectorBase : protected Policy
 {
-	using Policy::m_count;
-	using Policy::m_buffer;
 
 	public:
 		typedef T value_type;
@@ -142,6 +249,15 @@ class beVectorBase : Policy
 		{
 			Release();
 		}
+
+		template <typename... Args>
+		void SetAllTo(Args&&... args)
+		{
+			for (int i = 0; i < m_count; i++)
+			{
+
+			}
+		}
 		
 		void Release()
 		{
@@ -150,6 +266,12 @@ class beVectorBase : Policy
 			Policy::Release();
 		}
 		
+		void ReleaseUninitialised()
+		{
+			m_count = 0;
+			Policy::Release();
+		}
+
 		void Reserve(int capacity)
 		{
 			Policy::Reserve(capacity);
@@ -161,24 +283,62 @@ class beVectorBase : Policy
 			SetCount(count);
 		}
 
+		template <typename... Args>
+		void ReserveAndSetCount(int count, Args... args)
+		{
+			Reserve(count);
+			SetCount(count, std::forward<Args>(args)...);
+		}
+
+		void ReserveAndSetCountUninitialised(int count)
+		{
+			Reserve(count);
+			SetCountUninitialised(count);
+		}
+
 		void SetCount(int count)
 		{
-			const int capacity = Capacity();
-			BE_ASSERT(count <= capacity);
-			if (count > capacity) // growing
+			const int currentCount = m_count;
+			BE_ASSERT(count <= Capacity());
+			if (count > currentCount) // growing
 			{
-				ConstructElements(capacity, count);
+				ConstructElements(currentCount, count);
 			}
-			else if (count < capacity) // shrinking
+			else if (count < currentCount) // shrinking
 			{
-				DestructElements(count, m_count-1);
+				DestructElements(count, currentCount-1);
 			}
 			m_count = count;
 		}
 		
+		template <typename... Args>
+		void SetCount(int count, Args&&... defaultVal)
+		{
+			const int currentCount = m_count;
+			BE_ASSERT(count <= Capacity());
+			if (count > currentCount) // growing
+			{
+				for (int i = currentCount; i < count; i++)
+				{
+					new(&m_buffer[i]) value_type(std::forward<Args>(defaultVal)...);
+				}
+			}
+			else if (count < currentCount) // shrinking
+			{
+				DestructElements(count, currentCount-1);
+			}
+			m_count = count;
+		}
+
+		void SetCountUninitialised(int count)
+		{
+			BE_ASSERT(count <= Capacity());
+			m_count = count;
+		}
+
 		int Count() const
 		{
-			return m_count;
+			return Policy::m_count;
 		}
 		
 		int Capacity() const
@@ -269,34 +429,34 @@ class beVectorBase : Policy
 
 		T& At(int i)
 		{
-			BE_ASSERT(i <= m_count);
-			return *(T*)&m_buffer[i];
+			BE_ASSERT(i <= Count());
+			return *(T*)&begin()[i];
 		}
 
 		const T& At(int i) const
 		{
-			BE_ASSERT(i <= m_count);
-			return *(T*)&m_buffer[i];
+			BE_ASSERT(i <= Count());
+			return *(T*)&begin()[i];
 		}
 
 		T* begin()
 		{
-			return (T*)m_buffer;
+			return (T*)Policy::m_buffer;
 		}
 
 		T* end()
 		{
-			return (T*)m_buffer + m_count;
+			return ((T*)Policy::m_buffer) + m_count;
 		}
 
 		const T* begin() const
 		{
-			return (const T*)m_buffer;
+			return (const T*)Policy::m_buffer;
 		}
 
 		const T* end() const
 		{
-			return (const T*)m_buffer + m_count;
+			return ((const T*)Policy::m_buffer) + m_count;
 		}
 
 		typedef bool (*CompareFn)(const T*, const T*, int*);
@@ -344,42 +504,54 @@ class beVectorBase : Policy
 				index = newIndex;
 			}
 		}
-		
-	private:
-		template <bool isPod=std::is_pod_v<T>> void ConstructElements(int startElement, int endElement);
-		template<> void ConstructElements<true>(int startElement, int endElement) {}
-		template<> void ConstructElements<false>(int startElement, int endElement)
-		{
-			for (int i = startElement; i < endElement; i++)
-			{
-				BE_NEW(m_buffer + i) T();
-			}
-		}
-		
-		template <bool isPod=std::is_pod_v<T>> void DestructElements(int startElement, int endElement);
-		template<> void DestructElements<true>(int startElement, int endElement) {}
-		template<> void DestructElements<false>(int startElement, int endElement)
-		{
-			for (int i = startElement; i <= endElement; i++)
-			{
-					At(i).~T();
-			}
-		}
 
 		bool CheckRoomForAlloc()
 		{
 			return Policy::CheckRoomForAlloc();
 		}
+
+	private:
+		void ConstructElements(int startElement, int endElement)
+		{
+			if (!std::is_trivially_constructible_v<T>)
+			{
+				for (int i = startElement; i < endElement; i++)
+				{
+					BE_NEW(m_buffer + i) T();
+				}
+			}
+		}
+		
+		void DestructElements(int startElement, int endElement)
+		{
+			if (!std::is_trivially_destructible_v<T>)
+			{
+				for (int i = startElement; i <= endElement; i++)
+				{
+						At(i).~T();
+				}
+			}
+		}
+};
+
+template <typename T, int HYBRID_CAPACITY=16>
+class beVector : public beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>>
+{
+	typedef beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>> Base;
+	public:
+	explicit beVector(int capacity=HYBRID_CAPACITY, int increaseBy=-1) : Base(capacity, increaseBy) {}
+	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
+	beVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
 };
 
 template <typename T>
-class beVector : public beVectorBase<T, beVectorMallocPolicy<T>>
+class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T>>
 {
 	typedef beVectorBase<T, beVectorMallocPolicy<T>> Base;
 	public:
-	explicit beVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
-	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
-	beVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
+	explicit beHeapVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
+	explicit beHeapVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
+	beHeapVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
 };
 
 template <typename T, int CAPACITY>
