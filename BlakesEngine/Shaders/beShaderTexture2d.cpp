@@ -75,7 +75,7 @@ bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilena
 	
 
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
-	D3D11_BUFFER_DESC bufferDesc = {0};
+	//D3D11_BUFFER_DESC bufferDesc = {0};
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
@@ -147,7 +147,7 @@ void beShaderTexture2d::SetShaderParameters(beRenderInterface* ri, const Matrix&
 
 	{
 		XMMATRIX xOM = XMLoadFloat4x4(&orthoMatrix);
-		XMMATRIX txOrthoMatrix = XMMatrixTranspose(xOM);
+		//XMMATRIX txOrthoMatrix = XMMatrixTranspose(xOM);
 
 		auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
 		if (!dataPtr)

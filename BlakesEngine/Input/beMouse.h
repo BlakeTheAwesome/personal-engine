@@ -70,6 +70,6 @@ private:
 	State m_lastState;
 	int m_windowWidth;
 	int m_windowHeight;
-	Mode m_currentMode{MODE_RELATIVE};
+	//Mode m_currentMode{MODE_RELATIVE};
 };
 

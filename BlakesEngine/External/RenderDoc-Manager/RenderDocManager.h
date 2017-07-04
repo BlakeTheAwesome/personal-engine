@@ -24,7 +24,7 @@
 
 #pragma once
 #include "renderdoc_app.h"
-#include <windows.h>
+#include "BlakesEngine/Platform/beWindows.h"
 
 class RenderDocManager
 {

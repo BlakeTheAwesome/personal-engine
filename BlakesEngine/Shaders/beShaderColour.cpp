@@ -70,7 +70,7 @@ bool beShaderColour::Init(beRenderInterface* ri, const beWString& pixelFilename,
 	}
 	
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
-	D3D11_BUFFER_DESC matrixBufferDesc = {0};
+	//D3D11_BUFFER_DESC matrixBufferDesc = {0};
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
@@ -120,7 +120,7 @@ void beShaderColour::SetShaderParameters(beRenderInterface* ri, const Matrix& vi
 	const Matrix& worldMatrix = ri->GetWorldMatrix();
 	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
+	//D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
 	
 	XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
 	XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);

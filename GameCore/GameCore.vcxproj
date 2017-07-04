@@ -274,7 +274,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalOptions>-Wno-microsoft-template %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-microsoft-template -Wno-missing-braces %(AdditionalOptions)</AdditionalOptions>
       <MSCompatibility>true</MSCompatibility>
     </ClCompile>
     <Link>
@@ -282,7 +282,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>

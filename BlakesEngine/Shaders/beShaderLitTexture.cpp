@@ -91,7 +91,7 @@ bool beShaderLitTexture::Init(beRenderInterface* ri, const beWString& pixelFilen
 	}
 	
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[3];
-	D3D11_BUFFER_DESC bufferDesc = {0};
+	//D3D11_BUFFER_DESC bufferDesc = {0};
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;

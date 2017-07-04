@@ -227,7 +227,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MSCompatibility>true</MSCompatibility>
-      <AdditionalOptions>-Wno-microsoft-template %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-microsoft-template -Wno-missing-braces %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
