@@ -260,6 +260,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Framework\beStateMachine.cpp" />
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Input\beKeyboard.cpp" />
     <ClCompile Include="Input\beMouse.cpp" />
@@ -327,6 +328,9 @@
     <ClInclude Include="External\Misc\StreamToDebugOutput.h" />
     <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
     <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />
+    <ClInclude Include="Framework\beAppData.h" />
+    <ClInclude Include="Framework\beState.h" />
+    <ClInclude Include="Framework\beStateMachine.h" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Input\beKeyboard.h" />
     <ClInclude Include="Input\beMouse.h" />

@@ -299,12 +299,16 @@
       <PreprocessSuppressLineNumbers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessSuppressLineNumbers>
       <PreprocessSuppressLineNumbers Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessSuppressLineNumbers>
     </ClCompile>
+    <ClCompile Include="Test\StateRenderTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlakesEngine\BlakesEngine.vcxproj">
       <Project>{42330bec-5b97-463a-ab8d-55fb2b675a6d}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Test\StateRenderTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
