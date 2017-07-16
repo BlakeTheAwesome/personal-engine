@@ -242,7 +242,7 @@ int beFont::GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const Ch
 	return kerning;
 }
 
-bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, float maxWidth, u32 invalidStringCharacter, StringInfo* outStringInfo) const
+bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, StringInfo* outStringInfo) const
 {
 	//float textureWidth = (float)m_texture->GetWidth();
 	//float textureHeight = (float)m_texture->GetHeight();
@@ -272,6 +272,16 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 	int wordWidth = 0;
 	int wordChars = 0;
 	u32 lastChar = 0;
+
+	int fixedWidthValue = 0;
+	if (fixedWidth)
+	{
+		for (const beFont::CharacterInfo& charInfo : m_characterInfo)
+		{
+			fixedWidthValue = beMath::Max(fixedWidthValue, charInfo.width);
+		}
+		fixedWidthValue *= scale;
+	}
 
 	auto onNewLine = [&]() {
 		currentHeight = totalHeight;
@@ -305,7 +315,9 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 		}
 
 		int kerning = GetKerning(lastChar, nextChar, lastCharacterInfo, charInfo);
-		int newLineWidth = lineWidth + ((kerning + charInfo->width) * scale);
+		int characterSize = (kerning + charInfo->width) * scale;
+		int lineIncrement = fixedWidth ? fixedWidthValue : characterSize;
+		int newLineWidth = lineWidth + lineIncrement;
 		if (newLineWidth > maxWidth)
 		{
 			if (lineWidth == wordWidth)
@@ -344,7 +356,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 		float uvRight = charInfo->textureBtmRight.x;
 		float uvBottom = charInfo->textureBtmRight.y;
 		float posLeft = (float)lineWidth;// / textureWidth;
-		float posRight = (float)newLineWidth;// / textureWidth;
+		float posRight = (float)lineWidth + characterSize;// / textureWidth;
 		float posTop = (float)(m_lineHeight - currentHeight) * scale;// / textureHeight;
 		float posBtm = (float)(m_lineHeight - totalHeight) * scale;// / textureHeight;
 

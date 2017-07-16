@@ -168,9 +168,9 @@ void StateRenderTest::Render()
 			
 		//m_bitmapTexQuad.Render(renderInterface);
 		//textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
-
+		
 		renderInterface->EnableAlpha();
-		m_bitmapTextDynamic.InitText(renderInterface, &m_font, "Pre-RenderedText", 512.f, 0);
+		m_bitmapTextDynamic.InitText(renderInterface, &m_font, "initial string", 640.f, 0, false);
 		m_bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
 		m_bitmapTextDynamic.Render(renderInterface);
 		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture());
@@ -235,7 +235,7 @@ void StateRenderTest::Render()
 		renderInterface->EnableAlpha();
 		beStringBuilder sb;
 		sb << "Dynamic Text\nMouseX:"<<mouse->GetX()<<"\nMouseY:"<<mouse->GetY();
-		m_bitmapTextDynamic.InitText(renderInterface, &m_font, sb, 512.f, 0);
+		m_bitmapTextDynamic.InitText(renderInterface, &m_font, sb, 512.f, 0, false);
 		m_bitmapTextDynamic.Render(renderInterface);
 		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
 			

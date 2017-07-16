@@ -19,7 +19,7 @@ public:
 	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
 	void Deinit();
 
-	bool InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float maxWidth, u32 invalidStringCharacter);
+	bool InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float maxWidth, u32 invalidStringCharacter, bool fixedWidth);
 
 	void SetColour(const Vec4& colour);
 	Vec2 GetPosition() const;
