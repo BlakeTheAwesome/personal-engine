@@ -43,7 +43,7 @@ struct beVectorFixedPolicy
 		return m_count < CAPACITY;
 	}
 
-	int Capacity() const { return CAPACITY; }
+	constexpr int Capacity() const { return CAPACITY; }
 
 	int m_count = 0;
 	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer[CAPACITY];

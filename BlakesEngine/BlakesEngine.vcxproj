@@ -374,6 +374,7 @@
     <ClInclude Include="bePCH.h" />
     <ClInclude Include="DataStructures\beArray.h" />
     <ClInclude Include="DataStructures\beByteStreams.h" />
+    <ClInclude Include="DataStructures\beFastGrid.h" />
     <ClInclude Include="DataStructures\beHashMap.h" />
     <ClInclude Include="DataStructures\beReconstruct.h" />
     <ClInclude Include="DataStructures\beVector.h" />
@@ -408,6 +409,7 @@
     <ClInclude Include="Math\beMath.h" />
     <ClInclude Include="Math\bePerlinNoise.h" />
     <ClInclude Include="Math\beRandom.h" />
+    <ClInclude Include="Math\beZOrder.h" />
     <ClInclude Include="Platform\beEnvironment.h" />
     <ClInclude Include="Platform\beSystemEventManager.h" />
     <ClInclude Include="Platform\beWindows.h" />

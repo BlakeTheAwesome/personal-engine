@@ -36,7 +36,7 @@ class beArray
 			}
 		}
 		
-		int Capacity() const
+		constexpr int Capacity() const
 		{
 			return CAPACITY;
 		}

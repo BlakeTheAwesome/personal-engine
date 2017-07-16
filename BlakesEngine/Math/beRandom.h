@@ -47,6 +47,11 @@ public:
 		return b;
 	}
 
+	bool NextBool()
+	{
+		return (Next() % 2) != 0;
+	}
+
 
 	/* Returns a number between min and max, inclusive. Small statistical
 		biases might occur using this method - expected bias is < 2^-32. */

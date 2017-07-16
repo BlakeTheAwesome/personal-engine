@@ -162,6 +162,39 @@ namespace beMath
 	{
 		return (x << n) | (x >> (32 - n));
 	}
+
+	template <typename T>
+	constexpr T tOR(T a, T b) { return (T)(a | b); }
+	template <typename T>
+	constexpr T tSUB(T a, T b) { return (T)(a - b); }
+	template <typename T>
+	constexpr T tADD(T a, T b) { return (T)(a + b); }
+	template <typename T>
+	constexpr T tMASK(T a, T mask) { return (T)(a & mask); }
+	template <typename T>
+	constexpr T tRShiftOR(T a, T shift) { return (T)(a | (a >> shift)); }
+	template <typename T>
+	constexpr T tLShiftORMask(T a, T shift, T mask) { return (T)((a | (a << shift)) & mask); }
+	template <typename T>
+	constexpr T tRShiftORMask(T a, T shift, T mask) { return (T)((a | (a >> shift)) & mask); }
+
+
+	constexpr int NextPowerOfTwo(int v)
+	{
+		// Fill all the bits from the top one, then add one. Subtract one at the start in case we're already a power of 2.
+		//v--;
+		//v |= v >> 1;
+		//v |= v >> 2;
+		//v |= v >> 4;
+		//v |= v >> 8;
+		//v |= v >> 16;
+		//v++;
+		//return v;
+
+		return tADD(tRShiftOR(tRShiftOR(tRShiftOR(tRShiftOR(tRShiftOR(tSUB(v, 1), 1), 2), 4), 8), 16), 1);
+	}
+
+
 };
 using namespace beMath;
 
