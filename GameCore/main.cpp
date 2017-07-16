@@ -23,6 +23,8 @@
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
 
 #include "GameCore/Test/StateRenderTest.h"
+#include "GameCore/LifeGame/StateLifeGame.h"
+
 #include <shellapi.h>
 
 #ifdef DEBUG
@@ -36,7 +38,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    PSTR lpCmdLine,
                    int nCmdShow)
 {
-
 	Cout2VisualStudioDebugOutput c2v;
 	beEnvironment environment;
 	environment.Initialise(GetCommandLineA());
@@ -142,8 +143,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		{
 			initialState = BE_NEW StateRenderTest(&appData);
 		}
-		else
+		else if (*mode == "life")
 		{
+			initialState = BE_NEW StateLifeGame(&appData);
 		}
 	}
 	else
