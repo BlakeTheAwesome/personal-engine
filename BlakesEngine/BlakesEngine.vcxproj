@@ -372,6 +372,7 @@
     <ClInclude Include="Core\beTypes.h" />
     <ClInclude Include="Core\beTypeTests.h" />
     <ClInclude Include="bePCH.h" />
+    <ClInclude Include="Core\String\StringBuilder.h" />
     <ClInclude Include="DataStructures\beArray.h" />
     <ClInclude Include="DataStructures\beByteStreams.h" />
     <ClInclude Include="DataStructures\beFastGrid.h" />

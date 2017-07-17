@@ -1,33 +1,12 @@
 #pragma once
+#include "BlakesEngine/Core/String/StringBuilder.h"
 #include <string>
-#include <sstream>
 
 typedef std::wstring beWString;
 typedef std::string beString;
 
-class beStringBuilder : private std::stringstream
+class beStringBuilder : public ExternalStringBuilder::StringBuilder
 {
-	public:
-		beStringBuilder()=default;
-		~beStringBuilder()=default;
-
-		void Clear()
-		{
-			str(beString());
-			clear();
-		}
-
-		template <typename T>
-		beStringBuilder& operator<<(const T& o)
-		{
-			((std::stringstream&)(*this)) << o;
-			return *this;
-		}
-
-		beString ToString() const
-		{
-			return str();
-		}
 };
 
 class beStringView
