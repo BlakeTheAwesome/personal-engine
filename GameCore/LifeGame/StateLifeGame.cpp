@@ -52,7 +52,7 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 
 	m_camera.Update(dt);
 
-	if (m_timeUntilNextUpdate -= dt < 0.f)
+	if ((m_timeUntilNextUpdate -= dt) < 0.f)
 	{
 		m_timeUntilNextUpdate = m_updateTimeFrequency - m_timeUntilNextUpdate;
 		TickGame();
@@ -90,7 +90,7 @@ void StateLifeGame::Render()
 			for (int x = 0; x < m_cells.Length(); x++)
 			{
 				char c = m_cells.At(x,y) ? 'o' : 'x';
-				testString << c << " ";
+				testString << c;
 			}
 			testString << "\n";
 		}
@@ -104,6 +104,9 @@ void StateLifeGame::Render()
 		renderInterface->EnableZBuffer();
 		renderInterface->RestoreRenderTarget();
 		writeTexture.FinaliseTarget();
+		
+		m_bitmapTextDynamic.Render(renderInterface);
+		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
 	}
 }
 
@@ -115,14 +118,99 @@ void StateLifeGame::InitCells()
 	{
 		for (int x = 0; x < m_cells.Length(); x++)
 		{
-			 m_cells.At(x, y) = rng.NextBool();
+			m_cells.At(x, y) = rng.NextBool();
 		}
 	}
 }
 
 void StateLifeGame::TickGame()
 {
-	BE_UNUSED(m_cells);
+	const int length = m_cells.Length();
+	for (int y = 0; y < length; y++)
+	{
+		bool onTopEdge = y == 0;
+		bool onBottomEdge = y == (length-1);
+		for (int x = 0; x < length; x++)
+		{
+			bool onLeftEdge = x == 0;
+			bool onRightEdge = x == (length-1);
+			int adjecentLivingCells = 0;
+			// left cell
+			if (!onLeftEdge)
+			{
+				if (m_cells.At(x - 1, y))
+				{
+					adjecentLivingCells++;
+				}
+				// Left Top
+				if (!onTopEdge)
+				{
+					if (m_cells.At(x - 1, y - 1))
+					{
+						adjecentLivingCells++;
+					}
+				}
+				// Left Bottom
+				if (!onBottomEdge)
+				{
+					if (m_cells.At(x - 1, y + 1))
+					{
+						adjecentLivingCells++;
+					}
+				}
+			}
+			// right cell
+			if (!onRightEdge)
+			{
+				if (m_cells.At(x + 1, y))
+				{
+					adjecentLivingCells++;
+				}
+				// Right Top
+				if (!onTopEdge)
+				{
+					if (m_cells.At(x + 1, y - 1))
+					{
+						adjecentLivingCells++;
+					}
+				}
+				// Right Bottom
+				if (!onBottomEdge)
+				{
+					if (m_cells.At(x + 1, y + 1))
+					{
+						adjecentLivingCells++;
+					}
+				}
+			}
+			// top cell
+			if (!onTopEdge)
+			{
+				if (m_cells.At(x, y - 1))
+				{
+					adjecentLivingCells++;
+				}
+			}
+			// bottom cell
+			if (!onBottomEdge)
+			{
+				if (m_cells.At(x, y + 1))
+				{
+					adjecentLivingCells++;
+				}
+			}
+			//Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
+			//Any live cell with two or three live neighbours lives on to the next generation.
+			//Any live cell with more than three live neighbours dies, as if by overpopulation.
+			//Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+			if (adjecentLivingCells != 2)
+			{
+				m_nextCells.At(x, y) = adjecentLivingCells == 3;
+			}
+		}
+	}
+	
+	m_cells = m_nextCells;
 }
 
 

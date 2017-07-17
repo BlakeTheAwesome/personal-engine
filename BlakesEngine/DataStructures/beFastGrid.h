@@ -5,7 +5,8 @@
 template<typename T, int LENGTH>
 class beFastGrid
 {
-	static const int CAPACITY = LENGTH * LENGTH;
+	static const int STRIDE_LENGTH = beMath::NextPowerOfTwo(LENGTH);
+	static const int CAPACITY = STRIDE_LENGTH * STRIDE_LENGTH;
 	public:
 		typedef T value_type;
 		enum { element_size = sizeof(T) };
@@ -124,5 +125,5 @@ class beFastGrid
 		}
 
 	protected:
-		T m_buffer[beMath::NextPowerOfTwo(LENGTH)];
+		T m_buffer[CAPACITY];
 };

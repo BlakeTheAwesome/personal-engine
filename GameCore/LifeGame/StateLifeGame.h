@@ -30,7 +30,8 @@ class StateLifeGame : public beState
 	beShaderTexture2d m_textureShader2d;
 	beFlightCamera m_camera;
 
-	beFastGrid<bool, 128> m_cells;
+	beFastGrid<bool, 32> m_cells;
+	decltype(m_cells) m_nextCells;
 	float m_timeUntilNextUpdate = 0.f;
 	float m_updateTimeFrequency = 0.5f;
 	bool m_paused = false;

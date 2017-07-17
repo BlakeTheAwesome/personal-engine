@@ -195,6 +195,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);$(SolutionDir)/blakesengine/;</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
+      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
