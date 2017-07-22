@@ -390,6 +390,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LifeGame\LifeGameCells.cpp" />
     <ClCompile Include="LifeGame\StateLifeGame.cpp" />
     <ClCompile Include="main.cpp">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
@@ -406,6 +407,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LifeGame\LifeGameCells.h" />
     <ClInclude Include="LifeGame\StateLifeGame.h" />
     <ClInclude Include="Test\StateRenderTest.h" />
   </ItemGroup>

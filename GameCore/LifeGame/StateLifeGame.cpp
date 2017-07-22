@@ -14,15 +14,14 @@
 
 void StateLifeGame::Enter(beStateMachine* stateMachine)
 {
-	auto renderInterface = m_appData->renderInterface;
-
-	m_font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
-	m_textureShader2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
+	//auto renderInterface = m_appData->renderInterface;
+	//m_font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
+	//m_textureShader2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
 	
 	m_camera.AttachGamepad(m_appData->gamepad);
 	m_camera.AttachMouse(m_appData->mouse);
 	
-	InitCells();
+	m_cells.Initialise(m_appData);
 }
 
 void StateLifeGame::Exit(beStateMachine* stateMachine)
@@ -48,24 +47,30 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	if (keyboard->IsPressed(beKeyboard::Button::P))
 	{
 		m_paused = !m_paused;
+		m_timeUntilNextUpdate = 0.f;
 	}
 
 	m_camera.Update(dt);
 
-	if ((m_timeUntilNextUpdate -= dt) < 0.f)
+	bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
+	bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space);
+	if (step)
 	{
 		m_timeUntilNextUpdate = m_updateTimeFrequency - m_timeUntilNextUpdate;
-		TickGame();
+		m_cells.TickGame();
 	}
 }
 
 void StateLifeGame::Render()
 {
 	auto renderInterface = m_appData->renderInterface;
+	m_cells.Render(renderInterface);
 	//auto keyboard = m_appData->keyboard;
 	//auto mouse = m_appData->mouse;
 
 	//if (!m_haveWrittenToTexture)
+	
+	/*
 	{
 		beTexture writeTexture;
 		writeTexture.InitAsTarget(renderInterface, 512, 512);
@@ -107,110 +112,7 @@ void StateLifeGame::Render()
 		
 		m_bitmapTextDynamic.Render(renderInterface);
 		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
-	}
-}
-
-void StateLifeGame::InitCells()
-{
-	beRandom rng;
-	rng.InitFromSystemTime();
-	for (int y = 0; y < m_cells.Length(); y++)
-	{
-		for (int x = 0; x < m_cells.Length(); x++)
-		{
-			m_cells.At(x, y) = rng.NextBool();
-		}
-	}
-}
-
-void StateLifeGame::TickGame()
-{
-	const int length = m_cells.Length();
-	for (int y = 0; y < length; y++)
-	{
-		bool onTopEdge = y == 0;
-		bool onBottomEdge = y == (length-1);
-		for (int x = 0; x < length; x++)
-		{
-			bool onLeftEdge = x == 0;
-			bool onRightEdge = x == (length-1);
-			int adjecentLivingCells = 0;
-			// left cell
-			if (!onLeftEdge)
-			{
-				if (m_cells.At(x - 1, y))
-				{
-					adjecentLivingCells++;
-				}
-				// Left Top
-				if (!onTopEdge)
-				{
-					if (m_cells.At(x - 1, y - 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-				// Left Bottom
-				if (!onBottomEdge)
-				{
-					if (m_cells.At(x - 1, y + 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-			}
-			// right cell
-			if (!onRightEdge)
-			{
-				if (m_cells.At(x + 1, y))
-				{
-					adjecentLivingCells++;
-				}
-				// Right Top
-				if (!onTopEdge)
-				{
-					if (m_cells.At(x + 1, y - 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-				// Right Bottom
-				if (!onBottomEdge)
-				{
-					if (m_cells.At(x + 1, y + 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-			}
-			// top cell
-			if (!onTopEdge)
-			{
-				if (m_cells.At(x, y - 1))
-				{
-					adjecentLivingCells++;
-				}
-			}
-			// bottom cell
-			if (!onBottomEdge)
-			{
-				if (m_cells.At(x, y + 1))
-				{
-					adjecentLivingCells++;
-				}
-			}
-			//Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
-			//Any live cell with two or three live neighbours lives on to the next generation.
-			//Any live cell with more than three live neighbours dies, as if by overpopulation.
-			//Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-			if (adjecentLivingCells != 2)
-			{
-				m_nextCells.At(x, y) = adjecentLivingCells == 3;
-			}
-		}
-	}
-	
-	m_cells = m_nextCells;
+	}*/
 }
 
 

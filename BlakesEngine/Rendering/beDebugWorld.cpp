@@ -24,22 +24,20 @@ struct VertexColourType
 
 PIMPL_DATA(beDebugWorld)
 	bool InitAxes(beRenderInterface* ri);
-	bool InitGrid(beRenderInterface* ri)
-		;
+	bool InitGrid(beRenderInterface* ri);
+
 	beRenderBuffer axesVertexBuffer;
 	beRenderBuffer axesIndexBuffer;
 	
 	beRenderBuffer gridVertexBuffer;
 	beRenderBuffer gridLinesIndexBuffer;
 	beRenderBuffer gridFilledIndexBuffer;
-	bool renderAxes;
-	bool renderGrid;
+	bool renderAxes = false;
+	bool renderGrid = true;
 PIMPL_DATA_END
 
 
 PIMPL_CONSTRUCT(beDebugWorld)
-	: renderAxes(false)
-	, renderGrid(true)
 {
 }
 
