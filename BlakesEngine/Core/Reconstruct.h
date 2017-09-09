@@ -1,11 +1,11 @@
 #pragma once
 
 template <typename T, typename ...Args>
-void Reconstruct(T* self, Args&&... args)
+void Reconstruct(T* obj, Args&&... args)
 {
 	if (!std::is_trivially_destructible_v<T>)
 	{
-		self->~T();
+		obj->~T();
 	}
-	new(self) T(std::forward<Args>(args)...);
+	new(obj) T(std::forward<Args>(args)...);
 }

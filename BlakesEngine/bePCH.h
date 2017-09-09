@@ -7,6 +7,8 @@
 #include "BlakesEngine/Platform/beWindows.h"
 
 //#include "BlakesEngine/Core/beMacros.h"
+#include "BlakesEngine/Core/RangeIter.h"
+#include "BlakesEngine/Core/Reconstruct.h"
 #include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/beTypes.h"
 #include "BlakesEngine/Core/beNonCopiable.h"
