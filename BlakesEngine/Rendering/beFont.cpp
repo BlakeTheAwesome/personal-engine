@@ -326,13 +326,17 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 				onNewLine();
 				newLineWidth = charInfo->width * scale;
 			}
-			else
+			else if (wordChars != i)
 			{
 				// Move current word onto new line
 				i -= (wordChars + 1);
 				vertIndex -= vertsPerChar * wordChars;
 				onNewLine();
 				continue;
+			}
+			else
+			{
+				// Word does not fit on single line.
 			}
 		}
 
