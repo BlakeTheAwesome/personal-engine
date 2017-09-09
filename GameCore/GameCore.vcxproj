@@ -103,6 +103,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <OmitFramePointers>false</OmitFramePointers>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -132,6 +133,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir);$(SolutionDir)/blakesengine/;</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -161,7 +163,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalOptions>-Wno-microsoft-template -Wno-missing-braces %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-microsoft-template -Wno-missing-braces  -std=c++1z %(AdditionalOptions)</AdditionalOptions>
       <MSCompatibility>true</MSCompatibility>
       <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
@@ -193,7 +195,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalOptions>-Wno-microsoft-template -Wno-missing-braces %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-microsoft-template -Wno-missing-braces  -std=c++1z %(AdditionalOptions)</AdditionalOptions>
       <MSCompatibility>true</MSCompatibility>
       <Optimization>MinSize</Optimization>
       <CppLanguageStandard>c++1y</CppLanguageStandard>
