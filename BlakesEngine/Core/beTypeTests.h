@@ -1,10 +1,7 @@
-#ifndef _beTypeTests_h_
-#define _beTypeTests_h_
+#pragma once
 
 namespace beTypeTests
 {
 	bool RunTypeTests();
 };
-
-#endif
 

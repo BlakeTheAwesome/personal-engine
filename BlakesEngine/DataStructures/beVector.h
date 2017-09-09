@@ -544,8 +544,8 @@ class beVector : public beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>
 	beVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
 };
 
-template <typename T>
-class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T>>
+template <typename T, int INITIAL_SIZE=8>
+class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T, INITIAL_SIZE>>
 {
 	typedef beVectorBase<T, beVectorMallocPolicy<T>> Base;
 	public:
