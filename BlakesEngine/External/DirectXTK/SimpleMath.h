@@ -29,9 +29,6 @@
 #include <DirectXPackedVector.h>
 #include <DirectXCollision.h>
 
-#if !defined(DIRECTX_NO_WFRECT) && ((defined(_XBOX_ONE) && defined(_TITLE)) || (defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)))
-#include <Windows.Foundation.h>
-#endif
 
 namespace DirectX
 {
@@ -60,11 +57,8 @@ struct Rectangle
     explicit Rectangle(const RECT& rct) : x(rct.left), y(rct.top), width(rct.right - rct.left), height(rct.bottom - rct.top) {}
 
     operator RECT() { RECT rct; rct.left = x; rct.top = y; rct.right = (x + width); rct.bottom = (y + height); return rct; }
-#if !defined(DIRECTX_NO_WFRECT) && ((defined(_XBOX_ONE) && defined(_TITLE)) || (defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)))
-    operator ABI::Windows::Foundation::Rect() { ABI::Windows::Foundation::Rect r; r.X = float(x); r.Y = float(y); r.Width = float(width); r.Height = float(height); return r; }
 #ifdef __cplusplus_winrt
     operator Windows::Foundation::Rect() { return Windows::Foundation::Rect(float(x), float(y), float(width), float(height)); }
-#endif
 #endif
 
     // Comparison operators
@@ -848,7 +842,7 @@ public:
         width(vp.Width), height(vp.Height),
         minDepth(vp.MinDepth), maxDepth(vp.MaxDepth) {}
 
-    operator D3D11_VIEWPORT() { return *reinterpret_cast<D3D11_VIEWPORT*>(this); }
+    operator D3D11_VIEWPORT() { return *reinterpret_cast<const D3D11_VIEWPORT*>(this); }
     const D3D11_VIEWPORT* Get11() const { return reinterpret_cast<const D3D11_VIEWPORT*>(this); }
     Viewport& operator= (const D3D11_VIEWPORT& vp);
 #endif
@@ -860,7 +854,7 @@ public:
         width(vp.Width), height(vp.Height),
         minDepth(vp.MinDepth), maxDepth(vp.MaxDepth) {}
 
-    operator D3D12_VIEWPORT() { return *reinterpret_cast<D3D12_VIEWPORT*>(this); }
+    operator D3D12_VIEWPORT() { return *reinterpret_cast<const D3D12_VIEWPORT*>(this); }
     const D3D12_VIEWPORT* Get12() const { return reinterpret_cast<const D3D12_VIEWPORT*>(this); }
     Viewport& operator= (const D3D12_VIEWPORT& vp);
 #endif

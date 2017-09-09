@@ -158,6 +158,9 @@ namespace DirectX
         void __cdecl SetTextureEnabled(bool value);
         void __cdecl SetTexture(_In_opt_ ID3D11ShaderResourceView* value);
         
+        // Normal compression settings.
+        void __cdecl SetBiasedVertexNormals(bool value);
+
     private:
         // Private implementation.
         class Impl;
@@ -326,7 +329,10 @@ namespace DirectX
         void __cdecl SetEnvironmentMapAmount(float value);
         void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
         void __cdecl SetFresnelFactor(float value);
-        
+
+        // Normal compression settings.
+        void __cdecl SetBiasedVertexNormals(bool value);
+
     private:
         // Private implementation.
         class Impl;
@@ -397,6 +403,9 @@ namespace DirectX
         void __cdecl SetWeightsPerVertex(int value) override;
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
         void __cdecl ResetBoneTransforms() override;
+
+        // Normal compression settings.
+        void __cdecl SetBiasedVertexNormals(bool value);
 
     private:
         // Private implementation.
@@ -547,7 +556,10 @@ namespace DirectX
         void __cdecl SetTexture(_In_opt_ ID3D11ShaderResourceView* value);
         void __cdecl SetNormalTexture(_In_opt_ ID3D11ShaderResourceView* value);
         void __cdecl SetSpecularTexture(_In_opt_ ID3D11ShaderResourceView* value);
-    
+
+        // Normal compression settings.
+        void __cdecl SetBiasedVertexNormalsAndTangents(bool value);
+
     private:
         // Private implementation.
         class Impl;
@@ -573,6 +585,7 @@ namespace DirectX
             bool                enableSkinning;
             bool                enableDualTexture;
             bool                enableNormalMaps;
+            bool                biasedVertexNormals;
             float               specularPower;
             float               alpha;
             DirectX::XMFLOAT3   ambientColor;
@@ -615,6 +628,7 @@ namespace DirectX
         void __cdecl SetSharing( bool enabled );
 
         void __cdecl EnableNormalMapEffect( bool enabled );
+        void __cdecl EnableForceSRGB( bool forceSRGB );
 
         void __cdecl SetDirectory( _In_opt_z_ const wchar_t* path );
 
@@ -662,6 +676,8 @@ namespace DirectX
         void __cdecl ReleaseCache();
 
         void __cdecl SetSharing( bool enabled );
+
+        void __cdecl EnableForceSRGB( bool forceSRGB );
 
         void __cdecl SetDirectory( _In_opt_z_ const wchar_t* path );
 
