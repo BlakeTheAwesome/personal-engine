@@ -15,6 +15,30 @@ namespace beMath
 	typedef XMFLOAT4X4 Matrix;
 	typedef XMFLOAT4 Quat;
 
+	static inline Vec3 V30()  { return Vec3( 0.f,  0.f,  0.f); }
+	static inline Vec3 V3X()  { return Vec3( 1.f,  0.f,  0.f); }
+	static inline Vec3 V3Y()  { return Vec3( 0.f,  1.f,  0.f); }
+	static inline Vec3 V3Z()  { return Vec3( 0.f,  0.f,  1.f); }
+	static inline Vec3 V3NX() { return Vec3(-1.f,  0.f,  0.f); }
+	static inline Vec3 V3NY() { return Vec3( 0.f, -1.f,  0.f); }
+	static inline Vec3 V3NZ() { return Vec3( 0.f,  0.f, -1.f); }
+
+	static inline Vec4 V40()  { return Vec4( 0.f,  0.f,  0.f,  0.f); }
+	static inline Vec4 V4X()  { return Vec4( 1.f,  0.f,  0.f,  0.f); }
+	static inline Vec4 V4Y()  { return Vec4( 0.f,  1.f,  0.f,  0.f); }
+	static inline Vec4 V4Z()  { return Vec4( 0.f,  0.f,  1.f,  0.f); }
+	static inline Vec4 V4W()  { return Vec4( 0.f,  0.f,  0.f,  1.f); }
+	static inline Vec4 V4NX() { return Vec4(-1.f,  0.f,  0.f,  0.f); }
+	static inline Vec4 V4NY() { return Vec4( 0.f, -1.f,  0.f,  0.f); }
+	static inline Vec4 V4NZ() { return Vec4( 0.f,  0.f, -1.f,  0.f); }
+
+	static inline Vec4 V4XW()  { return Vec4( 1.f,  0.f,  0.f,  1.f); }
+	static inline Vec4 V4YW()  { return Vec4( 0.f,  1.f,  0.f,  1.f); }
+	static inline Vec4 V4ZW()  { return Vec4( 0.f,  0.f,  1.f,  1.f); }
+	static inline Vec4 V4NXW() { return Vec4(-1.f,  0.f,  0.f,  1.f); }
+	static inline Vec4 V4NYW() { return Vec4( 0.f, -1.f,  0.f,  1.f); }
+	static inline Vec4 V4NZW() { return Vec4( 0.f,  0.f, -1.f,  1.f); }
+
 	inline float Length(const beMath::Vec3& v)
 	{
 		XMVECTOR xv = XMLoadFloat3(&v);
@@ -54,6 +78,20 @@ namespace beMath
 		beMath::Vec3 out;
 		XMStoreFloat3(&out, xv);
 		return out;
+	}
+
+	template <typename T>
+	inline T Clamp(T value, T min, T max)
+	{
+		if (value < min)
+		{
+			return min;
+		}
+		if (value > max)
+		{
+			return max;
+		}
+		return value;
 	}
 
 	inline float Dot(const beMath::Vec2& a, const beMath::Vec2& b)
