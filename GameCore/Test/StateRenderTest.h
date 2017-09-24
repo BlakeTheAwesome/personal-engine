@@ -40,10 +40,6 @@ class StateRenderTest : public beState
 	beBitmap m_bitmapTextPreRendered;
 	beBitmap m_bitmapScreenGrab;
 
-	beShaderColour m_colourShader;
-	beShaderTexture m_textureShader;
-	beShaderTexture2d m_textureShader2d;
-	beShaderLitTexture m_litTextureShader;
 	beFlightCamera m_camera;
 
 	int m_shaderToUse = 0;

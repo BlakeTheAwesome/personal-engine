@@ -16,6 +16,12 @@ class beRenderInterface;
 class beShaderTexture2d
 {
 public:
+	struct VertexType
+	{
+		Vec2 position;
+		Vec2 uv;
+	};
+
 	enum class TextureMode
 	{
 		Wrapped,

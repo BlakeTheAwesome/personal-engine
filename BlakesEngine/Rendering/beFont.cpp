@@ -13,13 +13,6 @@
 #include <algorithm>
 #include <string>
 
-struct VertexWithNormalType
-{
-	Vec4 position;
-	Vec3 normal;
-	Vec2 texCoord;
-};
-
 bool beFont::ReadLine(const std::string& line)
 {
 	// Ignore everything before the first semi-colon

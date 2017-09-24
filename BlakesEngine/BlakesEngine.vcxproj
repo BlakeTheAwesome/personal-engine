@@ -280,6 +280,7 @@
     <ClInclude Include="Rendering\beTexture.h" />
     <ClInclude Include="Shaders\beShaderColour.h" />
     <ClInclude Include="Shaders\beShaderLitTexture.h" />
+    <ClInclude Include="Shaders\beShaderPack.h" />
     <ClInclude Include="Shaders\beShaderTexture.h" />
     <ClInclude Include="Shaders\beShaderTexture2d.h" />
     <ClInclude Include="Time\beClock.h" />

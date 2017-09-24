@@ -6,10 +6,13 @@
 #include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
+#include "BlakesEngine/Shaders/beShaderTexture.h"
 
 #include <d3d11.h>
 
 #include <fstream>
+
+using VertexWithNormalType = beShaderTexture::VertexType;
 
 struct VertInfo
 {
@@ -30,13 +33,6 @@ struct OBJFileInfo
 	beVector<Vec3> vertexNormals;
 	beVector<Vec2> texCoords;
 	beVector<Face> faces;
-};
-
-struct VertexWithNormalType
-{
-	Vec4 position;
-	Vec3 normal;
-	Vec2 texCoord;
 };
 
 beModel::beModel()
@@ -181,17 +177,17 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 	beVector<VertexWithNormalType> vertices(vertexCount, vertexCount, 0);
 	beVector<u32> indices(indexCount, indexCount, 0);
 
-	for (int i = 0; i < indices.Count(); i++)
+	for (int i : RangeIter(indices.Count()))
 	{
 		indices[i] = i;
 	}
 
 	int vertexIndex = 0;
-	for (int i = 0; i < fileInfo.faces.Count(); i++)
+	for (int i : RangeIter(fileInfo.faces.Count()))
 	{
 		const Face* face = &fileInfo.faces[i];
 		//bePRINTF("face %d", i);
-		for (int j = 2; j >= 0; j--) // Read backwards to swap rhs to lhs
+		for (int j : RangeIterReverse(2))  // Read backwards to swap rhs to lhs
 		{
 			const VertInfo* vert = &face->verts[j];
 			Vec3 vertex = fileInfo.vertices[vert->vertex];

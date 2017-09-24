@@ -15,12 +15,7 @@
 
 #include <fstream>
 
-
-struct VertexColourType
-{
-	Vec4 position;
-	Vec4 colour;
-};
+using VertexColourType = beShaderColour::VertexType;
 
 PIMPL_DATA(beDebugWorld)
 	bool InitAxes(beRenderInterface* ri);

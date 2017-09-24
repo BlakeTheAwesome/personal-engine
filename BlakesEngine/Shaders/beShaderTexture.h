@@ -16,6 +16,13 @@ class beRenderInterface;
 class beShaderTexture
 {
 public:
+	struct VertexType
+	{
+		Vec4 position;
+		Vec3 normal;
+		Vec2 texCoord;
+	};
+
 	beShaderTexture() = default;
 	~beShaderTexture();
 

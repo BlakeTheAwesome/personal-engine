@@ -13,6 +13,7 @@
 #include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
+#include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 #include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"
@@ -45,12 +46,6 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	m_bitmapTexQuad.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
 	m_bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
 	m_bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
-
-	m_colourShader.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
-	m_textureShader.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
-	m_textureShader2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
-	m_litTextureShader.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
-
 	
 	m_camera.AttachGamepad(m_appData->gamepad);
 	m_camera.AttachMouse(m_appData->mouse);
@@ -60,11 +55,6 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 void StateRenderTest::Exit(beStateMachine* stateMachine)
 {
 	m_camera.DetachGamepad();
-
-	m_litTextureShader.Deinit();
-	m_textureShader2d.Deinit();
-	m_textureShader.Deinit();
-	m_colourShader.Deinit();
 
 	m_bitmapScreenGrab.Deinit();
 	m_bitmapTextPreRendered.Deinit();
@@ -148,6 +138,7 @@ void StateRenderTest::Render()
 	auto renderInterface = m_appData->renderInterface;
 	auto keyboard = m_appData->keyboard;
 	auto mouse = m_appData->mouse;
+	auto shaderPack = m_appData->shaderPack;
 
 	if (!m_haveWrittenToTexture)
 	{
@@ -160,11 +151,11 @@ void StateRenderTest::Render()
 		writeTexture.SetAsTarget(renderInterface);
 		writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
 		m_model4.Render(renderInterface);
-		m_colourShader.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-		m_colourShader.Render(renderInterface, m_model4.GetIndexCount(), 0);
+		shaderPack->shaderColour.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+		shaderPack->shaderColour.Render(renderInterface, m_model4.GetIndexCount(), 0);
 				
 		renderInterface->DisableZBuffer();
-		m_textureShader2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
 			
 		//m_bitmapTexQuad.Render(renderInterface);
 		//textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
@@ -173,7 +164,7 @@ void StateRenderTest::Render()
 		m_bitmapTextDynamic.InitText(renderInterface, &m_font, "initial string", 640.f, 0, false);
 		m_bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
 		m_bitmapTextDynamic.Render(renderInterface);
-		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture());
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture());
 		renderInterface->DisableAlpha();
 		renderInterface->EnableZBuffer();
 		renderInterface->RestoreRenderTarget();
@@ -203,41 +194,41 @@ void StateRenderTest::Render()
 			switch (m_shaderToUse)
 			{
 				case 0:
-					m_litTextureShader.SetShaderParameters(renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition());
-					m_litTextureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
+					shaderPack->shaderLitTexture.SetShaderParameters(renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition());
+					shaderPack->shaderLitTexture.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 				break;
 				case 1:
-					m_textureShader.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-					m_textureShader.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
+					shaderPack->shaderTexture.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+					shaderPack->shaderTexture.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 				break;
 				case 2:
-					m_colourShader.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-					m_colourShader.Render(renderInterface, modelToRender->GetIndexCount(), 0);
+					shaderPack->shaderColour.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+					shaderPack->shaderColour.Render(renderInterface, modelToRender->GetIndexCount(), 0);
 				break;
 			}
 		}
 
 		m_debugWorld->SetRenderAxes(m_renderAxes);
-		m_debugWorld->Render(renderInterface, &m_colourShader, m_camera.GetViewMatrix(), m_camera.GetPosition());
+		m_debugWorld->Render(renderInterface, &shaderPack->shaderColour, m_camera.GetViewMatrix(), m_camera.GetPosition());
 
 		renderInterface->DisableZBuffer();
-		m_textureShader2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
 			
 		if (m_bitmapScreenGrab.GetTexture() && !writingToScreenGrabTexture)
 		{
 			m_bitmapScreenGrab.Render(renderInterface);
-			m_textureShader2d.Render(renderInterface, m_bitmapScreenGrab.GetIndexCount(), m_bitmapScreenGrab.GetTexture());
+			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapScreenGrab.GetIndexCount(), m_bitmapScreenGrab.GetTexture());
 		}
 			
 		m_bitmapTexQuad.Render(renderInterface);
-		m_textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
 	
 		renderInterface->EnableAlpha();
 		beStringBuilder sb;
 		sb << "Dynamic Text\nMouseX:"<<mouse->GetX()<<"\nMouseY:"<<mouse->GetY();
 		m_bitmapTextDynamic.InitText(renderInterface, &m_font, sb, 512.f, 0, false);
 		m_bitmapTextDynamic.Render(renderInterface);
-		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
 			
 		//bitmapTextPreRendered.Render(renderInterface);
 		//textureShader2d.Render(renderInterface, bitmapTextPreRendered.GetIndexCount(), bitmapTextPreRendered.GetTexture());

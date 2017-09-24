@@ -26,7 +26,6 @@ class StateLifeGame : public beState
 	beAppData* m_appData;
 	beFont m_font;
 	beBitmap m_bitmapTextDynamic;
-	beShaderTexture2d m_textureShader2d;
 	beFlightCamera m_camera;
 
 	LifeGameCells m_cells;

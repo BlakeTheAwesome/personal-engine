@@ -4,6 +4,7 @@
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Math/beMath.h"
+#include "BlakesEngine/Shaders/beShaderTexture2d.h"
 
 class beRenderInterface;
 struct ID3D11Buffer;
@@ -12,13 +13,7 @@ struct ID3D11ShaderResourceView;
 class beFont
 {
 public:
-
-	struct VertexInputType
-	{
-		Vec2 position;
-		Vec2 uv;
-	};
-
+	using VertexInputType = beShaderTexture2d::VertexType;
 	struct StringInfo
 	{
 		StringInfo() : width(0.f), height(0.f) {}

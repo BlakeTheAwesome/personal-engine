@@ -14,6 +14,12 @@ class beRenderInterface;
 class beShaderColour
 {
 public:
+	struct VertexType
+	{
+		Vec4 position;
+		Vec4 colour;
+	};
+
 	beShaderColour() = default;
 	~beShaderColour();
 

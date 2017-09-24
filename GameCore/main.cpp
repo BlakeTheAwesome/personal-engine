@@ -12,6 +12,7 @@
 #include "BlakesEngine/Time/beClock.h"
 #include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/shaders/beShaderPack.h"
 #include "BlakesEngine/platform/beSystemEventManager.h"
 #include "BlakesEngine/platform/beEnvironment.h"
 #include "BlakesEngine/framework/beAppData.h"
@@ -124,8 +125,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	});
 	defer(systemEventManager->DeregisterCallbackWinProc(winProcCallbackId));
 	
-
-
+	
+	beShaderPack shaderPack;
+	shaderPack.shaderColour.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
+	shaderPack.shaderTexture.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
+	shaderPack.shaderTexture2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
+	shaderPack.shaderLitTexture.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
+	defer
+	(
+		shaderPack.shaderColour.Deinit();
+		shaderPack.shaderTexture.Deinit();
+		shaderPack.shaderTexture2d.Deinit();
+		shaderPack.shaderLitTexture.Deinit();
+	);
 
 	beAppData appData;
 	appData.environment = &environment;
@@ -135,6 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	appData.keyboard = &keyboard;
 	appData.mouse = &mouse;
 	appData.gamepad = &gamepad;
+	appData.shaderPack = &shaderPack;
 
 	beState* initialState = nullptr;
 	if (const beString* mode = environment.Get("mode"))
@@ -153,7 +166,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	}
 
 	beStateMachine appStateMachine(initialState);
-
 
 	// ACTUAL MAIN LOOP
 

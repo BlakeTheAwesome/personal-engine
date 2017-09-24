@@ -27,7 +27,6 @@ void StateLifeGame::Enter(beStateMachine* stateMachine)
 void StateLifeGame::Exit(beStateMachine* stateMachine)
 {
 	m_camera.DetachGamepad();
-	m_textureShader2d.Deinit();
 	m_bitmapTextDynamic.Deinit();
 	m_font.Deinit();
 }
