@@ -87,7 +87,10 @@ void beEnvironment::Initialise(const beStringView& commandLine)
 					haveKey = false;
 				}
 			}
-			nextChar++;
+			if (*nextChar != '\0')
+			{
+				nextChar++;
+			}
 			searchStart = nextChar;
 		}
 		else
