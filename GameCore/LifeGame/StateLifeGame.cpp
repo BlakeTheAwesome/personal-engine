@@ -58,12 +58,13 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		m_timeUntilNextUpdate = m_updateTimeFrequency - m_timeUntilNextUpdate;
 		m_cells.TickGame();
 	}
+	m_cells.Update(m_appData, dt);
 }
 
 void StateLifeGame::Render()
 {
 	auto renderInterface = m_appData->renderInterface;
-	m_cells.Render(renderInterface);
+	m_cells.Render(renderInterface, m_appData->shaderPack, m_camera.GetViewMatrix(), m_camera.GetPosition());
 	//auto keyboard = m_appData->keyboard;
 	//auto mouse = m_appData->mouse;
 
