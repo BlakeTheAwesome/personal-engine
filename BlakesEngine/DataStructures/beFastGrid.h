@@ -59,6 +59,11 @@ class beFastGrid
 			return At(i);
 		}
 
+		int ToIndex(int x, int y) const
+		{
+			return beZOrder::EncodeMorton2(x, y);
+		}
+
 		T& At(int x, int y)
 		{
 			return At(beZOrder::EncodeMorton2(x, y));
@@ -87,18 +92,21 @@ class beFastGrid
 			beFastGrid* grid;
 			int index;
 			void operator++() { index++; }
-			void operator==(const iterator& rhs) { return index == rhs.index; }
+			bool operator==(const iterator& rhs) { return index == rhs.index; }
+			bool operator!=(const iterator& rhs) { return !(*this == rhs); }
 			T& operator*() { return grid->At(index); }
 			int xPos() const { return beZOrder::DecodeMorton2X(index); }
 			int yPos() const { return beZOrder::DecodeMorton2Y(index); }
 		};
+
 		struct const_iterator
 		{
 			const_iterator(beFastGrid* _grid, int _index) : grid(_grid), index(_index) {}
 			const beFastGrid* grid;
 			int index;
 			void operator++() { index++; }
-			void operator==(const const_iterator& rhs) { return index == rhs.index; }
+			bool operator==(const const_iterator& rhs) { return index == rhs.index; }
+			bool operator!=(const const_iterator& rhs) { return !(*this == rhs); }
 			const T& operator*() { return grid->At(index); }
 			int xPos() const { return beZOrder::DecodeMorton2X(index); }
 			int yPos() const { return beZOrder::DecodeMorton2Y(index); }
@@ -123,6 +131,56 @@ class beFastGrid
 		{
 			return const_iterator(this, CAPACITY);
 		}
+
+
+		struct GridIterator
+		{
+			beFastGrid* grid;
+			struct grid_iterator
+			{
+				grid_iterator(iterator _it) : it(_it) {}
+				iterator it;
+				void operator++() { it.index++; }
+				bool operator==(const grid_iterator& rhs) { return it == rhs.it; }
+				bool operator!=(const grid_iterator& rhs) { return !(*this == rhs); }
+				iterator operator*() { return it; }
+			};
+			grid_iterator begin()
+			{
+				return iterator(grid, 0);
+			}
+			grid_iterator end()
+			{
+				return iterator(grid, CAPACITY);
+			}
+		};
+		GridIterator GridIter() { return GridIterator{this}; }
+
+		struct ConstGridIterator
+		{
+			beFastGrid* grid;
+
+			struct const_grid_iterator
+			{
+				const_grid_iterator(const_iterator _it) : it(_it) {}
+				const_iterator it;
+				void operator++() { it.index++; }
+				bool operator==(const const_grid_iterator& rhs) { return it == rhs.it; }
+				bool operator!=(const const_grid_iterator& rhs) { return !(*this == rhs); }
+				const_iterator operator*() { return it; }
+			};
+
+			const_grid_iterator begin() const
+			{
+				return const_iterator(grid, 0);
+			}
+
+			const_grid_iterator end() const
+			{
+				return const_iterator(grid, CAPACITY);
+			}
+		};
+		ConstGridIterator GridIter() const { return ConstGridIterator{this}; }
 
 	protected:
 		T m_buffer[CAPACITY];

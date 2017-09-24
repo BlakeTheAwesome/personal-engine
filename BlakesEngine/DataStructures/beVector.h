@@ -10,6 +10,9 @@
 template <typename T, int CAPACITY>
 struct beVectorFixedPolicy
 {
+	public:
+	static constexpr int DataSize() { return sizeof(m_buffer); }
+
 	protected:
 	beVectorFixedPolicy() = default;
 	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
@@ -559,6 +562,8 @@ class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 {
 	typedef beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>> Base;
 	public:
+	using Base::DataSize;
+
 	beFixedVector() = default;
 	beFixedVector(std::initializer_list<T> list) : Base(CAPACITY, 0, list) {}
 };
