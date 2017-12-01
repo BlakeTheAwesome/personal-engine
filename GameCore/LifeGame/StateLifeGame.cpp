@@ -47,6 +47,10 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		m_paused = !m_paused;
 		m_timeUntilNextUpdate = 0.f;
 	}
+	if (keyboard->IsPressed(beKeyboard::Button::T))
+	{
+		m_cells.ToggleRenderText();
+	}
 
 	m_camera.Update(dt);
 

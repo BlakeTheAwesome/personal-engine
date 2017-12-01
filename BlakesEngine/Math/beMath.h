@@ -39,6 +39,13 @@ namespace beMath
 	static inline Vec4 V4NYW() { return Vec4( 0.f, -1.f,  0.f,  1.f); }
 	static inline Vec4 V4NZW() { return Vec4( 0.f,  0.f, -1.f,  1.f); }
 
+	static inline Vec4 V4XY() { return Vec4(1.f, 1.f, 0.f, 0.f); }
+	static inline Vec4 V4XZ() { return Vec4(1.f, 0.f, 1.f, 0.f); }
+	static inline Vec4 V4YZ() { return Vec4(0.f, 1.f, 1.f, 0.f); }
+	static inline Vec4 V4XYW() { return Vec4(1.f, 1.f, 0.f, 1.f); }
+	static inline Vec4 V4XZW() { return Vec4(1.f, 0.f, 1.f, 1.f); }
+	static inline Vec4 V4YZW() { return Vec4(0.f, 1.f, 1.f, 1.f); }
+
 	inline float Length(const beMath::Vec3& v)
 	{
 		XMVECTOR xv = XMLoadFloat3(&v);
@@ -77,6 +84,35 @@ namespace beMath
 		XMVECTOR xv = XMVectorScale(l, scale);
 		beMath::Vec3 out;
 		XMStoreFloat3(&out, xv);
+		return out;
+	}
+
+	inline beMath::Vec4 operator-(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
+	{
+		XMVECTOR l = XMLoadFloat4(&lhs);
+		XMVECTOR r = XMLoadFloat4(&rhs);
+		XMVECTOR xv = XMVectorSubtract(l, r);
+		beMath::Vec4 out;
+		XMStoreFloat4(&out, xv);
+		return out;
+	}
+
+	inline beMath::Vec4 operator+(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
+	{
+		XMVECTOR l = XMLoadFloat4(&lhs);
+		XMVECTOR r = XMLoadFloat4(&rhs);
+		XMVECTOR xv = XMVectorAdd(l, r);
+		beMath::Vec4 out;
+		XMStoreFloat4(&out, xv);
+		return out;
+	}
+
+	inline beMath::Vec4 operator*(const beMath::Vec4& v, const float& scale)
+	{
+		XMVECTOR l = XMLoadFloat4(&v);
+		XMVECTOR xv = XMVectorScale(l, scale);
+		beMath::Vec4 out;
+		XMStoreFloat4(&out, xv);
 		return out;
 	}
 

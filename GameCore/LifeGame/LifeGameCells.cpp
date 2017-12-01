@@ -29,31 +29,26 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 
 
 
-	//if (!m_haveWrittenToTexture)
+	if (m_renderTextCells)
 	{
 		beTexture writeTexture;
 		writeTexture.InitAsTarget(renderInterface, 512, 512);
 		defer(
 			writeTexture.Deinit();
 		);
-		//m_haveWrittenToTexture = true;
 		writeTexture.SetAsTarget(renderInterface);
 		writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
 
 		renderInterface->DisableZBuffer();
 		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-			
-		//m_bitmapTexQuad.Render(renderInterface);
-		//textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
 
 		
-
 		beStringBuilder testString;
-		for (int y = 0; y < m_cells.Length(); y++)
+		for (int y : RangeIterReverse(m_cells.Length()))
 		{
-			for (int x = 0; x < m_cells.Length(); x++)
+			for (int x : RangeIter(m_cells.Length()))
 			{
-				char c = m_cells.At(x,y) ? 'o' : 'x';
+				char c = m_cells.At(x, y) ? 'o' : 'x';
 				testString << c;
 			}
 			testString << "\n";
@@ -68,7 +63,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 		renderInterface->EnableZBuffer();
 		renderInterface->RestoreRenderTarget();
 		writeTexture.FinaliseTarget();
-		
+
 		m_bitmapTextDynamic.Render(renderInterface);
 		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
 	}
@@ -84,21 +79,29 @@ void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float y
 	int faceOffset = 0;
 	block->verts[faceOffset+2].position.y = newHeight;
 	block->verts[faceOffset+3].position.y = newHeight;
+	block->verts[faceOffset+2].colour = V4XYW() * newHeight;
+	block->verts[faceOffset+3].colour = V4XYW() * newHeight;
 
 	//+x
 	faceOffset += 4;
 	block->verts[faceOffset+2].position.y = newHeight;
 	block->verts[faceOffset+3].position.y = newHeight;
+	block->verts[faceOffset+2].colour = V4XW() * newHeight;
+	block->verts[faceOffset+3].colour = V4XW() * newHeight;
 
 	//-y
 	faceOffset += 4;
 	block->verts[faceOffset+2].position.y = newHeight;
 	block->verts[faceOffset+3].position.y = newHeight;
+	block->verts[faceOffset+2].colour = V4YZW() * newHeight;
+	block->verts[faceOffset+3].colour = V4YZW() * newHeight;
 
 	//+y
 	faceOffset += 4;
 	block->verts[faceOffset+2].position.y = newHeight;
 	block->verts[faceOffset+3].position.y = newHeight;
+	block->verts[faceOffset+2].colour = V4YW() * newHeight;
+	block->verts[faceOffset+3].colour = V4YW() * newHeight;
 
 	//+z
 	faceOffset += 4;
@@ -106,6 +109,10 @@ void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float y
 	block->verts[faceOffset+1].position.y = newHeight;
 	block->verts[faceOffset+2].position.y = newHeight;
 	block->verts[faceOffset+3].position.y = newHeight;
+	block->verts[faceOffset+0].colour = V4ZW() * newHeight;
+	block->verts[faceOffset+1].colour = V4ZW() * newHeight;
+	block->verts[faceOffset+2].colour = V4ZW() * newHeight;
+	block->verts[faceOffset+3].colour = V4ZW() * newHeight;
 }
 
 void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPos, float height)
@@ -116,10 +123,10 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	//block->verts[faceOffset+1].normal = V3NX();
 	//block->verts[faceOffset+2].normal = V3NX();
 	//block->verts[faceOffset+3].normal = V3NX();
-	block->verts[faceOffset+0].colour = V4NXW();
-	block->verts[faceOffset+1].colour = V4NXW();
-	block->verts[faceOffset+2].colour = V4NXW();
-	block->verts[faceOffset+3].colour = V4NXW();
+	block->verts[faceOffset+0].colour = V4XYW();
+	block->verts[faceOffset+1].colour = V4XYW();
+	block->verts[faceOffset+2].colour = V4XYW();
+	block->verts[faceOffset+3].colour = V4XYW();
 	block->verts[faceOffset+0].position = Vec4(xPos - HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
 	block->verts[faceOffset+1].position = Vec4(xPos - HalfBlockLength, 0.f,    yPos + HalfBlockLength, 1.f);
 	block->verts[faceOffset+2].position = Vec4(xPos - HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
@@ -135,10 +142,10 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	block->verts[faceOffset+1].colour = V4XW();
 	block->verts[faceOffset+2].colour = V4XW();
 	block->verts[faceOffset+3].colour = V4XW();
-	block->verts[faceOffset+0].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+1].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos + HalfBlockLength, 1.f);
-	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+3].position = Vec4(xPos + HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+1].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+0].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+3].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
 
 	//-y
 	faceOffset += 4;
@@ -146,14 +153,14 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	//block->verts[faceOffset+1].normal = V3NY();
 	//block->verts[faceOffset+2].normal = V3NY();
 	//block->verts[faceOffset+3].normal = V3NY();
-	block->verts[faceOffset+0].colour = V4NYW();
-	block->verts[faceOffset+1].colour = V4NYW();
-	block->verts[faceOffset+2].colour = V4NYW();
-	block->verts[faceOffset+3].colour = V4NYW();
-	block->verts[faceOffset+0].position = Vec4(xPos - HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+1].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+2].position = Vec4(xPos - HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+3].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+0].colour = V4YZW();
+	block->verts[faceOffset+1].colour = V4YZW();
+	block->verts[faceOffset+2].colour = V4YZW();
+	block->verts[faceOffset+3].colour = V4YZW();
+	block->verts[faceOffset+0].position = Vec4(xPos - HalfBlockLength, 0.f,    yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+1].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+2].position = Vec4(xPos - HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+3].position = Vec4(xPos + HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
 
 	//+y
 	faceOffset += 4;
@@ -165,10 +172,10 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	block->verts[faceOffset+1].colour = V4YW();
 	block->verts[faceOffset+2].colour = V4YW();
 	block->verts[faceOffset+3].colour = V4YW();
-	block->verts[faceOffset+0].position = Vec4(xPos - HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+1].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+2].position = Vec4(xPos - HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+3].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+1].position = Vec4(xPos - HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+0].position = Vec4(xPos + HalfBlockLength, 0.f,    yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+3].position = Vec4(xPos - HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
 
 	//+z
 	faceOffset += 4;
@@ -180,10 +187,10 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	block->verts[faceOffset+1].colour = V4ZW();
 	block->verts[faceOffset+2].colour = V4ZW();
 	block->verts[faceOffset+3].colour = V4ZW();
-	block->verts[faceOffset+0].position = Vec4(xPos - HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+1].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
-	block->verts[faceOffset+2].position = Vec4(xPos - HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
-	block->verts[faceOffset+3].position = Vec4(xPos + HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+1].position = Vec4(xPos - HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+0].position = Vec4(xPos + HalfBlockLength, height, yPos - HalfBlockLength, 1.f);
+	block->verts[faceOffset+3].position = Vec4(xPos - HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
+	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, height, yPos + HalfBlockLength, 1.f);
 
 }
 
@@ -210,7 +217,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 			float xPos = x*BlockLength;
 			float yPos = y*BlockLength;
 			float height = live ? BlockHeight : 0.f;
-			bePRINTF("Writing to block[%d]", arrayIndex);
+			//bePRINTF("Writing to block[%d]", arrayIndex);
 			InitBlock(&m_renderBlocks.At(arrayIndex), xPos, yPos, height);
 		}
 	}
@@ -220,8 +227,8 @@ void LifeGameCells::Initialise(beAppData* appData)
 	bool success = m_vertexBuffer.Allocate(renderInterface, sizeof(GridVertexFormat), numVerts, D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, m_renderBlocks.begin());
 	BE_ASSERT(success);
 
-	u32 FaceIndexLayout[Block::IndicesPerFace] = {
-		0, 1, 2, 2, 1, 3,
+	u32 FaceIndexLayout[Block::IndicesPerFace] ={
+		0, 1, 2, 2, 1, 3
 	};
 
 	beVector<u32> indices(numBlocks * Block::IndicesPerBlock);

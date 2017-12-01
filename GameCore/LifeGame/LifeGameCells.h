@@ -28,6 +28,7 @@ struct LifeGameCells
 	void Update(beAppData* appData, float hightOffset);
 	void Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition);
 	void SetAnimationSpeed(float distPerSecond) { m_animationDistancePerSecond = distPerSecond; }
+	void ToggleRenderText() { m_renderTextCells = !m_renderTextCells; }
 
 	private:
 
@@ -65,4 +66,5 @@ struct LifeGameCells
 	beRenderBuffer m_indexBuffer;
 
 	float m_animationDistancePerSecond = 1.f;
+	bool m_renderTextCells = false;
 };
