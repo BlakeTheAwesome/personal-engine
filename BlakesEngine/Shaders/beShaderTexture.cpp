@@ -3,7 +3,6 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
-#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
@@ -67,8 +66,8 @@ bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename
 
 	D3DReadFileToBlob(vertexFilename.c_str(), &vBuffer);
 	D3DReadFileToBlob(pixelFilename.c_str(), &pBuffer);
-	DeferredCall d1([&vBuffer] {BE_SAFE_RELEASE(vBuffer);});
-	DeferredCall d2([&pBuffer] {BE_SAFE_RELEASE(pBuffer);});
+	defer({BE_SAFE_RELEASE(vBuffer);});
+	defer({BE_SAFE_RELEASE(pBuffer);});
 
 	HRESULT	res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
 	if (FAILED(res))

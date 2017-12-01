@@ -14,6 +14,7 @@
 #include "BlakesEngine/Core/beNonCopiable.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beDeferred.h"
 
 //#include "BlakesEngine/Core/beTypeTests.h"
 

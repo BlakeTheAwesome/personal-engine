@@ -1,17 +1,18 @@
 #pragma once
-#include "beFunction.h"
 
-#define defer(body) DeferredCall MACRO_CONCAT(_deferredCall, __COUNTER__) ([&](){body;})
+#define defer(body) auto MACRO_CONCAT(_deferredCall, __COUNTER__) = beDeferred::MakeLambdaDefer([&](){body;})
 
-class DeferredCall
+namespace beDeferred
 {
-	public:
-		typedef func::function<void()> FnType;
+	template <typename Lambda>
+	struct LambdaDefer
+	{
+		LambdaDefer(Lambda&& l) : m_fn(std::move(l)) {}
+		LambdaDefer(LambdaDefer&& rhs) = default;
+		LambdaDefer(const LambdaDefer&) = delete;
+		LambdaDefer& operator=(const LambdaDefer&) = delete;
 
-		DeferredCall() = default;
-		DeferredCall(DeferredCall&& that) : m_fn(std::move(that.m_fn)) { that.Clear(); }
-		DeferredCall(FnType fn) : m_fn(fn) {}
-		~DeferredCall()
+		~LambdaDefer()
 		{
 			if (IsValid())
 			{
@@ -21,12 +22,12 @@ class DeferredCall
 
 		void Clear()
 		{
-			m_fn = FnType();
+			m_valid = false;
 		}
 
 		bool IsValid()
 		{
-			return m_fn;
+			return m_valid;
 		}
 
 		void Call()
@@ -35,8 +36,14 @@ class DeferredCall
 			Clear();
 		}
 
-	private:
-		DeferredCall(const DeferredCall&) = delete;
-		DeferredCall& operator=(const DeferredCall&) = delete;
-		FnType m_fn;
-};
+		private:
+		Lambda m_fn;
+		bool m_valid = true;
+	};
+
+	template <typename Lambda>
+	LambdaDefer<Lambda> MakeLambdaDefer(Lambda&& l)
+	{
+		return LambdaDefer<Lambda>(std::move(l));
+	}
+}

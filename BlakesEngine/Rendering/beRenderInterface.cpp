@@ -4,8 +4,6 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/Core/beDeferred.h"
-
 #include "BlakesEngine/Window/beWindow.h"
 
 #include <d3d11.h>
@@ -123,12 +121,12 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 		
 		HRESULT res = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
-		DeferredCall d1([factory]{ factory->Release(); });
+		defer({ factory->Release(); });
 
 		res = factory->EnumAdapters(0, &adapter);
 		//res = factory->EnumAdapters(1, &adapter);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
-		DeferredCall d2([adapter]{ adapter->Release(); });
+		defer({ adapter->Release(); });
 		
 		DXGI_ADAPTER_DESC adapterDesc = {0};
 		res = adapter->GetDesc(&adapterDesc);
@@ -140,7 +138,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 
 		res = adapter->EnumOutputs(0, &adapterOutput);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
-		DeferredCall d3([adapterOutput]{ adapterOutput->Release(); });
+		defer({ adapterOutput->Release(); });
 
 		
 		unsigned int numModes;
@@ -148,7 +146,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 		if(FAILED(res)) { BE_ASSERT(false); return; }
 
 		DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[numModes];
-		DeferredCall d4([displayModeList]{ delete [] displayModeList; });
+		defer({ delete [] displayModeList; });
 
 		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
