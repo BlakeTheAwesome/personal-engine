@@ -290,79 +290,25 @@ void LifeGameCells::Update(beAppData* appData, float dt)
 void LifeGameCells::TickGame()
 {
 	const int length = m_cells.Length();
-	for (int y = 0; y < length; y++)
+	for (int y : RangeIter(length))
 	{
-		bool onTopEdge = y == 0;
-		bool onBottomEdge = y == (length-1);
-		for (int x = 0; x < length; x++)
+		int yUp = (y-1+length) % length;
+		int yDown = (y+1+length) % length;
+		for (int x : RangeIter(length))
 		{
-			bool onLeftEdge = x == 0;
-			bool onRightEdge = x == (length-1);
-			int adjecentLivingCells = 0;
-			// left cell
-			if (!onLeftEdge)
-			{
-				if (m_cells.At(x - 1, y))
-				{
-					adjecentLivingCells++;
-				}
-				// Left Top
-				if (!onTopEdge)
-				{
-					if (m_cells.At(x - 1, y - 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-				// Left Bottom
-				if (!onBottomEdge)
-				{
-					if (m_cells.At(x - 1, y + 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-			}
-			// right cell
-			if (!onRightEdge)
-			{
-				if (m_cells.At(x + 1, y))
-				{
-					adjecentLivingCells++;
-				}
-				// Right Top
-				if (!onTopEdge)
-				{
-					if (m_cells.At(x + 1, y - 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-				// Right Bottom
-				if (!onBottomEdge)
-				{
-					if (m_cells.At(x + 1, y + 1))
-					{
-						adjecentLivingCells++;
-					}
-				}
-			}
-			// top cell
-			if (!onTopEdge)
-			{
-				if (m_cells.At(x, y - 1))
-				{
-					adjecentLivingCells++;
-				}
-			}
-			// bottom cell
-			if (!onBottomEdge)
-			{
-				if (m_cells.At(x, y + 1))
-				{
-					adjecentLivingCells++;
-				}
-			}
+			int xLeft = (x-1+length) % length;
+			int xRight = (x+1+length) % length;
+
+			int adjecentLivingCells =
+				(int)m_cells.At(xLeft, yUp) +
+				(int)m_cells.At(xLeft, y) +
+				(int)m_cells.At(xLeft, yDown) +
+				(int)m_cells.At(x, yUp) +
+				(int)m_cells.At(x, yDown) +
+				(int)m_cells.At(xRight, yUp) +
+				(int)m_cells.At(xRight, y) +
+				(int)m_cells.At(xRight, yDown)
+			;
 			//Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
 			//Any live cell with two or three live neighbours lives on to the next generation.
 			//Any live cell with more than three live neighbours dies, as if by overpopulation.
