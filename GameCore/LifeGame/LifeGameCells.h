@@ -60,11 +60,12 @@ struct LifeGameCells
 	beBitmap m_bitmapTextDynamic;
 	beFlightCamera m_camera;
 
-	beFastGrid<bool, 32> m_cells, m_nextCells;
-	beFixedVector<Block, 32*32> m_renderBlocks;
+	static constexpr int LENGTH = 64;
+	beFastGrid<bool, LENGTH> m_cells, m_nextCells;
+	beFixedVector<Block, LENGTH*LENGTH> m_renderBlocks;
 	beRenderBuffer m_vertexBuffer;
 	beRenderBuffer m_indexBuffer;
 
-	float m_animationDistancePerSecond = 1.f;
+	float m_animationDistancePerSecond = 2.f;
 	bool m_renderTextCells = false;
 };

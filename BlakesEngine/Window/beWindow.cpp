@@ -43,8 +43,8 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 							L"beWindowClass",
 							wideWindowName.c_str(),
 							WS_OVERLAPPEDWINDOW, // window style - add noresize etc
-							448,    // x
-							156,    // y
+							120,    // x
+							16,    // y
 							windowWidth, // w
 							windowHeight, // h
 							nullptr,    // parent window

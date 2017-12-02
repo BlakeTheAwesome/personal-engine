@@ -19,6 +19,11 @@ class beFlightCamera
 		const Matrix& GetViewMatrix() const; // Can get position with beMath::PositionFromMatrix
 		const Vec3& GetPosition() const; // Can get position with beMath::PositionFromMatrix
 
+		void SetPosition(const Vec3& v) { m_position = v; }
+		void SetPitch(float f) { m_pitch = f; }
+		void SetYaw(float f) { m_yaw = f; }
+		void SetRoll(float f) { m_roll = f; }
+
 	private:
 		void UpdateImpl(float dt, float extraPitch, float extraYaw, float extraForwards, float extraRight);
 

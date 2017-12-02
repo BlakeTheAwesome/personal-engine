@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	frameTimer.LimitFPS(120);
 	
 	beString windowName("TestWindow");
-	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1024, 768, false);
+	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1600, 900, false);
 	
 	RenderDocManager* renderDoc = nullptr;
 	#ifdef ENABLE_RENDERDOC
