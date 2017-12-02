@@ -9,6 +9,7 @@
 static const float ROTATIONS_PER_SECOND = 0.5f * (2.f * PI);
 static const float DISTANCE_PER_SECOND = 1.0f;
 static const float MOUSE_SPEED_MULTIPLIER = 0.01f;
+static const float R2_MULTIPLIER = 10.f;
 static const bool INVERT_Y = true;
 
 
@@ -85,7 +86,7 @@ void beFlightCamera::Update(float dt)
 
 		if (lX != 0.f || lY != 0.f || rX != 0.f || rY != 0.f)
 		{
-			float moveSpeedFactor = (5.f + m_gamepad->GetR2());
+			float moveSpeedFactor = (5.f + (R2_MULTIPLIER*m_gamepad->GetR2()));
 
 			float extraPitch = rX * ROTATIONS_PER_SECOND * dt;
 			float extraYaw = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
