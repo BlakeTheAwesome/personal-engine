@@ -19,6 +19,8 @@ void StateLifeGame::Enter(beStateMachine* stateMachine)
 	
 	m_camera.AttachGamepad(m_appData->gamepad);
 	m_camera.AttachMouse(m_appData->mouse);
+	m_camera.SetPosition(Vec3(30.f, 30.f, -30.f));
+	m_camera.SetYaw(0.5f);
 	
 	m_cells.Initialise(m_appData);
 }

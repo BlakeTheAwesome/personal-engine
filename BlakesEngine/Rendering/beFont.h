@@ -13,6 +13,13 @@ struct ID3D11ShaderResourceView;
 class beFont
 {
 public:
+	enum class WrapMode
+	{
+		Default,
+		NoWrap,
+		Count
+	};
+
 	using VertexInputType = beShaderTexture2d::VertexType;
 	struct StringInfo
 	{
@@ -30,7 +37,7 @@ public:
 	void Deinit();
 
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
-	bool CreateString(beRenderInterface* ri, const beStringView& string, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, StringInfo* outStringInfo) const;
+	bool CreateString(beRenderInterface* ri, const beStringView& string, float scale, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, WrapMode wrapMode, StringInfo* outStringInfo) const;
 	
 	const beTexture* GetTexture() const;
 

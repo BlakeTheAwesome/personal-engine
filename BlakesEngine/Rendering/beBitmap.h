@@ -1,12 +1,12 @@
 #pragma once
 #include "beRenderBuffer.h"
 #include "beTexture.h"
+#include "beFont.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 
 class beRenderInterface;
 class beTexture;
-class beFont;
 struct ID3D11ShaderResourceView;
 
 class beBitmap
@@ -19,7 +19,7 @@ public:
 	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
 	void Deinit();
 
-	bool InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float maxWidth, u32 invalidStringCharacter, bool fixedWidth);
+	bool InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float scale, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, beFont::WrapMode wrapMode);
 
 	void SetColour(const Vec4& colour);
 	Vec2 GetPosition() const;

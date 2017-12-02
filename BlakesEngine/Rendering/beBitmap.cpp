@@ -110,10 +110,10 @@ void beBitmap::Deinit()
 }
 
 #include "beFont.h"
-bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float maxWidth, u32 invalidStringCharacter, bool fixedWidth)
+bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float scale, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, beFont::WrapMode wrapMode)
 {
 	beFont::StringInfo info;
-	if (!font->CreateString(ri, string, maxWidth, invalidStringCharacter, fixedWidth, &info))
+	if (!font->CreateString(ri, string, scale, maxWidth, invalidStringCharacter, fixedWidth, wrapMode, &info))
 	{
 		return false;
 	}

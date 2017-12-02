@@ -235,11 +235,10 @@ int beFont::GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const Ch
 	return kerning;
 }
 
-bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, StringInfo* outStringInfo) const
+bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, float scale, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, WrapMode wrapMode, StringInfo* outStringInfo) const
 {
 	//float textureWidth = (float)m_texture->GetWidth();
 	//float textureHeight = (float)m_texture->GetHeight();
-	const int scale = 1;
 
 	beWString wstring;
 	beStringConversion::UTF8ToWide(string.c_str(), &wstring);
@@ -259,19 +258,19 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 	const CharacterInfo* defaultCharacterInfo = FindCharacterInfo(invalidStringCharacter);
 	const CharacterInfo* lastCharacterInfo = nullptr;
 	int totalHeight = 0;
-	int totalWidth = 0;
+	float totalWidth = 0;
 	int currentHeight = m_lineHeight;
-	int lineWidth = 0;
-	int wordWidth = 0;
+	float lineWidth = 0;
+	float wordWidth = 0;
 	int wordChars = 0;
 	u32 lastChar = 0;
 
-	int fixedWidthValue = 0;
+	float fixedWidthValue = 0;
 	if (fixedWidth)
 	{
 		for (const beFont::CharacterInfo& charInfo : m_characterInfo)
 		{
-			fixedWidthValue = beMath::Max(fixedWidthValue, charInfo.width);
+			fixedWidthValue = beMath::Max(fixedWidthValue, (float)charInfo.width);
 		}
 		fixedWidthValue *= scale;
 	}
@@ -307,11 +306,11 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 			}
 		}
 
-		int kerning = GetKerning(lastChar, nextChar, lastCharacterInfo, charInfo);
-		int characterSize = (kerning + charInfo->width) * scale;
-		int lineIncrement = fixedWidth ? fixedWidthValue : characterSize;
-		int newLineWidth = lineWidth + lineIncrement;
-		if (newLineWidth > maxWidth)
+		float kerning = (float)GetKerning(lastChar, nextChar, lastCharacterInfo, charInfo);
+		float characterSize = (kerning + charInfo->width) * scale;
+		float lineIncrement = fixedWidth ? fixedWidthValue : characterSize;
+		float newLineWidth = lineWidth + lineIncrement;
+		if (wrapMode != WrapMode::NoWrap && newLineWidth > maxWidth)
 		{
 			if (lineWidth == wordWidth)
 			{
@@ -352,8 +351,8 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 		float uvTop = charInfo->textureTopLeft.y;
 		float uvRight = charInfo->textureBtmRight.x;
 		float uvBottom = charInfo->textureBtmRight.y;
-		float posLeft = (float)lineWidth;// / textureWidth;
-		float posRight = (float)lineWidth + characterSize;// / textureWidth;
+		float posLeft = lineWidth;// / textureWidth;
+		float posRight = lineWidth + characterSize;// / textureWidth;
 		float posTop = (float)(m_lineHeight - currentHeight) * scale;// / textureHeight;
 		float posBtm = (float)(m_lineHeight - totalHeight) * scale;// / textureHeight;
 
