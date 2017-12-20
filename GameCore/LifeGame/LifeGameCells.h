@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine/framework/beState.h"
+#include "BlakesEngine/Framework/beState.h"
 #include "BlakesEngine/Rendering/beBitmap.h"
 #include "BlakesEngine/Rendering/beFont.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"

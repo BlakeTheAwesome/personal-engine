@@ -7,7 +7,7 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
 #include "BlakesEngine/Input/beGamepad.h"
-#include "BlakesEngine/Input/bekeyboard.h"
+#include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
 #include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"

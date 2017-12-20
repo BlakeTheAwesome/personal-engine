@@ -1,6 +1,6 @@
 #include "BlakesEngine/bePCH.h"
 #include "beClock.h"
-#include "blakesengine/core/beAssert.h"
+#include "BlakesEngine/Core/beAssert.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
 

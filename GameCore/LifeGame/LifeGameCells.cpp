@@ -2,7 +2,7 @@
 #include "LifeGameCells.h"
 
 #include "BlakesEngine/Input/beGamepad.h"
-#include "BlakesEngine/Input/bekeyboard.h"
+#include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
 #include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"

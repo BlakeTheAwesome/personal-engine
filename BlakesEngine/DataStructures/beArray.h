@@ -1,5 +1,5 @@
 #pragma once
-#include "blakesengine/core/beAssert.h"
+#include "BlakesEngine/Core/beAssert.h"
 
 template<typename T, int CAPACITY>
 class beArray

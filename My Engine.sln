@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BlakesEngine", "BlakesEngine\BlakesEngine.vcxproj", "{42330BEC-5B97-463A-AB8D-55FB2B675A6D}"
 EndProject
@@ -11,6 +11,7 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Clang - Debug|x64 = Clang - Debug|x64
 		Clang - Release|x64 = Clang - Release|x64
+		ClangLLVM - Debug|x64 = ClangLLVM - Debug|x64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -19,6 +20,8 @@ Global
 		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.Clang - Debug|x64.Build.0 = Clang - Debug|x64
 		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.Clang - Release|x64.ActiveCfg = Clang - Release|x64
 		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.Clang - Release|x64.Build.0 = Clang - Release|x64
+		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.ClangLLVM - Debug|x64.ActiveCfg = ClangLLVM - Debug|x64
+		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.ClangLLVM - Debug|x64.Build.0 = ClangLLVM - Debug|x64
 		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.Debug|x64.ActiveCfg = Debug|x64
 		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.Debug|x64.Build.0 = Debug|x64
 		{42330BEC-5B97-463A-AB8D-55FB2B675A6D}.Release|x64.ActiveCfg = Release|x64
@@ -27,6 +30,8 @@ Global
 		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.Clang - Debug|x64.Build.0 = Clang - Debug|x64
 		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.Clang - Release|x64.ActiveCfg = Clang - Release|x64
 		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.Clang - Release|x64.Build.0 = Clang - Release|x64
+		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.ClangLLVM - Debug|x64.ActiveCfg = ClangLLVM - Debug|x64
+		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.ClangLLVM - Debug|x64.Build.0 = ClangLLVM - Debug|x64
 		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.Debug|x64.ActiveCfg = Debug|x64
 		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.Debug|x64.Build.0 = Debug|x64
 		{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}.Release|x64.ActiveCfg = Release|x64

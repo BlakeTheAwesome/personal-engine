@@ -1,6 +1,6 @@
 #pragma once
-#include "blakesengine/core/beAssert.h"
-#include "blakesengine/math/beZOrder.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Math/beZOrder.h"
 
 template<typename T, int LENGTH>
 class beFastGrid

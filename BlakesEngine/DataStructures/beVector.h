@@ -1,6 +1,6 @@
 #pragma once
-#include "blakesengine/core/beMacros.h"
-#include "blakesengine/core/beAssert.h"
+#include "BlakesEngine/Core/beMacros.h"
+#include "BlakesEngine/Core/beAssert.h"
 
 #include <type_traits>
 

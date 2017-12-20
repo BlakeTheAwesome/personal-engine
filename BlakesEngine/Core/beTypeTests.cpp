@@ -1,7 +1,7 @@
 #include "BlakesEngine/bePCH.h"
 #include "beTypeTests.h"
-#include "blakesengine/Core/beTypes.h"
-#include "blakesengine/Core/beAssert.h"
+#include "BlakesEngine/Core/beTypes.h"
+#include "BlakesEngine/Core/beAssert.h"
 
 namespace beTypeTests
 {
