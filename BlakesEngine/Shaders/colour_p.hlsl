@@ -11,5 +11,5 @@ float4 main(PixelInputType input) : SV_TARGET
 	//float4 outPos = float4(input.color.x, input.color.y, input.color.z, 1);
 	//return outPos;
 	//input.colour.z = 0.5f;
-	return input.colour;
+	return input.colour; 
 }

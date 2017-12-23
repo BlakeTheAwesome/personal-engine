@@ -128,7 +128,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 		if(FAILED(res)) { BE_ASSERT(false); return; }
 		defer({ adapter->Release(); });
 		
-		DXGI_ADAPTER_DESC adapterDesc = {0};
+		DXGI_ADAPTER_DESC adapterDesc; ZeroMem(&adapterDesc);
 		res = adapter->GetDesc(&adapterDesc);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
 
@@ -169,7 +169,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 	}
 
 
-	DXGI_SWAP_CHAIN_DESC scd = {0};
+	DXGI_SWAP_CHAIN_DESC scd; ZeroMem(&scd);
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	scd.BufferDesc.Width = width;

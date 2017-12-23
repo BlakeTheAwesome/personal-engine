@@ -514,6 +514,9 @@ class beVectorBase : protected Policy
 		}
 
 	private:
+		using Policy::m_buffer;
+		using Policy::m_count;
+
 		void ConstructElements(int startElement, int endElement)
 		{
 			if (!std::is_trivially_constructible_v<T>)
