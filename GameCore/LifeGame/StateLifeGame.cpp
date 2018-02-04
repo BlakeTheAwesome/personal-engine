@@ -7,6 +7,8 @@
 #include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/Rendering/beDebugWorld.h"
+#include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Math/beRandom.h"
 
 #include <iomanip>
@@ -70,54 +72,10 @@ void StateLifeGame::Render()
 {
 	auto renderInterface = m_appData->renderInterface;
 	m_cells.Render(renderInterface, m_appData->shaderPack, m_camera.GetViewMatrix(), m_camera.GetPosition());
-	//auto keyboard = m_appData->keyboard;
-	//auto mouse = m_appData->mouse;
 
-	//if (!m_haveWrittenToTexture)
-	
-	/*
-	{
-		beTexture writeTexture;
-		writeTexture.InitAsTarget(renderInterface, 512, 512);
-		defer(
-			writeTexture.Deinit();
-		);
-		//m_haveWrittenToTexture = true;
-		writeTexture.SetAsTarget(renderInterface);
-		writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
-
-		renderInterface->DisableZBuffer();
-		m_textureShader2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-			
-		//m_bitmapTexQuad.Render(renderInterface);
-		//textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
-
-		
-
-		beStringBuilder testString;
-		for (int y = 0; y < m_cells.Length(); y++)
-		{
-			for (int x = 0; x < m_cells.Length(); x++)
-			{
-				char c = m_cells.At(x,y) ? 'o' : 'x';
-				testString << c;
-			}
-			testString << "\n";
-		}
-
-		renderInterface->EnableAlpha();
-		m_bitmapTextDynamic.InitText(renderInterface, &m_font, testString.ToString().c_str(), 512.f, 0, true);
-		m_bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
-		m_bitmapTextDynamic.Render(renderInterface);
-		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture());
-		renderInterface->DisableAlpha();
-		renderInterface->EnableZBuffer();
-		renderInterface->RestoreRenderTarget();
-		writeTexture.FinaliseTarget();
-		
-		m_bitmapTextDynamic.Render(renderInterface);
-		m_textureShader2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
-	}*/
+	auto debugWorld = m_appData->debugWorld;
+	debugWorld->SetRenderAxes(true);
+	debugWorld->Render(renderInterface, &m_appData->shaderPack->shaderColour, m_camera.GetViewMatrix(), m_camera.GetPosition());
 }
 
 

@@ -11,6 +11,7 @@
 #include "BlakesEngine/Time/beClock.h"
 #include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/Rendering/beDebugWorld.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Platform/beEnvironment.h"
@@ -138,10 +139,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		shaderPack.shaderLitTexture.Deinit();
 	);
 
+
+	std::unique_ptr<beDebugWorld> debugWorld(PIMPL_NEW(beDebugWorld)());
+	debugWorld->Init(renderInterface);
+	defer(debugWorld->Deinit(););
+
 	beAppData appData;
 	appData.environment = &environment;
 	appData.systemEventManager = systemEventManager;
 	appData.renderInterface = renderInterface;
+	appData.debugWorld = debugWorld.get();
 	appData.renderDocManager = renderDoc;
 	appData.keyboard = &keyboard;
 	appData.mouse = &mouse;

@@ -89,13 +89,13 @@ bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 	indices[4] = 4;
 	indices[5] = 5;
 
-	auto success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	auto success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if(!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	if(!success) { BE_ASSERT(false); return false; }
 
-	success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if(!success) { BE_ASSERT(false); return false; }
 	
 	return true;
@@ -117,11 +117,11 @@ bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStrin
 	{
 		return false;
 	}
-	m_vertexBuffer.Set(info.vertexBuffer);
-	m_indexBuffer.Set(info.indexBuffer);
+	m_vertexBuffer = std::move(info.vertexBuffer);
+	m_indexBuffer = std::move(info.indexBuffer);
 	m_texture.Set(*font->GetTexture());
 	
-	auto success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	auto success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if(!success) { BE_ASSERT(false); return false; }
 
 	return true;
@@ -180,16 +180,13 @@ void beBitmap::Render(beRenderInterface* ri)
 		m_positionBuffer.Unmap(ri);
 	}
 
-
-
-	unsigned int stride = m_vertexBuffer.ElementSize();
-	unsigned int offset = 0;
-
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
 	ID3D11Buffer* constantBuffers[] = {m_positionBuffer.GetBuffer()};
+	u32 strides[] = {m_vertexBuffer.ElementSize()};
+	u32 offsets[] = {0};
 
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
+	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
 	unsigned int bufferNumber = 1; // 0 is matrix buffer set in SetShaderParameters

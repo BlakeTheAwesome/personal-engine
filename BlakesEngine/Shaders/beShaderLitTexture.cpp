@@ -124,19 +124,19 @@ bool beShaderLitTexture::Init(beRenderInterface* ri, const beWString& pixelFilen
 		return false;
 	}
 
-	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success)
 	{
 		return false;
 	}
 	
-	success = m_lightBuffer.Allocate(ri, sizeof(LightBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	success = m_lightBuffer.Allocate(ri, sizeof(LightBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success)
 	{
 		return false;
 	}
 
-	success = m_cameraBuffer.Allocate(ri, sizeof(CameraBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	success = m_cameraBuffer.Allocate(ri, sizeof(CameraBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success)
 	{
 		return false;

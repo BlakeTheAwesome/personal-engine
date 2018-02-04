@@ -97,7 +97,7 @@ bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilena
 	res = device->CreateInputLayout(polygonLayout, numElements, vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), &m_layout);
 	if (FAILED(res)) { return false; }
 
-	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER,  D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success) { return false; }
 
 	// Create a texture sampler state description.

@@ -26,14 +26,17 @@ class StateRenderTest : public beState
 	void Render() override;
 
 	private:
+	void InitGrid(beRenderInterface* ri);
+
 	beAppData* m_appData;
-	beDebugWorld* m_debugWorld = nullptr;
 	beFont m_font;
 	beModel m_model1;
 	beModel m_model2;
 	beModel m_model3;
 	beModel m_model4;
 	beModel m_model5;
+	beModel m_gridModel;
+	beRenderBuffer m_gridModelLinesIndexBuffer;
 	beTexture m_screenGrabTexture;
 	beBitmap m_bitmapTexQuad;
 	beBitmap m_bitmapTextDynamic;
@@ -47,4 +50,5 @@ class StateRenderTest : public beState
 
 	bool m_haveWrittenToTexture = false;
 	bool m_renderAxes = true;
+	bool m_renderGrid = true;
 };

@@ -243,13 +243,13 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 	beWString wstring;
 	beStringConversion::UTF8ToWide(string.c_str(), &wstring);
 
-	const int vertsPerChar = 6;
+	const int vertsPerChar = 6; // TODO: re-use verts
 	int numChars = (int)wstring.size();
 	int numVerts = numChars * vertsPerChar;
 
 	beVector<VertexInputType> vertices(numVerts, numVerts, 0);
 	beVector<u32> indices(numVerts, numVerts, 0);
-
+	
 	for (int i = 0; i < numVerts; i++)
 	{
 		indices[i] = i;
@@ -378,10 +378,10 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 	outStringInfo->height = (float)totalHeight;
 	outStringInfo->width = (float)totalWidth;
 
-	bool success = outStringInfo->vertexBuffer.Allocate(ri, decltype(vertices)::element_size, numVerts, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	bool success = outStringInfo->vertexBuffer.Allocate(ri, decltype(vertices)::element_size, numVerts, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 	
-	success = outStringInfo->indexBuffer.Allocate(ri, decltype(indices)::element_size, numVerts, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	success = outStringInfo->indexBuffer.Allocate(ri, decltype(indices)::element_size, numVerts, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	//for (int i = 0; i < numVerts; i++)

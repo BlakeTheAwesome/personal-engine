@@ -116,10 +116,10 @@ bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename
 		return false;
 	}
 	
-	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER,  D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success) { return false; }
 
-	success = m_colourBuffer.Allocate(ri, sizeof(ColourBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER,  D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	success = m_colourBuffer.Allocate(ri, sizeof(ColourBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success) { return false; }
 
 	

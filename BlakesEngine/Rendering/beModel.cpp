@@ -206,13 +206,21 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 		}
 	}
 
-	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, textureFilename);
+}
+
+bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer)
+{
+	m_vertexBuffer = std::move(*vertexBuffer);
+	m_indexBuffer = std::move(*indexBuffer);
+
+	return m_vertexBuffer.IsValid() && m_indexBuffer.IsValid();
 }
 
 bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
@@ -257,10 +265,10 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 	indices[5] = 5;
 
 	
-	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, vertices.begin());
+	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, textureFilename);
@@ -281,14 +289,13 @@ bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilenam
 void beModel::Render(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	unsigned int stride = m_vertexBuffer.ElementSize();
-	unsigned int offset = 0;
-
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
-	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
+	u32 strides[] = {m_vertexBuffer.ElementSize()};
+	u32 offsets[] = {0};
+
+	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-	
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 }
 
 ID3D11ShaderResourceView * beModel::GetTexture() const

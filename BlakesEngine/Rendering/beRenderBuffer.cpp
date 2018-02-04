@@ -6,28 +6,11 @@
 
 #include <d3d11.h>
 
-
-beRenderBuffer::beRenderBuffer()
-	: m_buffer(nullptr)
-	, m_bufferSize(0)
-	, m_numElements(0)
-	, m_elementSize(0)
-	, m_d3dUsage(0)
-	, m_d3dBindFlags(0)
-	, m_d3dCPUAccessFlags(0)
-	, m_d3dMiscFlags(0)
-{
-}
-
-beRenderBuffer::~beRenderBuffer()
-{
-	Release();
-}
-
-bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData)
+bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, int d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData)
 {
 	BE_ASSERT(elementSize > 0);
 	BE_ASSERT(numElements > 0);
+	BE_ASSERT((d3dBindFlags == D3D11_BIND_INDEX_BUFFER) == (d3dIndexTopology != 0));
 
 	int newBufferSize = elementSize * numElements;
 	if (m_buffer != nullptr)
@@ -83,6 +66,7 @@ bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numEle
 	m_bufferSize = newBufferSize;
 	m_numElements = numElements;
 	m_elementSize = elementSize;
+	m_d3dIndexTopology = d3dIndexTopology;
 
 	return true;
 }
@@ -176,11 +160,11 @@ void beRenderBuffer::Release()
 	m_elementSize = 0;
 }
 
-void beRenderBuffer::Set(beRenderBuffer& that)
+void beRenderBuffer::StealBuffer(beRenderBuffer* that)
 {
 	Release();
-	*this = that;
+	*this = *that;
 
-	that.m_buffer = nullptr;
-	that.m_numElements = 0;
+	that->m_buffer = nullptr;
+	that->m_numElements = 0;
 }

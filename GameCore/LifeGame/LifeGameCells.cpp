@@ -24,7 +24,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
 
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 	shaderPack->shaderColour.Render(renderInterface, m_indexBuffer.NumElements(), 0);
 
 
@@ -224,7 +224,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 
 	int numVerts = numBlocks * Block::VertsPerBlock;
 	//int numTris = numBlocks * Block::TrisPerBlock;
-	bool success = m_vertexBuffer.Allocate(renderInterface, sizeof(GridVertexFormat), numVerts, D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, D3D11_CPU_ACCESS_WRITE, 0, m_renderBlocks.begin());
+	bool success = m_vertexBuffer.Allocate(renderInterface, sizeof(GridVertexFormat), numVerts, D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, m_renderBlocks.begin());
 	BE_ASSERT(success);
 
 	u32 FaceIndexLayout[Block::IndicesPerFace] ={
@@ -250,7 +250,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 		}
 	}
 
-	success = m_indexBuffer.Allocate(renderInterface, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(renderInterface, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	BE_ASSERT(success);
 }
 

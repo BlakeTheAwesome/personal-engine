@@ -17,6 +17,7 @@ public:
 
 	bool Init(beRenderInterface* ri, const beWString& textureFilename);
 	bool InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename);
+	bool InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer);
 	void Deinit();
 
 	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);
@@ -24,6 +25,8 @@ public:
 	void Render(beRenderInterface* ri);
 	
 	ID3D11ShaderResourceView* GetTexture() const;
+	const beRenderBuffer& GetVertexBuffer() const { return m_vertexBuffer; }
+	const beRenderBuffer& GetIndexBuffer() const { return m_indexBuffer; }
 
 	int GetIndexCount();
 
