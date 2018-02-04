@@ -14,11 +14,11 @@ class beSystemEventManager
 
 	void Update();
 
-	typedef void (*tCallbackWinPump)(const MSG& msg, void* userdata);
+	using tCallbackWinPump = void(*)(const MSG& msg, void* userdata);
 	CallbackId RegisterCallbackWin32Pump(void* userdata, tCallbackWinPump);
 	void DeregisterCallbackWin32Pump(CallbackId id);
 
-	typedef bool (*tCallbackWinProc)(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, void* userdata, LRESULT* result);
+	using tCallbackWinProc = bool(*)(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, void* userdata, LRESULT* result);
 	CallbackId RegisterCallbackWinProc(void* userdata, tCallbackWinProc);
 	void DeregisterCallbackWinProc(CallbackId id);
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

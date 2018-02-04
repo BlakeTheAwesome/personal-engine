@@ -7,6 +7,8 @@ class RenderDocManager;
 class beKeyboard;
 class beMouse;
 class beGamepad;
+class beDebugWorld;
+class beWindow;
 struct beShaderPack;
 
 struct beAppData
@@ -15,9 +17,11 @@ struct beAppData
 	beSystemEventManager* systemEventManager = nullptr;
 	beRenderInterface* renderInterface = nullptr;
 	RenderDocManager* renderDocManager = nullptr;
+	beDebugWorld* debugWorld = nullptr;
 	beKeyboard* keyboard = nullptr;
 	beMouse* mouse = nullptr;
 	beGamepad* gamepad = nullptr;
 	beShaderPack* shaderPack = nullptr;
+	beWindow* window = nullptr;
 };
 

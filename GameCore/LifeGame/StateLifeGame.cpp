@@ -10,6 +10,8 @@
 #include "BlakesEngine/Rendering/beDebugWorld.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Math/beRandom.h"
+#include "BlakesEngine/Camera/beCameraUtils.h"
+#include "BlakesEngine/Window/beWindow.h"
 
 #include <iomanip>
 
@@ -38,8 +40,8 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 {
 	auto gamepad = m_appData->gamepad;
 	auto keyboard = m_appData->keyboard;
-	//auto mouse = m_appData->mouse;
-	//auto renderInterface = m_appData->renderInterface;
+	auto mouse = m_appData->mouse;
+	auto renderInterface = m_appData->renderInterface;
 
 	if (gamepad->GetButtonReleased(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
@@ -66,6 +68,27 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		m_cells.TickGame();
 	}
 	m_cells.Update(m_appData, dt);
+
+
+
+
+	if (mouse->IsPressed(beMouse::LeftButton))
+	{
+		//auto window = m_appData->window;
+		float screenX = mouse->GetX();// -window->GetX();
+		float screenY = mouse->GetY();// - window->GetY();
+		Vec2 screenDimensions = renderInterface->GetScreenSize();
+		// screen dimensions not accounting for menu bars?
+		int screenW = screenDimensions.x; //m_appData->window->GetWidth();
+		int screenH = screenDimensions.y; //m_appData->window->GetHeight();
+		Vec3 worldPos, worldDir;
+		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
+		if (isInBounds)
+		{
+			bePRINTF("MOUSE CLICK: (%.2f, %.2f) POS:{%3.3f, %3.3f, %3.3f} dir:{%3.3f, %3.3f, %3.3f}\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
+		}
+	}
+
 }
 
 void StateLifeGame::Render()

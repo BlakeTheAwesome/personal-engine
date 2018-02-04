@@ -3,6 +3,7 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Window/beWindow.h"
+#include <Windowsx.h>
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -30,10 +31,23 @@ void beMouse::Init(beSystemEventManager* systemEventManager, const beWindow* win
 	BE_ASSERT(result >= 0);
 
 	m_mouse->Acquire();
+
+	m_systemCallbackId = systemEventManager->RegisterCallbackWin32Pump(this, [](const MSG& msg, void* userdata) {
+		beMouse* self = (beMouse*)userdata;
+		if (msg.message == WM_MOUSEMOVE)
+		{
+			self->m_currentState.x = GET_X_LPARAM(msg.lParam);
+			self->m_currentState.y = GET_Y_LPARAM(msg.lParam);
+		}
+	});
+	m_systemEventManager = systemEventManager;
 }
 
 void beMouse::Deinit()
 {
+	m_systemEventManager->DeregisterCallbackWin32Pump(m_systemCallbackId);
+	m_systemEventManager = nullptr;
+
 	m_mouse->Unacquire();
 	m_mouse->Release();
 	m_mouse = nullptr;
@@ -61,8 +75,8 @@ void beMouse::Update(float dt)
 		return;
 	}
 	
-	m_currentState.x += m_currentState.mouseState.lX;
-	m_currentState.y += m_currentState.mouseState.lY;
+	//m_currentState.x += m_currentState.mouseState.lX;
+	//m_currentState.y += m_currentState.mouseState.lY;
 	m_currentState.z += m_currentState.mouseState.lZ;
 
 	// Clamp
@@ -70,6 +84,9 @@ void beMouse::Update(float dt)
 	if (m_currentState.y < 0) { m_currentState.y = 0; }
 	if (m_currentState.x > m_windowWidth)  { m_currentState.x = m_windowWidth; }
 	if (m_currentState.y > m_windowHeight) { m_currentState.y = m_windowHeight; }
+
+	// This is SCREEN relative - not window relative.
+	//bePRINTF("X: %d, Y:%d", m_currentState.x, m_currentState.y);
 }
 
 static inline bool isDown(const DIMOUSESTATE2& mouseState, beMouse::Button button)

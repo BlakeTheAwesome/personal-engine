@@ -154,6 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	appData.mouse = &mouse;
 	appData.gamepad = &gamepad;
 	appData.shaderPack = &shaderPack;
+	appData.window = window;
 
 	beState* initialState = nullptr;
 	if (const beString* mode = environment.Get("mode"))

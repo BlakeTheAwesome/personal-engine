@@ -11,4 +11,6 @@ class beWindow
 	void* GetHWnd() const;
 	int GetWidth() const;
 	int GetHeight() const;
+	int GetX() const;
+	int GetY() const;
 };

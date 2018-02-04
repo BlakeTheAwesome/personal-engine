@@ -42,6 +42,7 @@ public:
 	bool IsReleased(Button button) const;
 	bool IsDown(Button button) const;
 
+	// This is SCREEN relative - not window relative.
 	int GetX() const { return m_currentState.x; };
 	int GetY() const { return m_currentState.y; };
 	int GetScrollWheel() const { return m_currentState.z; }
@@ -68,8 +69,8 @@ private:
 
 	State m_currentState;
 	State m_lastState;
-	int m_windowWidth;
-	int m_windowHeight;
+	int m_windowWidth = 0;
+	int m_windowHeight = 0;
 	//Mode m_currentMode{MODE_RELATIVE};
 };
 
