@@ -290,7 +290,7 @@ void beModel::Render(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
-	u32 strides[] = {m_vertexBuffer.ElementSize()};
+	u32 strides[] = {(u32)m_vertexBuffer.ElementSize()};
 	u32 offsets[] = {0};
 
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);

@@ -75,12 +75,12 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	if (mouse->IsPressed(beMouse::LeftButton))
 	{
 		//auto window = m_appData->window;
-		float screenX = mouse->GetX();// -window->GetX();
-		float screenY = mouse->GetY();// - window->GetY();
+		float screenX = (float)mouse->GetX();// -window->GetX();
+		float screenY = (float)mouse->GetY();// - window->GetY();
 		Vec2 screenDimensions = renderInterface->GetScreenSize();
 		// screen dimensions not accounting for menu bars?
-		int screenW = screenDimensions.x; //m_appData->window->GetWidth();
-		int screenH = screenDimensions.y; //m_appData->window->GetHeight();
+		float screenW = screenDimensions.x; //m_appData->window->GetWidth();
+		float screenH = screenDimensions.y; //m_appData->window->GetHeight();
 		Vec3 worldPos, worldDir;
 		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
 		if (isInBounds)

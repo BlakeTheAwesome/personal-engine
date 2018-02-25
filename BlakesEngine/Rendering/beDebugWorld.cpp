@@ -107,7 +107,7 @@ void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, c
 	{
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 		ID3D11Buffer* vertexBuffers[] = {self.axesVertexBuffer.GetBuffer()};
-		u32 strides[] = {self.axesVertexBuffer.ElementSize()};
+		u32 strides[] = {(u32)self.axesVertexBuffer.ElementSize()};
 		u32 offsets[] = {0};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 		deviceContext->IASetIndexBuffer(self.axesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);

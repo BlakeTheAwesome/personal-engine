@@ -182,7 +182,7 @@ void beBitmap::Render(beRenderInterface* ri)
 
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
 	ID3D11Buffer* constantBuffers[] = {m_positionBuffer.GetBuffer()};
-	u32 strides[] = {m_vertexBuffer.ElementSize()};
+	u32 strides[] = {(u32)m_vertexBuffer.ElementSize()};
 	u32 offsets[] = {0};
 
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);

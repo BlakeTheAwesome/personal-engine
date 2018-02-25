@@ -225,7 +225,7 @@ void StateRenderTest::Render()
 
 			ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
 			ID3D11Buffer* vertexBuffers[] = { m_gridModel.GetVertexBuffer().GetBuffer() };
-			u32 strides[] = { m_gridModel.GetVertexBuffer().ElementSize() };
+			u32 strides[] = {(u32)m_gridModel.GetVertexBuffer().ElementSize() };
 			u32 offsets[] ={ 0 };
 
 			deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
