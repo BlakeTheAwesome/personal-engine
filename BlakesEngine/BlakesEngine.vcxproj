@@ -436,6 +436,9 @@
   <ItemGroup>
     <None Include="External\DirectXTK\SimpleMath.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\MyEngine.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

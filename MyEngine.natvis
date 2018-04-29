@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <!-- VC 2015 -->
+  <Type Name="beVectorBase&lt;*, *&gt;">
+    <Intrinsic Name="count" Expression="m_count" />
+    <Intrinsic Name="capacity" Expression="m_capacity * 1" />
+    <DisplayString>Vector Count:[{count()}/{capacity()}]</DisplayString>
+    <Expand>
+      <Item Name="[buffer]">m_buffer</Item>
+      <ArrayItems>
+        <Size>count()</Size>
+        <ValuePointer>m_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+</AutoVisualizer>
