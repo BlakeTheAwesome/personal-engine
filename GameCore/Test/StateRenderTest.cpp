@@ -37,7 +37,7 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	m_model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"), {});
 	m_model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"), {});
 	m_model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"), {});
-	m_model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"), {});
+	m_model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"), {0.001f});
 
 	InitGrid(renderInterface);
 
@@ -84,7 +84,7 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	auto mouse = m_appData->mouse;
 	auto renderInterface = m_appData->renderInterface;
 
-	if (gamepad->GetButtonReleased(beGamepad::A) || keyboard->IsPressed(beKeyboard::Button::W))
+	if (gamepad->GetPressed(beGamepad::A) || keyboard->IsPressed(beKeyboard::Button::W))
 	{
 		renderInterface->ToggleWireframe();
 	}
@@ -92,41 +92,41 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	{
 		m_renderGrid = !m_renderGrid;
 	}
-	if (gamepad->GetButtonReleased(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
+	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
 		stateMachine->ChangeState(nullptr);
 		return;
 	}
-	if (gamepad->GetButtonReleased(beGamepad::Y))
+	if (gamepad->GetPressed(beGamepad::Y))
 	{
 		m_shaderToUse++;
 		m_shaderToUse %= numShaders;
 	}
-	if (gamepad->GetButtonReleased(beGamepad::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
+	if (gamepad->GetPressed(beGamepad::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
 	{
 		m_modelToUse++;
 		m_modelToUse %= numModels;
 	}
-	if (gamepad->GetButtonReleased(beGamepad::Select))
+	if (gamepad->GetPressed(beGamepad::Select))
 	{
 		m_renderAxes = !m_renderAxes;
 	}
-	if (gamepad->GetButtonReleased(beGamepad::Up))
+	if (gamepad->GetPressed(beGamepad::Up))
 	{
 		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
 		m_bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
 	}
-	if (gamepad->GetButtonReleased(beGamepad::Down))
+	if (gamepad->GetPressed(beGamepad::Down))
 	{
 		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
 		m_bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
 	}
-	if (gamepad->GetButtonReleased(beGamepad::Left))
+	if (gamepad->GetPressed(beGamepad::Left))
 	{
 		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
 		m_bitmapTexQuad.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
 	}
-	if (gamepad->GetButtonReleased(beGamepad::Right))
+	if (gamepad->GetPressed(beGamepad::Right))
 	{
 		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
 		m_bitmapTexQuad.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
@@ -153,7 +153,7 @@ void StateRenderTest::Render()
 		);
 		m_haveWrittenToTexture = true;
 		writeTexture.SetAsTarget(renderInterface);
-		writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
+		writeTexture.Clear(renderInterface, V40());
 		m_model4.Render(renderInterface);
 		shaderPack->shaderColour.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
 		shaderPack->shaderColour.Render(renderInterface, m_model4.GetIndexCount(), 0);
@@ -222,7 +222,7 @@ void StateRenderTest::Render()
 			ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
 			ID3D11Buffer* vertexBuffers[] = { m_gridModel.GetVertexBuffer().GetBuffer() };
 			u32 strides[] = {(u32)m_gridModel.GetVertexBuffer().ElementSize() };
-			u32 offsets[] ={ 0 };
+			u32 offsets[] = { 0 };
 
 			deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 			
@@ -270,7 +270,7 @@ void StateRenderTest::Render()
 	if (doScreenGrab)
 	{
 		m_screenGrabTexture.SetAsTarget(renderInterface);
-		m_screenGrabTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.f));
+		m_screenGrabTexture.Clear(renderInterface, V40());
 		renderFrame(true);
 		renderInterface->RestoreRenderTarget();
 		m_bitmapScreenGrab.Init(renderInterface, m_screenGrabTexture);
@@ -302,12 +302,12 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 	beVector<u32> lineIndices(vertexCount, vertexCount, 0);
 	beVector<u32> triIndices(triIndexCount, triIndexCount, 0);
 
-	for (int i = 0; i < lineIndices.Count(); i++)
+	for (int i : RangeIter(lineIndices.Count()))
 	{
 		lineIndices[i] = i;
 	}
 
-	for (int i = 0; i < quadCount; i++)
+	for (int i : RangeIter(quadCount))
 	{
 		int triListIndex = i * 6;
 		int lineListIndex = i * 8;

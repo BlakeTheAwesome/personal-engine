@@ -43,15 +43,29 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	auto mouse = m_appData->mouse;
 	auto renderInterface = m_appData->renderInterface;
 
-	if (gamepad->GetButtonReleased(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
+	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
 		stateMachine->ChangeState(nullptr);
 		return;
 	}
-	if (keyboard->IsPressed(beKeyboard::Button::P))
+	if (keyboard->IsPressed(beKeyboard::Button::P) || gamepad->GetPressed(beGamepad::Button::A))
 	{
 		m_paused = !m_paused;
 		m_timeUntilNextUpdate = 0.f;
+	}
+	if (keyboard->IsPressed(beKeyboard::Button::Up) || gamepad->GetPressed(beGamepad::Button::Up))
+	{
+		m_updateTimeFrequency -= 0.1f;
+		if (m_updateTimeFrequency < 0.f)
+		{
+			m_updateTimeFrequency = 0.f;
+		}
+		bePRINTF("Up: m_updateTimeFrequency = %3.3f\r\n", m_updateTimeFrequency);
+	}
+	if (keyboard->IsPressed(beKeyboard::Button::Down) || gamepad->GetPressed(beGamepad::Button::Down))
+	{
+		m_updateTimeFrequency += 0.1f;
+		bePRINTF("Down: m_updateTimeFrequency = %3.3f\r\n", m_updateTimeFrequency);
 	}
 	if (keyboard->IsPressed(beKeyboard::Button::T))
 	{
@@ -61,7 +75,7 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	m_camera.Update(dt);
 
 	bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
-	bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space);
+	bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space) || gamepad->GetPressed(beGamepad::Button::X);
 	if (step)
 	{
 		m_timeUntilNextUpdate = m_updateTimeFrequency - m_timeUntilNextUpdate;

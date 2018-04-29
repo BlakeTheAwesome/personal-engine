@@ -42,8 +42,9 @@ public:
 	float GetL2() const;
 	float GetR2() const;
 
+	bool GetDown(Button button) const;
 	bool GetPressed(Button button) const;
-	bool GetButtonReleased(Button button) const;
+	bool GetReleased(Button button) const;
 
 private:
 	float m_leftX = 0.f;

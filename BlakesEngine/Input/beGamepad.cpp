@@ -134,7 +134,7 @@ float beGamepad::GetR2() const
 	return m_r2;
 }
 
-bool beGamepad::GetPressed(Button button) const
+bool beGamepad::GetDown(Button button) const
 {
 	switch(button)
 	{
@@ -160,7 +160,33 @@ bool beGamepad::GetPressed(Button button) const
 	return false;
 }
 
-bool beGamepad::GetButtonReleased(Button button) const
+bool beGamepad::GetPressed(Button button) const
+{
+	switch(button)
+	{
+		case A: return (m_lastStateFlags & XINPUT_GAMEPAD_A) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_A) != 0);
+		case B: return (m_lastStateFlags & XINPUT_GAMEPAD_B) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_B) != 0);
+		case X: return (m_lastStateFlags & XINPUT_GAMEPAD_X) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_X) != 0);
+		case Y: return (m_lastStateFlags & XINPUT_GAMEPAD_Y) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_Y) != 0);
+		case L1: return (m_lastStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0);
+		case R1: return (m_lastStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0);
+		case Select: return (m_lastStateFlags & XINPUT_GAMEPAD_BACK) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_BACK) != 0);
+		case Start: return (m_lastStateFlags & XINPUT_GAMEPAD_START) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_START) != 0);
+		case Up: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_UP) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0);
+		case Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0);
+		case Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0);
+		case Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0);
+
+		case L2:
+		case R2:
+		case ButtonCount: break;
+	}
+
+	BE_ASSERT(false);
+	return false;
+}
+
+bool beGamepad::GetReleased(Button button) const
 {
 	switch(button)
 	{
@@ -176,9 +202,9 @@ bool beGamepad::GetButtonReleased(Button button) const
 		case Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0);
 		case Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0);
 		case Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0);
-		case L2: return m_l2 == 0.f;
-		case R2: return m_r2 == 0.f;
 		
+		case L2:
+		case R2:
 		case ButtonCount: break;
 	}
 
