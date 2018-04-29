@@ -230,31 +230,31 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 	
 	beVector<VertexWithNormalType> vertices(vertexCount, vertexCount, 0);
 	beVector<u32> indices(indexCount, indexCount, 0);
-	for (int i = 0; i < indices.Count(); i++)
+	for (auto& vertex : vertices)
 	{
-		vertices[i].normal = Vec3(1.0f, 0.0f, 0.0f);
+		vertex.normal = V3X();
 	}
 	
 	// Load the vertex array with data.
 	float distFromCamera = -1.f;
 	float w = 1.f;
 	vertices[0].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL
-	vertices[0].texCoord = Vec2(0.f, 0.f);
+	vertices[0].texCoord = V20();
 	
 	vertices[1].position = Vec4(1.f, 1.f, distFromCamera, w);  // TR
-	vertices[1].texCoord = Vec2(1.f, 0.f);
+	vertices[1].texCoord = V2X();
 
 	vertices[2].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[2].texCoord = Vec2(1.f, 1.f);
+	vertices[2].texCoord = V21();
 
 	vertices[3].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[3].texCoord = Vec2(1.f, 1.f);
+	vertices[3].texCoord = V21();
 	
 	vertices[4].position = Vec4(-1.f, -1.f, distFromCamera, w);  // BL.
-	vertices[4].texCoord = Vec2(0.f, 1.f);
+	vertices[4].texCoord = V2Y();
 
 	vertices[5].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL.
-	vertices[5].texCoord = Vec2(0.f, 0.f);
+	vertices[5].texCoord = V20();
 	
 
 	indices[0] = 0;
