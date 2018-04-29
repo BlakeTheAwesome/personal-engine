@@ -34,10 +34,10 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 
 	m_font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
 	m_model1.Init(renderInterface, beWString(L"boar.dds"));
-	m_model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"));
-	m_model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"));
-	m_model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"));
-	m_model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"));
+	m_model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"), {});
+	m_model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"), {});
+	m_model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"), {});
+	m_model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"), {});
 
 	InitGrid(renderInterface);
 
@@ -84,10 +84,6 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	auto mouse = m_appData->mouse;
 	auto renderInterface = m_appData->renderInterface;
 
-	if (gamepad->GetButtonReleased(beGamepad::A) || keyboard->IsPressed(beKeyboard::Button::W))
-	{
-		renderInterface->ToggleWireframe();
-	}
 	if (gamepad->GetButtonReleased(beGamepad::A) || keyboard->IsPressed(beKeyboard::Button::W))
 	{
 		renderInterface->ToggleWireframe();

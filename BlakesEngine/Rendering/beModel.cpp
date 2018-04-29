@@ -35,17 +35,6 @@ struct OBJFileInfo
 	beVector<Face> faces;
 };
 
-beModel::beModel()
-{
-	m_texture = new beTexture();
-}
-
-beModel::~beModel()
-{
-	BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid());
-	BE_SAFE_DELETE(m_texture);
-}
-
 static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 {
 	if (line[0] == 'v' && line[1] == 'n')
@@ -153,7 +142,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	return true;
 }
 
-bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename)
+bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename, const beModel::LoadOptions& loadOptions)
 {
 	OBJFileInfo fileInfo;
 	{
@@ -170,6 +159,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 		}
 	}
 
+	float scale = loadOptions.scale;
 
 	int vertexCount = fileInfo.faces.Count() * 3; 
 	int indexCount = vertexCount;
@@ -187,13 +177,13 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 	{
 		const Face* face = &fileInfo.faces[i];
 		//bePRINTF("face %d", i);
-		for (int j : RangeIterReverse(2))  // Read backwards to swap rhs to lhs
+		for (int j : RangeIterReverse(3))  // Read backwards to swap rhs to lhs
 		{
 			const VertInfo* vert = &face->verts[j];
 			Vec3 vertex = fileInfo.vertices[vert->vertex];
 			Vec2 texCoord = (vert->texCoord == -1) ? Vec2(0.0f, 0.0f) : fileInfo.texCoords[vert->texCoord];
 			Vec3 normal = (vert->normal == -1) ? Vec3(0.0f, 1.0f, 0.0f) : fileInfo.vertexNormals[vert->normal];
-			vertices[vertexIndex].position = Vec4(vertex.x, vertex.y, vertex.z, 1.f);
+			vertices[vertexIndex].position = Vec4(vertex.x, vertex.y, vertex.z, 1.f) * scale;
 			vertices[vertexIndex].normal = normal;
 			vertices[vertexIndex].texCoord = texCoord;
 
@@ -268,7 +258,7 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 	bool success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, textureFilename);
@@ -276,14 +266,14 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 
 void beModel::Deinit()
 {
-	m_texture->Deinit();
+	m_texture.Deinit();
 	m_indexBuffer.Release();
 	m_vertexBuffer.Release();
 }
 
 bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
 {
-	return m_texture->Init(ri, textureFilename);
+	return m_texture.Init(ri, textureFilename);
 }
 
 void beModel::Render(beRenderInterface* ri)
@@ -300,7 +290,7 @@ void beModel::Render(beRenderInterface* ri)
 
 ID3D11ShaderResourceView * beModel::GetTexture() const
 {
-	return m_texture->GetTexture();
+	return m_texture.GetTexture();
 }
 
 int beModel::GetIndexCount()

@@ -2,21 +2,24 @@
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 #include "beRenderBuffer.h"
+#include "beTexture.h"
 
 class beRenderInterface;
-class beTexture;
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
 class beModel
 {
 public:
+	struct LoadOptions
+	{
+		float scale = 1.f;
+	};
 
-	beModel();
-	~beModel();
+	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid()); }
 
 	bool Init(beRenderInterface* ri, const beWString& textureFilename);
-	bool InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename);
+	bool InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename, const LoadOptions& loadOptions);
 	bool InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer);
 	void Deinit();
 
@@ -31,7 +34,7 @@ public:
 	int GetIndexCount();
 
 private:
-	beTexture* m_texture;
+	beTexture m_texture;
 	beRenderBuffer m_vertexBuffer;
 	beRenderBuffer m_indexBuffer;
 };
