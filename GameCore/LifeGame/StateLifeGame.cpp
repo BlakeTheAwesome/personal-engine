@@ -100,6 +100,14 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		if (isInBounds)
 		{
 			bePRINTF("MOUSE CLICK: (%.2f, %.2f) POS:{%3.3f, %3.3f, %3.3f} dir:{%3.3f, %3.3f, %3.3f}\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
+			bePRINTF("MOUSE Deets:");
+			PositionFromMatrix(m_camera.GetViewMatrix());
+		}
+
+		if (auto realWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), screenX, screenY))
+		{
+			
+			bePRINTF("Collision! mouse pos:{%.3f, %.3f, %.3f} World collision at:{%3.3f, %3.3f, %3.3f}\r\n", m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z, realWorldPos->x, realWorldPos->y, realWorldPos->z);
 		}
 	}
 

@@ -19,6 +19,7 @@ namespace beMath
 	static inline Vec2 V21()  { return Vec2( 1.f,  1.f); }
 	static inline Vec2 V2X()  { return Vec2( 1.f,  0.f); }
 	static inline Vec2 V2Y()  { return Vec2( 0.f,  1.f); }
+	static inline Vec2 V2N0() { return Vec2(-1.f, -1.f); }
 	static inline Vec2 V2NX() { return Vec2(-1.f,  0.f); }
 	static inline Vec2 V2NY() { return Vec2( 0.f, -1.f); }
 
@@ -27,6 +28,7 @@ namespace beMath
 	static inline Vec3 V3X()  { return Vec3( 1.f,  0.f,  0.f); }
 	static inline Vec3 V3Y()  { return Vec3( 0.f,  1.f,  0.f); }
 	static inline Vec3 V3Z()  { return Vec3( 0.f,  0.f,  1.f); }
+	static inline Vec3 V3N1() { return Vec3(-1.f, -1.f, -1.f); }
 	static inline Vec3 V3NX() { return Vec3(-1.f,  0.f,  0.f); }
 	static inline Vec3 V3NY() { return Vec3( 0.f, -1.f,  0.f); }
 	static inline Vec3 V3NZ() { return Vec3( 0.f,  0.f, -1.f); }
@@ -37,6 +39,7 @@ namespace beMath
 	static inline Vec4 V4Y()   { return Vec4( 0.f,  1.f,  0.f,  0.f); }
 	static inline Vec4 V4Z()   { return Vec4( 0.f,  0.f,  1.f,  0.f); }
 	static inline Vec4 V4W()   { return Vec4( 0.f,  0.f,  0.f,  1.f); }
+	static inline Vec4 V4N1()  { return Vec4(-1.f, -1.f, -1.f, -1.f); }
 	static inline Vec4 V4NX()  { return Vec4(-1.f,  0.f,  0.f,  0.f); }
 	static inline Vec4 V4NY()  { return Vec4( 0.f, -1.f,  0.f,  0.f); }
 	static inline Vec4 V4NZ()  { return Vec4( 0.f,  0.f, -1.f,  0.f); }
@@ -124,7 +127,7 @@ namespace beMath
 	}
 
 	template <typename T>
-	inline T Clamp(T value, T min, T max)
+	inline constexpr T Clamp(T value, T min, T max)
 	{
 		if (value < min)
 		{
@@ -137,33 +140,33 @@ namespace beMath
 		return value;
 	}
 
-	inline float Dot(const beMath::Vec2& a, const beMath::Vec2& b)
+	inline constexpr float Dot(const beMath::Vec2& a, const beMath::Vec2& b)
 	{
 		return (a.x * b.x) + (a.y * b.y);
 	}
 	
-	inline float Dot(const beMath::Vec3& a, const beMath::Vec3& b)
+	inline constexpr float Dot(const beMath::Vec3& a, const beMath::Vec3& b)
 	{
 		return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 	}
 
-	inline bool operator==(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
+	inline constexpr bool operator==(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
 		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
 	}
 
-	inline bool operator!=(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
+	inline constexpr bool operator!=(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
 		return !(lhs==rhs);
 	}
 
-	inline float SmoothStep(float v)
+	inline constexpr float SmoothStep(float v)
 	{
 		// x = 3(v^2) - 2(v^3)
 		return v*v*(3-(2*v));
 	}
 	
-	inline float SmootherStep(float t)
+	inline constexpr float SmootherStep(float t)
 	{
 		// From Perlin's improved noise function
 		return t * t * t * (t * (t * 6 - 15) + 10);			// 6t^5 - 15t^4 + 10t^3
@@ -204,42 +207,51 @@ namespace beMath
 		bool success = XMMatrixDecompose(&scale, &rotationQuat, &translation, mat);
 		if (!success)
 		{
-			return beMath::Vec3(0.f, 0.f, 0.f);
+			return V30();
 		}
 		Vec3 position;
 		XMStoreFloat3(&position, translation);
 
-		//bePRINTF("CameraPosition %f, %f, %f, %f", translation.m128_f32[0], translation.m128_f32[1], translation.m128_f32[2], translation.m128_f32[3]);
-		//bePRINTF("CameraScale %f, %f, %f, %f", scale.m128_f32[0], scale.m128_f32[1], scale.m128_f32[2], scale.m128_f32[3]);
-		//bePRINTF("CameraRotation %f, %f, %f, %f", rotationQuat.m128_f32[0], rotationQuat.m128_f32[1], rotationQuat.m128_f32[2], rotationQuat.m128_f32[3]);
+		//this position is the opposite of what the camera thinks it's pos is...
+		bePRINTF("CameraPosition %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(translation, 0), XMVectorGetByIndex(translation, 1), XMVectorGetByIndex(translation, 2), XMVectorGetByIndex(translation, 3));
+		bePRINTF("CameraScale %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(scale, 0), XMVectorGetByIndex(scale, 1), XMVectorGetByIndex(scale, 2), XMVectorGetByIndex(scale, 3));
+		bePRINTF("CameraRotation %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(rotationQuat, 0), XMVectorGetByIndex(rotationQuat, 1), XMVectorGetByIndex(rotationQuat, 2), XMVectorGetByIndex(rotationQuat, 3));
 
-		//XMVECTOR pos = XMVectorSet(0.f, 0.f, 0.f, 0.f);
-		//XMVECTOR newPos = XMVector3Transform(pos, mat);
-
-		//bePRINTF("neaPos %f, %f, %f, %f", newPos.m128_f32[0], newPos.m128_f32[1], newPos.m128_f32[2], newPos.m128_f32[3]);
+		auto printPos = [&](float x, float y)
+		{
+			XMVECTOR pos = XMVectorSet(x, y, 0.f, 0.f);
+			XMVECTOR newPos = XMVector3Transform(pos, mat);
+			bePRINTF("[%.2f, %.2f] -> {%.3f, %.3f, %.3f}", x, y, XMVectorGetByIndex(newPos, 0), XMVectorGetByIndex(newPos, 1), XMVectorGetByIndex(newPos, 2));
+		};
+		// These values are world offsets translated to camera position, need to get viewport or near plane dimensions or something.
+		printPos(0.f, 0.f);
+		printPos(-1.f, -1.f);
+		printPos(-1.f,  1.f);
+		printPos( 1.f,  1.f);
+		printPos( 1.f, -1.f);
 
 		return position;
 	}
 
 	template <typename T>
-	T Min(const T lhs, const T rhs)
+	constexpr T Min(const T lhs, const T rhs)
 	{
 		return lhs < rhs ? lhs : rhs;
 	}
 	
 	template <typename T>
-	T Max(const T lhs, const T rhs)
+	constexpr T Max(const T lhs, const T rhs)
 	{
 		return lhs > rhs ? lhs : rhs;
 	}
 
 	template <typename T>
-	static inline T rotl32(T x, const int n)
+	static inline constexpr T rotl32(T x, const int n)
 	{
 		return (x << n) | (x >> (32 - n));
 	}
 	template <typename T>
-	static inline T rotr32(T x, const int n)
+	static inline constexpr T rotr32(T x, const int n)
 	{
 		return (x << n) | (x >> (32 - n));
 	}

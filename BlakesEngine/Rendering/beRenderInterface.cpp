@@ -16,6 +16,77 @@
 #pragma comment (lib, "D3DCompiler.lib")
 #pragma comment (lib, "DirectXTK.lib")
 
+
+// Note to self, going with a right hand coordinate system
+// Y ( up )
+// ^
+// |
+// |
+// ---->X ( right )
+// Z ( -forward ) pointing away from screen
+
+// View matrix will look like (Right, Up, Forward, -Pos)
+// [ Rx,  Ry,  Rz, 0]
+// [ Ux.  Uy,  Uz, 0]
+// [ Fx,  Fy,  Fz, 0]
+// [-Px, -Py, -Pz, 1]
+
+/*
+
+mat4 LookAtRH( vec3 eye, vec3 target, vec3 up )
+{
+    vec3 zaxis = normal(eye - target);    // The "forward" vector.
+    vec3 xaxis = normal(cross(up, zaxis));// The "right" vector.
+    vec3 yaxis = cross(zaxis, xaxis);     // The "up" vector.
+ 
+    // Create a 4x4 orientation matrix from the right, up, and forward vectors
+    // This is transposed which is equivalent to performing an inverse 
+    // if the matrix is orthonormalized (in this case, it is).
+    mat4 orientation = {
+       vec4( xaxis.x, yaxis.x, zaxis.x, 0 ),
+       vec4( xaxis.y, yaxis.y, zaxis.y, 0 ),
+       vec4( xaxis.z, yaxis.z, zaxis.z, 0 ),
+       vec4(   0,       0,       0,     1 )
+    };
+     
+    // Create a 4x4 translation matrix.
+    // The eye position is negated which is equivalent
+    // to the inverse of the translation matrix. 
+    // T(v)^-1 == T(-v)
+    mat4 translation = {
+        vec4(   1,      0,      0,   0 ),
+        vec4(   0,      1,      0,   0 ), 
+        vec4(   0,      0,      1,   0 ),
+        vec4(-eye.x, -eye.y, -eye.z, 1 )
+    };
+ 
+    // Combine the orientation and translation to compute 
+    // the final view matrix. Note that the order of 
+    // multiplication is reversed because the matrices
+    // are already inverted.
+    return ( orientation * translation );
+}
+
+mat4 LookAtRH_Fast( vec3 eye, vec3 target, vec3 up )
+{
+    vec3 zaxis = normal(eye - target);    // The "forward" vector.
+    vec3 xaxis = normal(cross(up, zaxis));// The "right" vector.
+    vec3 yaxis = cross(zaxis, xaxis);     // The "up" vector.
+ 
+    // Create a 4x4 view matrix from the right, up, forward and eye position vectors
+    mat4 viewMatrix = {
+        vec4(      xaxis.x,            yaxis.x,            zaxis.x,       0 ),
+        vec4(      xaxis.y,            yaxis.y,            zaxis.y,       0 ),
+        vec4(      xaxis.z,            yaxis.z,            zaxis.z,       0 ),
+        vec4(-dot( xaxis, eye ), -dot( yaxis, eye ), -dot( zaxis, eye ),  1 )
+    };
+     
+    return viewMatrix;
+}*/
+
+
+
+
 PIMPL_DATA(beRenderInterface)
 	void CreateDevice(HWND* hWnd, int width, int height);
 	void CreateDepthBuffer(int width, int height);
@@ -447,7 +518,7 @@ void beRenderInterface::DisableAlpha()
 	self.m_deviceContext->OMSetBlendState(self.m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 }
 
-Vec2 beRenderInterface::GetScreenSize()
+Vec2 beRenderInterface::GetScreenSize() const
 {
 	return Vec2(self.m_width, self.m_height);
 }

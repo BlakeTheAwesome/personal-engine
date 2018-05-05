@@ -16,8 +16,8 @@ class beFlightCamera
 		void DetachMouse();
 		
 		void Update(float dt);
-		const Matrix& GetViewMatrix() const; // Can get position with beMath::PositionFromMatrix
-		const Vec3& GetPosition() const; // Can get position with beMath::PositionFromMatrix
+		const Matrix& GetViewMatrix() const { return m_viewMatrix; } // Can get position with beMath::PositionFromMatrix
+		const Vec3& GetPosition() const { return m_position; }
 
 		void SetPosition(const Vec3& v) { m_position = v; }
 		void SetPitch(float f) { m_pitch = f; }

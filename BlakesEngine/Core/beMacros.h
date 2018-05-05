@@ -4,6 +4,7 @@
 #include <malloc.h> // aligned_alloc
 
 #define BE_UNUSED(x) void(sizeof(x))
+template <typename ...Args> static inline void Unused(Args&& ...args) {}
 
 // Need to use 2 macros do use __LINE__ as a string
 #define _STRINGIFY(x)     #x

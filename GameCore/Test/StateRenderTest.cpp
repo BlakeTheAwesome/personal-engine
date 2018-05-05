@@ -14,6 +14,7 @@
 #include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
+#include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 #include "BlakesEngine/Framework/beStateMachine.h"
@@ -21,6 +22,7 @@
 
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
 #include <shellapi.h>
+#include <iomanip>
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC
@@ -130,6 +132,31 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	{
 		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
 		m_bitmapTexQuad.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
+	}
+
+	if (mouse->IsPressed(beMouse::LeftButton))
+	{
+		//auto window = m_appData->window;
+		float screenX = (float)mouse->GetX();// -window->GetX();
+		float screenY = (float)mouse->GetY();// - window->GetY();
+		Vec2 screenDimensions = renderInterface->GetScreenSize();
+		// screen dimensions not accounting for menu bars?
+		float screenW = screenDimensions.x; //m_appData->window->GetWidth();
+		float screenH = screenDimensions.y; //m_appData->window->GetHeight();
+		Vec3 worldPos, worldDir;
+		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
+		if (isInBounds)
+		{
+			bePRINTF("MOUSE CLICK: (%.2f, %.2f) POS:{%3.3f, %3.3f, %3.3f} dir:{%3.3f, %3.3f, %3.3f}\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
+			bePRINTF("MOUSE Deets:");
+			PositionFromMatrix(m_camera.GetViewMatrix());
+		}
+
+		if (auto realWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), screenX, screenY))
+		{
+
+			bePRINTF("Collision! mouse pos:{%.3f, %.3f, %.3f} World collision at:{%3.3f, %3.3f, %3.3f}\r\n", m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z, realWorldPos->x, realWorldPos->y, realWorldPos->z);
+		}
 	}
 
 	m_camera.Update(dt);
@@ -253,11 +280,56 @@ void StateRenderTest::Render()
 		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
 	
 		renderInterface->EnableAlpha();
-		beStringBuilder sb;
-		sb << "Dynamic Text\nMouseX:"<<mouse->GetX()<<"\nMouseY:"<<mouse->GetY();
-		m_bitmapTextDynamic.InitText(renderInterface, &m_font, sb, 1.f, 512.f, 0, false, beFont::WrapMode::Default);
-		m_bitmapTextDynamic.Render(renderInterface);
-		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+
+		{
+			Vec3 cameraPos = m_camera.GetPosition();
+			Matrix viewMatrix = m_camera.GetViewMatrix();
+
+			float screenX = (float)mouse->GetX();// -window->GetX();
+			float screenY = (float)mouse->GetY();// - window->GetY();
+			Vec2 screenDimensions = renderInterface->GetScreenSize();
+			// screen dimensions not accounting for menu bars?
+			float screenW = screenDimensions.x; //m_appData->window->GetWidth();
+			float screenH = screenDimensions.y; //m_appData->window->GetHeight();
+			Vec3 worldPos, worldDir;
+			bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
+			auto maybeRealWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), screenX, screenY);
+
+			if (!isInBounds)
+			{
+				worldPos = V3N1();
+				worldDir = V3N1();
+			}
+			if (!maybeRealWorldPos)
+			{
+				maybeRealWorldPos = V3N1();
+			}
+
+
+			fmt::memory_buffer message;
+			fmt::format_to(message, "Dynamic Text\n");
+			fmt::format_to(message, "Mouse [X, Y]: [{}, {}]\n", mouse->GetX(), mouse->GetY());
+			fmt::format_to(message, "Camera [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", cameraPos.x, cameraPos.y, cameraPos.z);
+			fmt::format_to(message, "Mat Right [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[0][0], viewMatrix.m[0][1], viewMatrix.m[0][2], viewMatrix.m[0][3]);
+			fmt::format_to(message, "Mat Up    [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[1][0], viewMatrix.m[1][1], viewMatrix.m[1][2], viewMatrix.m[1][3]);
+			fmt::format_to(message, "-Mat Forw [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[2][0], viewMatrix.m[2][1], viewMatrix.m[2][2], viewMatrix.m[2][3]);
+			fmt::format_to(message, "_Mat Pos  [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[3][0], viewMatrix.m[3][1], viewMatrix.m[3][2], viewMatrix.m[3][3]);
+			;
+			if (isInBounds)
+			{
+				fmt::format_to(message, "ClickPos [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", worldPos.x, worldPos.y, worldPos.z);
+				fmt::format_to(message, "ClickDir [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", worldDir.x, worldDir.y, worldDir.z);
+			}
+			if (maybeRealWorldPos)
+			{
+				fmt::format_to(message, "Collision [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", maybeRealWorldPos->x, maybeRealWorldPos->y, maybeRealWorldPos->z);
+			}
+
+			beString messageStr = fmt::to_string(message);
+			m_bitmapTextDynamic.InitText(renderInterface, &m_font, messageStr.c_str(), 1.5f, 512.f, 0, false, beFont::WrapMode::Default);
+			m_bitmapTextDynamic.Render(renderInterface);
+			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+		}
 			
 		//bitmapTextPreRendered.Render(renderInterface);
 		//textureShader2d.Render(renderInterface, bitmapTextPreRendered.GetIndexCount(), bitmapTextPreRendered.GetTexture());

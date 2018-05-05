@@ -65,16 +65,6 @@ void beFlightCamera::DetachMouse()
 	m_mouse = nullptr;
 }
 
-const Vec3& beFlightCamera::GetPosition() const
-{
-	return m_position;
-}
-
-const Matrix& beFlightCamera::GetViewMatrix() const
-{
-	return m_viewMatrix;
-}
-
 void beFlightCamera::Update(float dt)
 {
 	if (m_gamepad)

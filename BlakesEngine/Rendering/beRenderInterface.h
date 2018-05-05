@@ -29,7 +29,7 @@ public:
 	void EnableAlpha();
 	void DisableAlpha();
 
-	Vec2 GetScreenSize();
+	Vec2 GetScreenSize() const;
 
 	void ToggleWireframe();
 

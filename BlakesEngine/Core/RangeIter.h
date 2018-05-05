@@ -4,8 +4,14 @@
 namespace RangeIterator
 {
 	template <typename T>
-	struct RangeIter : std::iterator<std::input_iterator_tag, T>
+	struct RangeIter
 	{
+		using iterator_category = std::input_iterator_tag;
+		using value_type = T;
+		using difference_type = ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
 		RangeIter(T val) : val(val) {}
 		T operator*() const { return val; }
 		const T* operator->() const { return &val; }
@@ -20,8 +26,14 @@ namespace RangeIterator
 	};
 
 	template <typename T>
-	struct RangeIterReverse : std::iterator<std::input_iterator_tag, T>
+	struct RangeIterReverse
 	{
+		using iterator_category = std::input_iterator_tag;
+		using value_type = T;
+		using difference_type = ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
 		RangeIterReverse(T val) : val(val) {}
 		T operator*() const { return val; }
 		const T* operator->() const { return &val; }
@@ -34,7 +46,6 @@ namespace RangeIterator
 		private:
 		T val;
 	};
-
 
 	template <typename T>
 	struct Range

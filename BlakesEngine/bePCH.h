@@ -4,6 +4,9 @@
 #define DEBUG
 #endif
 
+#include"BlakesEngine/External/fmt/format.h"
+#include <optional>
+
 #include "BlakesEngine/Platform/beWindows.h"
 
 //#include "BlakesEngine/Core/beMacros.h"
