@@ -24,7 +24,7 @@ static XMVECTOR screenToWorld(int xPos, int yPos, float zPos, const XMMATRIX& mo
 
 bool intersectsBounds(const XMMATRIX& inverseGlobalMatrix, const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVECTOR& rayStart, const XMVECTOR& rayDir, float* distance)
 {
-	// Transform into local space
+	// transform into local space
 	XMVECTOR localStart = XMVector3Transform(rayStart, inverseGlobalMatrix);
 	XMVECTOR localDir = XMVector3Transform(rayDir, inverseGlobalMatrix);
 
@@ -140,42 +140,69 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 		return false;
 	}
 	
+	Vec3 inputVecs[2];
+	Vec3 outputVecs[2];
+
+	inputVecs[0] = Vec3(screenX, screenY, 0.f);
+	inputVecs[1] = Vec3(screenX, screenY, 1.f);
+
 	XMMATRIX viewMatrix = XMLoadFloat4x4(&_viewMatrix);
 	XMMATRIX projectionMatrix = XMLoadFloat4x4(&ri.GetProjectionMatrix());
-	XMMATRIX invProjectionMatrix = XMMatrixInverse(nullptr, projectionMatrix);
-	XMMATRIX inverseProjectionView = XMMatrixMultiply(invProjectionMatrix, viewMatrix);
-	//XMMATRIX viewProjection = viewMatrix * projectionMatrix;
-	//XMMATRIX inverseProjectionView = XMMatrixInverse(nullptr, viewProjection);
+	XMMATRIX worldMatrix = XMLoadFloat4x4(&ri.GetWorldMatrix());
 
+	XMVector3UnprojectStream(outputVecs, sizeof(Vec3), inputVecs, sizeof(Vec3), 2, 0.f, 0.f, screenWidth, screenHeight, 0.f, 1.f, projectionMatrix, viewMatrix, worldMatrix);
+
+	XMVECTOR worldPos    = XMLoadFloat3(outputVecs+0);
+	XMVECTOR worldAlongZ = XMLoadFloat3(outputVecs+1);
+	XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
+
+
+	// Trimmed down XMVector implementation
+	/*XMMATRIX transform = XMMatrixMultiply(worldMatrix, viewMatrix);
+	transform = XMMatrixMultiply(transform, projectionMatrix);
+	transform = XMMatrixInverse(nullptr, transform);
+
+	XMVECTOR scale = XMVectorSet(screenWidth * 0.5f, -screenHeight * 0.5f, 1.f, 1.f);
+	scale = XMVectorReciprocal(scale);
+
+	XMVECTOR offset = XMVectorSet(-1.f, 1.f, 0.f, 0.f);
+
+	XMVECTOR pixelVec = XMVectorSet(screenX, screenY, 0.f, 1.f);
+	XMVECTOR worldPos2A = XMVectorMultiplyAdd(pixelVec, scale, offset);
+	XMVECTOR worldPos2 = XMVector3TransformCoord(worldPos2A, transform);
+
+	XMVECTOR pixelVec2 = XMVectorSet(screenX, screenY, 1.f, 1.f);
+	XMVECTOR worldAlongZ2A = XMVectorMultiplyAdd(pixelVec2, scale, offset);
+	XMVECTOR worldAlongZ2 = XMVector3TransformCoord(worldAlongZ2A, transform);
+	XMVECTOR worldForward2 = XMVector3Normalize(worldAlongZ2 - worldPos2);
+	*/
+
+	/*
 	float x = ((2.f * (screenX / screenWidth)) - 1.f);
 	float y = -((2.f * (screenY / screenHeight)) - 1.f);
 
 	XMVECTOR screenPosVec = XMVectorSet(x, y, 0.f, 1.f);
 	XMVECTOR screenForwardVec = XMVectorSet(x, y, 1.f, 1.f);
 
-	XMVECTOR screenPosVec2 = XMVector3Transform(screenPosVec, invProjectionMatrix);
-	XMVECTOR screenForwardVec2 = XMVector3Transform(screenForwardVec, invProjectionMatrix);
+	XMMATRIX viewProjection = viewMatrix * projectionMatrix;
+	XMMATRIX inverseProjectionView = XMMatrixInverse(nullptr, viewProjection);
 
-	Unused(screenPosVec2, screenForwardVec2);
+	XMVECTOR worldPos3 = XMVector3TransformCoord(screenPosVec, inverseProjectionView);
+	XMVECTOR worldAlongZ3 = XMVector3TransformCoord(screenForwardVec, inverseProjectionView);
+	XMVECTOR worldForward3 = XMVector3Normalize(worldAlongZ3 - worldPos3);
+	*/
 
-	XMVECTOR worldPos = XMVector3Transform(screenPosVec, inverseProjectionView);
-	XMVECTOR worldAlongZ = XMVector3Transform(screenForwardVec, inverseProjectionView);
-	XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
+	//bePRINTF("Pos");
+	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos,  0), XMVectorGetByIndex(worldPos,  2), XMVectorGetByIndex(worldPos, 2));
+	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos2, 0), XMVectorGetByIndex(worldPos2, 2), XMVectorGetByIndex(worldPos2, 2));
+	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos3, 0), XMVectorGetByIndex(worldPos3, 2), XMVectorGetByIndex(worldPos3, 2));
+	//bePRINTF("Forward");
+	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward,  0), XMVectorGetByIndex(worldForward,  2), XMVectorGetByIndex(worldForward,  2));
+	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward2, 0), XMVectorGetByIndex(worldForward2, 2), XMVectorGetByIndex(worldForward2, 2));
+	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward3, 0), XMVectorGetByIndex(worldForward3, 2), XMVectorGetByIndex(worldForward3, 2));
 
 	XMStoreFloat3(pos, worldPos);
 	XMStoreFloat3(direction, worldForward);
-
-
-
-	bePRINTF("relativeXY: %.2f,%.2f", x, y);
-	XMVECTOR posView = XMVector3Transform(screenPosVec, viewMatrix);
-	bePRINTF("posView: %.2f,%.2f,%.2f", XMVectorGetByIndex(posView, 0), XMVectorGetByIndex(posView, 2), XMVectorGetByIndex(posView, 2));
-	XMVECTOR posProj = XMVector3Transform(screenPosVec, projectionMatrix);
-	bePRINTF("posProj: %.2f,%.2f,%.2f", XMVectorGetByIndex(posProj, 0), XMVectorGetByIndex(posProj, 2), XMVectorGetByIndex(posProj, 2));
-	XMVECTOR posInvView = XMVector3Transform(screenPosVec, XMMatrixInverse(nullptr, viewMatrix));
-	bePRINTF("posInvView: %.2f,%.2f,%.2f", XMVectorGetByIndex(posInvView, 0), XMVectorGetByIndex(posInvView, 2), XMVectorGetByIndex(posInvView, 2));
-	XMVECTOR posInvProj = XMVector3Transform(screenPosVec, XMMatrixInverse(nullptr, projectionMatrix));
-	bePRINTF("posInvProj: %.2f,%.2f,%.2f", XMVectorGetByIndex(posInvProj, 0), XMVectorGetByIndex(posInvProj, 2), XMVectorGetByIndex(posInvProj, 2));
 
 	return true;
 }
