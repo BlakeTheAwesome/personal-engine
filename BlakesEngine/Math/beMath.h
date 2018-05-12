@@ -9,11 +9,11 @@ using namespace DirectX;
 
 namespace beMath
 {
-	typedef XMFLOAT2 Vec2;
-	typedef XMFLOAT3 Vec3;
-	typedef XMFLOAT4 Vec4;
-	typedef XMFLOAT4X4 Matrix;
-	typedef XMFLOAT4 Quat;
+	using Vec2 = XMFLOAT2;
+	using Vec3 = XMFLOAT3;
+	using Vec4 = XMFLOAT4;
+	using Matrix = XMFLOAT4X4;
+	using Quat = XMFLOAT4;
 
 	static inline Vec2 V20()  { return Vec2( 0.f,  0.f); }
 	static inline Vec2 V21()  { return Vec2( 1.f,  1.f); }
