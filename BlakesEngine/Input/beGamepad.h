@@ -32,7 +32,7 @@ public:
 
 	void Update(float dt);
 	
-	bool IsConnected() const;
+	bool IsConnected() const { return m_connected; }
 
 	float GetLeftX() const;
 	float GetLeftY() const;

@@ -2,6 +2,7 @@
 #include "beCameraUtils.h"
 #include "beCamera.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/Input/beMouse.h"
 
 
 bool intersectsBounds(const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVECTOR& rayStart, const XMVECTOR& rayDir, float* distance)
@@ -115,52 +116,19 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 	XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
 
 
-	// Trimmed down XMVector implementation
-	/*XMMATRIX transform = XMMatrixMultiply(worldMatrix, viewMatrix);
-	transform = XMMatrixMultiply(transform, projectionMatrix);
-	transform = XMMatrixInverse(nullptr, transform);
-
-	XMVECTOR scale = XMVectorSet(screenWidth * 0.5f, -screenHeight * 0.5f, 1.f, 1.f);
-	scale = XMVectorReciprocal(scale);
-
-	XMVECTOR offset = XMVectorSet(-1.f, 1.f, 0.f, 0.f);
-
-	XMVECTOR pixelVec = XMVectorSet(screenX, screenY, 0.f, 1.f);
-	XMVECTOR worldPos2A = XMVectorMultiplyAdd(pixelVec, scale, offset);
-	XMVECTOR worldPos2 = XMVector3TransformCoord(worldPos2A, transform);
-
-	XMVECTOR pixelVec2 = XMVectorSet(screenX, screenY, 1.f, 1.f);
-	XMVECTOR worldAlongZ2A = XMVectorMultiplyAdd(pixelVec2, scale, offset);
-	XMVECTOR worldAlongZ2 = XMVector3TransformCoord(worldAlongZ2A, transform);
-	XMVECTOR worldForward2 = XMVector3Normalize(worldAlongZ2 - worldPos2);
-	*/
-
-	/*
-	float x = ((2.f * (screenX / screenWidth)) - 1.f);
-	float y = -((2.f * (screenY / screenHeight)) - 1.f);
-
-	XMVECTOR screenPosVec = XMVectorSet(x, y, 0.f, 1.f);
-	XMVECTOR screenForwardVec = XMVectorSet(x, y, 1.f, 1.f);
-
-	XMMATRIX viewProjection = viewMatrix * projectionMatrix;
-	XMMATRIX inverseProjectionView = XMMatrixInverse(nullptr, viewProjection);
-
-	XMVECTOR worldPos3 = XMVector3TransformCoord(screenPosVec, inverseProjectionView);
-	XMVECTOR worldAlongZ3 = XMVector3TransformCoord(screenForwardVec, inverseProjectionView);
-	XMVECTOR worldForward3 = XMVector3Normalize(worldAlongZ3 - worldPos3);
-	*/
-
-	//LOG("Pos");
-	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos,  0), XMVectorGetByIndex(worldPos,  2), XMVectorGetByIndex(worldPos, 2));
-	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos2, 0), XMVectorGetByIndex(worldPos2, 2), XMVectorGetByIndex(worldPos2, 2));
-	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos3, 0), XMVectorGetByIndex(worldPos3, 2), XMVectorGetByIndex(worldPos3, 2));
-	//LOG("Forward");
-	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward,  0), XMVectorGetByIndex(worldForward,  2), XMVectorGetByIndex(worldForward,  2));
-	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward2, 0), XMVectorGetByIndex(worldForward2, 2), XMVectorGetByIndex(worldForward2, 2));
-	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward3, 0), XMVectorGetByIndex(worldForward3, 2), XMVectorGetByIndex(worldForward3, 2));
-
 	XMStoreFloat3(pos, worldPos);
 	XMStoreFloat3(direction, worldForward);
 
 	return true;
+}
+
+std::optional<beCameraUtils::PosDir> beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matrix& viewMatrix, const beMouse& mouse)
+{
+	Vec2 screenSize = ri.GetScreenSize();
+	Vec3 pos, direction;
+	if (GetScreeenToWorldRay(ri, viewMatrix, (float)mouse.GetX(), (float)mouse.GetY(), screenSize.x, screenSize.y, &pos, &direction))
+	{
+		return PosDir{pos, direction};
+	}
+	return {};
 }

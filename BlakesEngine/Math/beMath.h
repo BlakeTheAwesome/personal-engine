@@ -126,6 +126,16 @@ namespace beMath
 		return out;
 	}
 
+	inline constexpr float VecElem(const beMath::Vec3& v, int index)
+	{
+		switch (index)
+		{
+			case 0: return v.x;
+			case 1: return v.y;
+		}
+		return v.z;
+	}
+
 	template <typename T>
 	inline constexpr T Clamp(T value, T min, T max)
 	{

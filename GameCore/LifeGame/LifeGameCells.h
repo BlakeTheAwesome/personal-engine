@@ -25,7 +25,7 @@ struct LifeGameCells
 	void Initialise(beAppData* appData);
 	void Finalise();
 	void TickGame();
-	void Update(beAppData* appData, float hightOffset);
+	void Update(beAppData* appData, float hightOffset, const Matrix& viewMatrix);
 	void Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition);
 	void SetAnimationSpeed(float distPerSecond) { m_animationDistancePerSecond = distPerSecond; }
 	void ToggleRenderText() { m_renderTextCells = !m_renderTextCells; }
@@ -51,14 +51,15 @@ struct LifeGameCells
 		static constexpr int IndicesPerBlock = TrisPerBlock * 3;
 
 		beArray<GridVertexFormat, VertsPerBlock> verts;
+		Vec3 BlockMin() const;
+		Vec3 BlockMax() const;
 	};
 
-	static void UpdateBlock(LifeGameCells::Block* block, float xPos, float yPos, float height);
+	static void UpdateBlock(LifeGameCells::Block* block, float xPos, float yPos, float height, bool highlight);
 	static void InitBlock(LifeGameCells::Block* block, float xPos, float yPos, float height);
 
 	beFont m_font;
 	beBitmap m_bitmapTextDynamic;
-	beFlightCamera m_camera;
 
 	static constexpr int LENGTH = 64;
 	beFastGrid<bool, LENGTH> m_cells, m_nextCells;
@@ -66,6 +67,7 @@ struct LifeGameCells
 	beRenderBuffer m_vertexBuffer;
 	beRenderBuffer m_indexBuffer;
 
+	int m_hightlightIndex = -1;
 	float m_animationDistancePerSecond = 2.f;
 	bool m_renderTextCells = false;
 };

@@ -25,7 +25,7 @@ void StateLifeGame::Enter(beStateMachine* stateMachine)
 	m_camera.AttachMouse(m_appData->mouse);
 	m_camera.SetPosition(Vec3(30.f, -16.f, 30.f));
 	m_camera.SetYaw(0.0f);
-	m_camera.SetPitch(-0.8);
+	m_camera.SetPitch(-0.8f);
 	
 	m_cells.Initialise(m_appData);
 }
@@ -82,35 +82,35 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		m_timeUntilNextUpdate = m_updateTimeFrequency - m_timeUntilNextUpdate;
 		m_cells.TickGame();
 	}
-	m_cells.Update(m_appData, dt);
+	m_cells.Update(m_appData, dt, m_camera.GetViewMatrix());
 
 
 
 
-	if (mouse->IsPressed(beMouse::LeftButton))
-	{
-		//auto window = m_appData->window;
-		float screenX = (float)mouse->GetX();// -window->GetX();
-		float screenY = (float)mouse->GetY();// - window->GetY();
-		Vec2 screenDimensions = renderInterface->GetScreenSize();
-		// screen dimensions not accounting for menu bars?
-		float screenW = screenDimensions.x; //m_appData->window->GetWidth();
-		float screenH = screenDimensions.y; //m_appData->window->GetHeight();
-		Vec3 worldPos, worldDir;
-		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
-		if (isInBounds)
-		{
-			LOG("MOUSE CLICK: ({:.2f}, {:.2f}) POS:({:.3f}, {:.3f}, {:.3f}) dir:({:.3f}, {:.3f}, {:.3f})\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
-			LOG("MOUSE Deets:");
-			PositionFromMatrix(m_camera.GetViewMatrix());
-		}
-
-		if (auto realWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), (int)screenX, (int)screenY))
-		{
-			
-			LOG("Collision! mouse pos:({:.3f}, {:.3f}, {:.3f}) World collision at:({:.3f}, {:.3f}, {:.3f})\r\n", m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z, realWorldPos->x, realWorldPos->y, realWorldPos->z);
-		}
-	}
+	//if (mouse->IsPressed(beMouse::LeftButton))
+	//{
+	//	//auto window = m_appData->window;
+	//	float screenX = (float)mouse->GetX();// -window->GetX();
+	//	float screenY = (float)mouse->GetY();// - window->GetY();
+	//	Vec2 screenDimensions = renderInterface->GetScreenSize();
+	//	// screen dimensions not accounting for menu bars?
+	//	float screenW = screenDimensions.x; //m_appData->window->GetWidth();
+	//	float screenH = screenDimensions.y; //m_appData->window->GetHeight();
+	//	Vec3 worldPos, worldDir;
+	//	bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
+	//	if (isInBounds)
+	//	{
+	//		LOG("MOUSE CLICK: ({:.2f}, {:.2f}) POS:({:.3f}, {:.3f}, {:.3f}) dir:({:.3f}, {:.3f}, {:.3f})\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
+	//		LOG("MOUSE Deets:");
+	//		PositionFromMatrix(m_camera.GetViewMatrix());
+	//	}
+	//
+	//	if (auto realWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), (int)screenX, (int)screenY))
+	//	{
+	//		
+	//		LOG("Collision! mouse pos:({:.3f}, {:.3f}, {:.3f}) World collision at:({:.3f}, {:.3f}, {:.3f})\r\n", m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z, realWorldPos->x, realWorldPos->y, realWorldPos->z);
+	//	}
+	//}
 
 }
 

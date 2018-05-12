@@ -53,7 +53,12 @@ void beFlightCamera::DetachMouse()
 
 void beFlightCamera::Update(float dt)
 {
-	if (m_gamepad)
+	float extraPitch = 0.f;
+	float extraYaw = 0.f;
+	float forwards = 0.f;
+	float right = 0.f;
+
+	if (m_gamepad && m_gamepad->IsConnected())
 	{
 		float lX = m_gamepad->GetLeftX();
 		float lY = m_gamepad->GetLeftY();
@@ -64,24 +69,20 @@ void beFlightCamera::Update(float dt)
 		{
 			float moveSpeedFactor = (5.f + (R2_MULTIPLIER*m_gamepad->GetR2()));
 
-			float extraPitch = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
-			float extraYaw = (INVERT_X ? -rX : rX) * ROTATIONS_PER_SECOND * dt;
-			float forwards = -lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-			float right = (INVERT_X ? -lX : lX) * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
-			UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
+			extraPitch = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
+			extraYaw = (INVERT_X ? -rX : rX) * ROTATIONS_PER_SECOND * dt;
+			forwards = -lY * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
+			right = (INVERT_X ? -lX : lX) * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
 		}
-	}
-
-	if (m_mouse)
-	{
+	} else if (m_mouse) {
 		bool lDown = m_mouse->IsDown(beMouse::Button::LeftButton);
 		bool rDown = m_mouse->IsDown(beMouse::Button::RightButton);
-		float extraPitch = lDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
-		float extraYaw = lDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
-		float forwards = rDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
-		float right = rDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
-		UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
+		extraPitch = lDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		extraYaw = lDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		forwards = rDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		right = rDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 	}
+	UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
 }
 
 void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, float extraForwards, float extraRight)

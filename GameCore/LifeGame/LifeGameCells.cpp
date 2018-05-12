@@ -9,8 +9,8 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Math/beRandom.h"
-
-#include <iomanip>
+#include "BlakesEngine/Camera/beCameraUtils.h"
+#include "BlakesEngine/Math/beIntersection.h"
 
 void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
@@ -40,7 +40,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 		writeTexture.Clear(renderInterface, Vec4(0.f, 0.f, 0.f, 0.0f));
 
 		renderInterface->DisableZBuffer();
-		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, viewMatrix);
 
 		
 		beStringBuilder testString;
@@ -69,7 +69,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 	}
 }
 
-void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float yPos, float distance)
+void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float yPos, float distance, bool highlight)
 {
 	float currentHeight = block->verts[2].position.z;
 	float newHeight = beMath::Clamp(currentHeight+distance, 0.f, BlockHeight);
@@ -113,6 +113,14 @@ void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float y
 	block->verts[faceOffset+1].colour = V4ZW() * newHeight;
 	block->verts[faceOffset+2].colour = V4ZW() * newHeight;
 	block->verts[faceOffset+3].colour = V4ZW() * newHeight;
+
+	if (highlight)
+	{
+		for (GridVertexFormat& vert : block->verts)
+		{
+			vert.colour = V41();
+		}
+	}
 }
 
 void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPos, float height)
@@ -191,7 +199,18 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	block->verts[faceOffset+0].position = Vec4(xPos + HalfBlockLength, yPos - HalfBlockLength, height, 1.f);
 	block->verts[faceOffset+3].position = Vec4(xPos - HalfBlockLength, yPos + HalfBlockLength, height, 1.f);
 	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, yPos + HalfBlockLength, height, 1.f);
+}
 
+beMath::Vec3 LifeGameCells::Block::BlockMin() const
+{
+	const Vec4& minVert = verts[0].position;
+	return Vec3(minVert.x, minVert.y, minVert.z);
+}
+
+beMath::Vec3 LifeGameCells::Block::BlockMax() const
+{
+	const Vec4& maxVert = verts[6].position;
+	return Vec3(maxVert.x, maxVert.y, maxVert.z);
 }
 
 void LifeGameCells::Initialise(beAppData* appData)
@@ -262,9 +281,44 @@ void LifeGameCells::Finalise()
 	m_font.Deinit();
 }
 
-void LifeGameCells::Update(beAppData* appData, float dt)
+void LifeGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatrix)
 {
+	auto mouse = appData->mouse;
 	auto renderInterface = appData->renderInterface;
+	if (auto posDir = beCameraUtils::GetScreeenToWorldRay(*renderInterface, viewMatrix, *mouse))
+	{
+		//LOG("Mouse pos:({:.3f}, {:.3f}, {:.3f}) Dir:({:.3f}, {:.3f}, {:.3f})\r\n", posDir->pos.x, posDir->pos.y, posDir->pos.z, posDir->dir.x, posDir->dir.y, posDir->dir.z);
+		float minPosS = FLT_MAX;
+		int collidingIndex = -1;
+		// #TODO: Implement arrayiter
+		for (auto iter : RangeIter(m_renderBlocks.Count()))
+		{
+			const Block& block = m_renderBlocks[iter];
+			const Vec3& blockMin = block.BlockMin();
+			const Vec3& blockMax = block.BlockMax();
+			if (auto collisions = beIntersection::TRayVsAABB(posDir->pos, posDir->dir, blockMin, blockMax))
+			{
+				if (collisions->first >= 0.f)
+				{
+					minPosS = std::min(minPosS, collisions->first);
+					collidingIndex = iter;
+				}
+			}
+		}
+		if (collidingIndex != -1 && mouse->IsPressed(beMouse::Button::LeftButton))
+		{
+			m_cells.At(collidingIndex) = !m_cells.At(collidingIndex);
+		}
+
+		m_hightlightIndex = collidingIndex;
+	}
+	else
+	{
+		m_hightlightIndex = -1;
+	}
+
+
+
 
 	float distance = m_animationDistancePerSecond * dt;
 	float negDist = -distance;
@@ -275,8 +329,8 @@ void LifeGameCells::Update(beAppData* appData, float dt)
 		float increment = *iter ? distance : negDist;
 		float xPos = iter.xPos() * BlockLength;
 		float yPos = iter.yPos() * BlockLength;
-
-		UpdateBlock(block, xPos, yPos, increment);
+		bool highlight = iter.index == m_hightlightIndex;
+		UpdateBlock(block, xPos, yPos, increment, highlight);
 	}
 
 	{
@@ -324,5 +378,4 @@ void LifeGameCells::TickGame()
 	
 	m_cells = m_nextCells;
 }
-
 
