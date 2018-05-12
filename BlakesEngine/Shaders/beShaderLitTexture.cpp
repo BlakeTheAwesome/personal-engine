@@ -53,7 +53,7 @@ bool beShaderLitTexture::Init(beRenderInterface* ri, const beWString& pixelFilen
 	{
 		if (errorMessage)
 		{
-			bePRINTF("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), vertexFilename.c_str(), res);
+			LOG("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), vertexFilename.c_str(), res);
 		}
 
 		BE_ASSERT(false);
@@ -65,7 +65,7 @@ bool beShaderLitTexture::Init(beRenderInterface* ri, const beWString& pixelFilen
 	{
 		if (errorMessage)
 		{
-			bePRINTF("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), pixelFilename.c_str(), res);
+			LOG("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), pixelFilename.c_str(), res);
 		}
 
 		BE_ASSERT(false);

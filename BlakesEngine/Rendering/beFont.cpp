@@ -96,7 +96,7 @@ bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& 
 	{
 		char errmsg[256];
 		strerror_s(errmsg, sizeof(errmsg), errno);
-		bePRINTF("Error %s", errmsg);
+		LOG("Error %s", errmsg);
 		return false;
 	}
 
@@ -107,14 +107,14 @@ bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& 
 		u64 code = entry >> 32;
 		u32 index = (u32)entry;
 		const auto& info = m_characterInfo[index];
-		bePRINTF("%lld: %c {%3.3f, %3.3f}, {%3.3f, %3.3f}, %d, %d, %d", code, (char)code, info.textureTopLeft.x, info.textureTopLeft.y, info.textureBtmRight.x, info.textureBtmRight.y, info.width, info.prekerning, info.postkerning);
+		LOG("%lld: %c {%3.3f, %3.3f}, {%3.3f, %3.3f}, %d, %d, %d", code, (char)code, info.textureTopLeft.x, info.textureTopLeft.y, info.textureBtmRight.x, info.textureBtmRight.y, info.width, info.prekerning, info.postkerning);
 	}*/
 
 	/*for (auto entry : m_extraKerning)
 	{
 		u64 left = entry.pair >> 32;
 		u32 right = (u32)entry.pair;
-		bePRINTF("%lld (%c) %d (%c) %d", left, (char)left, right, (char)right, entry.offset);
+		LOG("%lld (%c) %d (%c) %d", left, (char)left, right, (char)right, entry.offset);
 	}*/
 	
 	return LoadTexture(ri, textureFilename);
@@ -386,7 +386,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 
 	//for (int i = 0; i < numVerts; i++)
 	//{
-	//	bePRINTF("Pos: %f, %f, uv: %f, %f", vertices[i].position.x, vertices[i].position.y, vertices[i].uv.x, vertices[i].uv.y);
+	//	LOG("Pos: %f, %f, uv: %f, %f", vertices[i].position.x, vertices[i].position.y, vertices[i].uv.x, vertices[i].uv.y);
 	//}
 
 	return true;

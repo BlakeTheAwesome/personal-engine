@@ -41,7 +41,7 @@ void beSystemEventManager::Update()
 
 		// send the message to the WindowProc function
 		DispatchMessage(&msg);
-		//bePRINTF("recieved message:0x%08x", msg.message);
+		//LOG("recieved message:0x%08x", msg.message);
 		
 		for (const auto& callback : self.m_callbackWin32Pump)
 		{

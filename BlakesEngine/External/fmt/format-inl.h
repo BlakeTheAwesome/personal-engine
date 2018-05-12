@@ -493,6 +493,11 @@ FMT_FUNC void vprint(std::FILE *f, string_view format_str, format_args args) {
   memory_buffer buffer;
   vformat_to(buffer, format_str, args);
   std::fwrite(buffer.data(), 1, buffer.size(), f);
+
+
+  char debugBuffer[4096];
+  strncpy_s(debugBuffer, sizeof(debugBuffer), buffer.data(), buffer.size());
+  OutputDebugStringA(debugBuffer);
 }
 
 FMT_FUNC void vprint(string_view format_str, format_args args) {

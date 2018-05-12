@@ -99,10 +99,10 @@ void beEnvironment::Initialise(const beStringView& commandLine)
 		}
 	}
 
-	bePRINTF("Environment Args:");
+	LOG("Environment Args:");
 	for (auto it : m_map)
 	{
-		bePRINTF("\t%s = %s", it.Key().c_str(), it.Value().c_str());
+		LOG("\t%s = %s", it.Key().c_str(), it.Value().c_str());
 	}
 }
 

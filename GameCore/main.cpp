@@ -221,7 +221,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				renderDoc->EndFrameCapture();
 			}
 			#endif
-			//bePRINTF("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
+			//LOG("timeSinceStart %3.3f, dt:%3.3f", (float)beClock::GetSecondsSinceStart(), dt.ToSeconds());
 
 		}
 	}

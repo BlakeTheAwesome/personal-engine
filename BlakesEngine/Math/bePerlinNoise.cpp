@@ -113,7 +113,7 @@ float bePerlinNoise2D::Get(float x, float y)
 	
 	// Change (-1,1) => (0, 1)
 	float result = (Lerp(Y1, Y2, w)+1.f) * 0.5f;
-	//bePRINTF("X,Y,Z {%3.1f, %3.1f, %3.1f}\t = %3.3f", x, y, zf, result);
+	//LOG("X,Y,Z {%3.1f, %3.1f, %3.1f}\t = %3.3f", x, y, zf, result);
 	return result;
 }
 

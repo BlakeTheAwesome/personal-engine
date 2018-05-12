@@ -192,14 +192,14 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 	XMVECTOR worldForward3 = XMVector3Normalize(worldAlongZ3 - worldPos3);
 	*/
 
-	//bePRINTF("Pos");
-	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos,  0), XMVectorGetByIndex(worldPos,  2), XMVectorGetByIndex(worldPos, 2));
-	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos2, 0), XMVectorGetByIndex(worldPos2, 2), XMVectorGetByIndex(worldPos2, 2));
-	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos3, 0), XMVectorGetByIndex(worldPos3, 2), XMVectorGetByIndex(worldPos3, 2));
-	//bePRINTF("Forward");
-	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward,  0), XMVectorGetByIndex(worldForward,  2), XMVectorGetByIndex(worldForward,  2));
-	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward2, 0), XMVectorGetByIndex(worldForward2, 2), XMVectorGetByIndex(worldForward2, 2));
-	//bePRINTF("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward3, 0), XMVectorGetByIndex(worldForward3, 2), XMVectorGetByIndex(worldForward3, 2));
+	//LOG("Pos");
+	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos,  0), XMVectorGetByIndex(worldPos,  2), XMVectorGetByIndex(worldPos, 2));
+	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos2, 0), XMVectorGetByIndex(worldPos2, 2), XMVectorGetByIndex(worldPos2, 2));
+	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldPos3, 0), XMVectorGetByIndex(worldPos3, 2), XMVectorGetByIndex(worldPos3, 2));
+	//LOG("Forward");
+	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward,  0), XMVectorGetByIndex(worldForward,  2), XMVectorGetByIndex(worldForward,  2));
+	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward2, 0), XMVectorGetByIndex(worldForward2, 2), XMVectorGetByIndex(worldForward2, 2));
+	//LOG("%.2f,%.2f,%.2f", XMVectorGetByIndex(worldForward3, 0), XMVectorGetByIndex(worldForward3, 2), XMVectorGetByIndex(worldForward3, 2));
 
 	XMStoreFloat3(pos, worldPos);
 	XMStoreFloat3(direction, worldForward);

@@ -392,14 +392,14 @@ void beRenderInterface::Impl::CreateBackBuffer()
 	HRESULT res = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTexture);
 	if (FAILED(res))
 	{
-		bePRINTF("ERROR res:0x%08x", res);
+		LOG("ERROR res:0x%08x", res);
 		BE_ASSERT(false);
 	}
-	//bePRINTF("m_swapChain->GetBuffer, res = 0x%08x, backBufferTexture = 0x%08x", res, backBufferTexture);
+	//LOG("m_swapChain->GetBuffer, res = 0x%08x, backBufferTexture = 0x%08x", res, backBufferTexture);
 	res = m_device->CreateRenderTargetView(backBufferTexture, nullptr, &m_backBuffer);
 	if (FAILED(res))
 	{
-		bePRINTF("ERROR res:0x%08x", res);
+		LOG("ERROR res:0x%08x", res);
 		BE_ASSERT(false);
 	}
 

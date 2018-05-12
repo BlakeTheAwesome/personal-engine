@@ -86,7 +86,7 @@ void beMouse::Update(float dt)
 	if (m_currentState.y > m_windowHeight) { m_currentState.y = m_windowHeight; }
 
 	// This is SCREEN relative - not window relative.
-	//bePRINTF("X: %d, Y:%d", m_currentState.x, m_currentState.y);
+	//LOG("X: %d, Y:%d", m_currentState.x, m_currentState.y);
 }
 
 static inline bool isDown(const DIMOUSESTATE2& mouseState, beMouse::Button button)

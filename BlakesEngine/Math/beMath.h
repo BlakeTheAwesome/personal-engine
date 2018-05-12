@@ -211,17 +211,17 @@ namespace beMath
 		}
 		Vec3 position;
 		XMStoreFloat3(&position, translation);
-
+		/*
 		//this position is the opposite of what the camera thinks it's pos is...
-		bePRINTF("CameraPosition %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(translation, 0), XMVectorGetByIndex(translation, 1), XMVectorGetByIndex(translation, 2), XMVectorGetByIndex(translation, 3));
-		bePRINTF("CameraScale %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(scale, 0), XMVectorGetByIndex(scale, 1), XMVectorGetByIndex(scale, 2), XMVectorGetByIndex(scale, 3));
-		bePRINTF("CameraRotation %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(rotationQuat, 0), XMVectorGetByIndex(rotationQuat, 1), XMVectorGetByIndex(rotationQuat, 2), XMVectorGetByIndex(rotationQuat, 3));
+		LOG("CameraPosition %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(translation, 0), XMVectorGetByIndex(translation, 1), XMVectorGetByIndex(translation, 2), XMVectorGetByIndex(translation, 3));
+		LOG("CameraScale %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(scale, 0), XMVectorGetByIndex(scale, 1), XMVectorGetByIndex(scale, 2), XMVectorGetByIndex(scale, 3));
+		LOG("CameraRotation %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(rotationQuat, 0), XMVectorGetByIndex(rotationQuat, 1), XMVectorGetByIndex(rotationQuat, 2), XMVectorGetByIndex(rotationQuat, 3));
 
 		auto printPos = [&](float x, float y)
 		{
 			XMVECTOR pos = XMVectorSet(x, y, 0.f, 0.f);
 			XMVECTOR newPos = XMVector3Transform(pos, mat);
-			bePRINTF("[%.2f, %.2f] -> {%.3f, %.3f, %.3f}", x, y, XMVectorGetByIndex(newPos, 0), XMVectorGetByIndex(newPos, 1), XMVectorGetByIndex(newPos, 2));
+			LOG("[%.2f, %.2f] -> {%.3f, %.3f, %.3f}", x, y, XMVectorGetByIndex(newPos, 0), XMVectorGetByIndex(newPos, 1), XMVectorGetByIndex(newPos, 2));
 		};
 		// These values are world offsets translated to camera position, need to get viewport or near plane dimensions or something.
 		printPos(0.f, 0.f);
@@ -229,7 +229,7 @@ namespace beMath
 		printPos(-1.f,  1.f);
 		printPos( 1.f,  1.f);
 		printPos( 1.f, -1.f);
-
+		*/
 		return position;
 	}
 

@@ -176,7 +176,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 	for (int i : RangeIter(fileInfo.faces.Count()))
 	{
 		const Face* face = &fileInfo.faces[i];
-		//bePRINTF("face %d", i);
+		//LOG("face %d", i);
 		for (int j : RangeIterReverse(3))  // Read backwards to swap rhs to lhs
 		{
 			const VertInfo* vert = &face->verts[j];
@@ -191,7 +191,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 			vertices[vertexIndex].position.z *= -1.f;
 			vertices[vertexIndex].texCoord.y *= -1.f;
 			vertices[vertexIndex].normal.z *= -1.f;
-			//bePRINTF("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
+			//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
 			vertexIndex++;
 		}
 	}

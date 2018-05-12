@@ -45,7 +45,7 @@ bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename
 	//{
 	//	if (errorMessage)
 	//	{
-	//		bePRINTF("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), vertexFilename.c_str(), res);
+	//		LOG("%s\n Filename:%s, res:0x%08x", errorMessage->GetBufferPointer(), vertexFilename.c_str(), res);
 	//	}
 
 	//	BE_ASSERT(false);
