@@ -218,7 +218,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 			float yPos = y*BlockLength;
 			float height = live ? BlockHeight : 0.f;
 			//LOG("Writing to block[%d]", arrayIndex);
-			InitBlock(&m_renderBlocks.At(arrayIndex), xPos, yPos, height);
+			InitBlock(&m_renderBlocks[arrayIndex], xPos, yPos, height);
 		}
 	}
 

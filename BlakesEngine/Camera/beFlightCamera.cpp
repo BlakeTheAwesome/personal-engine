@@ -76,8 +76,8 @@ void beFlightCamera::Update(float dt)
 	{
 		bool lDown = m_mouse->IsDown(beMouse::Button::LeftButton);
 		bool rDown = m_mouse->IsDown(beMouse::Button::RightButton);
-		float extraPitch = lDown ? -m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
-		float extraYaw = lDown ? -m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		float extraPitch = lDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
+		float extraYaw = lDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 		float forwards = rDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 		float right = rDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 		UpdateImpl(dt, extraPitch, extraYaw, forwards, right);
