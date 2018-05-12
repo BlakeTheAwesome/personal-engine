@@ -2,8 +2,8 @@
 #include "beCamera.h"
 
 beCamera::beCamera()
-	: m_pos(0.0f, 0.0f, -5.0f)
-	, m_rot(0.0f, -.5f, 0.0f)
+	: m_pos(0.0f, 0.0f, 3.0f)
+	, m_rot(0.0f, 0.f, -1.0f)
 {
 }
 
@@ -44,8 +44,8 @@ void beCamera::Update()
 
 	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 
-	Vec3 up(0.0f, 1.0f, 0.0f);
-	Vec3 lookAt(0.0f, 0.0f, 1.0f);
+	Vec3 up(0.0f, 0.0f, 1.0f);
+	Vec3 lookAt(1.0f, 0.0f, 0.0f);
 	
 	XMVECTOR xUp = XMVector3TransformCoord(XMLoadFloat3(&up), rotationMatrix);
 	XMVECTOR xLookAt = XMVector3TransformCoord(XMLoadFloat3(&lookAt), rotationMatrix);

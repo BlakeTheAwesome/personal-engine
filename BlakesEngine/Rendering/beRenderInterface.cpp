@@ -451,9 +451,9 @@ void beRenderInterface::Impl::CreateMatrices(float width, float height, float ne
 {
 	float fov = (float)PI / 4.0f;
 	float screenAspect = width / height;
-	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fov, screenAspect, nearPlane, farPlane);
+	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(fov, screenAspect, nearPlane, farPlane);
 	XMMATRIX worldMatrix = XMMatrixIdentity();
-	XMMATRIX orthoMatrix = XMMatrixOrthographicLH(width, height, nearPlane, farPlane);
+	XMMATRIX orthoMatrix = XMMatrixOrthographicRH(width, height, nearPlane, farPlane);
 
 	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
 	XMStoreFloat4x4(&m_worldMatrix, worldMatrix);

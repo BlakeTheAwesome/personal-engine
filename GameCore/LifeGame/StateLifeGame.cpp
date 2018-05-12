@@ -60,12 +60,12 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		{
 			m_updateTimeFrequency = 0.f;
 		}
-		LOG("Up: m_updateTimeFrequency = %3.3f\r\n", m_updateTimeFrequency);
+		LOG("Up: m_updateTimeFrequency = {:.3f}\r\n", m_updateTimeFrequency);
 	}
 	if (keyboard->IsPressed(beKeyboard::Button::Down) || gamepad->GetPressed(beGamepad::Button::Down))
 	{
 		m_updateTimeFrequency += 0.1f;
-		LOG("Down: m_updateTimeFrequency = %3.3f\r\n", m_updateTimeFrequency);
+		LOG("Down: m_updateTimeFrequency = {:.3f}\r\n", m_updateTimeFrequency);
 	}
 	if (keyboard->IsPressed(beKeyboard::Button::T))
 	{
@@ -99,15 +99,15 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
 		if (isInBounds)
 		{
-			LOG("MOUSE CLICK: (%.2f, %.2f) POS:{%3.3f, %3.3f, %3.3f} dir:{%3.3f, %3.3f, %3.3f}\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
+			LOG("MOUSE CLICK: ({:.2f}, {:.2f}) POS:({:.3f}, {:.3f}, {:.3f}) dir:({:.3f}, {:.3f}, {:.3f})\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
 			LOG("MOUSE Deets:");
 			PositionFromMatrix(m_camera.GetViewMatrix());
 		}
 
-		if (auto realWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), screenX, screenY))
+		if (auto realWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), (int)screenX, (int)screenY))
 		{
 			
-			LOG("Collision! mouse pos:{%.3f, %.3f, %.3f} World collision at:{%3.3f, %3.3f, %3.3f}\r\n", m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z, realWorldPos->x, realWorldPos->y, realWorldPos->z);
+			LOG("Collision! mouse pos:({:.3f}, {:.3f}, {:.3f}) World collision at:({:.3f}, {:.3f}, {:.3f})\r\n", m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z, realWorldPos->x, realWorldPos->y, realWorldPos->z);
 		}
 	}
 

@@ -4,6 +4,9 @@
 #define DEBUG
 #endif
 
+#define _USE_MATH_DEFINES
+#include <cmath>  
+
 #include"BlakesEngine/External/fmt/format.h"
 #include <optional>
 

@@ -46,7 +46,7 @@ class StateRenderTest : public beState
 	beFlightCamera m_camera;
 
 	int m_shaderToUse = 0;
-	int m_modelToUse = 2;
+	int m_modelToUse = 3;
 
 	bool m_haveWrittenToTexture = false;
 	bool m_renderAxes = true;

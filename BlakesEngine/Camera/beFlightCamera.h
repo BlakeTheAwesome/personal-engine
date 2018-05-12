@@ -29,10 +29,10 @@ class beFlightCamera
 
 		Matrix m_viewMatrix;
 		Matrix m_orientationMatrix;
-		Vec3 m_position{0.f, 0.f, -5.f};
+		Vec3 m_position{20.f, -30.f, 30.f};
 		beGamepad* m_gamepad{nullptr};
 		beMouse* m_mouse{nullptr};
-		float m_yaw{0.f};
-		float m_pitch{0.f};
+		float m_yaw{-1.f};
+		float m_pitch{-1.f};
 		float m_roll{0.f};
 };
