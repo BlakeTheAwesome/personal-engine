@@ -28,7 +28,7 @@ class StateRenderTest : public beState
 	private:
 	void InitGrid(beRenderInterface* ri);
 
-	beAppData* m_appData;
+	beAppData* m_appData = nullptr;
 	beFont m_font;
 	beModel m_model1;
 	beModel m_model2;

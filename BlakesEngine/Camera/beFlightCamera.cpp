@@ -6,7 +6,7 @@
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beMouse.h"
 
-static constexpr float ROTATIONS_PER_SECOND = (float)(0.5 * M_2_PI);
+static constexpr float ROTATIONS_PER_SECOND = (float)(0.5 * (2.0 * M_2_PI));
 static constexpr float DISTANCE_PER_SECOND = 1.0f;
 static constexpr float MOUSE_SPEED_MULTIPLIER = 0.01f;
 static constexpr float R2_MULTIPLIER = 10.f;
