@@ -41,8 +41,8 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 {
 	auto gamepad = m_appData->gamepad;
 	auto keyboard = m_appData->keyboard;
-	auto mouse = m_appData->mouse;
-	auto renderInterface = m_appData->renderInterface;
+	//auto mouse = m_appData->mouse;
+	//auto renderInterface = m_appData->renderInterface;
 	auto debugWorld = m_appData->debugWorld;
 
 	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))

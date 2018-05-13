@@ -2,7 +2,7 @@
 #include "beTexture.h"
 
 #include "BlakesEngine/Core/beAssert.h"
-#include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Core/beStringUtil.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 
@@ -14,6 +14,37 @@ beTexture::~beTexture()
 bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 {
 	BE_ASSERT(!m_texture);
+
+	enum FileType
+	{
+		Invalid = 0,
+		DDS,
+		PNG,
+	};
+
+	FileType fileType = Invalid;
+	{
+		auto fileNameBegin = textureFilename.begin();
+		auto fileNameEnd = textureFilename.end();
+		int extensionIndex = beStringUtil::FindLast(fileNameBegin, fileNameEnd, '.');
+		if (extensionIndex == -1)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		auto fileNameExt = fileNameBegin + extensionIndex + 1;
+
+		if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, L"dds"))
+		{
+			fileType = DDS;
+		}
+		else if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, L"PNG"))
+		{
+			fileType = PNG;
+		}
+	}
+
+	BE_ASSERT(fileType == DDS);
 
 	HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), textureFilename.c_str(), nullptr, &m_texture);
 	if(FAILED(res))

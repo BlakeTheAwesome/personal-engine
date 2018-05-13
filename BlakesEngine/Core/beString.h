@@ -23,6 +23,32 @@ class beStringView
 		if (m_beStr) { return (int)m_beStr->size(); } 
 		return (int)m_ownedStr.size();
 	}
+	
+	int FindFirst(char c) const
+	{
+		auto _begin = begin();
+		auto _end = end();
+		auto it = std::find(_begin, _end, c);
+		if (it != _end)
+		{
+			return (int)std::distance(_begin, it);
+		}
+		return -1;
+	}
+
+	int FindLast(char c) const
+	{
+		const char* start = begin();
+		const char* ptr = end();
+		while (--ptr >= start)
+		{
+			if (*ptr == c)
+			{
+				return (int)std::distance(start, ptr);
+			}
+		}
+		return -1;
+	}
 
 	const char* c_str() const
 	{
@@ -31,6 +57,14 @@ class beStringView
 		return m_ownedStr.c_str();
 	}
 
+	const char* begin() const
+	{
+		return c_str();
+	}
+	const char* end() const
+	{
+		return c_str() + Length();
+	}
 	private:
 	const char* m_cstr = nullptr;
 	const beString* m_beStr = nullptr;

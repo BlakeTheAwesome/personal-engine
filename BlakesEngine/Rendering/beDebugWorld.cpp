@@ -80,8 +80,8 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 			}
 		};
 
-		float mouseX = mouse->GetX();
-		float mouseY = mouse->GetY();
+		float mouseX = (float)mouse->GetX();
+		float mouseY = (float)mouse->GetY();
 		addPos(mouseX-5, mouseY-5);
 		addPos(mouseX-5, mouseY  );
 		addPos(mouseX-5, mouseY+5);

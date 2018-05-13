@@ -178,6 +178,7 @@
     <ClCompile Include="Core\beHash.cpp" />
     <ClCompile Include="Core\bePrintf.cpp" />
     <ClCompile Include="Core\beString.cpp" />
+    <ClCompile Include="Core\beStringUtil.cpp" />
     <ClCompile Include="Core\beTypeTests.cpp" />
     <ClCompile Include="bePCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -230,7 +231,6 @@
     <ClInclude Include="Camera\beCamera.h" />
     <ClInclude Include="Camera\beCameraUtils.h" />
     <ClInclude Include="Camera\beFlightCamera.h" />
-    <ClInclude Include="Core\ArrayIter.h" />
     <ClInclude Include="Core\beAssert.h" />
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
@@ -240,6 +240,7 @@
     <ClInclude Include="Core\bePimpl.h" />
     <ClInclude Include="Core\bePrimitiveType.h" />
     <ClInclude Include="Core\bePrintf.h" />
+    <ClInclude Include="Core\beStringUtil.h" />
     <ClInclude Include="Core\Reconstruct.h" />
     <ClInclude Include="Core\beString.h" />
     <ClInclude Include="Core\beTypes.h" />
