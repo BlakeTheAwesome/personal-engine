@@ -177,12 +177,11 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 	{
 		const Face* face = &fileInfo.faces[i];
 		//LOG("face %d", i);
-		for (int j : RangeIterReverse(3))  // Read backwards to swap rhs to lhs
+		auto parseVert = [&](const VertInfo& vert)
 		{
-			const VertInfo* vert = &face->verts[j];
-			Vec3 vertex = fileInfo.vertices[vert->vertex];
-			Vec2 texCoord = (vert->texCoord == -1) ? Vec2(0.0f, 0.0f) : fileInfo.texCoords[vert->texCoord];
-			Vec3 normal = (vert->normal == -1) ? Vec3(0.0f, 1.0f, 0.0f) : fileInfo.vertexNormals[vert->normal];
+			Vec3 vertex = fileInfo.vertices[vert.vertex];
+			Vec2 texCoord = (vert.texCoord == -1) ? V20() : fileInfo.texCoords[vert.texCoord];
+			Vec3 normal = (vert.normal == -1) ? V3Z() : fileInfo.vertexNormals[vert.normal];
 			vertices[vertexIndex].position = Vec4(vertex.x, vertex.y, vertex.z, 1.f) * scale;
 			vertices[vertexIndex].normal = normal;
 			vertices[vertexIndex].texCoord = texCoord;
@@ -193,6 +192,21 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 			vertices[vertexIndex].normal.z *= -1.f;
 			//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
 			vertexIndex++;
+		};
+
+		if (loadOptions.flipFaces)
+		{
+			for (int j : RangeIterReverse(3))  // Read backwards to swap rhs to lhs
+			{
+				parseVert(face->verts[j]);
+			}
+		} 
+		else
+		{
+			for (int j : RangeIter(3))
+			{
+				parseVert(face->verts[j]);
+			}
 		}
 	}
 

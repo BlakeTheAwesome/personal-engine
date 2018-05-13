@@ -14,6 +14,7 @@ public:
 	struct LoadOptions
 	{
 		float scale = 1.f;
+		bool flipFaces = false;
 	};
 
 	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid()); }
