@@ -88,13 +88,13 @@ mat4 LookAtRH_Fast( vec3 eye, vec3 target, vec3 up )
 
 
 PIMPL_DATA(beRenderInterface)
-	void CreateDevice(HWND* hWnd, int width, int height);
-	void CreateDepthBuffer(int width, int height);
+	void CreateDevice(HWND* hWnd, int windowWidth, int windowHeight, int clientWidth, int clientHeight);
+	void CreateDepthBuffer(int clientWidth, int clientHeight);
 	void CreateStencilView();
 	void CreateBlendStates();
 	void CreateBackBuffer();
 	void CreateRasterState();
-	void InitialiseViewport(float width, float height);
+	void InitialiseViewport(float clientWidth, float clientHeight);
 	void CreateMatrices(float width, float height, float nearPlane, float farPlane);
 
 	Matrix m_projectionMatrix;
@@ -150,7 +150,7 @@ void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, 
 	self.m_height = fHeight;
 	self.m_near = nearPlane;
 	self.m_far = farPlane;
-	self.CreateDevice(hWnd, width, height);
+	self.CreateDevice(hWnd, window->GetWindowWidth(), window->GetWindowHeight(), width, height);
 	self.CreateDepthBuffer(width, height);
 	self.CreateStencilView();
 	self.CreateBlendStates();
@@ -178,7 +178,7 @@ void beRenderInterface::Deinit()
 	BE_SAFE_RELEASE(self.m_deviceContext);
 }
 
-void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
+void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int windowHeight, int clientWidth, int clientHeight)
 {
 	unsigned int refreshRateNumerator = 0;
 	unsigned int refreshRateDenominator = 0;
@@ -225,9 +225,9 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 		bool found = false;
 		for (unsigned int i = 0; i < numModes; i++)
 		{
-			if(displayModeList[i].Width == (unsigned int)width)
+			if(displayModeList[i].Width == (unsigned int)windowWidth)
 			{
-				if(displayModeList[i].Height == (unsigned int)height)
+				if(displayModeList[i].Height == (unsigned int)windowHeight)
 				{
 					refreshRateNumerator = displayModeList[i].RefreshRate.Numerator;
 					refreshRateDenominator = displayModeList[i].RefreshRate.Denominator;
@@ -243,8 +243,8 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int width, int height)
 	DXGI_SWAP_CHAIN_DESC scd; ZeroMem(&scd);
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scd.BufferDesc.Width = width;
-	scd.BufferDesc.Height = height;
+	scd.BufferDesc.Width = clientWidth;
+	scd.BufferDesc.Height = clientHeight;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.OutputWindow = *hWnd;
 	scd.Windowed = TRUE;

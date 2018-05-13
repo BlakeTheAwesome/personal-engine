@@ -66,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	#endif
 
 	auto renderInterface = PIMPL_NEW(beRenderInterface)();
-	renderInterface->Init(window, 0.01f, 100.00f, true);
+	renderInterface->Init(window, 0.01f, 1000.00f, true);
 	defer(
 		renderInterface->Deinit();
 		PIMPL_DELETE(renderInterface);

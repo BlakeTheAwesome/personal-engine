@@ -283,6 +283,7 @@ void LifeGameCells::Finalise()
 
 void LifeGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatrix)
 {
+	// #TODO: I think this selection should happen in StateLifeGame
 	auto mouse = appData->mouse;
 	auto renderInterface = appData->renderInterface;
 	if (auto posDir = beCameraUtils::GetScreeenToWorldRay(*renderInterface, viewMatrix, *mouse))

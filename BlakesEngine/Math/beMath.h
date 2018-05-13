@@ -63,9 +63,9 @@ namespace beMath
 		return out.x;
 	}
 
-	inline beMath::Vec3 To2DVec(const beMath::Vec3& v)
+	inline beMath::Vec4 ToVec4(const beMath::Vec3& v, float w)
 	{
-		return beMath::Vec3(v.x, 0.0f, v.z);
+		return beMath::Vec4(v.x, v.y, v.z, w);
 	}
 
 	inline beMath::Vec3 operator-(const beMath::Vec3& lhs, const beMath::Vec3& rhs)

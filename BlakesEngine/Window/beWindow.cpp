@@ -13,6 +13,8 @@ PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, 
 		HINSTANCE m_hInstance{nullptr};
 		int m_width = 0;
 		int m_height = 0;
+		int m_clientRectWidth = 0;
+		int m_clientRectHeight = 0;
 		int m_x = 0;
 		int m_y = 0;
 PIMPL_DATA_END
@@ -62,7 +64,13 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 
 	// display the window on the screen
 	ShowWindow(m_hWnd, SW_SHOW);
-
+	RECT clientRect{0};
+	if (!GetClientRect(m_hWnd, &clientRect))
+	{
+		BE_ASSERT(false);
+	}
+	m_clientRectWidth = clientRect.right - clientRect.left;
+	m_clientRectHeight = clientRect.bottom - clientRect.top;
 	s_staticInstance = this;
 }
 
@@ -84,10 +92,20 @@ void* beWindow::GetHWnd() const
 
 int beWindow::GetWidth() const
 {
-	return self.m_width;
+	return self.m_clientRectWidth;
 }
 
 int beWindow::GetHeight() const
+{
+	return self.m_clientRectHeight;
+}
+
+int beWindow::GetWindowWidth() const
+{
+	return self.m_width;
+}
+
+int beWindow::GetWindowHeight() const
 {
 	return self.m_height;
 }

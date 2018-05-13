@@ -139,12 +139,8 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 		//auto window = m_appData->window;
 		float screenX = (float)mouse->GetX();// -window->GetX();
 		float screenY = (float)mouse->GetY();// - window->GetY();
-		Vec2 screenDimensions = renderInterface->GetScreenSize();
-		// screen dimensions not accounting for menu bars?
-		float screenW = screenDimensions.x; //m_appData->window->GetWidth();
-		float screenH = screenDimensions.y; //m_appData->window->GetHeight();
 		Vec3 worldPos, worldDir;
-		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
+		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, &worldPos, &worldDir);
 		if (isInBounds)
 		{
 			//LOG("MOUSE CLICK: (%.2f, %.2f) POS:{%3.3f, %3.3f, %3.3f} dir:{%3.3f, %3.3f, %3.3f}\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
@@ -285,15 +281,11 @@ void StateRenderTest::Render()
 			Vec3 cameraPos = m_camera.GetPosition();
 			Matrix viewMatrix = m_camera.GetViewMatrix();
 
-			float screenX = (float)mouse->GetX();// -window->GetX();
-			float screenY = (float)mouse->GetY();// - window->GetY();
-			Vec2 screenDimensions = renderInterface->GetScreenSize();
-			// screen dimensions not accounting for menu bars?
-			float screenW = screenDimensions.x; //m_appData->window->GetWidth();
-			float screenH = screenDimensions.y; //m_appData->window->GetHeight();
+			float screenX = (float)mouse->GetX();
+			float screenY = (float)mouse->GetY();
 			Vec3 worldPos, worldDir;
-			bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, screenW, screenH, &worldPos, &worldDir);
-			auto maybeRealWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition(), (int)screenX, (int)screenY);
+			bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, &worldPos, &worldDir);
+			auto maybeRealWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), (int)screenX, (int)screenY);
 
 			if (!isInBounds)
 			{

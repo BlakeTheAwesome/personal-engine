@@ -43,6 +43,7 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	auto keyboard = m_appData->keyboard;
 	auto mouse = m_appData->mouse;
 	auto renderInterface = m_appData->renderInterface;
+	auto debugWorld = m_appData->debugWorld;
 
 	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
@@ -72,8 +73,13 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	{
 		m_cells.ToggleRenderText();
 	}
+	if (keyboard->IsPressed(beKeyboard::Button::M))
+	{
+		debugWorld->ToggleRenderMouseRay();
+	}
 
 	m_camera.Update(dt);
+	debugWorld->Update(*m_appData, m_camera.GetViewMatrix());
 
 	bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
 	bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space) || gamepad->GetPressed(beGamepad::Button::X);

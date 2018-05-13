@@ -58,14 +58,13 @@ bool intersectsBounds(const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVE
 	return true;
 }
 
-std::optional<Vec3> beCameraUtils::WorldPosFromScreenPos(const beRenderInterface& ri, const Matrix& cameraViewMatrix, const Vec3& cameraPos, int x, int y)
+std::optional<Vec3> beCameraUtils::WorldPosFromScreenPos(const beRenderInterface& ri, const Matrix& cameraViewMatrix, int x, int y)
 {
 	// performs a line-plane intersection from the camera position,coords of the click and field
 	// to give is the world co-ords on the field the user clicked
 
-	Vec2 screenSize = ri.GetScreenSize();
 	Vec3 worldPos, worldDir;
-	if (!GetScreeenToWorldRay(ri, cameraViewMatrix, (float)x, (float)y, screenSize.x, screenSize.y, &worldPos, &worldDir))
+	if (!GetScreeenToWorldRay(ri, cameraViewMatrix, (float)x, (float)y, &worldPos, &worldDir))
 	{
 		return {};
 	}
@@ -87,8 +86,9 @@ std::optional<Vec3> beCameraUtils::WorldPosFromScreenPos(const beRenderInterface
 	return result;
 }
 
-bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matrix& _viewMatrix, float screenX, float screenY, float screenWidth, float screenHeight, Vec3* pos, Vec3* direction)
+bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matrix& _viewMatrix, float screenX, float screenY, Vec3* pos, Vec3* direction)
 {
+	auto [screenWidth, screenHeight] = ri.GetScreenSize();
 	if (screenX < 0
 	 || screenY < 0
 	 || screenX > screenWidth
@@ -124,9 +124,8 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 
 std::optional<beCameraUtils::PosDir> beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matrix& viewMatrix, const beMouse& mouse)
 {
-	Vec2 screenSize = ri.GetScreenSize();
 	Vec3 pos, direction;
-	if (GetScreeenToWorldRay(ri, viewMatrix, (float)mouse.GetX(), (float)mouse.GetY(), screenSize.x, screenSize.y, &pos, &direction))
+	if (GetScreeenToWorldRay(ri, viewMatrix, (float)mouse.GetX(), (float)mouse.GetY(), &pos, &direction))
 	{
 		return PosDir{pos, direction};
 	}
