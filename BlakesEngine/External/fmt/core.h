@@ -44,6 +44,8 @@
 
 #ifdef _MSC_VER
 # define FMT_MSC_VER _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4702)
 #else
 # define FMT_MSC_VER 0
 #endif
@@ -1254,5 +1256,10 @@ inline void print(string_view format_str, const Args & ... args) {
   vprint(format_str, as);
 }
 }  // namespace fmt
+
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
+
 
 #endif  // FMT_CORE_H_

@@ -77,6 +77,11 @@
 # endif
 #endif
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4702)
+#endif
+
 #ifdef __clang__
 # define FMT_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
 #endif
@@ -3596,6 +3601,10 @@ operator"" _a(const wchar_t *s, std::size_t) { return {s}; }
 # include "format-inl.h"
 #else
 # define FMT_FUNC
+#endif
+
+#ifdef _MSC_VER
+	#pragma warning(pop)
 #endif
 
 // Restore warnings.
