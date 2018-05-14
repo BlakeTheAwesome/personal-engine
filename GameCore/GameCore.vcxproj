@@ -104,7 +104,7 @@
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <OmitFramePointers>false</OmitFramePointers>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_c.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -133,7 +133,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_c.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
