@@ -236,7 +236,13 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int wind
 				}
 			}
 		}
-		BE_ASSERT(found);
+
+		if (!found)
+		{
+			BE_ASSERT(found); // #TODO: This is all wrong, doesn't work on all monitors, needs to be better. Can push past assert for now.
+			refreshRateNumerator = displayModeList[numModes-1].RefreshRate.Numerator;
+			refreshRateDenominator = displayModeList[numModes-1].RefreshRate.Denominator;
+		}
 	}
 
 
