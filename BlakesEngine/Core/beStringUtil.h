@@ -7,21 +7,21 @@ namespace beStringUtil
 	inline std::locale s_locale;
 
 	#define WRAP_PERMUTATIONS_CHAR(FunctionName)\
-		auto FunctionName(const beStringView& str, char c) { return FunctionName(str.begin(), str.end(), c); }\
-		auto FunctionName(const beWString& str, char c)    { return FunctionName(str.begin(), str.end(), c); }\
+		inline auto FunctionName(const beStringView& str, char c) { return FunctionName(str.begin(), str.end(), c); }\
+		inline auto FunctionName(const beWString& str, char c)    { return FunctionName(str.begin(), str.end(), c); }\
 	// WRAP_PERMUTATIONS_CHAR
 
 
 	#define WRAP_PERMUTATIONS(FunctionName)\
-		template <typename Iter> auto FunctionName(Iter beginRange, Iter endRange, const beStringView& pattern) { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
-		                         auto FunctionName(const beStringView& str, const beStringView& pattern)        { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
-		template <typename Iter> auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
-		                         auto FunctionName(const beWString& str, const beWString& pattern)              { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
-		                         auto FunctionName(const beWString& str, const wchar_t* pattern)                { return FunctionName(str.begin(), str.end(), pattern, pattern + wcslen(pattern)); }\
+		template <typename Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beStringView& pattern) { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
+		                         inline auto FunctionName(const beStringView& str, const beStringView& pattern)        { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
+		template <typename Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
+		                         inline auto FunctionName(const beWString& str, const beWString& pattern)              { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
+		                         inline auto FunctionName(const beWString& str, const wchar_t* pattern)                { return FunctionName(str.begin(), str.end(), pattern, pattern + wcslen(pattern)); }\
 	// WRAP_PERMUTATIONS
 
 	template <typename Iter>
-	int FindFirst(Iter begin, Iter end, char c)
+	inline int FindFirst(Iter begin, Iter end, char c)
 	{
 		auto it = std::find(begin, end, c);
 		if (it != end)
@@ -33,7 +33,7 @@ namespace beStringUtil
 	WRAP_PERMUTATIONS_CHAR(FindFirst);
 
 	template <typename Iter, typename IterPattern>
-	int FindFirst(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline int FindFirst(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
 		{
@@ -53,7 +53,7 @@ namespace beStringUtil
 
 
 	template <typename Iter>
-	int FindLast(Iter begin, Iter end, char c)
+	inline int FindLast(Iter begin, Iter end, char c)
 	{
 		while (--end >= begin)
 		{
@@ -67,7 +67,7 @@ namespace beStringUtil
 	WRAP_PERMUTATIONS_CHAR(FindLast);
 
 	template <typename Iter, typename IterPattern>
-	int FindLast(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline int FindLast(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
 		{
@@ -85,7 +85,7 @@ namespace beStringUtil
 	WRAP_PERMUTATIONS(FindLast);
 
 	template <typename Iter, typename IterPattern>
-	bool IsEqual(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool IsEqual(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) != std::distance(beginPattern, endPattern))
 		{
@@ -117,7 +117,7 @@ namespace beStringUtil
 	};
 
 	template <typename Iter, typename IterPattern>
-	bool IsEqualI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool IsEqualI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) != std::distance(beginPattern, endPattern))
 		{
