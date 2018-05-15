@@ -5,6 +5,9 @@
 #include "BlakesEngine/Core/beStringUtil.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
+#include "BlakesEngine/External/stb/stb_image.h"
+
+#include <D3D11.h>
 
 beTexture::~beTexture()
 {
@@ -44,21 +47,60 @@ bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 		}
 	}
 
-	BE_ASSERT(fileType == DDS);
-
-	HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), textureFilename.c_str(), nullptr, &m_texture);
-	if(FAILED(res))
+	if (fileType == DDS)
 	{
-		BE_ASSERT(false);
-		return false;
+		HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), textureFilename.c_str(), nullptr, &m_texture);
+		if (FAILED(res))
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		ID3D11Resource* resource;
+		m_texture->GetResource(&resource);
+		resource->QueryInterface<ID3D11Texture2D>(&m_texture2d);
+		m_texture2d->GetDesc(&m_desc);
+		resource->Release();
+	}
+	else
+	{
+		beString fileName;
+		beStringConversion::UTF8FromWide(textureFilename, &fileName);
+		int imageWidth, imageHeight, channelsInFile;
+		auto imageBuffer = stbi_load(fileName.c_str(), &imageWidth, &imageHeight, &channelsInFile, 4);
+		BE_ASSERT(imageBuffer);
+		defer(stbi_image_free(imageBuffer););
+
+		DXGI_SAMPLE_DESC sampleDesc;
+		sampleDesc.Count = 1;
+		sampleDesc.Quality = 0;
+
+		D3D11_TEXTURE2D_DESC desc{0};
+		desc.Width = imageWidth;
+		desc.Height = imageHeight;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UINT;
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		desc.SampleDesc = sampleDesc;
+
+		D3D11_SUBRESOURCE_DATA loadInfo;
+		loadInfo.pSysMem = imageBuffer;
+		loadInfo.SysMemPitch = imageWidth * 4;
+		loadInfo.SysMemSlicePitch = imageWidth * imageHeight * 4;
+
+		m_desc = desc;
+
+		auto device = ri->GetDevice();
+		HRESULT res = device->CreateTexture2D(&m_desc, &loadInfo, &m_texture2d);
+		BE_ASSERT(SUCCEEDED(res));
+		res = device->CreateShaderResourceView(m_texture2d, nullptr, &m_texture);
+		BE_ASSERT(SUCCEEDED(res));
 	}
 
-	ID3D11Resource* resource;
-	m_texture->GetResource(&resource);
-	resource->QueryInterface<ID3D11Texture2D>(&m_texture2d);
-	m_texture2d->GetDesc(&m_desc);
 
-	resource->Release();
 	
 	return true;
 }
