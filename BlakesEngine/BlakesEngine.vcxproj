@@ -225,6 +225,7 @@
     <ClCompile Include="Rendering\beTexture.cpp" />
     <ClCompile Include="Shaders\beShaderColour.cpp" />
     <ClCompile Include="Shaders\beShaderLitTexture.cpp" />
+    <ClCompile Include="Shaders\beShaderPack.cpp" />
     <ClCompile Include="Shaders\beShaderTexture.cpp" />
     <ClCompile Include="Shaders\beShaderTexture2d.cpp" />
     <ClCompile Include="Time\beClock.cpp" />
@@ -313,6 +314,7 @@
     <ClInclude Include="Rendering\beRenderBuffer.h" />
     <ClInclude Include="Rendering\beRenderInterface.h" />
     <ClInclude Include="Rendering\beTexture.h" />
+    <ClInclude Include="Shaders\beShaderCBufferDefinitions.h" />
     <ClInclude Include="Shaders\beShaderColour.h" />
     <ClInclude Include="Shaders\beShaderLitTexture.h" />
     <ClInclude Include="Shaders\beShaderPack.h" />

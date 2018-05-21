@@ -1,23 +1,10 @@
+#include "beShaderCBufferDefinitions.h"
+
 Texture2D shaderTexture;
 SamplerState SampleType;
 
-cbuffer LightBuffer
-{
-    float4 ambientColour;
-    float4 diffuseColour;
-    float3 lightDirection;
-    float specularPower;
-    float4 specularColor;
-};
-
-
-struct PixelInputType
-{
-	float4 position : SV_POSITION;
-	float3 normal : NORMAL;
-	float2 tex : TEXCOORD0;
-	float3 viewDirection : TEXCOORD1;
-};
+CBUF_LightBuffer
+CS_LightPixelInputType(PixelInputType)
 
 float4 main(PixelInputType input) : SV_TARGET
 {

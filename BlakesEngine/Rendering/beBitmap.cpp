@@ -189,7 +189,7 @@ void beBitmap::Render(beRenderInterface* ri)
 	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-	unsigned int bufferNumber = 1; // 0 is matrix buffer set in SetShaderParameters
+	unsigned int bufferNumber = CBUFIDX_PositionBuffer;
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, constantBuffers);
 }
 

@@ -167,6 +167,8 @@ void StateRenderTest::Render()
 	auto shaderPack = m_appData->shaderPack;
 	auto debugWorld = m_appData->debugWorld;
 
+	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix());
+
 	if (!m_haveWrittenToTexture)
 	{
 		beTexture writeTexture;
@@ -221,7 +223,7 @@ void StateRenderTest::Render()
 			switch (m_shaderToUse)
 			{
 				case 0:
-					shaderPack->shaderLitTexture.SetShaderParameters(renderInterface, m_camera.GetViewMatrix(), m_camera.GetPosition());
+					shaderPack->shaderLitTexture.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
 					shaderPack->shaderLitTexture.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
 				break;
 				case 1:

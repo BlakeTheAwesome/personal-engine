@@ -10,4 +10,13 @@ struct beShaderPack
 	beShaderLitTexture shaderLitTexture;
 	beShaderTexture shaderTexture;
 	beShaderTexture2d shaderTexture2d;
+
+	beShaderPack();
+	~beShaderPack();
+	void Init(beRenderInterface* ri);
+	void Deinit();
+	void UpdateFrameBuffers(beRenderInterface* ri, const Matrix& viewMatrix);
+	private:
+	struct FrameData;
+	std::unique_ptr<FrameData> m_frameData;
 };

@@ -126,6 +126,23 @@ namespace beMath
 		return out;
 	}
 
+	inline bool operator==(const beMath::Matrix& m1, const beMath::Matrix& m2)
+	{
+		bool ret = true;
+		for (int i : RangeIter(4))
+		{
+			for (int j : RangeIter(4))
+			{
+				ret = ret && m1.m[i][j] == m2.m[i][j];
+			}
+		}
+		return ret;
+	}
+	inline bool operator!=(const beMath::Matrix& m1, const beMath::Matrix& m2)
+	{
+		return !(m1 == m2);
+	}
+
 	inline constexpr float VecElem(const beMath::Vec3& v, int index)
 	{
 		switch (index)
@@ -158,6 +175,16 @@ namespace beMath
 	inline constexpr float Dot(const beMath::Vec3& a, const beMath::Vec3& b)
 	{
 		return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+	}
+
+	inline constexpr bool operator==(const beMath::Vec2& lhs, const beMath::Vec2& rhs)
+	{
+		return lhs.x == rhs.x && lhs.y == rhs.y;
+	}
+
+	inline constexpr bool operator!=(const beMath::Vec2& lhs, const beMath::Vec2& rhs)
+	{
+		return !(lhs==rhs);
 	}
 
 	inline constexpr bool operator==(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
@@ -210,37 +237,23 @@ namespace beMath
 
 	inline beMath::Vec3 PositionFromMatrix(const beMath::Matrix& matrix)
 	{
-		XMVECTOR scale;
-		XMVECTOR rotationQuat;
-		XMVECTOR translation;
-		XMMATRIX mat = XMLoadFloat4x4(&matrix);
-		bool success = XMMatrixDecompose(&scale, &rotationQuat, &translation, mat);
-		if (!success)
-		{
-			return V30();
-		}
-		Vec3 position;
-		XMStoreFloat3(&position, translation);
-		/*
-		//this position is the opposite of what the camera thinks it's pos is...
-		LOG("CameraPosition %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(translation, 0), XMVectorGetByIndex(translation, 1), XMVectorGetByIndex(translation, 2), XMVectorGetByIndex(translation, 3));
-		LOG("CameraScale %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(scale, 0), XMVectorGetByIndex(scale, 1), XMVectorGetByIndex(scale, 2), XMVectorGetByIndex(scale, 3));
-		LOG("CameraRotation %.3f, %.3f, %.3f, %.3f", XMVectorGetByIndex(rotationQuat, 0), XMVectorGetByIndex(rotationQuat, 1), XMVectorGetByIndex(rotationQuat, 2), XMVectorGetByIndex(rotationQuat, 3));
+		//XMVECTOR scale;
+		//XMVECTOR rotationQuat;
+		//XMVECTOR translation;
+		//XMMATRIX mat = XMLoadFloat4x4(&matrix);
+		//bool success = XMMatrixDecompose(&scale, &rotationQuat, &translation, mat);
+		//if (!success)
+		//{
+		//	return V30();
+		//}
+		//Vec3 position;
+		//XMStoreFloat3(&position, translation);
+		//return position;
 
-		auto printPos = [&](float x, float y)
-		{
-			XMVECTOR pos = XMVectorSet(x, y, 0.f, 0.f);
-			XMVECTOR newPos = XMVector3Transform(pos, mat);
-			LOG("[%.2f, %.2f] -> {%.3f, %.3f, %.3f}", x, y, XMVectorGetByIndex(newPos, 0), XMVectorGetByIndex(newPos, 1), XMVectorGetByIndex(newPos, 2));
-		};
-		// These values are world offsets translated to camera position, need to get viewport or near plane dimensions or something.
-		printPos(0.f, 0.f);
-		printPos(-1.f, -1.f);
-		printPos(-1.f,  1.f);
-		printPos( 1.f,  1.f);
-		printPos( 1.f, -1.f);
-		*/
-		return position;
+		const auto& row = matrix.m[3];
+		BE_ASSERT(row[3] != 0.f);
+		float invScale = 1.f / row[3];
+		return Vec3(row[0] * invScale, row[1] * invScale, row[2] * invScale);
 	}
 
 	template <typename T>

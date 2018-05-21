@@ -17,7 +17,7 @@ using VertexWithNormalType = beShaderTexture::VertexType;
 struct VertInfo
 {
 	int vertex;
-	int texCoord;
+	int uv;
 	int normal;
 };
 
@@ -134,7 +134,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 			
 			BE_ASSERT(pos != 0);
 			face->verts[i].vertex = pos - 1;
-			face->verts[i].texCoord = texCoord - 1;
+			face->verts[i].uv = texCoord - 1;
 			face->verts[i].normal = normal - 1;
 		}
 	}
@@ -180,15 +180,15 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 		auto parseVert = [&](const VertInfo& vert)
 		{
 			Vec3 vertex = fileInfo.vertices[vert.vertex];
-			Vec2 texCoord = (vert.texCoord == -1) ? V20() : fileInfo.texCoords[vert.texCoord];
+			Vec2 texCoord = (vert.uv == -1) ? V20() : fileInfo.texCoords[vert.uv];
 			Vec3 normal = (vert.normal == -1) ? V3Z() : fileInfo.vertexNormals[vert.normal];
 			vertices[vertexIndex].position = Vec4(vertex.x, vertex.y, vertex.z, 1.f) * scale;
 			vertices[vertexIndex].normal = normal;
-			vertices[vertexIndex].texCoord = texCoord;
+			vertices[vertexIndex].uv = texCoord;
 
 			// Invert to swap rhs to lhs
 			vertices[vertexIndex].position.z *= -1.f;
-			vertices[vertexIndex].texCoord.y *= -1.f;
+			vertices[vertexIndex].uv.y *= -1.f;
 			vertices[vertexIndex].normal.z *= -1.f;
 			//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
 			vertexIndex++;
@@ -243,22 +243,22 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 	float distFromCamera = -1.f;
 	float w = 1.f;
 	vertices[0].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL
-	vertices[0].texCoord = V20();
+	vertices[0].uv = V20();
 	
 	vertices[1].position = Vec4(1.f, 1.f, distFromCamera, w);  // TR
-	vertices[1].texCoord = V2X();
+	vertices[1].uv = V2X();
 
 	vertices[2].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[2].texCoord = V21();
+	vertices[2].uv = V21();
 
 	vertices[3].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[3].texCoord = V21();
+	vertices[3].uv = V21();
 	
 	vertices[4].position = Vec4(-1.f, -1.f, distFromCamera, w);  // BL.
-	vertices[4].texCoord = V2Y();
+	vertices[4].uv = V2Y();
 
 	vertices[5].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL.
-	vertices[5].texCoord = V20();
+	vertices[5].uv = V20();
 	
 
 	indices[0] = 0;

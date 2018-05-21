@@ -131,8 +131,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	shaderPack.shaderTexture.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
 	shaderPack.shaderTexture2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
 	shaderPack.shaderLitTexture.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
+	shaderPack.Init(renderInterface);
 	defer
 	(
+		shaderPack.Deinit();
 		shaderPack.shaderColour.Deinit();
 		shaderPack.shaderTexture.Deinit();
 		shaderPack.shaderTexture2d.Deinit();

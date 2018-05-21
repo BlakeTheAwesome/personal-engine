@@ -1,4 +1,6 @@
 #pragma once
+#include "beShaderCBufferDefinitions.h"
+
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
@@ -14,11 +16,7 @@ class beRenderInterface;
 class beShaderColour
 {
 public:
-	struct VertexType
-	{
-		Vec4 position;
-		Vec4 colour;
-	};
+	using VertexType = beShaderDefinitions::ShaderColour::VertexInputType;
 
 	beShaderColour() = default;
 	~beShaderColour();
@@ -35,15 +33,7 @@ public:
 	bool IsLoaded() const;
 
 private:
-	struct MatrixBufferType
-	{
-		Matrix world;
-		Matrix view;
-		Matrix projection;
-	};
-
 	ID3D11PixelShader* m_pShader = nullptr;
 	ID3D11VertexShader* m_vShader = nullptr;
 	ID3D11InputLayout* m_layout = nullptr;
-	beRenderBuffer m_matrixBuffer;
 };

@@ -95,19 +95,11 @@ bool beShaderColour::Init(beRenderInterface* ri, const beWString& pixelFilename,
 		return false;
 	}
 
-
-	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
-	if (!success)
-	{
-		return false;
-	}
-
 	return true;
 }
 
 void beShaderColour::Deinit()
 {
-	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
@@ -115,35 +107,6 @@ void beShaderColour::Deinit()
 
 void beShaderColour::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
-	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	const Matrix& worldMatrix = ri->GetWorldMatrix();
-	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
-
-	//D3D11_MAPPED_SUBRESOURCE mappedResource = {0};
-	
-	XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
-	XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
-	XMMATRIX xPM = XMLoadFloat4x4(&projectionMatrix);
-
-	XMMATRIX txWorldMatrix = XMMatrixTranspose(xWM);
-	XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
-	XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
-
-	auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
-	if (!dataPtr)
-	{
-		BE_ASSERT(false);
-		return;
-	}
-	XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
-	XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
-	XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
-
-	m_matrixBuffer.Unmap(ri);
-
-	ID3D11Buffer* constantBuffers[] = {m_matrixBuffer.GetBuffer()};
-	unsigned int bufferNumber = 0;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, constantBuffers);
 }
 
 void beShaderColour::Render(beRenderInterface* ri, int indexCount, int indexOffset)

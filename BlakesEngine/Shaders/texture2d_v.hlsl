@@ -1,31 +1,10 @@
+#include "beShaderCBufferDefinitions.h"
 
-// Set on the CPU
-cbuffer MatrixBuffer
-{
-	matrix orthoMatrix;
-	float2 screenSize;
-	float2 padding;
-};
+CBUF_OrthoMatrixBuffer
+CBUF_PositionBuffer
 
-cbuffer PositionBuffer
-{
-	float4 colour;
-	float2 positionOffset;
-	float2 padding2;
-};
-
-struct VertexInputType
-{
-	float2 position : POSITION;
-	float2 tex : TEXCOORD0;
-};
-
-struct PixelInputType
-{
-	float4 position : SV_POSITION;
-	float4 colour : COLOR0;
-	float2 tex : TEXCOORD0;
-};
+CS_Texture2DVertexInputType(VertexInputType)
+CS_TexturePixelInputType(PixelInputType)
 
 PixelInputType main(VertexInputType input)
 {
@@ -41,7 +20,7 @@ PixelInputType main(VertexInputType input)
 	position = mul(position, orthoMatrix);
 
 	output.position = position;
-	output.tex = input.tex;
+	output.uv = input.uv;
 	output.colour = colour;
 	
 	return output;

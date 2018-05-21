@@ -123,6 +123,10 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 void StateLifeGame::Render()
 {
 	auto renderInterface = m_appData->renderInterface;
+	auto shaderPack = m_appData->shaderPack;
+
+	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix());
+
 	m_cells.Render(renderInterface, m_appData->shaderPack, m_camera.GetViewMatrix(), m_camera.GetPosition());
 
 	auto debugWorld = m_appData->debugWorld;

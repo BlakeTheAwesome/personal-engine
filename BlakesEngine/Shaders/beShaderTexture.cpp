@@ -10,21 +10,10 @@
 #include <d3d11.h>
 #include <D3Dcompiler.h>
 
-struct MatrixBufferType
-{
-	Matrix world;
-	Matrix view;
-	Matrix projection;
-};
-
-struct ColourBufferType
-{
-	Vec4 colour;
-};
+using ColourBufferType = beShaderDefinitions::ColourBuffer;
 
 beShaderTexture::~beShaderTexture()
 {
-	BE_ASSERT(!m_matrixBuffer.IsValid());
 	BE_ASSERT(!m_colourBuffer.IsValid());
 	BE_ASSERT(!m_sampleState);
 	BE_ASSERT(!m_pShader);
@@ -116,13 +105,6 @@ bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename
 		return false;
 	}
 	
-	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
-	if (!success) { return false; }
-
-	success = m_colourBuffer.Allocate(ri, sizeof(ColourBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
-	if (!success) { return false; }
-
-	
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -146,6 +128,8 @@ bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename
 		return false;
 	}
 
+	bool success = m_colourBuffer.Allocate(ri, sizeof(ColourBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	if (!success) { return false; }
 
 	return true;
 }
@@ -153,14 +137,13 @@ bool beShaderTexture::Init(beRenderInterface* ri, const beWString& pixelFilename
 void beShaderTexture::Deinit()
 {
 	m_colourBuffer.Release();
-	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_sampleState);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderTexture::SetColour(const Vec4 & colour)
+void beShaderTexture::SetColour(const Vec4& colour)
 {
 	m_colour = colour;
 	m_colourDirty = true;
@@ -169,30 +152,6 @@ void beShaderTexture::SetColour(const Vec4 & colour)
 void beShaderTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	const Matrix& worldMatrix = ri->GetWorldMatrix();
-	const Matrix& projectionMatrix = ri->GetProjectionMatrix();
-
-	{
-		XMMATRIX xWM = XMLoadFloat4x4(&worldMatrix);
-		XMMATRIX xVM = XMLoadFloat4x4(&viewMatrix);
-		XMMATRIX xPM = XMLoadFloat4x4(&projectionMatrix);
-
-		XMMATRIX txWorldMatrix = XMMatrixTranspose(xWM);
-		XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
-		XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
-
-		auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
-		if (!dataPtr)
-		{
-			return;
-		}
-
-		XMStoreFloat4x4(&dataPtr->world, txWorldMatrix);
-		XMStoreFloat4x4(&dataPtr->view, txViewMatrix);
-		XMStoreFloat4x4(&dataPtr->projection, txProjectionMatrix);
-
-		m_matrixBuffer.Unmap(ri);
-	}
 
 	if (m_colourDirty)
 	{
@@ -206,8 +165,8 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& v
 		m_colourDirty = false;
 	}
 	
-	ID3D11Buffer* buffers[] = {m_matrixBuffer.GetBuffer(), m_colourBuffer.GetBuffer()};
-	deviceContext->VSSetConstantBuffers(0, 2, buffers);
+	ID3D11Buffer* buffers[] = {m_colourBuffer.GetBuffer()};
+	deviceContext->VSSetConstantBuffers(CBUFIDX_ColourBuffer, 1, buffers);
 }
 
 void beShaderTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)

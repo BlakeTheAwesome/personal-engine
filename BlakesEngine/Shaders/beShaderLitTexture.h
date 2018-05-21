@@ -2,6 +2,7 @@
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
+#include "beShaderCBufferDefinitions.h"
 
 struct ID3D10Blob;
 struct ID3D11VertexShader;
@@ -16,12 +17,7 @@ class beRenderInterface;
 class beShaderLitTexture
 {
 public:
-	struct VertexType
-	{
-		Vec4 position;
-		Vec3 normal;
-		Vec2 texCoord;
-	};
+	using VertexType = beShaderDefinitions::ShaderLitTexture::VertexInputType;
 
 	beShaderLitTexture() = default;
 	~beShaderLitTexture();
@@ -29,7 +25,7 @@ public:
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 
-	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix, const Vec3& cameraPosition);
+	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture);
 
@@ -42,7 +38,6 @@ private:
 	ID3D11SamplerState* m_sampleState = nullptr;
 	ID3D11InputLayout* m_layout = nullptr;
 	
-	beRenderBuffer m_matrixBuffer;
 	beRenderBuffer m_lightBuffer;
 	beRenderBuffer m_cameraBuffer;
 };

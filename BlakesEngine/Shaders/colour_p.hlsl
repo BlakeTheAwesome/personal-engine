@@ -1,8 +1,6 @@
-struct PixelInputType
-{
-	float4 position : SV_POSITION;
-	float4 colour : COLOR;
-};
+#include "beShaderCBufferDefinitions.h"
+
+CS_ColourPixelInputType(PixelInputType)
 
 float4 main(PixelInputType input) : SV_TARGET
 {

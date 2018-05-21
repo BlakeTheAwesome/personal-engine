@@ -9,14 +9,7 @@
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>
-
-
-struct MatrixBufferType
-{
-	Matrix ortho;
-	Vec2 screenSize;
-	Vec2 padding;
-};
+#include "BlakesEngine/DataStructures/beArray.h"
 
 beShaderTexture2d::~beShaderTexture2d()
 {
@@ -96,10 +89,7 @@ bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilena
 
 	res = device->CreateInputLayout(polygonLayout, numElements, vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), &m_layout);
 	if (FAILED(res)) { return false; }
-
-	bool success = m_matrixBuffer.Allocate(ri, sizeof(MatrixBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
-	if (!success) { return false; }
-
+	
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -131,7 +121,6 @@ bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilena
 
 void beShaderTexture2d::Deinit()
 {
-	m_matrixBuffer.Release();
 	BE_SAFE_RELEASE(m_clampedSampleState);
 	BE_SAFE_RELEASE(m_wrappedSampleState);
 	BE_SAFE_RELEASE(m_layout);
@@ -141,28 +130,6 @@ void beShaderTexture2d::Deinit()
 
 void beShaderTexture2d::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
-	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	const Matrix& orthoMatrix = ri->GetOrthoMatrix();
-
-	{
-		XMMATRIX xOM = XMLoadFloat4x4(&orthoMatrix);
-		//XMMATRIX txOrthoMatrix = XMMatrixTranspose(xOM);
-
-		auto dataPtr = (MatrixBufferType*)m_matrixBuffer.Map(ri);
-		if (!dataPtr)
-		{
-			return;
-		}
-
-		XMStoreFloat4x4(&dataPtr->ortho, xOM);
-		dataPtr->screenSize = ri->GetScreenSize();
-
-		m_matrixBuffer.Unmap(ri);
-	}
-	
-	ID3D11Buffer* vsConstantBuffers[] = { m_matrixBuffer.GetBuffer() };
-	unsigned int bufferNumber = 0;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, vsConstantBuffers);
 }
 
 void beShaderTexture2d::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode)

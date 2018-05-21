@@ -2,6 +2,7 @@
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
+#include "beShaderCBufferDefinitions.h"
 
 struct ID3D10Blob;
 struct ID3D11VertexShader;
@@ -16,12 +17,7 @@ class beRenderInterface;
 class beShaderTexture
 {
 public:
-	struct VertexType
-	{
-		Vec4 position;
-		Vec3 normal;
-		Vec2 texCoord;
-	};
+	using VertexType = beShaderDefinitions::ShaderTexture::VertexInputType;
 
 	beShaderTexture() = default;
 	~beShaderTexture();
@@ -43,7 +39,6 @@ private:
 	ID3D11VertexShader* m_vShader = nullptr;
 	ID3D11SamplerState* m_sampleState = nullptr;
 	ID3D11InputLayout* m_layout = nullptr;
-	beRenderBuffer m_matrixBuffer;
 	beRenderBuffer m_colourBuffer;
 
 	Vec4 m_colour{1.f,1.f,1.f,1.f};

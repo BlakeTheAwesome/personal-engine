@@ -2,6 +2,7 @@
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Math/beMath.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
+#include "beShaderCBufferDefinitions.h"
 
 struct ID3D10Blob;
 struct ID3D11VertexShader;
@@ -16,11 +17,7 @@ class beRenderInterface;
 class beShaderTexture2d
 {
 public:
-	struct VertexType
-	{
-		Vec2 position;
-		Vec2 uv;
-	};
+	using VertexType = beShaderDefinitions::ShaderTexture2d::VertexInputType;
 
 	enum class TextureMode
 	{
@@ -47,5 +44,4 @@ private:
 	ID3D11SamplerState* m_wrappedSampleState = nullptr;
 	ID3D11SamplerState* m_clampedSampleState = nullptr;
 	ID3D11InputLayout* m_layout = nullptr;
-	beRenderBuffer m_matrixBuffer;
 };
