@@ -1,6 +1,7 @@
 *.suo
 *.vcxproj.*
 *.sdf
+*.vadbg
 *.opensdf
 *.VC.db
 *.VC.opendb
