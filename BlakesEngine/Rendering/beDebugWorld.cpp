@@ -98,10 +98,10 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 
 		if (self.haveMouseVerts)
 		{
-			bool success = self.mouseVertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
+			bool success = self.mouseVertexBuffer.Allocate(ri, ElementSize(vertices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
 			if (!success) { BE_ASSERT(false); }
 
-			success = self.mouseIndexBuffer.Allocate(ri, decltype(indices)::element_size, vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.begin());
+			success = self.mouseIndexBuffer.Allocate(ri, ElementSize(indices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
 			if (!success) { BE_ASSERT(false); }
 		}
 	}
@@ -153,10 +153,10 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	indices[5] = 5;
 
 
-	bool success = axesVertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
+	bool success = axesVertexBuffer.Allocate(ri, ElementSize(vertices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = axesIndexBuffer.Allocate(ri, decltype(indices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.begin());
+	success = axesIndexBuffer.Allocate(ri, ElementSize(indices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
 	if (!success) { BE_ASSERT(false); return false; }
 	
 	return true;

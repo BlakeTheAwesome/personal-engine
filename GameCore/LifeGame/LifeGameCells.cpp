@@ -269,7 +269,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 		}
 	}
 
-	success = m_indexBuffer.Allocate(renderInterface, decltype(indices)::element_size, indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(renderInterface, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	BE_ASSERT(success);
 }
 

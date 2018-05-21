@@ -237,6 +237,7 @@
     <ClInclude Include="Camera\beCameraUtils.h" />
     <ClInclude Include="Camera\beFlightCamera.h" />
     <ClInclude Include="Core\beAssert.h" />
+    <ClInclude Include="Core\beContainerHelpers.h" />
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
     <ClInclude Include="Core\beHash.h" />
@@ -246,6 +247,7 @@
     <ClInclude Include="Core\bePrimitiveType.h" />
     <ClInclude Include="Core\bePrintf.h" />
     <ClInclude Include="Core\beStringUtil.h" />
+    <ClInclude Include="Core\optional_arg.h" />
     <ClInclude Include="Core\Reconstruct.h" />
     <ClInclude Include="Core\beString.h" />
     <ClInclude Include="Core\beTypes.h" />

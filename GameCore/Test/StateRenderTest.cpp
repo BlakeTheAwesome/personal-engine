@@ -425,7 +425,7 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 
 	beRenderBuffer vertexBuffer, indexBuffer;
 
-	vertexBuffer.Allocate(renderInterface, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
+	vertexBuffer.Allocate(renderInterface, ElementSize(vertices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	indexBuffer.Allocate(renderInterface, decltype(triIndices)::element_size, triIndices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, triIndices.begin());
 	bool success = m_gridModel.InitFromBuffers(&vertexBuffer, &indexBuffer);
 	if (!success) { BE_ASSERT(false); return; }

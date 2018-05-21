@@ -22,6 +22,8 @@
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beDeferred.h"
+#include "BlakesEngine/Core/optional_arg.h"
+#include "BlakesEngine/Core/beContainerHelpers.h"
 
 //#include "BlakesEngine/Core/beTypeTests.h"
 

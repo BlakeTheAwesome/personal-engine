@@ -89,10 +89,10 @@ bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
 	indices[4] = 4;
 	indices[5] = 5;
 
-	auto success = m_vertexBuffer.Allocate(ri, decltype(vertices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
+	auto success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
 	if(!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, decltype(indices)::element_size, indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.data());
 	if(!success) { BE_ASSERT(false); return false; }
 
 	success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);

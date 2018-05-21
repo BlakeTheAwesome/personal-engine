@@ -80,7 +80,7 @@ float bePerlinNoise2D::Get(float x, float y)
 	float v = beMath::SmootherStep(yf);
 	float w = beMath::SmootherStep(zf);
 
-	u8* p = m_hashTable.begin();
+	u8* p = m_hashTable.data();
 	
 	int z0 = 0;
 	int z1 = 1;
