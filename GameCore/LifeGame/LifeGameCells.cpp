@@ -32,7 +32,11 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 	if (m_renderTextCells)
 	{
 		beTexture writeTexture;
-		writeTexture.InitAsTarget(renderInterface, 512, 512);
+		beTexture::LoadOptions textureLoadOptions;
+		textureLoadOptions.height = 512;
+		textureLoadOptions.width = 512;
+		textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
+		writeTexture.InitAsTarget(renderInterface, textureLoadOptions);
 		defer(
 			writeTexture.Deinit();
 		);
@@ -217,7 +221,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 {
 	auto renderInterface = appData->renderInterface;
 
-	m_font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
+	m_font.Init(renderInterface, appData->shaderPack, "tutefont.txt", beWString(L"tutefont.dds"));
 
 	beRandom rng;
 	rng.InitFromSystemTime();

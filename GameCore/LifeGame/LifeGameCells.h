@@ -13,7 +13,7 @@ struct beAppData;
 class beDebugWorld;
 class beRenderInterface;
 class beApData;
-struct beShaderPack;
+class beShaderPack;
 
 struct LifeGameCells
 {

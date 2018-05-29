@@ -42,13 +42,13 @@ bool beBitmap::Init(beRenderInterface* ri, const beTexture& texture)
 	return true;
 }
 
-bool beBitmap::Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename)
+bool beBitmap::Init(beRenderInterface* ri, beShaderPack* shaderPack, float width, float height, const beWString& textureFilename)
 {
 	if (!InitCommon(ri, width, height))
 	{
 		return false;
 	}
-	return m_texture.Init(ri, textureFilename);
+	return m_texture.Init(ri, shaderPack, textureFilename, {});
 }
 
 bool beBitmap::InitCommon(beRenderInterface* ri, float width, float height)
@@ -127,9 +127,9 @@ bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStrin
 	return true;
 }
 
-bool beBitmap::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
+bool beBitmap::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
 {
-	return m_texture.Init(ri, textureFilename);
+	return m_texture.Init(ri, shaderPack, textureFilename, {});
 }
 
 void beBitmap::SetColour(const Vec4 & colour)
@@ -189,8 +189,7 @@ void beBitmap::Render(beRenderInterface* ri)
 	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-	unsigned int bufferNumber = CBUFIDX_PositionBuffer;
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, constantBuffers);
+	deviceContext->VSSetConstantBuffers(CBUFIDX_PositionBuffer, 1, constantBuffers);
 }
 
 ID3D11ShaderResourceView* beBitmap::GetTexture() const

@@ -33,19 +33,29 @@
 void StateRenderTest::Enter(beStateMachine* stateMachine)
 {
 	auto renderInterface = m_appData->renderInterface;
+	auto shaderPack = m_appData->shaderPack;
 
-	m_font.Init(renderInterface, "tutefont.txt", beWString(L"tutefont.dds"));
-	m_model1.Init(renderInterface, beWString(L"boar.dds"));
-	m_model2.InitWithFilename(renderInterface, "cube.obj", beWString(L"seafloor.dds"), {});
-	m_model3.InitWithFilename(renderInterface, "cube2.obj", beWString(L"seafloor.dds"), {});
-	m_model4.InitWithFilename(renderInterface, "teapot.obj", beWString(L"seafloor.dds"), {});
-	m_model5.InitWithFilename(renderInterface, "boxes.obj", beWString(L"barrels.dds"), {0.001f});
+	auto renderDoc = m_appData->renderDocManager;
+
+	renderDoc->StartFrameCapture();
+	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
+	m_font.Init(renderInterface, shaderPack, "tutefont.txt", beWString(L"tutefont.dds"));
+	m_model1.Init(renderInterface, shaderPack, beWString(L"boar.dds"));
+	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj", beWString(L"seafloor.dds"), {});
+	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj", beWString(L"seafloor.dds"), {});
+	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj", beWString(L"seafloor.dds"), {});
+	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj", beWString(L"barrels.dds"), {0.001f});
+	renderDoc->EndFrameCapture();
 
 	InitGrid(renderInterface);
 
-	m_screenGrabTexture.InitAsTarget(renderInterface, 256, 256);
+	beTexture::LoadOptions textureLoadOptions;
+	textureLoadOptions.height = 256;
+	textureLoadOptions.width = 256;
+	textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
+	m_screenGrabTexture.InitAsTarget(renderInterface, textureLoadOptions);
 
-	m_bitmapTexQuad.Init(renderInterface, 128, 128, beWString(L"boar.dds"));
+	m_bitmapTexQuad.Init(renderInterface, shaderPack, 128, 128, beWString(L"boar.dds"));
 	m_bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
 	m_bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	
@@ -172,7 +182,11 @@ void StateRenderTest::Render()
 	if (!m_haveWrittenToTexture)
 	{
 		beTexture writeTexture;
-		writeTexture.InitAsTarget(renderInterface, 512, 512);
+		beTexture::LoadOptions textureLoadOptions;
+		textureLoadOptions.height = 512;
+		textureLoadOptions.width = 512;
+		textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
+		writeTexture.InitAsTarget(renderInterface, textureLoadOptions);
 		defer(
 			writeTexture.Deinit();
 		);

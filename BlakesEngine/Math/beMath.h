@@ -68,6 +68,13 @@ namespace beMath
 		return beMath::Vec4(v.x, v.y, v.z, w);
 	}
 
+	inline beMath::Vec2& operator*=(beMath::Vec2& lhs, const beMath::Vec2& rhs)
+	{
+		lhs.x *= rhs.x;
+		lhs.y *= rhs.y;
+		return lhs;
+	}
+
 	inline beMath::Vec3 operator-(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
 		XMVECTOR l = XMLoadFloat3(&lhs);
@@ -175,6 +182,16 @@ namespace beMath
 	inline constexpr float Dot(const beMath::Vec3& a, const beMath::Vec3& b)
 	{
 		return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+	}
+
+	inline constexpr beMath::Vec2 operator+(const beMath::Vec2& lhs, const beMath::Vec2& rhs)
+	{
+		return beMath::Vec2(lhs.x + rhs.x, lhs.y + rhs.y);
+	}
+
+	inline constexpr beMath::Vec2 operator-(const beMath::Vec2& lhs, const beMath::Vec2& rhs)
+	{
+		return beMath::Vec2(lhs.x - rhs.x, lhs.y - rhs.y);
 	}
 
 	inline constexpr bool operator==(const beMath::Vec2& lhs, const beMath::Vec2& rhs)

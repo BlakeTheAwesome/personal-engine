@@ -9,7 +9,7 @@ class beMouse;
 class beGamepad;
 class beDebugWorld;
 class beWindow;
-struct beShaderPack;
+class beShaderPack;
 
 struct beAppData
 {

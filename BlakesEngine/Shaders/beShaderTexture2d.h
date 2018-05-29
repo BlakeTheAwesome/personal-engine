@@ -33,6 +33,7 @@ public:
 
 	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
+	void RenderQuad(beRenderInterface* renderInterface, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, TextureMode textureMode=TextureMode::Wrapped);
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode=TextureMode::Wrapped);
 
 	// Todo: add async loader
@@ -44,4 +45,9 @@ private:
 	ID3D11SamplerState* m_wrappedSampleState = nullptr;
 	ID3D11SamplerState* m_clampedSampleState = nullptr;
 	ID3D11InputLayout* m_layout = nullptr;
+
+	// For RenderQuad
+	beRenderBuffer m_vertexBuffer;
+	beRenderBuffer m_indexBuffer;
+	beRenderBuffer m_positionBuffer;
 };

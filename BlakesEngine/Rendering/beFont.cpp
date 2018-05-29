@@ -78,7 +78,7 @@ bool beFont::ReadLine(const std::string& line)
 	return true;
 }
 
-bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& textureFilename)
+bool beFont::Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename)
 {
 	std::string line;
 	std::ifstream fstream(filename);
@@ -117,7 +117,7 @@ bool beFont::Init(beRenderInterface* ri, const char* filename, const beWString& 
 		LOG("%lld (%c) %d (%c) %d", left, (char)left, right, (char)right, entry.offset);
 	}*/
 	
-	return LoadTexture(ri, textureFilename);
+	return LoadTexture(ri, shaderPack, textureFilename);
 }
 
 
@@ -126,9 +126,9 @@ void beFont::Deinit()
 	m_texture.Deinit();
 }
 
-bool beFont::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
+bool beFont::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
 {
-	return m_texture.Init(ri, textureFilename);
+	return m_texture.Init(ri, shaderPack, textureFilename, {});
 }
 
 static bool CompareTop32(const u64* _lhs, const u64* _rhs, int* comparison)

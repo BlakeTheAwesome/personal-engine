@@ -7,6 +7,7 @@
 
 class beRenderInterface;
 class beTexture;
+class beShaderPack;
 struct ID3D11ShaderResourceView;
 
 class beBitmap
@@ -16,7 +17,7 @@ public:
 	~beBitmap();
 
 	bool Init(beRenderInterface* ri, const beTexture& texture);
-	bool Init(beRenderInterface* ri, float width, float height, const beWString& textureFilename);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, float width, float height, const beWString& textureFilename);
 	void Deinit();
 
 	bool InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float scale, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, beFont::WrapMode wrapMode);
@@ -26,7 +27,7 @@ public:
 	void SetPosition(float x, float y);
 	void SetAnchorPoint(float x, float y); // [0-1]
 
-	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);
+	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename);
 
 	void Render(beRenderInterface* ri);
 	

@@ -4,17 +4,34 @@
 #include <d3d11.h>
 
 class beRenderInterface;
+class beShaderPack;
 struct ID3D11ShaderResourceView;
+
+enum class beTextureFormat : u8
+{
+	Invalid,
+	R8G8B8A8_UNORM,
+	R32G32B32_FLOAT,
+};
 
 class beTexture : NonCopiable
 {
 public:
+	
+	struct LoadOptions
+	{
+		int height = 0;
+		int width = 0;
+		int mipLevels = 0;
+		beTextureFormat format = beTextureFormat::Invalid;
+		bool cpuReadable = false;
+		bool cpuWritable = false;
+	};
 
-	beTexture() = default;
 	~beTexture();
 
-	bool Init(beRenderInterface* ri, const beWString& textureFilename);
-	bool InitAsTarget(beRenderInterface* ri, int height, int width);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename, optional_arg<LoadOptions> loadOptions);
+	bool InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptions);
 	void FinaliseTarget();
 	void Deinit();
 

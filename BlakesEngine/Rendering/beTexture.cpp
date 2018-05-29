@@ -6,6 +6,7 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 #include "BlakesEngine/External/stb/stb_image.h"
+#include "BlakesEngine/Shaders/beShaderPack.h"
 
 #include <D3D11.h>
 
@@ -14,7 +15,7 @@ beTexture::~beTexture()
 	Deinit();
 }
 
-bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
+bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename, optional_arg<LoadOptions> loadOptions)
 {
 	BE_ASSERT(!m_texture);
 
@@ -79,7 +80,7 @@ bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 		desc.Height = imageHeight;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_R8G8B8A8_UINT;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.Usage = D3D11_USAGE_IMMUTABLE;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		desc.CPUAccessFlags = 0;
@@ -100,14 +101,79 @@ bool beTexture::Init(beRenderInterface* ri, const beWString& textureFilename)
 		BE_ASSERT(SUCCEEDED(res));
 	}
 
+	if (loadOptions)
+	{
+		const LoadOptions& options = *loadOptions;
+		int currentHeight = m_desc.Height;
+		int currentWidth = m_desc.Width;
+		int currentMipLevel = m_desc.MipLevels;
 
+		bool textureMatches = true;
+		textureMatches = textureMatches && (options.height == 0 || options.height == currentHeight);
+		textureMatches = textureMatches && (options.width == 0  || options.width  == currentWidth);
+		textureMatches = textureMatches && (options.mipLevels == 0  || options.mipLevels == currentMipLevel);
+		textureMatches = textureMatches && (!options.cpuReadable || (m_desc.CPUAccessFlags & D3D11_CPU_ACCESS_READ) != 0);
+		textureMatches = textureMatches && (!options.cpuWritable || (m_desc.CPUAccessFlags & D3D11_CPU_ACCESS_WRITE) != 0);
+		if (textureMatches)
+		{
+			switch (m_desc.Format)
+			{
+				case DXGI_FORMAT_R8G8B8A8_UNORM: textureMatches = options.format == beTextureFormat::R8G8B8A8_UNORM; break;
+				case DXGI_FORMAT_R32G32B32_FLOAT: textureMatches = options.format == beTextureFormat::R32G32B32_FLOAT; break;
+				default: textureMatches = false;
+			}
+		}
+
+		if (!textureMatches)
+		{
+			//Convert into desired format
+			auto loadedTexture = m_texture;
+			auto loadedTexture2d = m_texture2d;
+			m_texture = nullptr;
+			m_texture2d = nullptr;
+			
+			LoadOptions targetOptions = options;
+			if (targetOptions.height == 0)
+			{
+				targetOptions.height = m_desc.Height;
+			}
+			if (targetOptions.width == 0)
+			{
+				targetOptions.width = m_desc.Width;
+			}
+			InitAsTarget(ri, targetOptions);
+			SetAsTarget(ri);
+			// Render into new texture
+			
+			shaderPack->shaderTexture2d.RenderQuad(ri, V20(), V21(), loadedTexture, beShaderTexture2d::TextureMode::Clamped);
+			FinaliseTarget();
+			
+			loadedTexture->Release();
+			loadedTexture2d->Release();
+		}
+	}
 	
 	return true;
 }
 
-bool beTexture::InitAsTarget(beRenderInterface* ri, int height, int width)
+bool beTexture::InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptions)
 {
 	BE_ASSERT(!m_texture);
+
+	BE_ASSERT(loadOptions.height > 0);
+	BE_ASSERT(loadOptions.width > 0);
+	BE_ASSERT(loadOptions.format != beTextureFormat::Invalid);
+
+	int height = loadOptions.height;
+	int width = loadOptions.width;
+	DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+	switch (loadOptions.format)
+	{
+		case beTextureFormat::R32G32B32_FLOAT: format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+		case beTextureFormat::R8G8B8A8_UNORM: format = DXGI_FORMAT_R8G8B8A8_UNORM; break;
+		default: break;
+	}
+	BE_ASSERT(format != DXGI_FORMAT_UNKNOWN);
 
 	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
@@ -115,12 +181,12 @@ bool beTexture::InitAsTarget(beRenderInterface* ri, int height, int width)
 	auto device = ri->GetDevice();
 
 	// Setup the render target texture description.
-	ZeroMemory(&m_desc, sizeof(m_desc));
+	ZeroMem(&m_desc);
 	m_desc.Width = width;
 	m_desc.Height = height;
-	m_desc.MipLevels = 1;
+	m_desc.MipLevels = loadOptions.mipLevels > 0 ? loadOptions.mipLevels : 1;
 	m_desc.ArraySize = 1;
-	m_desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	m_desc.Format = format;
 	m_desc.SampleDesc.Count = 1;
 	m_desc.Usage = D3D11_USAGE_DEFAULT;
 	m_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
@@ -128,7 +194,7 @@ bool beTexture::InitAsTarget(beRenderInterface* ri, int height, int width)
 	m_desc.MiscFlags = 0;
 
 	// Create the render target texture.
-	HRESULT res = device->CreateTexture2D(&m_desc, NULL, &m_texture2d);
+	HRESULT res = device->CreateTexture2D(&m_desc, nullptr, &m_texture2d);
 	if(FAILED(res)) { return false; }
 
 	// Setup the description of the render target view.
@@ -144,7 +210,7 @@ bool beTexture::InitAsTarget(beRenderInterface* ri, int height, int width)
 	shaderResourceViewDesc.Format = m_desc.Format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	shaderResourceViewDesc.Texture2D.MipLevels = m_desc.MipLevels;
 
 	// Create the shader resource view.
 	res = device->CreateShaderResourceView(m_texture2d, &shaderResourceViewDesc, &m_texture);
@@ -168,7 +234,7 @@ bool beTexture::InitAsTarget(beRenderInterface* ri, int height, int width)
 	if(FAILED(res)) { BE_ASSERT(false); return false; }
 	
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	memset(&depthStencilViewDesc, 0, sizeof(depthStencilViewDesc));
+	ZeroMem(&depthStencilViewDesc);
 	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;

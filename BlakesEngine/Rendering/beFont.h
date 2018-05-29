@@ -7,6 +7,7 @@
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 
 class beRenderInterface;
+class beShaderPack;
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
@@ -23,17 +24,16 @@ public:
 	using VertexInputType = beShaderTexture2d::VertexType;
 	struct StringInfo
 	{
-		StringInfo() : width(0.f), height(0.f) {}
 		beRenderBuffer vertexBuffer;
 		beRenderBuffer indexBuffer;
-		float width;
-		float height;
+		float width = 0.f;
+		float height = 0.f;
 	};
 
 	beFont() = default;
 	~beFont() = default;
 
-	bool Init(beRenderInterface* ri, const char* filename, const beWString& textureFilename);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename);
 	void Deinit();
 
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
@@ -59,7 +59,7 @@ private:
 	};
 
 	bool ReadLine(const std::string & line);
-	bool LoadTexture(beRenderInterface* ri, const beWString& textureFilename);
+	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename);
 	const CharacterInfo* FindCharacterInfo(u32 c) const;
 	static bool CompareExtraKerning(const beFont::ExtraKerning* lhs, const beFont::ExtraKerning* rhs, int* res);
 	int GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar) const;

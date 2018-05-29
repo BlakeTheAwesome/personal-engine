@@ -10,14 +10,9 @@ PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 
-	float2 realPosition = (input.position + positionOffset);
-	float4 position = float4(realPosition, 0.f, 1.f);
-	//float4 worldPosition = mul(input.position, worldMatrix); // CPU should be sending us w=1 on our position, if not our matrix will misbehave.
-
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	//output.position = worldPosition;
-	//output.position = mul(output.position, viewMatrix);
+	float4 position = float4(input.position, 0.f, 1.f);
 	position = mul(position, orthoMatrix);
+	position = position + float4(positionOffset, 0.f, 0.f) - float4(1.f, 1.f, 0.f, 0.f);
 
 	output.position = position;
 	output.uv = input.uv;

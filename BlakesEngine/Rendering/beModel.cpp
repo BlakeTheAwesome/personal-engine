@@ -142,7 +142,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	return true;
 }
 
-bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, const beWString& textureFilename, const beModel::LoadOptions& loadOptions)
+bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename, const beModel::LoadOptions& loadOptions)
 {
 	OBJFileInfo fileInfo;
 	{
@@ -216,7 +216,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, const char* filename, cons
 	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	return LoadTexture(ri, textureFilename);
+	return LoadTexture(ri, shaderPack, textureFilename);
 }
 
 bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer)
@@ -227,7 +227,7 @@ bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* inde
 	return m_vertexBuffer.IsValid() && m_indexBuffer.IsValid();
 }
 
-bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
+bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
 {
 	int vertexCount = 6; 
 	int indexCount = vertexCount;
@@ -275,7 +275,7 @@ bool beModel::Init(beRenderInterface* ri, const beWString& textureFilename)
 	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	return LoadTexture(ri, textureFilename);
+	return LoadTexture(ri, shaderPack, textureFilename);
 }
 
 void beModel::Deinit()
@@ -285,9 +285,12 @@ void beModel::Deinit()
 	m_vertexBuffer.Release();
 }
 
-bool beModel::LoadTexture(beRenderInterface* ri, const beWString& textureFilename)
+bool beModel::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
 {
-	return m_texture.Init(ri, textureFilename);
+	beTexture::LoadOptions textureLoadOptions;
+	//textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
+	textureLoadOptions.format = beTextureFormat::R8G8B8A8_UNORM;
+	return m_texture.Init(ri, shaderPack, textureFilename, textureLoadOptions);
 }
 
 void beModel::Render(beRenderInterface* ri)
