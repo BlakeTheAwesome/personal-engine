@@ -180,6 +180,7 @@ void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->VSSetConstantBuffers(CBUFIDX_PositionBuffer, 1, constantBuffers);
 
+	ri->DisableZBuffer();
 	Render(ri, c_quadIndexCount, texture, textureMode);
 }
 
