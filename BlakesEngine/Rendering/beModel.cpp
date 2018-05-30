@@ -229,7 +229,7 @@ bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* inde
 
 bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
 {
-	int vertexCount = 6; 
+	int vertexCount = 5; 
 	int indexCount = vertexCount;
 	
 	beVector<VertexWithNormalType> vertices(vertexCount, vertexCount, 0);
@@ -251,23 +251,16 @@ bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWStr
 	vertices[2].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
 	vertices[2].uv = V21();
 
-	vertices[3].position = Vec4(1.f, -1.f, distFromCamera, w);  // BR
-	vertices[3].uv = V21();
-	
-	vertices[4].position = Vec4(-1.f, -1.f, distFromCamera, w);  // BL.
-	vertices[4].uv = V2Y();
+	vertices[3].position = Vec4(-1.f, -1.f, distFromCamera, w);  // BL.
+	vertices[3].uv = V2Y();
 
-	vertices[5].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL.
-	vertices[5].uv = V20();
-	
+	vertices[4].position = Vec4(-1.f, 1.f, distFromCamera, w);  // TL.
+	vertices[4].uv = V20();
 
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
-	indices[3] = 3;
-	indices[4] = 4;
-	indices[5] = 5;
-
+	for (int i : RangeIter(indexCount))
+	{
+		indices[i] = i;
+	}
 	
 	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
