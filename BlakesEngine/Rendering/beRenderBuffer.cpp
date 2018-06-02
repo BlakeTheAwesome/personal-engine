@@ -6,6 +6,10 @@
 
 #include <d3d11.h>
 
+bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, beRendering::Topology topology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData)
+{
+	return Allocate(ri, elementSize, numElements, d3dUsage, d3dBindFlags, beRendering::GetD3DTopology(topology), d3dCPUAccessFlags, d3dMiscFlags, initialData);
+}
 bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, int d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData)
 {
 	BE_ASSERT(elementSize > 0);

@@ -146,8 +146,8 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWS
 			// Render into new texture
 			
 			shaderPack->shaderTexture2d.RenderQuad(ri, V20(), V21(), loadedTexture, beShaderTexture2d::TextureMode::Clamped);
+			ri->RestoreRenderTarget();
 			FinaliseTarget();
-			
 			loadedTexture->Release();
 			loadedTexture2d->Release();
 		}
@@ -299,6 +299,5 @@ void beTexture::Clear(beRenderInterface* ri, Vec4 clearColour)
 {
 	auto context = ri->GetDeviceContext();
 	context->ClearRenderTargetView(m_renderTargetView, &clearColour.x);
-
 	context->ClearDepthStencilView(ri->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }

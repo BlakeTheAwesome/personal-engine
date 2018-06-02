@@ -213,7 +213,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, loadOptions.topology, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, shaderPack, textureFilename);
@@ -265,7 +265,7 @@ bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWStr
 	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, 0, 0, indices.begin());
+	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleStrip, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, shaderPack, textureFilename);

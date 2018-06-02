@@ -35,6 +35,7 @@ public:
 
 	void SetRenderTarget(ID3D11RenderTargetView* renderTarget, ID3D11DepthStencilView* depthStencilView, float height, float width, float nearPlane, float farPlane);
 	void RestoreRenderTarget();
+	void ClearDepth();
 
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();

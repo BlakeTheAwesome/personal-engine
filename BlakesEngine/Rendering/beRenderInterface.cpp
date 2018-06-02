@@ -556,6 +556,11 @@ void beRenderInterface::RestoreRenderTarget()
 	self.InitialiseViewport(self.m_width, self.m_height);
 }
 
+void beRenderInterface::ClearDepth()
+{
+	self.m_deviceContext->ClearDepthStencilView(self.m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
 const Matrix& beRenderInterface::GetProjectionMatrix() const
 {
 	return self.m_projectionMatrix;

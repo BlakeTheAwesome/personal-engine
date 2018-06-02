@@ -41,10 +41,10 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
 	m_font.Init(renderInterface, shaderPack, "tutefont.txt", beWString(L"tutefont.dds"));
 	m_model1.Init(renderInterface, shaderPack, beWString(L"boar.dds"));
-	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj", beWString(L"seafloor.dds"), {});
-	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj", beWString(L"seafloor.dds"), {});
+	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj",   beWString(L"seafloor.dds"), {});
+	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj",  beWString(L"seafloor.dds"), {});
 	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj", beWString(L"seafloor.dds"), {});
-	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj", beWString(L"barrels.dds"), {0.001f});
+	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj",  beWString(L"barrels.dds"),  {beRendering::Topology::TriangleList, false, 0.001f});
 	renderDoc->EndFrameCapture();
 
 	InitGrid(renderInterface);
@@ -339,8 +339,6 @@ void StateRenderTest::Render()
 			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
 		}
 			
-		//bitmapTextPreRendered.Render(renderInterface);
-		//textureShader2d.Render(renderInterface, bitmapTextPreRendered.GetIndexCount(), bitmapTextPreRendered.GetTexture());
 		renderInterface->DisableAlpha();
 			
 		renderInterface->EnableZBuffer();
@@ -354,6 +352,7 @@ void StateRenderTest::Render()
 		renderFrame(true);
 		renderInterface->RestoreRenderTarget();
 		m_bitmapScreenGrab.Init(renderInterface, m_screenGrabTexture);
+		renderInterface->ClearDepth();
 	}
 	renderFrame(false);
 

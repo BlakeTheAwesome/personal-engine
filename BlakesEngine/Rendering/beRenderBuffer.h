@@ -1,5 +1,6 @@
 #pragma once
 #include "BlakesEngine/Core/beNonCopiable.h"
+#include "beRendering.h"
 
 struct ID3D11Buffer;
 class beRenderInterface;
@@ -9,6 +10,7 @@ class beRenderBuffer : public NonCopiable
 	public:
 	~beRenderBuffer() { Release(); }
 
+	bool Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, beRendering::Topology d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData=nullptr);
 	bool Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, int d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData=nullptr);
 	void Release();
 

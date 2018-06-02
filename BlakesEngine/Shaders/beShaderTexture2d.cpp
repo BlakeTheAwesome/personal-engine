@@ -106,15 +106,15 @@ bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilena
 	beArray<VertexType, c_quadVertexCount> vertices;
 	beArray<u32, c_quadIndexCount> indices;
 
-	for (int i : RangeIter(indices.size()))
+	for (auto i : RangeIter((u32)indices.size()))
 	{
 		indices[i] = i;
 	}
 
-	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.size(), D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, vertices.data());
+	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), (u32)vertices.size(), D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, vertices.data());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.size(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, indices.data());
+	success = m_indexBuffer.Allocate(ri, ElementSize(indices), (u32)indices.size(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleList, 0, 0, indices.data());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	success = m_positionBuffer.Allocate(ri, sizeof(beShaderDefinitions::PositionBuffer), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
@@ -182,6 +182,7 @@ void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax
 
 	ri->DisableZBuffer();
 	Render(ri, c_quadIndexCount, texture, textureMode);
+	ri->RestoreRenderTarget();
 }
 
 void beShaderTexture2d::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode)

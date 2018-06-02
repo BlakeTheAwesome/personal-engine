@@ -12,10 +12,12 @@ struct ID3D11ShaderResourceView;
 class beModel
 {
 public:
+
 	struct LoadOptions
 	{
-		float scale = 1.f;
+		beRendering::Topology topology = beRendering::Topology::TriangleList;
 		bool flipFaces = false;
+		float scale = 1.f;
 	};
 
 	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid()); }
