@@ -420,6 +420,22 @@ class beVectorBase : protected Policy
 			return BE_NEW(obj) T{std::forward<Args>(args)...};
 		}
 
+		void AddRange(const T* range, int rangeLength)
+		{
+			ReserveAndSetCountUninitialised(m_count + rangeLength);
+			T* ptr = end() - rangeLength;
+			for (int i : RangeIter(rangeLength))
+			{
+				BE_NEW(ptr+i) T(range[i]);
+			}
+		}
+
+		template <int ARRAY_LEN>
+		void AddRange(const T (&range)[ARRAY_LEN])
+		{
+			AddRange(range, ARRAY_LEN);
+		}
+
 		T& operator[](int i)
 		{
 			return At(i);

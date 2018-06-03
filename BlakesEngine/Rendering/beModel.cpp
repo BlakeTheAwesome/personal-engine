@@ -11,6 +11,7 @@
 #include <d3d11.h>
 
 #include <fstream>
+#include <charconv>
 
 using VertexWithNormalType = beShaderTexture::VertexType;
 
@@ -23,7 +24,7 @@ struct VertInfo
 
 struct Face
 {
-	VertInfo verts[3];
+	beFixedVector<VertInfo, 4> verts;
 };
 
 struct OBJFileInfo
@@ -86,56 +87,37 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 	{
 		const char* next = line + 1;
 		while (*next == ' ') { next++; }
-		Face* face = fileInfo->faces.AllocateNew();
-		for (int i = 0; i < 3; i++)
-		{
-			// .OBJ is 1 indexed, so 0 here will be -1 for us.
-			int pos = 0;
-			int texCoord = 0;
-			int normal = 0;
 
-			int buffIndex = 0;
-			int nextThing = 0;
-			char buff[32];
-			while (true)
-			{
-				if (*next >= '0' && *next <= '9')
-				{
-					BE_ASSERT(buffIndex < 32);
-					buff[buffIndex++] = *next;
-					next++;
-					continue;
-				}
-				buff[buffIndex] = 0;
-				if (*buff != 0)
-				{
-					int thing = atoi(buff);
-					if (nextThing == 0)
-					{
-						pos = thing;
-					}
-					else if (nextThing == 1)
-					{
-						texCoord = thing;
-					}
-					else
-					{
-						normal = thing;
-					}
-				}
-				nextThing++;
-				buffIndex = 0;
+		Face* face = fileInfo->faces.AddNew();
 
-				if (*next++ != '/')
-				{
-					break;
-				}
-			}
+		const char* start = next;
+		const char* chunkEnd = start;
+		const char* end = start + strlen(start);
 			
+		while (start != end)
+		{
+			chunkEnd = std::find(start, end, ' ');
+			int pos = -1;
+			int texcoord = 1;
+			int normal = -1;
+			auto result = std::from_chars(start, chunkEnd, pos);
+			BE_ASSERT(*result.ptr == '/');
+			result = std::from_chars(result.ptr+1, chunkEnd, texcoord);
+			BE_ASSERT(*result.ptr == '/');
+			result = std::from_chars(result.ptr+1, chunkEnd, normal);
+			BE_ASSERT(*result.ptr == ' ' || result.ptr == end);
+
+			VertInfo* vert = face->verts.AddNew();
 			BE_ASSERT(pos != 0);
-			face->verts[i].vertex = pos - 1;
-			face->verts[i].uv = texCoord - 1;
-			face->verts[i].normal = normal - 1;
+			vert->vertex = pos - 1;
+			vert->uv = texcoord - 1;
+			vert->normal = normal - 1; 
+			
+			start = result.ptr;
+			if (*start == ' ')
+			{
+				start++;
+			}
 		}
 	}
 
@@ -161,52 +143,60 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 
 	float scale = loadOptions.scale;
 
-	int vertexCount = fileInfo.faces.Count() * 3; 
-	int indexCount = vertexCount;
+	int numFaces = fileInfo.faces.Count();
+	int maxVertCount = numFaces * 4;
 	
-	beVector<VertexWithNormalType> vertices(vertexCount, vertexCount, 0);
-	beVector<u32> indices(indexCount, indexCount, 0);
+	beVector<VertexWithNormalType> vertices(maxVertCount);
+	beVector<u32> indices(maxVertCount);
 
-	for (int i : RangeIter(indices.Count()))
+	for (const Face& face : fileInfo.faces)
 	{
-		indices[i] = i;
-	}
-
-	int vertexIndex = 0;
-	for (int i : RangeIter(fileInfo.faces.Count()))
-	{
-		const Face* face = &fileInfo.faces[i];
-		//LOG("face %d", i);
-		auto parseVert = [&](const VertInfo& vert)
+		u32 vertIndex = vertices.Count();
+		int numVerts = face.verts.Count();
+		for (int i : RangeIter(numVerts))
 		{
-			Vec3 vertex = fileInfo.vertices[vert.vertex];
-			Vec2 texCoord = (vert.uv == -1) ? V20() : fileInfo.texCoords[vert.uv];
-			Vec3 normal = (vert.normal == -1) ? V3Z() : fileInfo.vertexNormals[vert.normal];
-			vertices[vertexIndex].position = Vec4(vertex.x, vertex.y, vertex.z, 1.f) * scale;
-			vertices[vertexIndex].normal = normal;
-			vertices[vertexIndex].uv = texCoord;
+			const VertInfo& vertInfo = face.verts[i];
+
+			VertexWithNormalType* vert = vertices.AddNew();
+			Vec3 vertex = fileInfo.vertices[vertInfo.vertex];
+			Vec2 texCoord = (vertInfo.uv == -1) ? V20() : fileInfo.texCoords[vertInfo.uv];
+			Vec3 normal = (vertInfo.normal == -1) ? V3Z() : fileInfo.vertexNormals[vertInfo.normal];
+			vert->position = Vec4(vertex.x, vertex.y, vertex.z, 1.f) * scale;
+			vert->normal = normal;
+			vert->uv = texCoord;
 
 			// Invert to swap rhs to lhs
-			vertices[vertexIndex].position.z *= -1.f;
-			vertices[vertexIndex].uv.y *= -1.f;
-			vertices[vertexIndex].normal.z *= -1.f;
+			vert->position.z *= -1.f;
+			vert->uv.y *= -1.f;
+			vert->normal.z *= -1.f;
 			//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
-			vertexIndex++;
-		};
+		}
 
-		if (loadOptions.flipFaces)
+		enum IndexOrder
 		{
-			for (int j : RangeIterReverse(3))  // Read backwards to swap rhs to lhs
-			{
-				parseVert(face->verts[j]);
-			}
-		} 
-		else
+			Invalid,
+			Tri_lhs,
+			Tri_rhs,
+			Quad_lhs,
+			Quad_rhs,
+		} order = Invalid;
+
+		if (numVerts == 3)
 		{
-			for (int j : RangeIter(3))
-			{
-				parseVert(face->verts[j]);
-			}
+			order = loadOptions.flipFaces ? Tri_lhs : Tri_rhs;
+		}
+		else if (numVerts == 4)
+		{
+			order = loadOptions.flipFaces ? Quad_lhs : Quad_rhs;
+		}
+
+		switch (order)
+		{
+			case Tri_lhs: { indices.AddRange({vertIndex+2,vertIndex+1,vertIndex+0}); } break;
+			case Tri_rhs: { indices.AddRange({vertIndex+0,vertIndex+1,vertIndex+2}); } break;
+			case Quad_lhs: { indices.AddRange({vertIndex+2,vertIndex+1,vertIndex+0}); indices.AddRange({vertIndex+0,vertIndex+3,vertIndex+2}); } break;
+			case Quad_rhs: { indices.AddRange({vertIndex+0,vertIndex+1,vertIndex+2}); indices.AddRange({vertIndex+0,vertIndex+2,vertIndex+3}); } break;
+			default: BE_ASSERT(false);
 		}
 	}
 

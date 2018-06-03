@@ -4,13 +4,14 @@
   <!-- VC 2015 -->
   <Type Name="beVectorBase&lt;*, *&gt;">
     <Intrinsic Name="count" Expression="m_count" />
-    <Intrinsic Name="capacity" Expression="m_capacity * 1" />
-    <DisplayString>Vector Count:[{count()}/{capacity()}]</DisplayString>
+    <!-- Intrinsic Name="capacity" Expression="m_capacity * 1" />
+    <DisplayString>Vector Count:[{count()}/{capacity()}]</DisplayString-->
+    <DisplayString>Vector Count:{count()}</DisplayString>
     <Expand>
       <Item Name="[buffer]">m_buffer</Item>
       <ArrayItems>
         <Size>count()</Size>
-        <ValuePointer>m_buffer</ValuePointer>
+        <ValuePointer>($T1*)m_buffer</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
