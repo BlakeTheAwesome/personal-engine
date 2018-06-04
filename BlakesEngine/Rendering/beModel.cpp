@@ -149,6 +149,15 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 	beVector<VertexWithNormalType> vertices(maxVertCount);
 	beVector<u32> indices(maxVertCount);
 
+	const auto& axesSwizzle = loadOptions.axesSwizzle;
+	auto swizzleVert = [axesSwizzle](Vec3 unswizzled)
+	{
+		float x = VecElem(unswizzled, axesSwizzle[0]);
+		float y = VecElem(unswizzled, axesSwizzle[1]);
+		float z = VecElem(unswizzled, axesSwizzle[2]);
+		return Vec3(x, y, z);
+	};
+	
 	for (const Face& face : fileInfo.faces)
 	{
 		u32 vertIndex = vertices.Count();
@@ -158,17 +167,19 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 			const VertInfo& vertInfo = face.verts[i];
 
 			VertexWithNormalType* vert = vertices.AddNew();
-			Vec3 vertex = fileInfo.vertices[vertInfo.vertex];
-			Vec2 texCoord = (vertInfo.uv == -1) ? V20() : fileInfo.texCoords[vertInfo.uv];
+			Vec3 vertex = fileInfo.vertices[vertInfo.vertex] * scale;
 			Vec3 normal = (vertInfo.normal == -1) ? V3Z() : fileInfo.vertexNormals[vertInfo.normal];
-			vert->position = Vec4(vertex.x, vertex.y, vertex.z, 1.f) * scale;
+			Vec2 texCoord = (vertInfo.uv == -1) ? V20() : fileInfo.texCoords[vertInfo.uv];
+			
+			// Invert to swap rhs to lhs
+			vertex.z *= -1.f;
+			normal.z *= -1.f;
+			texCoord.y *= -1.f;
+
+			vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
 			vert->normal = normal;
 			vert->uv = texCoord;
 
-			// Invert to swap rhs to lhs
-			vert->position.z *= -1.f;
-			vert->uv.y *= -1.f;
-			vert->normal.z *= -1.f;
 			//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
 		}
 

@@ -15,9 +15,12 @@ public:
 
 	struct LoadOptions
 	{
+		enum {swizX=0, swizY=1, swizZ=2};
+
 		beRendering::Topology topology = beRendering::Topology::TriangleList;
 		bool flipFaces = false;
 		float scale = 1.f;
+		beArray<int, 3> axesSwizzle ={swizX, swizY, swizZ};
 	};
 
 	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid()); }

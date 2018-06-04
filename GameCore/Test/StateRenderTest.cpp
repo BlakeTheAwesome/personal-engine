@@ -43,8 +43,8 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	m_model1.Init(renderInterface, shaderPack, beWString(L"boar.dds"));
 	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj",   beWString(L"seafloor.dds"), {});
 	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj",  beWString(L"seafloor.dds"), {});
-	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj", beWString(L"seafloor.dds"), {});
-	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj",  beWString(L"barrels.dds"),  {beRendering::Topology::TriangleList, false, 0.001f});
+	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj", beWString(L"seafloor.dds"), {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
+	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj", beWString(L"barrels.dds"), {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
 	renderDoc->EndFrameCapture();
 
 	InitGrid(renderInterface);
