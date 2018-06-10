@@ -57,7 +57,7 @@
 		float4 diffuseColour;\
 		float3 lightDirection;\
 		float specularPower;\
-		float4 specularColor;\
+		float4 specularColour;\
 	};
 
 #define CBUF_ColourBuffer\

@@ -169,6 +169,7 @@ void beDebugWorld::ToggleRenderMouseRay()
 
 void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
+	shaderColour->SetActive(ri);
 	if (self.renderAxes)
 	{
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();

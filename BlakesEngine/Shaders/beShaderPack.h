@@ -18,8 +18,6 @@ class beShaderPack
 	beShaderTexture shaderTexture;
 	beShaderTexture2d shaderTexture2d;
 
-
-
 	private:
 	struct FrameData;
 	std::unique_ptr<FrameData> m_frameData;

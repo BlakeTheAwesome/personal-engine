@@ -105,24 +105,21 @@ void beShaderColour::Deinit()
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderColour::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
+void beShaderColour::SetActive(beRenderInterface* ri)
+{
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	deviceContext->IASetInputLayout(m_layout);
+	deviceContext->VSSetShader(m_vShader, nullptr, 0);
+	deviceContext->PSSetShader(m_pShader, nullptr, 0);
+}
+
+void beShaderColour::SetShaderParameters(beRenderInterface* ri)
 {
 }
 
 void beShaderColour::Render(beRenderInterface* ri, int indexCount, int indexOffset)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	
-	deviceContext->IASetInputLayout(m_layout);
-
-	deviceContext->VSSetShader(m_vShader, nullptr, 0);
-	deviceContext->PSSetShader(m_pShader, nullptr, 0);
-
 	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
 }
 
-void beShaderColour::RenderMore(beRenderInterface* ri, int indexCount, int indexOffset)
-{
-	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	deviceContext->DrawIndexed(indexCount, 0, indexOffset);
-}

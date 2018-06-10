@@ -1,5 +1,6 @@
 #include "BlakesEngine/bePCH.h"
 #include "beModel.h"
+#include "beRendering.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
@@ -7,12 +8,16 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
 #include "BlakesEngine/Shaders/beShaderTexture.h"
+#include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Core/beStringUtil.h"
 
 #include <d3d11.h>
 
 #include <fstream>
 #include <charconv>
+#include <filesystem>
+
+using namespace beRendering;
 
 using VertexWithNormalType = beShaderTexture::VertexType;
 
@@ -35,6 +40,7 @@ struct beModel::OBJFileInfo
 	beVector<Vec2> texCoords{2048};
 	struct Mesh
 	{
+		beString meshName;
 		beString material;
 		beVector<Face> faces{1024};
 		bool smoothShading = false;
@@ -112,12 +118,14 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Ns"))
 	{
-		int res = sscanf_s(begin + 3, "%f", &material->m_specExponent);
+		float f;
+		int res = sscanf_s(begin + 3, "%f", &f);
 		if (res != 1)
 		{
 			BE_ASSERT(false);
 			return false;
 		}
+		material->m_specularPower = f;
 		return true;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "d"))
@@ -146,12 +154,14 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "illum"))
 	{
-		int res = sscanf_s(begin + 6, "%d", &material->m_illuminationMode);
+		int i;
+		int res = sscanf_s(begin + 6, "%d", &i);
 		if (res != 1)
 		{
 			BE_ASSERT(false);
 			return false;
 		}
+		material->m_illuminationMode = i;
 		return true;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "map_Kd "))
@@ -219,11 +229,16 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 		{
 			currentMesh = fileInfo->meshes.AddNew();
 		}
-		currentMesh->material = _line.substr(2);
+		currentMesh->meshName = _line.substr(2);
 		return true;
 	}
 
-	if (beStringUtil::BeginsWith(lineStart, lineEnd, "vn "))
+	if (beStringUtil::BeginsWith(lineStart, lineEnd, "usemtl "))
+	{
+		currentMesh->material = _line.substr(7);
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "vn "))
 	{
 		float f1, f2, f3;
 		int res = sscanf_s(line, "vn %f %f %f", &f1, &f2, &f3);
@@ -313,8 +328,16 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	return true;
 }
 
-bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename, const beModel::LoadOptions& loadOptions)
+bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const beModel::LoadOptions& loadOptions)
 {
+	std::filesystem::path modelPath(filename);
+	std::filesystem::path modelFolder = modelPath.parent_path();
+	if (!LoadTexture(ri, shaderPack, textureFilename, modelFolder.u8string()))
+	{
+		BE_ASSERT(false);
+		return false;
+	}
+
 	OBJFileInfo fileInfo;
 	{
 		std::string line;
@@ -347,81 +370,99 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 		return Vec3(x, y, z);
 	};
 	
-	for (const Face& face : fileInfo.meshes.First().faces)
+	for (const OBJFileInfo::Mesh& mesh : fileInfo.meshes)
 	{
-		u32 vertIndex = vertices.Count();
-		int numVerts = face.verts.Count();
-		for (int i : RangeIter(numVerts))
+		indices.Clear();
+		for (const Face& face : mesh.faces)
 		{
-			const VertInfo& vertInfo = face.verts[i];
+			u32 vertIndex = vertices.Count();
+			int numVerts = face.verts.Count();
+			for (int i : RangeIter(numVerts))
+			{
+				const VertInfo& vertInfo = face.verts[i];
 
-			VertexWithNormalType* vert = vertices.AddNew();
-			Vec3 vertex = fileInfo.vertices[vertInfo.vertex] * scale;
-			Vec3 normal = (vertInfo.normal == -1) ? V3Z() : fileInfo.vertexNormals[vertInfo.normal];
-			Vec2 texCoord = (vertInfo.uv == -1) ? V20() : fileInfo.texCoords[vertInfo.uv];
-			
-			// Invert to swap rhs to lhs
-			vertex.z *= -1.f;
-			normal.z *= -1.f;
-			texCoord.y *= -1.f;
+				VertexWithNormalType* vert = vertices.AddNew();
+				Vec3 vertex = fileInfo.vertices[vertInfo.vertex] * scale;
+				Vec3 normal = (vertInfo.normal == -1) ? V3Z() : fileInfo.vertexNormals[vertInfo.normal];
+				Vec2 texCoord = (vertInfo.uv == -1) ? V20() : fileInfo.texCoords[vertInfo.uv];
 
-			vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
-			vert->normal = normal;
-			vert->uv = texCoord;
+				// Invert to swap rhs to lhs
+				vertex.z *= -1.f;
+				normal.z *= -1.f;
+				texCoord.y *= -1.f;
 
-			//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
+				vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
+				vert->normal = normal;
+				vert->uv = texCoord;
+
+				//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
+			}
+
+			enum IndexOrder
+			{
+				Invalid,
+				Tri_lhs,
+				Tri_rhs,
+				Quad_lhs,
+				Quad_rhs,
+			} order = Invalid;
+
+			if (numVerts == 3)
+			{
+				order = loadOptions.flipFaces ? Tri_lhs : Tri_rhs;
+			}
+			else if (numVerts == 4)
+			{
+				order = loadOptions.flipFaces ? Quad_lhs : Quad_rhs;
+			}
+
+			switch (order)
+			{
+				case Tri_lhs: { indices.AddRange({vertIndex+2,vertIndex+1,vertIndex+0}); } break;
+				case Tri_rhs: { indices.AddRange({vertIndex+0,vertIndex+1,vertIndex+2}); } break;
+				case Quad_lhs: { indices.AddRange({vertIndex+2,vertIndex+1,vertIndex+0}); indices.AddRange({vertIndex+0,vertIndex+3,vertIndex+2}); } break;
+				case Quad_rhs: { indices.AddRange({vertIndex+0,vertIndex+1,vertIndex+2}); indices.AddRange({vertIndex+0,vertIndex+2,vertIndex+3}); } break;
+				default: BE_ASSERT(false);
+			}
 		}
 
-		enum IndexOrder
-		{
-			Invalid,
-			Tri_lhs,
-			Tri_rhs,
-			Quad_lhs,
-			Quad_rhs,
-		} order = Invalid;
-
-		if (numVerts == 3)
-		{
-			order = loadOptions.flipFaces ? Tri_lhs : Tri_rhs;
-		}
-		else if (numVerts == 4)
-		{
-			order = loadOptions.flipFaces ? Quad_lhs : Quad_rhs;
-		}
-
-		switch (order)
-		{
-			case Tri_lhs: { indices.AddRange({vertIndex+2,vertIndex+1,vertIndex+0}); } break;
-			case Tri_rhs: { indices.AddRange({vertIndex+0,vertIndex+1,vertIndex+2}); } break;
-			case Quad_lhs: { indices.AddRange({vertIndex+2,vertIndex+1,vertIndex+0}); indices.AddRange({vertIndex+0,vertIndex+3,vertIndex+2}); } break;
-			case Quad_rhs: { indices.AddRange({vertIndex+0,vertIndex+1,vertIndex+2}); indices.AddRange({vertIndex+0,vertIndex+2,vertIndex+3}); } break;
-			default: BE_ASSERT(false);
-		}
+		auto outMesh = m_meshes.AddNew();
+		outMesh->m_name = mesh.meshName;
+		const beStringView& materialName = mesh.material;
+		outMesh->m_materialIndex = m_materials.Count() == 1 ? 0 : m_materials.IndexOf([&](const Material& material) {return material.m_name == materialName; });
+		bool success = outMesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, loadOptions.topology, 0, 0, indices.begin());
+		if (!success) { BE_ASSERT(false); return false; }
 	}
 
 	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	Mesh* mesh = m_meshes.AddNew();
-	success = mesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, loadOptions.topology, 0, 0, indices.begin());
-	if (!success) { BE_ASSERT(false); return false; }
-
-	return LoadTexture(ri, shaderPack, textureFilename);
+	return true;
 }
 
-bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer)
+bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, gsl::span<Mesh> meshes, gsl::span<Material> materials)
 {
 	Deinit();
 
 	m_vertexBuffer = std::move(*vertexBuffer);
-	Mesh* mesh = m_meshes.AddNew();
-	mesh->m_indexBuffer = std::move(*indexBuffer);
+	bool valid = m_vertexBuffer.IsValid();
+	
+	for (Material& iterMaterial : materials)
+	{
+		Material* material = m_materials.AddNew();
+		*material = std::move(iterMaterial);
+	}
 
-	return m_vertexBuffer.IsValid() && mesh->m_indexBuffer.IsValid();
+	for (Mesh& iterMesh : meshes)
+	{
+		Mesh* mesh = m_meshes.AddNew();
+		*mesh = std::move(iterMesh);
+	}
+
+	return valid;
 }
 
-bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename)
+bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename)
 {
 	int vertexCount = 5; 
 	int indexCount = vertexCount;
@@ -463,7 +504,7 @@ bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStri
 	success = mesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleStrip, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	return LoadTexture(ri, shaderPack, textureFilename);
+	return LoadTexture(ri, shaderPack, textureFilename, "");
 }
 
 void beModel::Deinit()
@@ -473,13 +514,21 @@ void beModel::Deinit()
 	m_vertexBuffer.Release();
 }
 
-bool beModel::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename)
+void beModel::SetMeshVisibility(const beStringView& meshName, bool visible)
+{
+	Mesh* mesh = m_meshes.AddressOf([&](const Mesh& mesh) { return mesh.m_name == meshName; });
+	BE_ASSERT(mesh);
+	mesh->m_enabled = visible;
+}
+
+bool beModel::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, const beStringView& additionalLoadDir)
 {
 	m_materials.Release();
 
 	beTexture::LoadOptions textureLoadOptions;
 	//textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
 	textureLoadOptions.format = beTextureFormat::R8G8B8A8_UNORM;
+	textureLoadOptions.additionalLoadDir = additionalLoadDir.ToString();
 
 	if (!beStringUtil::EndsWithI(textureFilename, "mtl"))
 	{
@@ -502,24 +551,119 @@ bool beModel::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const
 		}
 	}
 
-	return false;
+	for (Material& material : m_materials)
+	{
+		if (!material.m_texDiffuse.empty())
+		{
+			if (!material.m_texture.Init(ri, shaderPack, material.m_texDiffuse, textureLoadOptions))
+			{
+				BE_ASSERT(false);
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
-void beModel::Render(beRenderInterface* ri)
+void beModel::Render(beRenderInterface* ri, beShaderPack* shaderPack, beRendering::ShaderType shaderOverride)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
 	u32 strides[] = {(u32)m_vertexBuffer.ElementSize()};
 	u32 offsets[] = {0};
-
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
-	deviceContext->IASetIndexBuffer(m_meshes[0].m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_meshes[0].m_indexBuffer.D3DIndexTopology());
+	
+	std::optional<beShaderLitTexture::ShaderParams> defaultLitParams;
+
+	beRendering::ShaderType lastShaderType = ShaderType::Invalid;
+	for (const Mesh& mesh : m_meshes)
+	{
+		if (!mesh.m_enabled)
+		{
+			continue;
+		}
+		const Material* material = mesh.m_materialIndex != -1 ? &m_materials[mesh.m_materialIndex] : nullptr;
+		beRendering::ShaderType shader = shaderOverride;
+		if (shader == ShaderType::Default && material)
+		{
+			shader = material->m_shader;
+		}
+
+		deviceContext->IASetIndexBuffer(mesh.m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)mesh.m_indexBuffer.D3DIndexTopology());
+		switch (shader)
+		{
+			case beRendering::ShaderType::Texture:
+			{
+				if (lastShaderType != beRendering::ShaderType::Texture)
+				{
+					lastShaderType = beRendering::ShaderType::Texture;
+					shaderPack->shaderTexture.SetActive(ri);
+					shaderPack->shaderTexture.SetShaderParameters(ri);
+				}
+				shaderPack->shaderTexture.Render(ri, mesh.m_indexBuffer.NumElements(), material ? material->m_texture.GetTexture() : nullptr);
+			}
+			break;
+
+			case beRendering::ShaderType::Colour:
+			{
+				if (lastShaderType != beRendering::ShaderType::Colour)
+				{
+					lastShaderType = beRendering::ShaderType::Colour;
+					shaderPack->shaderColour.SetActive(ri);
+					shaderPack->shaderColour.SetShaderParameters(ri);
+				}
+				shaderPack->shaderColour.Render(ri, mesh.m_indexBuffer.NumElements(), 0);
+			}
+			break;
+
+			case beRendering::ShaderType::LitTexture:
+			default:
+			{
+				if (lastShaderType != beRendering::ShaderType::LitTexture)
+				{
+					lastShaderType = beRendering::ShaderType::LitTexture;
+					shaderPack->shaderLitTexture.SetActive(ri);
+				}
+
+				if (!defaultLitParams)
+				{
+					defaultLitParams = beShaderLitTexture::GetDefaultShaderParams(ri);
+				}
+				beShaderLitTexture::ShaderParams shaderParams = *defaultLitParams;
+				shaderPack->shaderLitTexture.SetShaderParameters(ri, shaderParams);
+
+				if (material)
+				{
+					if (material->m_ambientColour)
+					{
+						shaderParams.ambientColour = beMath::ToVec4(*material->m_ambientColour, 1.f);
+					}
+					if (material->m_diffuseColour)
+					{
+						shaderParams.diffuseColour = beMath::ToVec4(*material->m_diffuseColour, 1.f);
+					}
+					if (material->m_specularColour)
+					{
+						shaderParams.specularColour = beMath::ToVec4(*material->m_specularColour, 1.f);
+					}
+					if (material->m_specularPower)
+					{
+						shaderParams.specularPower = *material->m_specularPower;
+					}
+				}
+				shaderPack->shaderLitTexture.Render(ri, mesh.m_indexBuffer.NumElements(), material ? material->m_texture.GetTexture() : nullptr);
+			}
+			break;
+		}
+	}
+
 }
 
-ID3D11ShaderResourceView * beModel::GetTexture(int materialIndex) const
+ID3D11ShaderResourceView* beModel::GetTexture(int meshIndex) const
 {
-	return m_materials[materialIndex].m_texture.GetTexture();
+	int materialIndex = m_meshes[meshIndex].m_materialIndex;
+	return materialIndex >= 0 ? m_materials[materialIndex].m_texture.GetTexture() : nullptr;
 }
 
 int beModel::GetIndexCount(int meshIndex)

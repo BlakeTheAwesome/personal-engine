@@ -27,7 +27,8 @@ public:
 
 	void SetColour(const Vec4& colour);
 
-	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
+	void SetActive(beRenderInterface* renderInterface);
+	void SetShaderParameters(beRenderInterface* renderInterface);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture);
 

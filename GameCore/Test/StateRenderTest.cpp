@@ -104,6 +104,12 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	{
 		m_renderGrid = !m_renderGrid;
 	}
+	if (keyboard->IsPressed(beKeyboard::Button::F))
+	{
+		m_showGroundFilled = !m_showGroundFilled;
+		m_gridModel.SetMeshVisibility("GroundFilled", m_showGroundFilled);
+	}
+
 	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
 		stateMachine->ChangeState(nullptr);
@@ -111,8 +117,8 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	}
 	if (gamepad->GetPressed(beGamepad::Y))
 	{
-		m_shaderToUse++;
-		m_shaderToUse %= numShaders;
+		int shader = ((int)m_shaderToUse + 1) % (int)beRendering::ShaderType::Count;
+		m_shaderToUse = (beRendering::ShaderType)shader;
 	}
 	if (gamepad->GetPressed(beGamepad::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
 	{
@@ -193,10 +199,8 @@ void StateRenderTest::Render()
 		m_haveWrittenToTexture = true;
 		writeTexture.SetAsTarget(renderInterface);
 		writeTexture.Clear(renderInterface, V40());
-		m_model4.Render(renderInterface);
-		shaderPack->shaderColour.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-		shaderPack->shaderColour.Render(renderInterface, m_model4.GetIndexCount(), 0);
-				
+		m_models[3].Render(renderInterface, shaderPack, beRendering::ShaderType::Colour);
+		
 		renderInterface->DisableZBuffer();
 		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
 			
@@ -219,61 +223,16 @@ void StateRenderTest::Render()
 	
 	auto renderFrame = [&](bool writingToScreenGrabTexture)
 	{
-		beModel* modelToRender = nullptr;
-		switch (m_modelToUse)
-		{
-			case 0: modelToRender = nullptr; break;
-			case 1: modelToRender = &m_model1; break;
-			case 2: modelToRender = &m_model2; break;
-			case 3: modelToRender = &m_model3; break;
-			case 4: modelToRender = &m_model4; break;
-			case 5: modelToRender = &m_model5; break;
-		}
+		beModel* modelToRender = m_modelToUse < m_models.Count() ? &m_models[m_modelToUse] : nullptr;
 			
 		if (modelToRender)
 		{
-			modelToRender->Render(renderInterface);
-
-			switch (m_shaderToUse)
-			{
-				case 0:
-					shaderPack->shaderLitTexture.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-					shaderPack->shaderLitTexture.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
-				break;
-				case 1:
-					shaderPack->shaderTexture.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-					shaderPack->shaderTexture.Render(renderInterface, modelToRender->GetIndexCount(), modelToRender->GetTexture());
-				break;
-				case 2:
-					shaderPack->shaderColour.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-					shaderPack->shaderColour.Render(renderInterface, modelToRender->GetIndexCount(), 0);
-				break;
-			}
+			modelToRender->Render(renderInterface, shaderPack, m_shaderToUse);
 		}
 
 		if (m_renderGrid)
 		{
-			shaderPack->shaderColour.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-			//m_gridModel.Render(renderInterface);
-			//shaderPack->shaderColour.Render(renderInterface, modelToRender->GetIndexCount(), 0);
-
-
-			ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
-			ID3D11Buffer* vertexBuffers[] = { m_gridModel.GetVertexBuffer().GetBuffer() };
-			u32 strides[] = {(u32)m_gridModel.GetVertexBuffer().ElementSize() };
-			u32 offsets[] = { 0 };
-
-			deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
-			
-			//deviceContext->IASetIndexBuffer(m_gridModel.GetIndexBuffer().GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-			//deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_gridModel.GetIndexBuffer().D3DIndexTopology());
-			//BE_ASSERT(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST == (D3D11_PRIMITIVE_TOPOLOGY)m_gridModel.GetIndexBuffer().D3DIndexTopology());
-			//shaderPack->shaderColour.Render(renderInterface, modelToRender->GetIndexCount(), 0);
-
-			deviceContext->IASetIndexBuffer(m_gridModelLinesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-			deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_gridModelLinesIndexBuffer.D3DIndexTopology());
-			shaderPack->shaderColour.Render(renderInterface, m_gridModelLinesIndexBuffer.NumElements(), 0);
-			BE_ASSERT(D3D11_PRIMITIVE_TOPOLOGY_LINELIST == (D3D11_PRIMITIVE_TOPOLOGY)m_gridModelLinesIndexBuffer.D3DIndexTopology());
+			m_gridModel.Render(renderInterface, shaderPack);
 		}
 
 		debugWorld->SetRenderAxes(m_renderAxes);
@@ -438,14 +397,24 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 		}
 	}
 
-	beRenderBuffer vertexBuffer, indexBuffer;
+	beRenderBuffer vertexBuffer, indexBuffer, linesIndexB;
 
 	vertexBuffer.Allocate(renderInterface, ElementSize(vertices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
-	indexBuffer.Allocate(renderInterface, decltype(triIndices)::element_size, triIndices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, triIndices.begin());
-	bool success = m_gridModel.InitFromBuffers(&vertexBuffer, &indexBuffer);
-	if (!success) { BE_ASSERT(false); return; }
 
-	success = m_gridModelLinesIndexBuffer.Allocate(renderInterface, decltype(lineIndices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, lineIndices.begin());
+	beModel::Material materials[1];
+	materials[0].m_shader = beRendering::ShaderType::Colour;
+
+	beModel::Mesh meshes[2];
+	meshes[0].m_name = beString("GroundFilled");
+	meshes[0].m_indexBuffer.Allocate(renderInterface, decltype(triIndices)::element_size, triIndices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, 0, 0, triIndices.begin());
+	meshes[0].m_materialIndex = 0;
+	meshes[0].m_enabled = false;
+
+	meshes[1].m_name = beString("GroundLines");
+	meshes[1].m_indexBuffer.Allocate(renderInterface, decltype(lineIndices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, lineIndices.begin());
+	meshes[1].m_materialIndex = 0;
+
+	bool success = m_gridModel.InitFromBuffers(&vertexBuffer, meshes, materials);
 	if (!success) { BE_ASSERT(false); return; }
 }
 

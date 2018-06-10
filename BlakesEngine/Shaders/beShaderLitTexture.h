@@ -11,13 +11,15 @@ struct ID3D11InputLayout;
 struct ID3D11Buffer;
 struct ID3D11SamplerState;
 struct ID3D11ShaderResourceView;
-
+class beModel;
 class beRenderInterface;
 
 class beShaderLitTexture
 {
 public:
 	using VertexType = beShaderDefinitions::ShaderLitTexture::VertexInputType;
+	using ShaderParams = beShaderDefinitions::LightBuffer;
+	
 
 	beShaderLitTexture() = default;
 	~beShaderLitTexture();
@@ -25,9 +27,11 @@ public:
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 
-	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
+	static ShaderParams GetDefaultShaderParams(beRenderInterface* renderInterface);
+	void SetShaderParameters(beRenderInterface* renderInterface, const ShaderParams& shaderParams);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture);
+	void SetActive(beRenderInterface* renderInterface);
 
 	// Todo: add async loader
 	bool IsLoaded() const;
@@ -40,4 +44,6 @@ private:
 	
 	beRenderBuffer m_lightBuffer;
 	beRenderBuffer m_cameraBuffer;
+
+	ShaderParams m_lastShaderParams;
 };

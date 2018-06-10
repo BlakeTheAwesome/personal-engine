@@ -10,5 +10,17 @@ namespace beRendering
 		Count
 	};
 
+	enum class ShaderType
+	{
+		Invalid = -1,
+		Default,
+		LitTexture,
+		Texture,
+		Colour,
+		//Texture2D,
+
+		Count
+	};
+
 	int GetD3DTopology(Topology topology);
 }

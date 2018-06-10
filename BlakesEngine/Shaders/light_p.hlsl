@@ -30,7 +30,7 @@ float4 main(PixelInputType input) : SV_TARGET
 		colour += diffuseColour * lightIntensity;
 
 		float3 reflectionVector = normalize(2 * lightIntensity * input.normal - lightDirection);
-		specular = specularColor * pow(saturate(dot(input.viewDirection, reflectionVector)), specularPower);
+		specular = specularColour * pow(saturate(dot(input.viewDirection, reflectionVector)), specularPower);
 	}
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.

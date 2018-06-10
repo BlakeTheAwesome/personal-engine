@@ -22,26 +22,59 @@ public:
 		float scale = 1.f;
 		beArray<int, 3> axesSwizzle ={swizX, swizY, swizZ};
 	};
+	struct Mesh
+	{
+		beString m_name;
+		beRenderBuffer m_indexBuffer;
+		int m_materialIndex = -1;
+		bool m_enabled = true;
+	};
+	struct Material
+	{
+		beString m_name;
+		beTexture m_texture;
+		std::optional<Vec3> m_ambientColour;
+		std::optional<Vec3> m_diffuseColour;
+		std::optional<Vec3> m_specularColour;
+		std::optional<float> m_specularPower;
+		std::optional<float> m_alpha;
+		std::optional<int> m_illuminationMode;
+		beRendering::ShaderType m_shader = beRendering::ShaderType::Default;
 
-	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid()); }
+		float m_bumpMultiplier = 1.f;
+		beString m_texAmbient;
+		beString m_texDiffuse;
+		beString m_texBump;
+		beString m_texSpec;
+		beString m_texEnv;
+	};
 
-	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename);
-	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename, const LoadOptions& loadOptions);
-	bool InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer);
+	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid()); }
+
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename);
+	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const LoadOptions& loadOptions);
+	bool InitFromBuffers(beRenderBuffer* vertexBuffer, gsl::span<Mesh> meshes, gsl::span<Material> materials);
 	void Deinit();
 
-	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename);
-
-	void Render(beRenderInterface* ri);
-	
-	ID3D11ShaderResourceView* GetTexture() const;
-	const beRenderBuffer& GetVertexBuffer() const { return m_vertexBuffer; }
-	const beRenderBuffer& GetIndexBuffer() const { return m_indexBuffer; }
-
-	int GetIndexCount();
+	void SetMeshVisibility(const beStringView& meshName, bool visible);
+	void Render(beRenderInterface* ri, beShaderPack* shaderPack, beRendering::ShaderType shaderOverride=beRendering::ShaderType::Default);
 
 private:
-	beTexture m_texture;
+	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, const beStringView& additionalLoadDir);
+	
+	int GetNumMeshes() const { return m_meshes.Count(); }
+	ID3D11ShaderResourceView* GetTexture(int meshIndex = 0) const;
+	const beRenderBuffer& GetVertexBuffer() const { return m_vertexBuffer; }
+	const beRenderBuffer& GetIndexBuffer(int meshIndex = 0) const { return m_meshes[meshIndex].m_indexBuffer; }
+
+	int GetIndexCount(int meshIndex = 0);
+
+	struct OBJFileInfo;
+
+	bool ReadMaterialLine(const std::string& line);
+	static bool ReadMeshLine(const std::string& line, OBJFileInfo* fileInfo);
+
 	beRenderBuffer m_vertexBuffer;
-	beRenderBuffer m_indexBuffer;
+	beVector<Mesh, 1> m_meshes;
+	beVector<Material, 1> m_materials;
 };

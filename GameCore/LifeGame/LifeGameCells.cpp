@@ -14,7 +14,7 @@
 
 void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
-	shaderPack->shaderColour.SetShaderParameters(renderInterface, viewMatrix);
+	shaderPack->shaderColour.SetShaderParameters(renderInterface);
 
 	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
 	unsigned int stride = m_vertexBuffer.ElementSize();
@@ -25,6 +25,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
+	shaderPack->shaderColour.SetActive(renderInterface);
 	shaderPack->shaderColour.Render(renderInterface, m_indexBuffer.NumElements(), 0);
 
 

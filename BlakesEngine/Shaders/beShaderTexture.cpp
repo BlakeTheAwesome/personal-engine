@@ -149,7 +149,17 @@ void beShaderTexture::SetColour(const Vec4& colour)
 	m_colourDirty = true;
 }
 
-void beShaderTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
+void beShaderTexture::SetActive(beRenderInterface* ri)
+{
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+
+	deviceContext->IASetInputLayout(m_layout);
+	deviceContext->VSSetShader(m_vShader, nullptr, 0);
+	deviceContext->PSSetShader(m_pShader, nullptr, 0);
+	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
+}
+
+void beShaderTexture::SetShaderParameters(beRenderInterface* ri)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 
@@ -172,14 +182,7 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& v
 void beShaderTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	
-	deviceContext->IASetInputLayout(m_layout);
 
-	deviceContext->VSSetShader(m_vShader, nullptr, 0);
-	deviceContext->PSSetShader(m_pShader, nullptr, 0);
-	
 	deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
-
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 }

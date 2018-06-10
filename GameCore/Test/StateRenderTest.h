@@ -36,7 +36,6 @@ class StateRenderTest : public beState
 	beModel m_model4;
 	beModel m_model5;
 	beModel m_gridModel;
-	beRenderBuffer m_gridModelLinesIndexBuffer;
 	beTexture m_screenGrabTexture;
 	beBitmap m_bitmapTexQuad;
 	beBitmap m_bitmapTextDynamic;
@@ -45,10 +44,11 @@ class StateRenderTest : public beState
 
 	beFlightCamera m_camera;
 
-	int m_shaderToUse = 0;
+	beRendering::ShaderType m_shaderToUse = beRendering::ShaderType::Default;
 	int m_modelToUse = 3;
 
 	bool m_haveWrittenToTexture = false;
 	bool m_renderAxes = true;
 	bool m_renderGrid = true;
+	bool m_showGroundFilled = false;
 };

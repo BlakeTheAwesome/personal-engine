@@ -3,6 +3,7 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
+#include "BlakesEngine/Rendering/beModel.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
@@ -11,7 +12,6 @@
 #include <D3Dcompiler.h>
 
 using CameraBufferType = beShaderDefinitions::CameraBuffer;
-using LightBufferType = beShaderDefinitions::LightBuffer;
 
 beShaderLitTexture::~beShaderLitTexture()
 {
@@ -79,7 +79,7 @@ bool beShaderLitTexture::Init(beRenderInterface* ri, const beWString& pixelFilen
 		return false;
 	}
 
-	bool success = m_lightBuffer.Allocate(ri, sizeof(LightBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	bool success = m_lightBuffer.Allocate(ri, sizeof(ShaderParams), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if (!success)
 	{
 		return false;
@@ -121,25 +121,40 @@ void beShaderLitTexture::Deinit()
 	BE_SAFE_RELEASE(m_vShader);
 }
 
-void beShaderLitTexture::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
+beShaderLitTexture::ShaderParams beShaderLitTexture::GetDefaultShaderParams(beRenderInterface* ri)
 {
-	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	const Vec3& lightDirection = ri->GetLightDirection();
+	beShaderLitTexture::ShaderParams shaderParams;
+	shaderParams.diffuseColour = Vec4(1.0f, 0.2f, 0.2f, 1.0f);
+	shaderParams.ambientColour = Vec4(0.0f, 0.1f, 0.3f, 1.0f);
+	shaderParams.specularColour = Vec4(1.f, 1.f, 1.f, 1.f);
+	shaderParams.specularPower = 32.f;
 	
+	const Vec3& lightDirection = ri->GetLightDirection();
+	shaderParams.lightDirection = lightDirection;
+	
+	return shaderParams;
+}
+
+void beShaderLitTexture::SetShaderParameters(beRenderInterface* ri, const ShaderParams& shaderParams)
+{
+	bool update = false;
+	update = update || (shaderParams.ambientColour != m_lastShaderParams.ambientColour);
+	update = update || (shaderParams.diffuseColour != m_lastShaderParams.diffuseColour);
+	update = update || (shaderParams.lightDirection != m_lastShaderParams.lightDirection);
+	update = update || (shaderParams.specularPower != m_lastShaderParams.specularPower);
+	update = update || (shaderParams.specularColour != m_lastShaderParams.specularColour);
+
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+	
+	if (update)
 	{
-		auto dataPtr = (LightBufferType*)m_lightBuffer.Map(ri);
+		m_lastShaderParams = shaderParams;
+		auto dataPtr = (ShaderParams*)m_lightBuffer.Map(ri);
 		if (!dataPtr)
 		{
 			return;
 		}
-	
-		dataPtr->diffuseColour = Vec4(1.0f, 0.2f, 0.2f, 1.0f);
-		dataPtr->ambientColour = Vec4(0.0f, 0.1f, 0.3f, 1.0f);
-		dataPtr->lightDirection = lightDirection;
-		
-		dataPtr->specularPower = 32.f;
-		dataPtr->specularColor = Vec4(1.f, 1.f, 1.f, 1.f);
-		
+		*dataPtr = shaderParams;
 		m_lightBuffer.Unmap(ri);
 	}
 
@@ -150,15 +165,18 @@ void beShaderLitTexture::SetShaderParameters(beRenderInterface* ri, const Matrix
 void beShaderLitTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-	
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->DrawIndexed(indexCount, 0, 0);
+}
+
+void beShaderLitTexture::SetActive(beRenderInterface* ri)
+{
+	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
+
 	deviceContext->IASetInputLayout(m_layout);
 
 	deviceContext->VSSetShader(m_vShader, nullptr, 0);
 	deviceContext->PSSetShader(m_pShader, nullptr, 0);
-	
-	deviceContext->PSSetShaderResources(0, 1, &texture);
-	//deviceContext->VSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 }

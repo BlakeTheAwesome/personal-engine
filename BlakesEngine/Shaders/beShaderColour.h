@@ -24,10 +24,10 @@ public:
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 
-	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
+	void SetActive(beRenderInterface* renderInterface);
+	void SetShaderParameters(beRenderInterface* renderInterface);
 	
 	void Render(beRenderInterface* renderInterface, int indexCount, int indexOffset);
-	void RenderMore(beRenderInterface* renderInterface, int indexCount, int indexOffset);
 
 	// Todo: add async loader
 	bool IsLoaded() const;
