@@ -30,11 +30,7 @@ class StateRenderTest : public beState
 
 	beAppData* m_appData = nullptr;
 	beFont m_font;
-	beModel m_model1;
-	beModel m_model2;
-	beModel m_model3;
-	beModel m_model4;
-	beModel m_model5;
+	beVector<beModel> m_models;
 	beModel m_gridModel;
 	beTexture m_screenGrabTexture;
 	beBitmap m_bitmapTexQuad;

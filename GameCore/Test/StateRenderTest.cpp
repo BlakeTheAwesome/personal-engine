@@ -35,17 +35,13 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	auto renderInterface = m_appData->renderInterface;
 	auto shaderPack = m_appData->shaderPack;
 
-	auto renderDoc = m_appData->renderDocManager;
-
-	renderDoc->StartFrameCapture();
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
-	m_font.Init(renderInterface, shaderPack, "tutefont.txt","tutefont.dds");
-	m_model1.Init(renderInterface, shaderPack,"boar.dds");
-	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj",  "seafloor.dds", {});
-	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj", "seafloor.dds", {});
-	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj","seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
-	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj","barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
-	renderDoc->EndFrameCapture();
+	m_font.Init(renderInterface, shaderPack, "tutefont.txt", "tutefont.dds");
+	m_models.AddNew()->Init(renderInterface, shaderPack, "boar.dds");
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube.obj",   "seafloor.dds", {});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube2.obj",  "seafloor.dds", {});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "teapot.obj", "seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "boxes.obj", "barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
 
 	InitGrid(renderInterface);
 
@@ -76,21 +72,17 @@ void StateRenderTest::Exit(beStateMachine* stateMachine)
 	m_screenGrabTexture.FinaliseTarget();
 	m_screenGrabTexture.Deinit();
 
-	m_gridModelLinesIndexBuffer.Release();
 	m_gridModel.Deinit();
-	m_model5.Deinit();
-	m_model4.Deinit();
-	m_model3.Deinit();
-	m_model2.Deinit();
-	m_model1.Deinit();
+	for (beModel& model : m_models)
+	{
+		model.Deinit();
+	}
+	m_models.Release();
 	m_font.Deinit();
 }
 
 void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 {
-	const int numShaders = 3;
-	const int numModels = 6;
-	
 	auto gamepad = m_appData->gamepad;
 	auto keyboard = m_appData->keyboard;
 	auto mouse = m_appData->mouse;
@@ -123,7 +115,7 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	if (gamepad->GetPressed(beGamepad::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
 	{
 		m_modelToUse++;
-		m_modelToUse %= numModels;
+		m_modelToUse %= m_models.Count() + 1;
 	}
 	if (gamepad->GetPressed(beGamepad::Select))
 	{
