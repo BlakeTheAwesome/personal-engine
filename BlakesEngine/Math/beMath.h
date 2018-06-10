@@ -214,6 +214,16 @@ namespace beMath
 		return !(lhs==rhs);
 	}
 
+	inline constexpr bool operator==(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
+	{
+		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
+	}
+
+	inline constexpr bool operator!=(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
+	{
+		return !(lhs==rhs);
+	}
+
 	inline constexpr float SmoothStep(float v)
 	{
 		// x = 3(v^2) - 2(v^3)
