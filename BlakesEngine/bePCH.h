@@ -25,6 +25,7 @@
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/optional_arg.h"
 #include "BlakesEngine/DataStructures/beArray.h"
+#include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
 
 //#include "BlakesEngine/Core/beTypeTests.h"
