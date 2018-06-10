@@ -257,20 +257,17 @@ class beVectorBase : protected Policy
 			Release();
 		}
 
-		template <typename... Args>
-		void SetAllTo(Args&&... args)
-		{
-			for (int i = 0; i < m_count; i++)
-			{
-
-			}
-		}
-		
 		void Release()
 		{
 			DestructElements(0, m_count-1);
 			m_count = 0;
 			Policy::Release();
+		}
+
+		void Clear()
+		{
+			DestructElements(0, m_count-1);
+			m_count = 0;
 		}
 		
 		void ReleaseUninitialised()
@@ -432,6 +429,41 @@ class beVectorBase : protected Policy
 			{
 				BE_NEW(ptr+i) T(range[i]);
 			}
+		}
+
+		template <typename U>//, typename std::enable_if_t<!std::is_convertible_v<decltype(std::declval<T>() == std::declval<U>()), bool>> = 0>
+		T* AddressOf(U&& comp)
+		{
+			auto ret = std::find_if(begin(), end(), std::forward<U>(comp));
+			return ret != end() ? ret : nullptr;
+		}
+
+		template <typename U>//, typename std::enable_if_t<!std::is_convertible_v<decltype(std::declval<T>() == std::declval<U>()), bool>> = 0>
+		const T* AddressOf(U&& comp) const
+		{
+			auto ret = std::find_if(begin(), end(), std::forward<U>(comp));
+			return ret != end() ? ret : nullptr;
+		}
+
+		template <typename U>
+		T* AddressOf(const U& val)
+		{
+			auto ret = std::find(begin(), end(), val);
+			return ret != end() ? ret : nullptr;
+		}
+
+		template <typename U>
+		const T* AddressOf(const U& val) const
+		{
+			auto ret = std::find(begin(), end(), val);
+			return ret != end() ? ret : nullptr;
+		}
+
+		template <typename U>
+		int IndexOf(U&& comp) const
+		{
+			auto address = AddressOf(std::forward<U>(comp));
+			return address ? (int)std::distance(begin(), address) : -1;
 		}
 
 		template <int ARRAY_LEN>
