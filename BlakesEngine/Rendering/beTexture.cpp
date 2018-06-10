@@ -9,6 +9,7 @@
 #include "BlakesEngine/Shaders/beShaderPack.h"
 
 #include <D3D11.h>
+#include <filesystem>
 
 beTexture::~beTexture()
 {
@@ -38,24 +39,42 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 		}
 		auto fileNameExt = fileNameBegin + extensionIndex + 1;
 
-		if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, L"dds"))
+		if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, "dds"))
 		{
 			fileType = DDS;
 		}
-		else if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, L"PNG"))
+		else if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, "PNG"))
 		{
 			fileType = PNG;
 		}
 	}
 
+	const char* additionalLoadDir = nullptr;
+	if (loadOptions)
+	{
+		const LoadOptions& options = *loadOptions;
+		if (!options.additionalLoadDir.empty())
+		{
+			additionalLoadDir = options.additionalLoadDir.c_str();
+		}
+	}
 	if (fileType == DDS)
 	{
 		beWString filename = beStringConversion::UTF8ToWide(textureFilename);
 		HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), filename.c_str(), nullptr, &m_texture);
 		if (FAILED(res))
 		{
-			BE_ASSERT(false);
-			return false;
+			if (additionalLoadDir)
+			{
+				std::filesystem::path path(additionalLoadDir);
+				path /= textureFilename.c_str();
+				res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), path.c_str(), nullptr, &m_texture);
+			}
+			if (FAILED(res))
+			{
+				BE_ASSERT(false);
+				return false;
+			}
 		}
 		ID3D11Resource* resource;
 		m_texture->GetResource(&resource);
@@ -67,6 +86,13 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 	{
 		int imageWidth, imageHeight, channelsInFile;
 		auto imageBuffer = stbi_load(textureFilename.c_str(), &imageWidth, &imageHeight, &channelsInFile, 4);
+		if (!imageBuffer && additionalLoadDir)
+		{
+			std::filesystem::path path(additionalLoadDir);
+			path /= textureFilename.c_str();
+			const beString& u8Path = path.u8string();
+			imageBuffer = stbi_load(u8Path.c_str(), &imageWidth, &imageHeight, &channelsInFile, 4);
+		}
 		BE_ASSERT(imageBuffer);
 		defer(stbi_image_free(imageBuffer););
 

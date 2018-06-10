@@ -24,6 +24,7 @@ public:
 		int width = 0;
 		int mipLevels = 0;
 		beTextureFormat format = beTextureFormat::Invalid;
+		beString additionalLoadDir;
 		bool cpuReadable = false;
 		bool cpuWritable = false;
 	};
