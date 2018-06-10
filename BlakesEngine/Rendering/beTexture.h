@@ -30,7 +30,7 @@ public:
 
 	~beTexture();
 
-	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename, optional_arg<LoadOptions> loadOptions);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, optional_arg<LoadOptions> loadOptions);
 	bool InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptions);
 	void FinaliseTarget();
 	void Deinit();

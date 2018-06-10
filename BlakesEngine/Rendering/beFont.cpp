@@ -78,7 +78,7 @@ bool beFont::ReadLine(const std::string& line)
 	return true;
 }
 
-bool beFont::Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename)
+bool beFont::Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename)
 {
 	std::string line;
 	std::ifstream fstream(filename);
@@ -126,7 +126,7 @@ void beFont::Deinit()
 	m_texture.Deinit();
 }
 
-bool beFont::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
+bool beFont::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename)
 {
 	return m_texture.Init(ri, shaderPack, textureFilename, {});
 }

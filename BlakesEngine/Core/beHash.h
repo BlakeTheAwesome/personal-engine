@@ -24,9 +24,9 @@ struct beHash<beString>
 		return beHashFunctions::MurmerHash32(str, (int)strlen(str));
 	}
 	
-	static size_t GetHash(const beString& str)
+	static size_t GetHash(const beStringView& str)
 	{
-		return beHashFunctions::MurmerHash32(str.c_str(), (int)str.size());
+		return beHashFunctions::MurmerHash32(str.c_str(), (int)str.Length());
 	}
 };
 

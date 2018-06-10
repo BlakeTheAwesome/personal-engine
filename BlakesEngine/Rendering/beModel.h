@@ -25,12 +25,12 @@ public:
 
 	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid() && !m_indexBuffer.IsValid()); }
 
-	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename);
-	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename, const LoadOptions& loadOptions);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename);
+	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename, const LoadOptions& loadOptions);
 	bool InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer);
 	void Deinit();
 
-	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename);
+	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename);
 
 	void Render(beRenderInterface* ri);
 	

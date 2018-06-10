@@ -33,7 +33,7 @@ public:
 	beFont() = default;
 	~beFont() = default;
 
-	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename);
 	void Deinit();
 
 	// invalidStringCharacter will be used to replace unknown symbols, set to 0 to skip, or ' ' for a blank character
@@ -59,7 +59,7 @@ private:
 	};
 
 	bool ReadLine(const std::string & line);
-	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename);
+	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename);
 	const CharacterInfo* FindCharacterInfo(u32 c) const;
 	static bool CompareExtraKerning(const beFont::ExtraKerning* lhs, const beFont::ExtraKerning* rhs, int* res);
 	int GetKerning(u32 lhs, u32 rhs, const CharacterInfo* lastChar, const CharacterInfo* nextChar) const;

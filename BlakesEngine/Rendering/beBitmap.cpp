@@ -42,7 +42,7 @@ bool beBitmap::Init(beRenderInterface* ri, const beTexture& texture)
 	return true;
 }
 
-bool beBitmap::Init(beRenderInterface* ri, beShaderPack* shaderPack, float width, float height, const beWString& textureFilename)
+bool beBitmap::Init(beRenderInterface* ri, beShaderPack* shaderPack, float width, float height, const beStringView& textureFilename)
 {
 	if (!InitCommon(ri, width, height))
 	{
@@ -127,7 +127,7 @@ bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStrin
 	return true;
 }
 
-bool beBitmap::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
+bool beBitmap::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename)
 {
 	return m_texture.Init(ri, shaderPack, textureFilename, {});
 }

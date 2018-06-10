@@ -106,7 +106,7 @@ void beEnvironment::Initialise(const beStringView& commandLine)
 	}
 }
 
-const beString* beEnvironment::Get(const beString& str)
+const beString* beEnvironment::Get(const beStringView& str)
 {
 	return m_map.Get(str);
 }

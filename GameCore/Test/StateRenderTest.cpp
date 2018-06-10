@@ -39,12 +39,12 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 
 	renderDoc->StartFrameCapture();
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
-	m_font.Init(renderInterface, shaderPack, "tutefont.txt", beWString(L"tutefont.dds"));
-	m_model1.Init(renderInterface, shaderPack, beWString(L"boar.dds"));
-	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj",   beWString(L"seafloor.dds"), {});
-	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj",  beWString(L"seafloor.dds"), {});
-	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj", beWString(L"seafloor.dds"), {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
-	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj", beWString(L"barrels.dds"), {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
+	m_font.Init(renderInterface, shaderPack, "tutefont.txt","tutefont.dds");
+	m_model1.Init(renderInterface, shaderPack,"boar.dds");
+	m_model2.InitWithFilename(renderInterface, shaderPack, "cube.obj",  "seafloor.dds", {});
+	m_model3.InitWithFilename(renderInterface, shaderPack, "cube2.obj", "seafloor.dds", {});
+	m_model4.InitWithFilename(renderInterface, shaderPack, "teapot.obj","seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
+	m_model5.InitWithFilename(renderInterface, shaderPack, "boxes.obj","barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
 	renderDoc->EndFrameCapture();
 
 	InitGrid(renderInterface);
@@ -55,7 +55,7 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
 	m_screenGrabTexture.InitAsTarget(renderInterface, textureLoadOptions);
 
-	m_bitmapTexQuad.Init(renderInterface, shaderPack, 128, 128, beWString(L"boar.dds"));
+	m_bitmapTexQuad.Init(renderInterface, shaderPack, 128, 128, "boar.dds");
 	m_bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
 	m_bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	

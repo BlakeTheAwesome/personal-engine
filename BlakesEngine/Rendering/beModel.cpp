@@ -7,6 +7,7 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
 #include "BlakesEngine/Shaders/beShaderTexture.h"
+#include "BlakesEngine/Core/beStringUtil.h"
 
 #include <d3d11.h>
 
@@ -27,18 +28,202 @@ struct Face
 	beFixedVector<VertInfo, 4> verts;
 };
 
-struct OBJFileInfo
+struct beModel::OBJFileInfo
 {
-	OBJFileInfo() : vertices(2048), vertexNormals(2048), texCoords(2048), faces(1024){}
-	beVector<Vec3> vertices;
-	beVector<Vec3> vertexNormals;
-	beVector<Vec2> texCoords;
-	beVector<Face> faces;
+	beVector<Vec3> vertices{2048};
+	beVector<Vec3> vertexNormals{2048};
+	beVector<Vec2> texCoords{2048};
+	struct Mesh
+	{
+		beString material;
+		beVector<Face> faces{1024};
+		bool smoothShading = false;
+	};
+	beVector<Mesh> meshes;
 };
 
-static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
+std::optional<Vec3> ReadVec3(const char* begin, const char* end)
 {
-	if (line[0] == 'v' && line[1] == 'n')
+	// #BJLPTODO: next MSVC will have std::from_chars float implementation, would be better. 
+	float f1 = 0.f;
+	float f2 = 0.f;
+	float f3 = 0.f;
+	int res = sscanf_s(begin, "%f %f %f", &f1, &f2, &f3);
+	if (res != 3)
+	{
+		return {};
+	}
+	return Vec3(f1, f2, f3);
+}
+
+bool beModel::ReadMaterialLine(const std::string& line)
+{
+	auto begin = line.c_str();
+	auto end = begin + line.size();
+
+	if (beStringUtil::BeginsWith(begin, end, "newmtl"))
+	{
+		Material* material = m_materials.AddNew();
+		material->m_name = beString(begin + 7, end);
+		return true;
+	}
+	
+	if (m_materials.Count() == 0)
+	{
+		return true;
+	}
+
+	Material* material = &m_materials.Last();
+	if (beStringUtil::BeginsWith(begin, end, "Ka"))
+	{
+		auto res = ReadVec3(begin + 3, end);
+		if (!res)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+
+		material->m_ambientColour = *res;
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "Kd"))
+	{
+		auto res = ReadVec3(begin + 3, end);
+		if (!res)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+
+		material->m_diffuseColour = *res;
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "Ks"))
+	{
+		auto res = ReadVec3(begin + 3, end);
+		if (!res)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+
+		material->m_specularColour = *res;
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "Ns"))
+	{
+		int res = sscanf_s(begin + 3, "%f", &material->m_specExponent);
+		if (res != 1)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "d"))
+	{
+		float alpha = 0.f;
+		int res = sscanf_s(begin + 2, "%f", &alpha);
+		if (res != 1)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		material->m_alpha = alpha;
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "Tr"))
+	{
+		float transparency = 0.f;
+		int res = sscanf_s(begin + 3, "%f", &transparency);
+		if (res != 1)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		material->m_alpha = 1.f - transparency;
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "illum"))
+	{
+		int res = sscanf_s(begin + 6, "%d", &material->m_illuminationMode);
+		if (res != 1)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "map_Kd "))
+	{
+		auto lastSpaceIndex = line.rfind(" ");
+		material->m_texDiffuse = line.substr(lastSpaceIndex+1);
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "map_Ka "))
+	{
+		auto lastSpaceIndex = line.rfind(" ");
+		material->m_texAmbient = line.substr(lastSpaceIndex+1);
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "map_Ks "))
+	{
+		auto lastSpaceIndex = line.rfind(" ");
+		material->m_texSpec = line.substr(lastSpaceIndex+1);
+		return true;
+	}
+	else if (beStringUtil::BeginsWith(begin, end, "map_Bump "))
+	{
+		auto lastSpaceIndex = line.rfind(" ");
+		material->m_texBump = line.substr(lastSpaceIndex+1);
+
+		if (lastSpaceIndex != 8)
+		{
+			auto subParamStart = begin + 8;
+			auto subParamEnd = begin + lastSpaceIndex;
+			while (subParamStart != subParamEnd)
+			{
+				subParamStart++;
+				if (beStringUtil::BeginsWith(subParamStart, subParamEnd, "-bm"))
+				{
+					if (sscanf_s(subParamStart, "-bm %f", &material->m_bumpMultiplier) != 1)
+					{
+						return false;
+					}
+				}
+
+				subParamStart = std::find(subParamStart, subParamEnd, ' ');
+			}
+		}
+		return true;
+	}
+
+	return true;
+}
+
+bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
+{
+	if (fileInfo->meshes.Count() == 0)
+	{
+		fileInfo->meshes.AddNew();
+	}
+	OBJFileInfo::Mesh* currentMesh = &fileInfo->meshes.Last();
+
+	const char* line = _line.c_str();
+	auto lineStart = _line.begin();
+	auto lineEnd = _line.end();
+
+	if (beStringUtil::BeginsWith(lineStart, lineEnd, "o "))
+	{
+		if (currentMesh->faces.Count() > 0)
+		{
+			currentMesh = fileInfo->meshes.AddNew();
+		}
+		currentMesh->material = _line.substr(2);
+		return true;
+	}
+
+	if (beStringUtil::BeginsWith(lineStart, lineEnd, "vn "))
 	{
 		float f1, f2, f3;
 		int res = sscanf_s(line, "vn %f %f %f", &f1, &f2, &f3);
@@ -53,7 +238,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 			return false;
 		}
 	}
-	else if (line[0] == 'v' && line[1] == 't')
+	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "vt "))
 	{
 		float f1, f2;
 		int res = sscanf_s(line, "vt %f %f", &f1, &f2);
@@ -68,7 +253,7 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 			return false;
 		}
 	}
-	else if (line[0] == 'v')
+	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "v "))
 	{
 		float f1, f2, f3;
 		int res = sscanf_s(line, "v %f %f %f", &f1, &f2, &f3);
@@ -83,12 +268,12 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 			return false;
 		} 
 	}
-	else if (line[0] == 'f')
+	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "f "))
 	{
 		const char* next = line + 1;
 		while (*next == ' ') { next++; }
 
-		Face* face = fileInfo->faces.AddNew();
+		Face* face = currentMesh->faces.AddNew();
 
 		const char* start = next;
 		const char* chunkEnd = start;
@@ -120,11 +305,15 @@ static bool ReadLine(const char* line, OBJFileInfo* fileInfo)
 			}
 		}
 	}
+	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "s "))
+	{
+		currentMesh->smoothShading = beStringUtil::EndsWith(lineStart, lineEnd, "1");
+	}
 
 	return true;
 }
 
-bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beWString& textureFilename, const beModel::LoadOptions& loadOptions)
+bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename, const beModel::LoadOptions& loadOptions)
 {
 	OBJFileInfo fileInfo;
 	{
@@ -133,7 +322,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 		while (!fstream.eof())
 		{
 			std::getline(fstream, line);
-			if (!ReadLine(line.c_str(), &fileInfo))
+			if (!ReadMeshLine(line.c_str(), &fileInfo))
 			{
 				BE_ASSERT(false);
 				return false;
@@ -143,7 +332,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 
 	float scale = loadOptions.scale;
 
-	int numFaces = fileInfo.faces.Count();
+	int numFaces = fileInfo.meshes.First().faces.Count();
 	int maxVertCount = numFaces * 4;
 	
 	beVector<VertexWithNormalType> vertices(maxVertCount);
@@ -158,7 +347,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 		return Vec3(x, y, z);
 	};
 	
-	for (const Face& face : fileInfo.faces)
+	for (const Face& face : fileInfo.meshes.First().faces)
 	{
 		u32 vertIndex = vertices.Count();
 		int numVerts = face.verts.Count();
@@ -214,7 +403,8 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, loadOptions.topology, 0, 0, indices.begin());
+	Mesh* mesh = m_meshes.AddNew();
+	success = mesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, loadOptions.topology, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, shaderPack, textureFilename);
@@ -222,13 +412,16 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 
 bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, beRenderBuffer* indexBuffer)
 {
-	m_vertexBuffer = std::move(*vertexBuffer);
-	m_indexBuffer = std::move(*indexBuffer);
+	Deinit();
 
-	return m_vertexBuffer.IsValid() && m_indexBuffer.IsValid();
+	m_vertexBuffer = std::move(*vertexBuffer);
+	Mesh* mesh = m_meshes.AddNew();
+	mesh->m_indexBuffer = std::move(*indexBuffer);
+
+	return m_vertexBuffer.IsValid() && mesh->m_indexBuffer.IsValid();
 }
 
-bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
+bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename)
 {
 	int vertexCount = 5; 
 	int indexCount = vertexCount;
@@ -266,7 +459,8 @@ bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWStr
 	bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleStrip, 0, 0, indices.begin());
+	Mesh* mesh = m_meshes.AddNew();
+	success = mesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleStrip, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
 	return LoadTexture(ri, shaderPack, textureFilename);
@@ -274,17 +468,41 @@ bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWStr
 
 void beModel::Deinit()
 {
-	m_texture.Deinit();
-	m_indexBuffer.Release();
+	m_materials.Release();
+	m_meshes.Release();
 	m_vertexBuffer.Release();
 }
 
-bool beModel::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename)
+bool beModel::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename)
 {
+	m_materials.Release();
+
 	beTexture::LoadOptions textureLoadOptions;
 	//textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
 	textureLoadOptions.format = beTextureFormat::R8G8B8A8_UNORM;
-	return m_texture.Init(ri, shaderPack, textureFilename, textureLoadOptions);
+
+	if (!beStringUtil::EndsWithI(textureFilename, "mtl"))
+	{
+		// Load single texture file
+		Material* material = m_materials.AddNew();
+		return material->m_texture.Init(ri, shaderPack, textureFilename, textureLoadOptions);
+	}
+
+	{
+		std::string line;
+		std::ifstream fstream(textureFilename.c_str());
+		while (!fstream.eof())
+		{
+			std::getline(fstream, line);
+			if (!ReadMaterialLine(line))
+			{
+				BE_ASSERT(false);
+				return false;
+			}
+		}
+	}
+
+	return false;
 }
 
 void beModel::Render(beRenderInterface* ri)
@@ -295,16 +513,16 @@ void beModel::Render(beRenderInterface* ri)
 	u32 offsets[] = {0};
 
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
-	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
+	deviceContext->IASetIndexBuffer(m_meshes[0].m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_meshes[0].m_indexBuffer.D3DIndexTopology());
 }
 
-ID3D11ShaderResourceView * beModel::GetTexture() const
+ID3D11ShaderResourceView * beModel::GetTexture(int materialIndex) const
 {
-	return m_texture.GetTexture();
+	return m_materials[materialIndex].m_texture.GetTexture();
 }
 
-int beModel::GetIndexCount()
+int beModel::GetIndexCount(int meshIndex)
 {
-	return m_indexBuffer.NumElements();
+	return m_meshes[meshIndex].m_indexBuffer.NumElements();
 }

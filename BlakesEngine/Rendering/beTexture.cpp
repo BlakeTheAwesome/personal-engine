@@ -15,7 +15,7 @@ beTexture::~beTexture()
 	Deinit();
 }
 
-bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWString& textureFilename, optional_arg<LoadOptions> loadOptions)
+bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, optional_arg<LoadOptions> loadOptions)
 {
 	BE_ASSERT(!m_texture);
 
@@ -50,7 +50,8 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWS
 
 	if (fileType == DDS)
 	{
-		HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), textureFilename.c_str(), nullptr, &m_texture);
+		beWString filename = beStringConversion::UTF8ToWide(textureFilename);
+		HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), filename.c_str(), nullptr, &m_texture);
 		if (FAILED(res))
 		{
 			BE_ASSERT(false);
@@ -64,10 +65,8 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beWS
 	}
 	else
 	{
-		beString fileName;
-		beStringConversion::UTF8FromWide(textureFilename, &fileName);
 		int imageWidth, imageHeight, channelsInFile;
-		auto imageBuffer = stbi_load(fileName.c_str(), &imageWidth, &imageHeight, &channelsInFile, 4);
+		auto imageBuffer = stbi_load(textureFilename.c_str(), &imageWidth, &imageHeight, &channelsInFile, 4);
 		BE_ASSERT(imageBuffer);
 		defer(stbi_image_free(imageBuffer););
 

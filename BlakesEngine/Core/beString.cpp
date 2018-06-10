@@ -46,4 +46,17 @@ void beStringConversion::UTF8FromWide(const beWString& wStr, beString* outStr)
 	BE_FREE(buffer);
 }
 
+beWString beStringConversion::UTF8ToWide(const beStringView& utf8)
+{
+	beWString ret;
+	UTF8ToWide(utf8, &ret);
+	return ret;
+}
+
+beString beStringConversion::UTF8FromWide(const beWString& wStr)
+{
+	beString ret;
+	UTF8FromWide(wStr, &ret);
+	return ret;
+}
 

@@ -2,8 +2,8 @@
 #include "BlakesEngine/Core/String/StringBuilder.h"
 #include <string>
 
-typedef std::wstring beWString;
-typedef std::string beString;
+using beWString = std::wstring;
+using beString = std::string;
 
 class beStringBuilder : public ExternalStringBuilder::StringBuilder
 {
@@ -57,6 +57,20 @@ class beStringView
 		return m_ownedStr.c_str();
 	}
 
+	bool IsEqual(const beString& rhs) const
+	{
+		if (m_beStr) { return rhs == *m_beStr; }
+		if (m_cstr) { return rhs == m_cstr; }
+		return rhs == m_ownedStr;
+	}
+
+	beString ToString() const
+	{
+		if (m_beStr) { return *m_beStr; }
+		if (m_cstr) { return beString(m_cstr); }
+		return m_ownedStr;
+	}
+
 	const char* begin() const
 	{
 		return c_str();
@@ -71,8 +85,36 @@ class beStringView
 	const beString m_ownedStr;
 };
 
+inline bool operator==(const beString& lhs, const beStringView& rhs)
+{
+	return rhs.IsEqual(lhs);
+}
+inline bool operator==(const beStringView& lhs, const beString& rhs)
+{
+	return lhs.IsEqual(rhs);
+}
+
+namespace fmt
+{
+	template <>
+	struct formatter<beStringView>
+	{
+		template <typename ParseContext>
+		constexpr auto parse(ParseContext &ctx) { return ctx.begin(); }
+
+		template <typename FormatContext>
+		auto format(const beStringView &stringView, FormatContext &ctx)
+		{
+			return format_to(ctx.begin(), "{}", stringView.c_str());
+		}
+	};
+}
+
 namespace beStringConversion
 {
 	void UTF8ToWide(const beStringView& utf8, beWString* outWStr);
 	void UTF8FromWide(const beWString& wStr, beString* outStr);
+
+	beWString UTF8ToWide(const beStringView& utf8);
+	beString UTF8FromWide(const beWString& wStr);
 };

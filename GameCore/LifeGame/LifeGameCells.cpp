@@ -221,7 +221,7 @@ void LifeGameCells::Initialise(beAppData* appData)
 {
 	auto renderInterface = appData->renderInterface;
 
-	m_font.Init(renderInterface, appData->shaderPack, "tutefont.txt", beWString(L"tutefont.dds"));
+	m_font.Init(renderInterface, appData->shaderPack, "tutefont.txt", "tutefont.dds");
 
 	beRandom rng;
 	rng.InitFromSystemTime();

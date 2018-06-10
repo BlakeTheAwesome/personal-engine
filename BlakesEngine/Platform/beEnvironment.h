@@ -8,7 +8,7 @@ class beEnvironment
 	beEnvironment() = default;
 	void Initialise(const beStringView& commandLine);
 
-	const beString* Get(const beString& str);
+	const beString* Get(const beStringView& str);
 	const beString* Get(const char* str);
 	private:
 

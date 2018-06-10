@@ -5,7 +5,7 @@
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Platform/beWindows.h"
 
-PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		static Impl* s_staticInstance;
 		beSystemEventManager* m_systemEventManager;
@@ -21,9 +21,9 @@ PIMPL_DATA_END
 
 beWindow::Impl* beWindow::Impl::s_staticInstance = nullptr;
 
-PIMPL_CONSTRUCT_ARGS(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+PIMPL_CONSTRUCT_ARGS(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
 PIMPL_CONSTRUCT_ARGS_VARS(beWindow, systemEventManager, _hInstance, windowName, windowWidth, windowHeight, fullscreen)
-PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beString& windowName, int windowWidth, int windowHeight, bool fullscreen)
+PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
 : m_systemEventManager(systemEventManager)
 , m_width(windowWidth)
 , m_height(windowHeight)
