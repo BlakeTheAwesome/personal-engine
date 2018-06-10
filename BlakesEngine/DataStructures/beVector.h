@@ -93,6 +93,8 @@ struct beVectorMallocPolicy : public NonCopiable
 	void Release()
 	{
 		BE_FREE_ALIGNED(m_buffer);
+		m_buffer = nullptr;
+		m_capacity = 0;
 	}
 
 	bool CheckRoomForAlloc()
@@ -186,6 +188,8 @@ struct beVectorHybridPolicy : public NonCopiable
 		if (m_buffer != (T*)m_storage)
 		{
 			BE_FREE_ALIGNED(m_buffer);
+			m_buffer = (T*)m_storage;
+			m_capacity = RESERVED_SIZE;
 		}
 	}
 
@@ -476,6 +480,30 @@ class beVectorBase : protected Policy
 		const T* end() const
 		{
 			return ((const T*)Policy::m_buffer) + m_count;
+		}
+
+		T& First()
+		{
+			BE_ASSERT(Count() > 0);
+			return *begin();
+		}
+
+		const T& First() const
+		{
+			BE_ASSERT(Count() > 0);
+			return *begin();
+		}
+
+		T& Last()
+		{
+			BE_ASSERT(Count() > 0);
+			return *(end() - 1);
+		}
+
+		const T& Last() const
+		{
+			BE_ASSERT(Count() > 0);
+			return *(end() - 1);
 		}
 
 		typedef bool (*CompareFn)(const T*, const T*, int*);
