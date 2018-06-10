@@ -8,6 +8,7 @@
 #include <cmath>  
 
 #include"BlakesEngine/External/fmt/format.h"
+#include"BlakesEngine/Core/beGSL.h"
 #include <optional>
 
 #include "BlakesEngine/Platform/beWindows.h"
