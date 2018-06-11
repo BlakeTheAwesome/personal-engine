@@ -23,25 +23,32 @@ beShaderTexture2d::~beShaderTexture2d()
 	BE_ASSERT(!m_clampedSampleState);
 	BE_ASSERT(!m_wrappedSampleState);
 	BE_ASSERT(!m_pShader);
-	BE_ASSERT(!m_vShader);
+	BE_ASSERT(!m_vShaderNormalised);
+	BE_ASSERT(!m_vShaderPixelSpace);
 }
 
-bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilename, const beWString& vertexFilename)
+bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilename, const beWString& vertexFilenameNormalised, const beWString& vertexFilenamePixelSpace)
 {
 	ID3D11Device* device = ri->GetDevice();
 	D3D11_SAMPLER_DESC samplerDesc;
 
 	//ID3D10Blob* errorMessage = nullptr;
-	ID3D10Blob* vBuffer = nullptr;
+	ID3D10Blob* vBufferNorm = nullptr;
+	ID3D10Blob* vBufferPix = nullptr;
 	ID3D10Blob* pBuffer = nullptr;
 
-	D3DReadFileToBlob(vertexFilename.c_str(), &vBuffer);
+	D3DReadFileToBlob(vertexFilenameNormalised.c_str(), &vBufferNorm);
+	D3DReadFileToBlob(vertexFilenamePixelSpace.c_str(), &vBufferPix);
 	D3DReadFileToBlob(pixelFilename.c_str(), &pBuffer);
-	defer({ BE_SAFE_RELEASE(vBuffer);});
+	defer({BE_SAFE_RELEASE(vBufferNorm);});
+	defer({BE_SAFE_RELEASE(vBufferPix);});
 	defer({ BE_SAFE_RELEASE(pBuffer);});
 
 
-	HRESULT res = device->CreateVertexShader(vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), nullptr, &m_vShader);
+	HRESULT res = device->CreateVertexShader(vBufferNorm->GetBufferPointer(), vBufferNorm->GetBufferSize(), nullptr, &m_vShaderNormalised);
+	if (FAILED(res)) { return false; }
+
+	res = device->CreateVertexShader(vBufferPix->GetBufferPointer(), vBufferPix->GetBufferSize(), nullptr, &m_vShaderPixelSpace);
 	if (FAILED(res)) { return false; }
 
 	res = device->CreatePixelShader(pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), nullptr, &m_pShader);
@@ -69,7 +76,7 @@ bool beShaderTexture2d::Init(beRenderInterface* ri, const beWString& pixelFilena
 	
 	unsigned int numElements = BE_ARRAY_DIMENSION(polygonLayout);
 
-	res = device->CreateInputLayout(polygonLayout, numElements, vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), &m_layout);
+	res = device->CreateInputLayout(polygonLayout, numElements, vBufferNorm->GetBufferPointer(), vBufferNorm->GetBufferSize(), &m_layout);
 	if (FAILED(res)) { return false; }
 	
 	// Create a texture sampler state description.
@@ -132,14 +139,15 @@ void beShaderTexture2d::Deinit()
 	BE_SAFE_RELEASE(m_wrappedSampleState);
 	BE_SAFE_RELEASE(m_layout);
 	BE_SAFE_RELEASE(m_pShader);
-	BE_SAFE_RELEASE(m_vShader);
+	BE_SAFE_RELEASE(m_vShaderNormalised);
+	BE_SAFE_RELEASE(m_vShaderPixelSpace);
 }
 
 void beShaderTexture2d::SetShaderParameters(beRenderInterface* ri, const Matrix& viewMatrix)
 {
 }
 
-void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, TextureMode textureMode)
+void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode)
 {
 	{
 		Vec2 size = uvMax-uvMin;
@@ -181,17 +189,25 @@ void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax
 	deviceContext->VSSetConstantBuffers(CBUFIDX_PositionBuffer, 1, constantBuffers);
 
 	ri->DisableZBuffer();
-	Render(ri, c_quadIndexCount, texture, textureMode);
+	Render(ri, c_quadIndexCount, texture, normalisedVerts, textureMode);
 	ri->RestoreRenderTarget();
 }
 
-void beShaderTexture2d::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode)
+void beShaderTexture2d::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode)
 {
 	ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 	
 	deviceContext->IASetInputLayout(m_layout);
 
-	deviceContext->VSSetShader(m_vShader, nullptr, 0);
+	if (normalisedVerts)
+	{
+		deviceContext->VSSetShader(m_vShaderNormalised, nullptr, 0);
+	}
+	else
+	{
+		deviceContext->VSSetShader(m_vShaderPixelSpace, nullptr, 0);
+	}
+
 	deviceContext->PSSetShader(m_pShader, nullptr, 0);
 
 	deviceContext->PSSetShaderResources(0, 1, &texture);

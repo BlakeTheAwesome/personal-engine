@@ -25,6 +25,7 @@ public:
 	void SetColour(const Vec4& colour);
 	Vec2 GetPosition() const;
 	void SetPosition(float x, float y);
+	void SetPosition(const Vec2& v);
 	void SetAnchorPoint(float x, float y); // [0-1]
 
 	bool LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename);

@@ -129,7 +129,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beShaderPack shaderPack;
 	shaderPack.shaderColour.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
 	shaderPack.shaderTexture.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
-	shaderPack.shaderTexture2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2d_v.cso"));
+	shaderPack.shaderTexture2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2dNorm_v.cso"), beWString(L"Texture2dPixels_v.cso"));
 	shaderPack.shaderLitTexture.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
 	shaderPack.Init(renderInterface);
 	defer

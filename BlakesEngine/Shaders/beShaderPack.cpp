@@ -92,15 +92,18 @@ void beShaderPack::UpdateFrameBuffers(beRenderInterface* ri, const Matrix& viewM
 
 	{
 		const Matrix& orthoMatrix = ri->GetOrthoMatrix();
+		const Matrix& orthoMatrixPixelSpace = ri->GetOrthoMatrixPixelCoord();
 		const Vec2& screenSize = ri->GetScreenSize();
 		auto* current = &m_frameData->m_orthoMatrixData;
 		bool update = false;
-		update = update || orthoMatrix != current->orthoMatrix;
+		update = update || orthoMatrix != current->orthoMatrixNormalised;
+		update = update || orthoMatrixPixelSpace != current->orthoMatrixPixels;
 		update = update || screenSize != current->screenSize;
 
 		if (update)
 		{
-			current->orthoMatrix = orthoMatrix;
+			current->orthoMatrixNormalised = orthoMatrix;
+			current->orthoMatrixPixels = orthoMatrixPixelSpace;
 			current->screenSize = screenSize;
 
 			auto dataPtr = (beShaderDefinitions::OrthoMatrixBuffer*)m_frameData->m_orthoMatrixBuffer.Map(ri);

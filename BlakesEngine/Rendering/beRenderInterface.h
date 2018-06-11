@@ -44,6 +44,7 @@ public:
 	const Matrix& GetProjectionMatrix() const;
 	const Matrix& GetWorldMatrix() const;
 	const Matrix& GetOrthoMatrix() const;
+	const Matrix& GetOrthoMatrixPixelCoord() const;
 	const Vec3& GetLightDirection() const;
 
 	void GetVideoCardInfo(beString* name, size_t* memorySize);

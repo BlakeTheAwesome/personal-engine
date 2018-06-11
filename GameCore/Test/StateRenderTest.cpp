@@ -51,8 +51,11 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
 	m_screenGrabTexture.InitAsTarget(renderInterface, textureLoadOptions);
 
-	m_bitmapTexQuad.Init(renderInterface, shaderPack, 128, 128, "boar.dds");
-	m_bitmapTexQuad.SetPosition(1024/2-128, 768/2-128);
+	m_bitmapTexQuadNorm.Init(renderInterface, shaderPack, 0.2f, 0.2f, "boar.dds");
+	m_bitmapTexQuadNorm.SetPosition(0.1f, 0.1f);
+	m_bitmapTexQuadPixelCoord.Init(renderInterface, shaderPack, 128, 128, "bark.dds");
+	m_bitmapTexQuadPixelCoord.SetPosition(-0.8f, -0.5f);
+
 	m_bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
 	
 	m_camera.AttachGamepad(m_appData->gamepad);
@@ -67,7 +70,8 @@ void StateRenderTest::Exit(beStateMachine* stateMachine)
 	m_bitmapScreenGrab.Deinit();
 	m_bitmapTextPreRendered.Deinit();
 	m_bitmapTextDynamic.Deinit();
-	m_bitmapTexQuad.Deinit();
+	m_bitmapTexQuadNorm.Deinit();
+	m_bitmapTexQuadPixelCoord.Deinit();
 
 	m_screenGrabTexture.FinaliseTarget();
 	m_screenGrabTexture.Deinit();
@@ -123,23 +127,23 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	}
 	if (gamepad->GetPressed(beGamepad::Up))
 	{
-		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
-		m_bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y + 10.f);
+		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() + Vec2(0.f, 0.1f));
+		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() + Vec2(0.f, 20.f));
 	}
 	if (gamepad->GetPressed(beGamepad::Down))
 	{
-		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
-		m_bitmapTexQuad.SetPosition(bitmapPosition.x, bitmapPosition.y - 10.f);
+		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() - Vec2(0.f, 0.1f));
+		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() - Vec2(0.f, 20.f));
 	}
 	if (gamepad->GetPressed(beGamepad::Left))
 	{
-		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
-		m_bitmapTexQuad.SetPosition(bitmapPosition.x - 10.f, bitmapPosition.y);
+		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() - Vec2(0.1f, 0.f));
+		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() - Vec2(20.f, 0.f));
 	}
 	if (gamepad->GetPressed(beGamepad::Right))
 	{
-		Vec2 bitmapPosition = m_bitmapTexQuad.GetPosition();
-		m_bitmapTexQuad.SetPosition(bitmapPosition.x + 10.f, bitmapPosition.y);
+		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() + Vec2(0.1f, 0.f));
+		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() + Vec2(20.f, 0.f));
 	}
 
 	if (mouse->IsPressed(beMouse::LeftButton))
@@ -203,7 +207,7 @@ void StateRenderTest::Render()
 		m_bitmapTextDynamic.InitText(renderInterface, &m_font, "initial string", 1.f, 640.f, 0, false, beFont::WrapMode::Default);
 		m_bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
 		m_bitmapTextDynamic.Render(renderInterface);
-		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture());
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), true);
 		renderInterface->DisableAlpha();
 		renderInterface->EnableZBuffer();
 		renderInterface->RestoreRenderTarget();
@@ -236,12 +240,15 @@ void StateRenderTest::Render()
 		if (m_bitmapScreenGrab.GetTexture() && !writingToScreenGrabTexture)
 		{
 			m_bitmapScreenGrab.Render(renderInterface);
-			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapScreenGrab.GetIndexCount(), m_bitmapScreenGrab.GetTexture());
+			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapScreenGrab.GetIndexCount(), m_bitmapScreenGrab.GetTexture(), true);
 		}
 			
-		m_bitmapTexQuad.Render(renderInterface);
-		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
+		m_bitmapTexQuadNorm.Render(renderInterface);
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTexQuadNorm.GetIndexCount(), m_bitmapTexQuadNorm.GetTexture(), true);
 	
+		m_bitmapTexQuadPixelCoord.Render(renderInterface);
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTexQuadPixelCoord.GetIndexCount(), m_bitmapTexQuadPixelCoord.GetTexture(), false);
+
 		renderInterface->EnableAlpha();
 
 		{
@@ -287,7 +294,7 @@ void StateRenderTest::Render()
 			beString messageStr = fmt::to_string(message);
 			m_bitmapTextDynamic.InitText(renderInterface, &m_font, messageStr.c_str(), 1.5f, 512.f, 0, false, beFont::WrapMode::Default);
 			m_bitmapTextDynamic.Render(renderInterface);
-			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+			shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), false, beShaderTexture2d::TextureMode::Clamped);
 		}
 			
 		renderInterface->DisableAlpha();

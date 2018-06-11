@@ -38,7 +38,8 @@
 #define CBUF_OrthoMatrixBuffer\
 	cbuffer OrthoMatrixBuffer SlotId(CBUFIDX_OrthoMatrixBuffer)\
 	{\
-		matrix orthoMatrix;\
+		matrix orthoMatrixNormalised;\
+		matrix orthoMatrixPixels;\
 		float2 screenSize;\
 		float2 padding;\
 	};

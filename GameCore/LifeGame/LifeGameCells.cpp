@@ -28,8 +28,6 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 	shaderPack->shaderColour.SetActive(renderInterface);
 	shaderPack->shaderColour.Render(renderInterface, m_indexBuffer.NumElements(), 0);
 
-
-
 	if (m_renderTextCells)
 	{
 		beTexture writeTexture;
@@ -61,16 +59,16 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 
 		renderInterface->EnableAlpha();
 		m_bitmapTextDynamic.InitText(renderInterface, &m_font, testString.ToString().c_str(), 0.5f, 512.f, 0, true, beFont::WrapMode::NoWrap);
-		m_bitmapTextDynamic.SetPosition(60.f + (float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
+		m_bitmapTextDynamic.SetPosition(60.f, 0.f);
 		m_bitmapTextDynamic.Render(renderInterface);
-		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture());
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), false);
 		renderInterface->DisableAlpha();
 		renderInterface->EnableZBuffer();
 		renderInterface->RestoreRenderTarget();
 		writeTexture.FinaliseTarget();
 
 		m_bitmapTextDynamic.Render(renderInterface);
-		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), beShaderTexture2d::TextureMode::Clamped);
+		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), false, beShaderTexture2d::TextureMode::Clamped);
 	}
 }
 

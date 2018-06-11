@@ -100,6 +100,7 @@ PIMPL_DATA(beRenderInterface)
 	Matrix m_projectionMatrix;
 	Matrix m_worldMatrix;
 	Matrix m_orthoMatrix;
+	Matrix m_orthoMatrixPixelCoord;
 
 	IDXGISwapChain* m_swapChain = nullptr;
 	ID3D11Device* m_device = nullptr; // Mostly memory like stuff
@@ -460,10 +461,14 @@ void beRenderInterface::Impl::CreateMatrices(float width, float height, float ne
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(fov, screenAspect, nearPlane, farPlane);
 	XMMATRIX worldMatrix = XMMatrixIdentity();
 	XMMATRIX orthoMatrix = XMMatrixOrthographicRH(width, height, nearPlane, farPlane);
+	XMVECTOR negHalfScreenVec = XMVectorSet(-width/2.f, -height/2.f, 0.f, 0.f);
+	XMMATRIX orthoMatrixPixelSpace = orthoMatrix * XMMatrixTranslationFromVector(negHalfScreenVec);
+
 
 	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);
 	XMStoreFloat4x4(&m_worldMatrix, worldMatrix);
 	XMStoreFloat4x4(&m_orthoMatrix, orthoMatrix);
+	XMStoreFloat4x4(&m_orthoMatrixPixelCoord, orthoMatrixPixelSpace);
 }
 
 static float s_offset = 0.0f;
@@ -574,6 +579,11 @@ const Matrix& beRenderInterface::GetWorldMatrix() const
 const Matrix& beRenderInterface::GetOrthoMatrix() const
 {
 	return self.m_orthoMatrix;
+}
+
+const Matrix& beRenderInterface::GetOrthoMatrixPixelCoord() const
+{
+	return self.m_orthoMatrixPixelCoord;
 }
 
 const Vec3& beRenderInterface::GetLightDirection() const

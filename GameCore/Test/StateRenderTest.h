@@ -33,7 +33,8 @@ class StateRenderTest : public beState
 	beVector<beModel> m_models;
 	beModel m_gridModel;
 	beTexture m_screenGrabTexture;
-	beBitmap m_bitmapTexQuad;
+	beBitmap m_bitmapTexQuadNorm;
+	beBitmap m_bitmapTexQuadPixelCoord;
 	beBitmap m_bitmapTextDynamic;
 	beBitmap m_bitmapTextPreRendered;
 	beBitmap m_bitmapScreenGrab;

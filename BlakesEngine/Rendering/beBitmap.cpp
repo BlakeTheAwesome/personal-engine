@@ -149,6 +149,12 @@ void beBitmap::SetPosition(float x, float y)
 	m_dirtyPositionBuffer = true;
 }
 
+void beBitmap::SetPosition(const Vec2& v)
+{
+	m_position = v;
+	m_dirtyPositionBuffer = true;
+}
+
 void beBitmap::SetAnchorPoint(float x, float y)
 {
 	m_anchorPoint = Vec2(x, y);

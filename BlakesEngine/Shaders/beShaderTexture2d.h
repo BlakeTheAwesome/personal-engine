@@ -28,20 +28,21 @@ public:
 	beShaderTexture2d() = default;
 	~beShaderTexture2d();
 
-	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
+	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilenameNormalised, const beWString& vertexFilenamePixelSpace);
 	void Deinit();
 
 	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
-	void RenderQuad(beRenderInterface* renderInterface, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, TextureMode textureMode=TextureMode::Wrapped);
-	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, TextureMode textureMode=TextureMode::Wrapped);
+	void RenderQuad(beRenderInterface* renderInterface, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode=TextureMode::Wrapped);
+	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode=TextureMode::Wrapped);
 
 	// Todo: add async loader
 	bool IsLoaded() const;
 
 private:
 	ID3D11PixelShader* m_pShader = nullptr;
-	ID3D11VertexShader* m_vShader = nullptr;
+	ID3D11VertexShader* m_vShaderNormalised = nullptr;
+	ID3D11VertexShader* m_vShaderPixelSpace = nullptr;
 	ID3D11SamplerState* m_wrappedSampleState = nullptr;
 	ID3D11SamplerState* m_clampedSampleState = nullptr;
 	ID3D11InputLayout* m_layout = nullptr;
