@@ -48,18 +48,69 @@ struct beModel::OBJFileInfo
 	beVector<Mesh> meshes;
 };
 
+std::optional<int> ReadInt(const char* begin, const char* end)
+{
+	bool success = true;
+	int i1 = 0;
+	auto result = std::from_chars(begin, end, i1);
+	success |= (*result.ptr == ' ' || result.ptr == end);
+
+	if (success)
+	{
+		return i1;
+	}
+	return {};
+}
+
+std::optional<float> ReadFloat(const char* begin, const char* end)
+{
+	bool success = true;
+	float f1 = 0.f;
+	auto result = std::from_chars(begin, end, f1);
+	success |= (*result.ptr == ' ' || result.ptr == end);
+
+	if (success)
+	{
+		return f1;
+	}
+	return {};
+}
+
+std::optional<Vec2> ReadVec2(const char* begin, const char* end)
+{
+	bool success = true;
+	float f1 = 0.f;
+	float f2 = 0.f;
+	auto result = std::from_chars(begin, end, f1);
+	success |= *result.ptr == ' ';
+	result = std::from_chars(result.ptr+1, end, f2);
+	success |= (*result.ptr == ' ' || result.ptr == end);
+
+	if (success)
+	{
+		return Vec2{f1, f2};
+	}
+	return {};
+}
+
 std::optional<Vec3> ReadVec3(const char* begin, const char* end)
 {
-	// #BJLPTODO: next MSVC will have std::from_chars float implementation, would be better. 
+	bool success = true;
 	float f1 = 0.f;
 	float f2 = 0.f;
 	float f3 = 0.f;
-	int res = sscanf_s(begin, "%f %f %f", &f1, &f2, &f3);
-	if (res != 3)
+	auto result = std::from_chars(begin, end, f1);
+	success |= *result.ptr == ' ';
+	result = std::from_chars(result.ptr+1, end, f2);
+	success |= *result.ptr == ' ';
+	result = std::from_chars(result.ptr+1, end, f3);
+	success |= (*result.ptr == ' ' || result.ptr == end);
+
+	if (success)
 	{
-		return {};
+		return Vec3{f1, f2, f3};
 	}
-	return Vec3(f1, f2, f3);
+	return {};
 }
 
 bool beModel::ReadMaterialLine(const std::string& line)
@@ -82,87 +133,73 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	Material* material = &m_materials.Last();
 	if (beStringUtil::BeginsWith(begin, end, "Ka"))
 	{
-		auto res = ReadVec3(begin + 3, end);
-		if (!res)
+		if (auto res = ReadVec3(begin + 3, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_ambientColour = *res;
+			return true;
 		}
-
-		material->m_ambientColour = *res;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Kd"))
 	{
-		auto res = ReadVec3(begin + 3, end);
-		if (!res)
+		if (auto res = ReadVec3(begin + 3, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_diffuseColour = *res;
+			return true;
 		}
-
-		material->m_diffuseColour = *res;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Ks"))
 	{
-		auto res = ReadVec3(begin + 3, end);
-		if (!res)
+		if (auto res = ReadVec3(begin + 3, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_specularColour = *res;
+			return true;
 		}
-
-		material->m_specularColour = *res;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Ns"))
 	{
-		float f;
-		int res = sscanf_s(begin + 3, "%f", &f);
-		if (res != 1)
+		if (auto f = ReadFloat(begin + 3, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_specularPower = f.value();
+			return true;
 		}
-		material->m_specularPower = f;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "d"))
 	{
-		float alpha = 0.f;
-		int res = sscanf_s(begin + 2, "%f", &alpha);
-		if (res != 1)
+		if (auto f = ReadFloat(begin + 2, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_alpha = f.value();
+			return true;
 		}
-		material->m_alpha = alpha;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Tr"))
 	{
-		float transparency = 0.f;
-		int res = sscanf_s(begin + 3, "%f", &transparency);
-		if (res != 1)
+		if (auto f = ReadFloat(begin + 3, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_alpha = 1.f - f.value();
+			return true;
 		}
-		material->m_alpha = 1.f - transparency;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "illum"))
 	{
-		int i;
-		int res = sscanf_s(begin + 6, "%d", &i);
-		if (res != 1)
+		if (auto i = ReadInt(begin + 6, end))
 		{
-			BE_ASSERT(false);
-			return false;
+			material->m_illuminationMode = i;
+			return true;
 		}
-		material->m_illuminationMode = i;
-		return true;
+		BE_ASSERT(false);
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "map_Kd "))
 	{
@@ -196,7 +233,11 @@ bool beModel::ReadMaterialLine(const std::string& line)
 				subParamStart++;
 				if (beStringUtil::BeginsWith(subParamStart, subParamEnd, "-bm"))
 				{
-					if (sscanf_s(subParamStart, "-bm %f", &material->m_bumpMultiplier) != 1)
+					if (auto f = ReadFloat(subParamStart + 4, subParamEnd))
+					{
+						material->m_bumpMultiplier = f.value();
+					}
+					else
 					{
 						return false;
 					}
@@ -219,7 +260,8 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	}
 	OBJFileInfo::Mesh* currentMesh = &fileInfo->meshes.Last();
 
-	const char* line = _line.c_str();
+	const char* lineStartPtr = _line.c_str();
+	const char* lineEndPtr = lineStartPtr + _line.size();
 	auto lineStart = _line.begin();
 	auto lineEnd = _line.end();
 
@@ -240,52 +282,34 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "vn "))
 	{
-		float f1, f2, f3;
-		int res = sscanf_s(line, "vn %f %f %f", &f1, &f2, &f3);
-		if (res == 3)
+		if (auto vec = ReadVec3(lineStartPtr+3, lineEndPtr))
 		{
-			Vec3 normal(f1,f2,f3);
-			fileInfo->vertexNormals.Insert(normal);
+			fileInfo->vertexNormals.Insert(vec.value());
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "vt "))
 	{
-		float f1, f2;
-		int res = sscanf_s(line, "vt %f %f", &f1, &f2);
-		if (res == 2)
+		if (auto vec = ReadVec2(lineStartPtr+3, lineEndPtr))
 		{
-			Vec2 textureCoord(f1,f2);
-			fileInfo->texCoords.Insert(textureCoord);
+			fileInfo->texCoords.Insert(vec.value());
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "v "))
 	{
-		float f1, f2, f3;
-		int res = sscanf_s(line, "v %f %f %f", &f1, &f2, &f3);
-		if (res == 3)
+		if (auto vec = ReadVec3(lineStartPtr+2, lineEndPtr))
 		{
-			XMFLOAT3 vert(f1,f2,f3);
-			fileInfo->vertices.Insert(vert);
+			fileInfo->vertices.Insert(vec.value());
 			return true;
 		}
-		else
-		{
-			return false;
-		} 
+		return false;
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "f "))
 	{
-		const char* next = line + 1;
+		const char* next = lineStartPtr + 1;
 		while (*next == ' ') { next++; }
 
 		Face* face = currentMesh->faces.AddNew();
