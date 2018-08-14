@@ -55,6 +55,10 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		m_paused = !m_paused;
 		m_timeUntilNextUpdate = 0.f;
 	}
+	if (keyboard->IsPressed(beKeyboard::Button::K))
+	{
+		m_cells.KillAll();
+	}
 	if (keyboard->IsPressed(beKeyboard::Button::Up) || gamepad->GetPressed(beGamepad::Button::Up))
 	{
 		m_updateTimeFrequency -= 0.1f;

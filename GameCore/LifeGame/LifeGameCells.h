@@ -29,6 +29,7 @@ struct LifeGameCells
 	void Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition);
 	void SetAnimationSpeed(float distPerSecond) { m_animationDistancePerSecond = distPerSecond; }
 	void ToggleRenderText() { m_renderTextCells = !m_renderTextCells; }
+	void KillAll() { m_cells.SetAll(false); }
 
 	private:
 

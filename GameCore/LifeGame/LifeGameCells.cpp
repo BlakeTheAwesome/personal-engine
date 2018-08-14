@@ -371,11 +371,14 @@ void LifeGameCells::TickGame()
 			//Any live cell with two or three live neighbours lives on to the next generation.
 			//Any live cell with more than three live neighbours dies, as if by overpopulation.
 			//Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-			if (adjecentLivingCells != 2)
+			int index = m_nextCells.ToIndex(x, y);
+			if (adjecentLivingCells == 2)
 			{
-				bool live = adjecentLivingCells == 3;
-				int index = m_nextCells.ToIndex(x, y);
-				m_nextCells[index] = live;
+				m_nextCells[index] = m_cells[index];
+			}
+			else
+			{
+				m_nextCells[index] = adjecentLivingCells == 3;
 			}
 		}
 	}
