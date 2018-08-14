@@ -87,7 +87,7 @@ bool beShaderColour::Init(beRenderInterface* ri, const beWString& pixelFilename,
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[1].InstanceDataStepRate = 0;
 	
-	unsigned int numElements = BE_ARRAY_DIMENSION(polygonLayout);
+	u32 numElements = (u32)std::size(polygonLayout);
 
 	res = device->CreateInputLayout(polygonLayout, numElements, vBuffer->GetBufferPointer(), vBuffer->GetBufferSize(), &m_layout);
 	if (FAILED(res))

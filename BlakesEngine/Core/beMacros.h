@@ -3,7 +3,6 @@
 #include <cstring> // memcpy
 #include <malloc.h> // aligned_alloc
 
-#define BE_UNUSED(x) void(sizeof(x))
 template <typename ...Args> static inline void Unused(Args&& ...args) {}
 
 // Need to use 2 macros do use __LINE__ as a string
@@ -28,8 +27,6 @@ template <typename ...Args> static inline void Unused(Args&& ...args) {}
 #define BE_SAFE_DESTROY(x) if (x){ x->Destroy(); x = nullptr;};
 
 #define BE_MEMCPY memcpy
-
-#define BE_ARRAY_DIMENSION(x) (sizeof(x) / (sizeof(x[0])))
 
 template <int wow> struct ttWow;
 
