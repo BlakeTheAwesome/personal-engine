@@ -1,9 +1,8 @@
 #pragma once
 
-class beClock
+namespace beClock
 {
-	public:
-		static void Initialise();
-		static double GetMillisecondsSinceStart();
-		static double GetSecondsSinceStart();
+	void Initialise();
+	double GetMillisecondsSinceStart();
+	double GetSecondsSinceStart();
 };

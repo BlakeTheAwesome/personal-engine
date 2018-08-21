@@ -1,35 +1,30 @@
 #include "BlakesEngine/bePCH.h"
 #include "beClock.h"
 #include "BlakesEngine/Core/beAssert.h"
+#include <chrono>
 
-#include "BlakesEngine/Platform/beWindows.h"
+using ClockType = std::chrono::high_resolution_clock;
+using TimePoint = ClockType::time_point;
+using Duration = ClockType::duration;
+using DoubleSeconds = std::chrono::duration<double>;
+using DoubleMillis = std::chrono::duration<double, std::milli>;
 
-static double s_frequency = 0;
-static __int64 s_startTime = 0;
+static TimePoint s_startTime;
 
 void beClock::Initialise()
 {
-	LARGE_INTEGER li;
-	if(!QueryPerformanceFrequency(&li))
-	{
-		BE_ASSERT(false);
-	}
-	__int64 ticksPerSecond = li.QuadPart;
-	s_frequency = 1.0 / (double)(ticksPerSecond);
-
-	QueryPerformanceCounter(&li);
-	s_startTime = li.QuadPart;
+	s_startTime = ClockType::now();
 }
 
 double beClock::GetSecondsSinceStart()
 {
-	LARGE_INTEGER li;
-	QueryPerformanceCounter(&li);
-	return double(li.QuadPart-s_startTime) * s_frequency;
+	TimePoint now = ClockType::now();
+	return std::chrono::duration_cast<DoubleSeconds>(now - s_startTime).count();
 }
 
 double beClock::GetMillisecondsSinceStart()
 {
-	return GetSecondsSinceStart() * 1000;
+	TimePoint now = ClockType::now();
+	return std::chrono::duration_cast<DoubleMillis>(now - s_startTime).count();
 }
 
