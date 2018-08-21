@@ -3,14 +3,16 @@
 
 class beFrameTimer
 {
-	public:
-		beFrameTimer();
+public:
+	using ClockType = std::chrono::high_resolution_clock;
+	using TimePoint = ClockType::time_point;
+	using Duration = ClockType::duration;
 
-		void LimitFPS(int maxFPS);
-		bool StepFrame(beTimeValue* dt);
+	void LimitFPS(int maxFPS);
+	bool StepFrame(Duration* dt);
 
-	private:
-		beTimeValue m_lastTime;
-		beTimeValue m_accumulatedTime;
-		beTimeValue m_requiredWaitTime;
+private:
+	TimePoint m_lastTime = std::chrono::high_resolution_clock::now();
+	Duration m_accumulatedTime = Duration::zero();
+	Duration m_requiredWaitTime = Duration::zero();
 };

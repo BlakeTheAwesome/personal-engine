@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	beClock::Initialise();
 	
 	beFrameTimer frameTimer;
-	frameTimer.LimitFPS(120);
+	frameTimer.LimitFPS(60);
 	
 	beString windowName("TestWindow");
 	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1600, 900, false);
@@ -182,12 +182,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	{
 		systemEventManager->Update();
 
-		beTimeValue dt;
+		beFrameTimer::Duration dt;
 		bool doStuff = frameTimer.StepFrame(&dt);
 
 		if (doStuff)
 		{
-			float fdt = dt.ToSeconds();
+			using tFloatTime = std::chrono::duration<float>;
+			float fdt = std::chrono::duration_cast<tFloatTime>(dt).count();
 			keyboard.Update(fdt);
 			mouse.Update(fdt);
 			gamepad.Update(fdt);
