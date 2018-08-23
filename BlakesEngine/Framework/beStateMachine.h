@@ -4,18 +4,17 @@
 class beStateMachine
 {
 	public:
-	beStateMachine(beState* initialState=nullptr);
+	beStateMachine(std::shared_ptr<beState> initialState=nullptr);
 	~beStateMachine();
 
-	void ChangeState(beState* state, beState** previousState=nullptr); // Can retrieve the previous state instead of destroying it
-	void ChangeStateWhenLoaded(beState* state, beState** previousState=nullptr);
+	void ChangeState(std::shared_ptr<beState> state, std::shared_ptr<beState>* previousState=nullptr); // Can retrieve the previous state instead of destroying it
+	void ChangeStateWhenLoaded(std::shared_ptr<beState> state, std::shared_ptr<beState>* previousState=nullptr);
 	bool Update(float dt);
 	void Render();
 
 	private:
-	beState* m_currentState = nullptr;
-	beState* m_loadingState = nullptr;
-	bool m_currentStateRetrieved = false;
+	std::shared_ptr<beState> m_currentState;
+	std::shared_ptr<beState> m_loadingState;
 };
 
 

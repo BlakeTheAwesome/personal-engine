@@ -158,23 +158,23 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	appData.shaderPack = &shaderPack;
 	appData.window = window;
 
-	beState* initialState = nullptr;
+	std::shared_ptr<beState> initialState;
 	if (const beString* mode = environment.Get("mode"))
 	{
 		if (*mode == "test")
 		{
-			initialState = BE_NEW StateRenderTest(&appData);
+			initialState = std::make_shared<StateRenderTest>(&appData);
 		}
 		else if (*mode == "life")
 		{
-			initialState = BE_NEW StateLifeGame(&appData);
+			initialState = std::make_shared<StateLifeGame>(&appData);
 		}
 	}
 	else
 	{
 	}
 
-	beStateMachine appStateMachine(initialState);
+	beStateMachine appStateMachine(move(initialState));
 
 	// ACTUAL MAIN LOOP
 
