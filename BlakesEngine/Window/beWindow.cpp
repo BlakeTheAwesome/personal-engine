@@ -31,7 +31,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 	auto hInstance = *(HINSTANCE*)_hInstance;
 	m_hInstance = hInstance;
 	std::wstring wideWindowName;
-	wideWindowName.assign(windowName.begin (), windowName.end ());
+	wideWindowName.assign(windowName.begin(), windowName.end());
 
 	WNDCLASSEX wc = {0};
 	wc.cbSize = sizeof(WNDCLASSEX);
