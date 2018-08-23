@@ -66,12 +66,12 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 		{
 			m_updateTimeFrequency = 0.f;
 		}
-		LOG("Up: m_updateTimeFrequency = {:.3f}\r\n", m_updateTimeFrequency);
+		LOG("Up: m_updateTimeFrequency = {:.3f}", m_updateTimeFrequency);
 	}
 	if (keyboard->IsPressed(beKeyboard::Button::Down) || gamepad->GetPressed(beGamepad::Button::Down))
 	{
 		m_updateTimeFrequency += 0.1f;
-		LOG("Down: m_updateTimeFrequency = {:.3f}\r\n", m_updateTimeFrequency);
+		LOG("Down: m_updateTimeFrequency = {:.3f}", m_updateTimeFrequency);
 	}
 	if (keyboard->IsPressed(beKeyboard::Button::T))
 	{

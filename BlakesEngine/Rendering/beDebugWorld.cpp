@@ -94,7 +94,7 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 
 		self.haveMouseVerts = vertCount > 0;
 
-		LOG("MouseX:{:.2f} mouseY{:.2f}\r\n", mouseX, mouseY);
+		LOG("MouseX:{:.2f} mouseY{:.2f}", mouseX, mouseY);
 
 		if (self.haveMouseVerts)
 		{

@@ -2,7 +2,7 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include"BlakesEngine/External/fmt/format.h"
 
-#define LOG(...) fmt::print(LOCATION ": " __VA_ARGS__)
+#define LOG(msg, ...) fmt::print(LOCATION ": " msg "\r\n", __VA_ARGS__)
 //#define LOG(...) bePrintf::bePrintf(true, LOCATION, __VA_ARGS__)
 //#define LOG printf
 

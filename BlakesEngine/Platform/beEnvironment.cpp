@@ -102,7 +102,7 @@ void beEnvironment::Initialise(const beStringView& commandLine)
 	LOG("Environment Args:");
 	for (auto it : m_map)
 	{
-		LOG("\t{} = {}\r\n", it.Key().c_str(), it.Value().c_str());
+		LOG("\t{} = {}", it.Key().c_str(), it.Value().c_str());
 	}
 }
 
