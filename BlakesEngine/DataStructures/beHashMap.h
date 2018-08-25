@@ -243,9 +243,9 @@ class beHashMapBase
 		for (const Remap& remap : remaps)
 		{
 			int searchStartIndex = remap.hash % newCapacity;
-			for (size_t i = searchStartIndex, searchEndIndex = searchStartIndex + newCapacity; i < searchEndIndex; i++)
+			for (int i : RangeIter(searchStartIndex, searchStartIndex + newCapacity))
 			{
-				int index = (int)(i % newCapacity);
+				int index = i % newCapacity;
 				if ((!m_validEntries[index]))
 				{
 					m_validEntries[index] = true;

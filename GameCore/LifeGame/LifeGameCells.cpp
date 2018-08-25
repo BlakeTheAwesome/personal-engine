@@ -79,7 +79,7 @@ void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float y
 
 
 	//-x
-	int faceOffset = 0;
+	size_t faceOffset = 0;
 	block->verts[faceOffset+2].position.z = newHeight;
 	block->verts[faceOffset+3].position.z = newHeight;
 	block->verts[faceOffset+2].colour = V4XYW() * newHeight;
@@ -129,7 +129,7 @@ void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float y
 void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPos, float height)
 {
 	//-x
-	int faceOffset = 0;
+	size_t faceOffset = 0;
 	//block->verts[faceOffset+0].normal = V3NX();
 	//block->verts[faceOffset+1].normal = V3NX();
 	//block->verts[faceOffset+2].normal = V3NX();

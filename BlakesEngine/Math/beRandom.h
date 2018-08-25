@@ -8,9 +8,10 @@
 
 class beRandom {
 public:
-	/* If no seed is passed to the constructor it will use the current time
-		in seconds as the seed. */
-	beRandom(){};
+	beRandom()
+	{
+		InitFromSystemTime();
+	}
 	beRandom(int seed) 
 	{
 		Init(seed);
@@ -64,7 +65,7 @@ public:
 		} 
 
 
-		return min + u32((Next() * u64(max - min + 1)) >> 32);
+		return min + u32((Next() * (u64)(max) - (u64)min + 1) >> 32);
 	}
 
 

@@ -74,8 +74,8 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 			if (beCameraUtils::GetScreeenToWorldRay(*ri, viewMatrix, x, y, &pos, &dir))
 			{
 				Vec3 endPoint3 = pos + (dir * 100.f);
-				vertices[vertCount] = VertexColourType{beMath::ToVec4(pos, 1.f), startColour};
-				vertices[vertCount+1] = VertexColourType{beMath::ToVec4(endPoint3, 1.f), endColour};
+				vertices[(size_t)vertCount] = VertexColourType{beMath::ToVec4(pos, 1.f), startColour};
+				vertices[(size_t)vertCount+1] = VertexColourType{beMath::ToVec4(endPoint3, 1.f), endColour};
 				vertCount += 2;
 			}
 		};
