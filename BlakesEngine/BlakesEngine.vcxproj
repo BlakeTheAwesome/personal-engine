@@ -110,6 +110,8 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <CustomBuild>
       <Command>xcopy /y /d %(FullPath) $(OutDir)</Command>
@@ -137,6 +139,8 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -163,6 +167,8 @@
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
+      <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -190,6 +196,8 @@
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+      <TreatLibWarningAsErrors>true</TreatLibWarningAsErrors>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
