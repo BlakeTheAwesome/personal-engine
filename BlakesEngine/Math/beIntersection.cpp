@@ -1,7 +1,7 @@
 #include "BlakesEngine/bePCH.h"
 #include "beIntersection.h"
 
-int beIntersection::TRayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const Vec3& boxMin, const Vec3& boxMax, float collisions[2])
+int beIntersection::TRayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const Vec3& boxMin, const Vec3& boxMax, gsl::span<float, 2> collisions)
 {
 	float maxS = -FLT_MAX;
 	float minT = FLT_MAX;

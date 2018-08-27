@@ -1,240 +1,15 @@
 #pragma once
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
+#include "beMemoryPolicies.h"
 
 #include <type_traits>
 
-// Policies do not need to handle constructing/destructing elements, vector base does that. Default vector is hybrid<16>
-
-
-template <typename T, int CAPACITY>
-struct beVectorFixedPolicy
-{
-	public:
-	static constexpr int DataSize() { return sizeof(m_buffer); }
-
-	protected:
-	beVectorFixedPolicy() = default;
-	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
-	{
-		BE_ASSERT(increaseBy == 0);
-		BE_ASSERT(capacity <= CAPACITY); 
-		BE_ASSERT((int)list.size() <= capacity);
-
-		for (const T& iter : list)
-		{
-			BE_NEW(m_buffer+m_count++) T(iter);
-		}
-	}
-	beVectorFixedPolicy(int capacity, int increaseBy)
-	{
-		BE_ASSERT(increaseBy == 0);
-		BE_ASSERT(capacity <= CAPACITY);
-	}
-
-	void Reserve(int capacity)
-	{
-		BE_ASSERT(capacity <= CAPACITY);
-	}
-	
-	void Release()
-	{
-	}
-
-	bool CheckRoomForAlloc() const
-	{
-		return m_count < CAPACITY;
-	}
-
-	constexpr int Capacity() const { return CAPACITY; }
-
-	int m_count = 0;
-	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer[CAPACITY];
-};
-
-
-template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
-struct beVectorMallocPolicy : public NonCopiable
-{
-	protected:
-	beVectorMallocPolicy() : beVectorMallocPolicy(INITIAL_SIZE, -1) {}
-	beVectorMallocPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
-	{
-		BE_ASSERT((int)list.size() <= capacity);
-		Reserve(capacity);
-		for (const T& iter : list)
-		{
-			BE_NEW(m_buffer+m_count++) T(iter);
-		}
-	}
-
-	beVectorMallocPolicy(int capacity, int increaseBy)
-		: m_increaseBy(increaseBy)
-	{
-		Reserve(capacity);
-	}
-
-
-	void Reserve(int capacity)
-	{
-		if (capacity > m_capacity)
-		{
-			T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*capacity);
-			if (m_count > 0)
-			{
-				BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
-				BE_FREE_ALIGNED(m_buffer);
-			}
-			m_buffer = newBuffer;
-			m_capacity = capacity;
-		}
-	}
-
-	void Release()
-	{
-		BE_FREE_ALIGNED(m_buffer);
-		m_buffer = nullptr;
-		m_capacity = 0;
-	}
-
-	bool CheckRoomForAlloc()
-	{
-		if (m_count >= m_capacity)
-		{
-			switch (m_increaseBy)
-			{
-				case 0:
-				{
-					BE_ASSERT(false);
-					return false;
-				}
-				case -1:
-				{
-					if (m_capacity == 0)
-					{
-						Reserve(1);
-						return true;
-					}
-
-					Reserve(m_capacity * 2);
-					return true;
-				}
-				default:
-				{
-					Reserve(m_capacity + m_increaseBy);
-					return true;
-				}
-			}
-		}
-		return true;
-	}
-
-	int Capacity() const { return m_capacity; }
-
-	T* m_buffer = nullptr;
-	int m_count = 0;
-	int m_increaseBy = -1;
-	int m_capacity = 0;
-};
-
-
-template <typename T, int RESERVED_SIZE = 16>
-struct beVectorHybridPolicy : public NonCopiable
-{
-	protected:
-	beVectorHybridPolicy() : beVectorHybridPolicy(0, -1) {}
-	beVectorHybridPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
-	{
-		BE_ASSERT((int)list.size() <= capacity);
-		Reserve(capacity);
-		for (const T& iter : list)
-		{
-			BE_NEW(m_buffer+m_count++) T(iter);
-		}
-	}
-
-	beVectorHybridPolicy(int capacity, int increaseBy)
-		: m_increaseBy(increaseBy)
-	{
-		Reserve(capacity);
-	}
-
-	void Reserve(int capacity)
-	{
-		if (capacity > m_capacity)
-		{
-			if (capacity <= RESERVED_SIZE)
-			{
-				m_buffer = (T*)m_storage;
-			}
-			else
-			{
-				T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*capacity);
-				if (m_count > 0)
-				{
-					BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
-					if (m_buffer != (T*)m_storage)
-					{
-						BE_FREE_ALIGNED(m_buffer);
-					}
-				}
-				m_buffer = newBuffer;
-			}
-			m_capacity = capacity;
-		}
-	}
-	void Release()
-	{
-		if (m_buffer != (T*)m_storage)
-		{
-			BE_FREE_ALIGNED(m_buffer);
-			m_buffer = (T*)m_storage;
-			m_capacity = RESERVED_SIZE;
-		}
-	}
-
-	bool CheckRoomForAlloc()
-	{
-		if (m_count >= m_capacity)
-		{
-			switch (m_increaseBy)
-			{
-				case 0:
-				{
-					BE_ASSERT(false);
-					return false;
-				}
-				case -1:
-				{
-					if (m_capacity == 0)
-					{
-						Reserve(1);
-						return true;
-					}
-
-					Reserve(m_capacity * 2);
-					return true;
-				}
-				default:
-				{
-					Reserve(m_capacity + m_increaseBy);
-					return true;
-				}
-			}
-		}
-		return true;
-	}
-
-	int Capacity() const { return m_capacity; }
-
-	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_storage[RESERVED_SIZE];
-
-	T* m_buffer = nullptr;
-	int m_count = 0;
-	int m_increaseBy = -1;
-	int m_capacity = 0;
-};
-
+#pragma warning(push)
+#pragma warning(disable:26481) // pointer arithmetic
+#pragma warning(disable:26482) // pointer arithmetic
+#pragma warning(disable:26485) // pointer arithmetic
+#pragma warning(disable:26446) // pointer arithmetic
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<typename T, typename Policy>
@@ -242,7 +17,7 @@ class beVectorBase : protected Policy
 {
 
 	public:
-		typedef T value_type;
+		using value_type = T;
 		enum { element_size = sizeof(T) };
 		
 		beVectorBase() = default;
@@ -260,7 +35,6 @@ class beVectorBase : protected Policy
 		void Release()
 		{
 			DestructElements(0, m_count-1);
-			m_count = 0;
 			Policy::Release();
 		}
 
@@ -272,7 +46,6 @@ class beVectorBase : protected Policy
 		
 		void ReleaseUninitialised()
 		{
-			m_count = 0;
 			Policy::Release();
 		}
 
@@ -538,7 +311,7 @@ class beVectorBase : protected Policy
 			return *(end() - 1);
 		}
 
-		typedef bool (*CompareFn)(const T*, const T*, int*);
+		using CompareFn = bool (*)(const T*, const T*, int*);
 		template <CompareFn fn> //CompareFn return true if match, else arg3 will be <0 if lhs<rhs or >0 if lhs<rhs
 		bool BinarySearch(const T* target, const T** result) const
 		{
@@ -619,7 +392,7 @@ class beVectorBase : protected Policy
 template <typename T, int HYBRID_CAPACITY=16>
 class beVector : public beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>>
 {
-	typedef beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>> Base;
+	using Base = beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>>;
 	public:
 	explicit beVector(int capacity=HYBRID_CAPACITY, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
@@ -639,10 +412,11 @@ class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T, INITIAL_SIZE
 template <typename T, int CAPACITY>
 class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 {
-	typedef beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>> Base;
+	using Base = beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>;
 	public:
 	using Base::DataSize;
 
 	beFixedVector() = default;
 	beFixedVector(std::initializer_list<T> list) : Base(CAPACITY, 0, list) {}
 };
+#pragma warning(pop)

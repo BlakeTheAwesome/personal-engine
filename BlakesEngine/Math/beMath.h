@@ -140,7 +140,7 @@ namespace beMath
 		{
 			for (int j : RangeIter(4))
 			{
-				ret = ret && m1.m[i][j] == m2.m[i][j];
+				ret = ret && m1(i, j) == m2(i, j);
 			}
 		}
 		return ret;

@@ -48,6 +48,9 @@ struct beModel::OBJFileInfo
 	beVector<Mesh> meshes;
 };
 
+#pragma warning(push)
+#pragma warning(disable:26481) // pointer arithmetic
+
 std::optional<int> ReadInt(const char* begin, const char* end)
 {
 	bool success = true;
@@ -351,6 +354,7 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 
 	return true;
 }
+#pragma warning(pop)
 
 bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const beModel::LoadOptions& loadOptions)
 {
@@ -388,9 +392,9 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 	const auto& axesSwizzle = loadOptions.axesSwizzle;
 	auto swizzleVert = [axesSwizzle](Vec3 unswizzled)
 	{
-		float x = VecElem(unswizzled, axesSwizzle[0]);
-		float y = VecElem(unswizzled, axesSwizzle[1]);
-		float z = VecElem(unswizzled, axesSwizzle[2]);
+		float x = VecElem(unswizzled, axesSwizzle.at(0));
+		float y = VecElem(unswizzled, axesSwizzle.at(1));
+		float z = VecElem(unswizzled, axesSwizzle.at(2));
 		return Vec3(x, y, z);
 	};
 	
@@ -595,7 +599,7 @@ void beModel::Render(beRenderInterface* ri, beShaderPack* shaderPack, beRenderin
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
 	u32 strides[] = {(u32)m_vertexBuffer.ElementSize()};
 	u32 offsets[] = {0};
-	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffers[0], &strides[0], &offsets[0]);
 	
 	std::optional<beShaderLitTexture::ShaderParams> defaultLitParams;
 

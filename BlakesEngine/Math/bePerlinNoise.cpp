@@ -13,18 +13,12 @@ bePerlinNoise2D::bePerlinNoise2D()
 
 void bePerlinNoise2D::Initialise(int randomSeed)
 {
-	u8 hashTable[256];
-	for (int i = 0; i < 256; i++)
-	{
-		hashTable[i] = (u8)i;
-	}
-	std::shuffle(hashTable, hashTable + 256, std::default_random_engine(randomSeed));
+	beArray<u8, 256> hashTable;
+	std::iota(hashTable.begin(), hashTable.end(), (u8)0); // Fill 0-255
+	std::shuffle(hashTable.begin(), hashTable.end(), std::default_random_engine(randomSeed));
 
 	// We have this at double the size so that the p[p[p[x0]+y0]+z0]; code doesn't run off the end (could also mask it with 0xff at each step).
-	for (int i = 0; i < 512; i++)
-	{
-		m_hashTable[i] = hashTable[i & 0xff];
-	}
+	std::generate(m_hashTable.begin(), m_hashTable.end(), [i = 0, &hashTable]() mutable { return hashTable.at(i & 0xff); });
 }
 
 float bePerlinNoise2D::GetOctave(float x, float y, int octaves, float persistence)
@@ -85,6 +79,8 @@ float bePerlinNoise2D::Get(float x, float y)
 	int z0 = 0;
 	int z1 = 1;
 
+	#pragma warning(push)
+	#pragma warning(disable:26481) // pointer arithmetic
 	int aaa, aba, aab, abb, baa, bba, bab, bbb;
 	aaa = p[p[p[x0]+y0]+z0];
 	aba = p[p[p[x0]+y1]+z0];
@@ -94,7 +90,8 @@ float bePerlinNoise2D::Get(float x, float y)
 	bba = p[p[p[x1]+y1]+z0];
 	bab = p[p[p[x1]+y0]+z1];
 	bbb = p[p[p[x1]+y1]+z1];
-	
+	#pragma warning(pop)
+
 	// The gradient function calculates the dot product between a pseudorandom
 	// gradient vector and the vector from the input coordinate to the 8
 	// surrounding points in its unit cube.

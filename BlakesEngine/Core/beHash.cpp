@@ -1,6 +1,10 @@
 #include "BlakesEngine/bePCH.h"
 #include "beHash.h"
 
+#include <CodeAnalysis/Warnings.h>
+#pragma warning(push)
+#pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)
+
 //-----------------------------------------------------------------------------
 // MurmurHash3 was written by Austin Appleby, and is placed in the public
 // domain. The author hereby disclaims copyright to this source code.
@@ -351,3 +355,5 @@ void MurmurHash3_x64_128 ( const void * key, const int len,
 	}
 
 }// namespace beHashFunctions
+
+#pragma warning(pop)

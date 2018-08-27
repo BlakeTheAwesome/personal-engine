@@ -5,12 +5,14 @@
 // Usage in other files
 #define PIMPL_NEW(_class) _class::Create
 #define PIMPL_DELETE(ptr) { if (ptr) { ptr->Dispose(); } ptr = nullptr; }
+#define PIMPL_GET_DATA(_this) ((Impl*)(intptr_t(_this)+sizeof(*this)))
+#define PIMPL_GET_PARENT(_class, _this) ((_class*)(intptr_t(_this)-sizeof(_class)))
 
 
 // Usage in header
 #define PIMPL_DECLARE(_class, ...)                                                                               \
     private:                                                                                                     \
-        _class() : self(*(Impl*)(this+1)){};                                                                     \
+        _class() : self(*PIMPL_GET_DATA(this)){};                                                                \
         _class(const _class&) = delete;                                                                          \
         _class& operator=(const _class&) = delete;                                                               \
         struct Impl; Impl& self;                                                                                 \
@@ -27,7 +29,7 @@ struct _class::Impl                                                             
 {                                                                                                                \
     Impl(__VA_ARGS__);                                                                                           \
     ~Impl();                                                                                                     \
-    _class* Parent() { return ((_class*)this)-1;}                                                                \
+    _class* Parent() { return PIMPL_GET_PARENT(_class, this);}                                                                \
 // PIMPL_DATA
 #define PIMPL_DATA_END };
 

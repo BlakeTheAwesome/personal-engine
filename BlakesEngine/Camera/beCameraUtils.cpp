@@ -99,20 +99,20 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 		return false;
 	}
 	
-	Vec3 inputVecs[2];
-	Vec3 outputVecs[2];
+	beArray<Vec3, 2> inputVecs;
+	beArray<Vec3, 2> outputVecs;
 
-	inputVecs[0] = Vec3(screenX, screenY, 0.f);
-	inputVecs[1] = Vec3(screenX, screenY, 1.f);
+	inputVecs.at(0) = Vec3(screenX, screenY, 0.f);
+	inputVecs.at(1) = Vec3(screenX, screenY, 1.f);
 
 	XMMATRIX viewMatrix = XMLoadFloat4x4(&_viewMatrix);
 	XMMATRIX projectionMatrix = XMLoadFloat4x4(&ri.GetProjectionMatrix());
 	XMMATRIX worldMatrix = XMLoadFloat4x4(&ri.GetWorldMatrix());
 
-	XMVector3UnprojectStream(outputVecs, sizeof(Vec3), inputVecs, sizeof(Vec3), 2, 0.f, 0.f, screenWidth, screenHeight, 0.f, 1.f, projectionMatrix, viewMatrix, worldMatrix);
+	XMVector3UnprojectStream(outputVecs.data(), sizeof(Vec3), inputVecs.data(), sizeof(Vec3), 2, 0.f, 0.f, screenWidth, screenHeight, 0.f, 1.f, projectionMatrix, viewMatrix, worldMatrix);
 
-	XMVECTOR worldPos    = XMLoadFloat3(outputVecs+0);
-	XMVECTOR worldAlongZ = XMLoadFloat3(outputVecs+1);
+	XMVECTOR worldPos    = XMLoadFloat3(&outputVecs.at(0));
+	XMVECTOR worldAlongZ = XMLoadFloat3(&outputVecs.at(1));
 	XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
 
 

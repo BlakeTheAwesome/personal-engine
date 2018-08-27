@@ -227,6 +227,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DataStructures\beDataBuffer.cpp" />
     <ClCompile Include="External\fmt\format.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -298,8 +299,10 @@
     <ClInclude Include="Core\ZeroMem.h" />
     <ClInclude Include="DataStructures\beArray.h" />
     <ClInclude Include="DataStructures\beByteStreams.h" />
+    <ClInclude Include="DataStructures\beDataBuffer.h" />
     <ClInclude Include="DataStructures\beFastGrid.h" />
     <ClInclude Include="DataStructures\beHashMap.h" />
+    <ClInclude Include="DataStructures\beMemoryPolicies.h" />
     <ClInclude Include="DataStructures\beVector.h" />
     <ClInclude Include="External\DirectXTK\Audio.h" />
     <ClInclude Include="External\DirectXTK\CommonStates.h" />
