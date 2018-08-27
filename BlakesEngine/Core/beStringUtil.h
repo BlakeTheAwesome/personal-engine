@@ -4,7 +4,7 @@
 
 namespace beStringUtil
 {
-	inline std::locale s_locale;
+	inline std::locale s_locale; 
 
 	#define WRAP_PERMUTATIONS_CHAR(FunctionName)\
 		inline auto FunctionName(const beStringView& str, char c) { return FunctionName(str.begin(), str.end(), c); }\
@@ -17,9 +17,10 @@ namespace beStringUtil
 		                         inline auto FunctionName(const beStringView& str, const beStringView& pattern)        { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 		template <typename Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beWString& str, const beWString& pattern)              { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
-		                         inline auto FunctionName(const beWString& str, const wchar_t* pattern)                { return FunctionName(str.begin(), str.end(), pattern, pattern + wcslen(pattern)); }\
+		                         inline auto FunctionName(const beWString& str, gsl::span<const wchar_t> pattern)      { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 	// WRAP_PERMUTATIONS
-
+	#pragma warning(push)
+	#pragma warning(disable:26481) // Pointer arithmetic
 	template <typename Iter>
 	struct LowerIterator : public std::iterator_traits<Iter>
 	{
@@ -41,8 +42,7 @@ namespace beStringUtil
 		template <typename T> auto operator-= (T val) { iter -= val; return *this; }
 		template <typename T> auto operator[] (T val) const { return iter[val]; }
 	};
-
-
+	#pragma warning(pop)
 
 
 	template <typename Iter>
@@ -80,12 +80,12 @@ namespace beStringUtil
 	template <typename Iter>
 	inline int FindLast(Iter begin, Iter end, char c)
 	{
-		while (--end >= begin)
+		auto rbegin = std::reverse_iterator(end);
+		auto rend = std::reverse_iterator(begin);
+		auto it = std::find(rbegin, rend, c);
+		if (it != rend)
 		{
-			if (*end == c)
-			{
-				return (int)std::distance(begin, end);
-			}
+			return (int)std::distance(&(*begin), &(*it));
 		}
 		return -1;
 	}
@@ -116,16 +116,10 @@ namespace beStringUtil
 		{
 			return false;
 		}
-
-		for (; beginPattern != endPattern; ++beginPattern, ++beginRange)
-		{
-			if (*beginPattern != *beginRange)
-			{
-				return false;
-			}
-		}
-
-		return true;
+		#pragma warning(push)
+		#pragma warning(disable:26459) // Passing raw pointer iterator
+		return std::equal(beginPattern, endPattern, beginRange);
+		#pragma warning(pop)
 	}
 	WRAP_PERMUTATIONS(BeginsWith);
 
@@ -139,36 +133,22 @@ namespace beStringUtil
 	template <typename Iter, typename IterPattern>
 	inline bool EndsWith(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
-		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
-		{
-			return false;
-		}
-		
-		if (beginPattern == endPattern)
-		{
-			return true;
-		}
-
-		while (true)
-		{
-			--endPattern;
-			--endRange;
-			if (*endPattern != *endRange)
-			{
-				return false;
-			}
-			if (endPattern == beginPattern)
-			{
-				return true;
-			}
-		}
+		auto rbeginRange = std::reverse_iterator(endRange);
+		auto rendRange = std::reverse_iterator(beginRange);
+		auto rbeginPattern = std::reverse_iterator(endPattern);
+		auto rendPattern = std::reverse_iterator(beginPattern);
+		return BeginsWith(rbeginRange, rendRange, rbeginPattern, rendPattern);
 	}
 	WRAP_PERMUTATIONS(EndsWith);
 
 	template <typename Iter, typename IterPattern>
 	inline bool EndsWithI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
-		return EndsWith(LowerIterator{beginRange}, LowerIterator{endRange}, LowerIterator{beginPattern}, LowerIterator{endPattern});
+		auto rbeginRange = std::reverse_iterator(endRange);
+		auto rendRange = std::reverse_iterator(beginRange);
+		auto rbeginPattern = std::reverse_iterator(endPattern);
+		auto rendPattern = std::reverse_iterator(beginPattern);
+		return BeginsWithI(rbeginRange, rendRange, rbeginPattern, rendPattern);
 	}
 	WRAP_PERMUTATIONS(EndsWithI);
 

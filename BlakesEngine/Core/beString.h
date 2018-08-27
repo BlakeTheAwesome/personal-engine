@@ -23,7 +23,31 @@ class beStringView
 		if (m_beStr) { return (int)m_beStr->size(); } 
 		return (int)m_ownedStr.size();
 	}
+
+	gsl::span<const char> ToSpan() const
+	{
+		return {begin(), Length()};
+	}
+
+	const char* begin() const
+	{
+		return c_str();
+	}
 	
+	const char* end() const
+	{
+		return &(*ToSpan().end());
+	}
+	auto rbegin() const
+	{
+		return std::reverse_iterator(end());
+	}
+	
+	auto rend() const
+	{
+		return std::reverse_iterator(begin());
+	}
+
 	int FindFirst(char c) const
 	{
 		auto _begin = begin();
@@ -38,14 +62,13 @@ class beStringView
 
 	int FindLast(char c) const
 	{
-		const char* start = begin();
-		const char* ptr = end();
-		while (--ptr >= start)
+		auto _begin = begin();
+		auto _rbegin = rbegin();
+		auto _rend = rend();
+		auto it = std::find(_rbegin, _rend, c);
+		if (it != _rend)
 		{
-			if (*ptr == c)
-			{
-				return (int)std::distance(start, ptr);
-			}
+			return (int)std::distance(&(*_begin), &(*it));
 		}
 		return -1;
 	}
@@ -71,14 +94,6 @@ class beStringView
 		return m_ownedStr;
 	}
 
-	const char* begin() const
-	{
-		return c_str();
-	}
-	const char* end() const
-	{
-		return c_str() + Length();
-	}
 	private:
 	const char* m_cstr = nullptr;
 	const beString* m_beStr = nullptr;
