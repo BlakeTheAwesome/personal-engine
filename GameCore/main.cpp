@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	RenderDocManager* renderDoc = nullptr;
 	#ifdef ENABLE_RENDERDOC
-	bool usingRenderDoc = environment.Get("r");
+	const bool usingRenderDoc = environment.Get("r");
 	if (usingRenderDoc)
 	{
 		renderDoc = BE_NEW RenderDocManager(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
@@ -183,12 +183,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		systemEventManager->Update();
 
 		beFrameTimer::Duration dt;
-		bool doStuff = frameTimer.StepFrame(&dt);
+		const bool doStuff = frameTimer.StepFrame(&dt);
 
 		if (doStuff)
 		{
 			using tFloatTime = std::chrono::duration<float>;
-			float fdt = std::chrono::duration_cast<tFloatTime>(dt).count();
+			const float fdt = std::chrono::duration_cast<tFloatTime>(dt).count();
 			keyboard.Update(fdt);
 			mouse.Update(fdt);
 			gamepad.Update(fdt);

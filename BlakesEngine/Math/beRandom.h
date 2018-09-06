@@ -77,7 +77,7 @@ public:
 
 	float NextFloat(float min, float max)
 	{
-		float range = max - min;
+		const float range = max - min;
 		return min + (Next() * (range / 4294967296.f));
 	}
 

@@ -43,7 +43,7 @@ float bePerlinNoise2D::Get(float x, float y)
 	float xi, xf, yi, yf;
 	xf = modf(x, &xi);
 	yf = modf(y, &yi);
-	float zf = 0.5f;
+	constexpr float zf = 0.5f;
 
 	if (xf < 0.0)
 	{
@@ -58,22 +58,22 @@ float bePerlinNoise2D::Get(float x, float y)
 
 	int x0 = (int)xi;
 	int y0 = (int)yi;
-	int maxX = 255;
-	int maxY = 255;
+	const int maxX = 255;
+	const int maxY = 255;
 
 	x0 = ((x0 % maxX) + maxX) % maxX; // [0, maxX)
 	y0 = ((y0 % maxY) + maxY) % maxY; // [0, maxX)
-	int x1 = (x0 + 1) % maxX; // [0, maxX)
-	int y1 = (y0 + 1) % maxY; // [0, maxX)
+	const int x1 = (x0 + 1) % maxX; // [0, maxX)
+	const int y1 = (y0 + 1) % maxY; // [0, maxX)
 	
-	float u = beMath::SmootherStep(xf);
-	float v = beMath::SmootherStep(yf);
-	float w = beMath::SmootherStep(zf);
+	const float u = beMath::SmootherStep(xf);
+	const float v = beMath::SmootherStep(yf);
+	constexpr float w = beMath::SmootherStep(zf);
 
 	u8* p = m_hashTable.data();
 	
-	int z0 = 0;
-	int z1 = 1;
+	const int z0 = 0;
+	const int z1 = 1;
 
 	#pragma warning(push)
 	#pragma warning(disable:26481) // pointer arithmetic
@@ -105,7 +105,7 @@ float bePerlinNoise2D::Get(float x, float y)
 	Y2 = Lerp(X1, X2, v);
 	
 	// Change (-1,1) => (0, 1)
-	float result = (Lerp(Y1, Y2, w)+1.f) * 0.5f;
+	const float result = (Lerp(Y1, Y2, w)+1.f) * 0.5f;
 	//LOG("X,Y,Z {%3.1f, %3.1f, %3.1f}\t = %3.3f", x, y, zf, result);
 	return result;
 }

@@ -113,7 +113,7 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	}
 	if (gamepad->GetPressed(beGamepad::Y))
 	{
-		int shader = ((int)m_shaderToUse + 1) % (int)beRendering::ShaderType::Count;
+		const int shader = ((int)m_shaderToUse + 1) % (int)beRendering::ShaderType::Count;
 		m_shaderToUse = (beRendering::ShaderType)shader;
 	}
 	if (gamepad->GetPressed(beGamepad::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
@@ -149,10 +149,10 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	if (mouse->IsPressed(beMouse::LeftButton))
 	{
 		//auto window = m_appData->window;
-		float screenX = (float)mouse->GetX();// -window->GetX();
-		float screenY = (float)mouse->GetY();// - window->GetY();
+		const float screenX = (float)mouse->GetX();// -window->GetX();
+		const float screenY = (float)mouse->GetY();// - window->GetY();
 		Vec3 worldPos, worldDir;
-		bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, &worldPos, &worldDir);
+		const bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, &worldPos, &worldDir);
 		if (isInBounds)
 		{
 			//LOG("MOUSE CLICK: (%.2f, %.2f) POS:{%3.3f, %3.3f, %3.3f} dir:{%3.3f, %3.3f, %3.3f}\r\n", screenX, screenY, worldPos.x, worldPos.y, worldPos.z, worldDir.x, worldDir.y, worldDir.z);
@@ -252,13 +252,13 @@ void StateRenderTest::Render()
 		renderInterface->EnableAlpha();
 
 		{
-			Vec3 cameraPos = m_camera.GetPosition();
-			Matrix viewMatrix = m_camera.GetViewMatrix();
+			const Vec3 cameraPos = m_camera.GetPosition();
+			const Matrix viewMatrix = m_camera.GetViewMatrix();
 
-			float screenX = (float)mouse->GetX();
-			float screenY = (float)mouse->GetY();
+			const float screenX = (float)mouse->GetX();
+			const float screenY = (float)mouse->GetY();
 			Vec3 worldPos, worldDir;
-			bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, &worldPos, &worldDir);
+			const bool isInBounds = beCameraUtils::GetScreeenToWorldRay(*renderInterface, m_camera.GetViewMatrix(), screenX, screenY, &worldPos, &worldDir);
 			auto maybeRealWorldPos = beCameraUtils::WorldPosFromScreenPos(*renderInterface, m_camera.GetViewMatrix(), (int)screenX, (int)screenY);
 
 			if (!isInBounds)
@@ -302,7 +302,7 @@ void StateRenderTest::Render()
 		renderInterface->EnableZBuffer();
 	};
 	
-	bool doScreenGrab = keyboard->IsPressed(beKeyboard::Button::Space);
+	const bool doScreenGrab = keyboard->IsPressed(beKeyboard::Button::Space);
 	if (doScreenGrab)
 	{
 		m_screenGrabTexture.SetAsTarget(renderInterface);
@@ -318,18 +318,18 @@ void StateRenderTest::Render()
 
 void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 {
-	int gridRadius = 100;
-	float gridSize = 1.f;
-	float xzOffset = gridSize / 2.f; // Don't draw on same spot as renderAxes
-	float gridOffset = ((float)gridRadius / 2.f);
+	const int gridRadius = 100;
+	const float gridSize = 1.f;
+	const float xzOffset = gridSize / 2.f; // Don't draw on same spot as renderAxes
+	const float gridOffset = ((float)gridRadius / 2.f);
 
-	int quadCount = gridRadius * gridRadius;
-	int vertexCount = quadCount * 8;
-	int triCount = quadCount * 2;
-	int triIndexCount = triCount * 3;
+	const int quadCount = gridRadius * gridRadius;
+	const int vertexCount = quadCount * 8;
+	const int triCount = quadCount * 2;
+	const int triIndexCount = triCount * 3;
 
-	float noiseScale = 5.f;
-	float noiseHeight = 8.f;
+	const float noiseScale = 5.f;
+	const float noiseHeight = 8.f;
 	beRandom rng;
 	rng.InitFromSystemTime();
 	bePerlinNoise2D noise;
@@ -346,8 +346,8 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 
 	for (int i : RangeIter(quadCount))
 	{
-		int triListIndex = i * 6;
-		int lineListIndex = i * 8;
+		const int triListIndex = i * 6;
+		const int lineListIndex = i * 8;
 		triIndices[triListIndex+0] = lineListIndex+0;
 		triIndices[triListIndex+1] = lineListIndex+2;
 		triIndices[triListIndex+2] = lineListIndex+4;
@@ -360,21 +360,21 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 	int vertexIndex = 0;
 	for (float x = -gridOffset; x < gridOffset; x += gridSize)
 	{
-		float xPos0 = x + xzOffset;
-		float xPos1 = xPos0+gridSize;
+		const float xPos0 = x + xzOffset;
+		const float xPos1 = xPos0+gridSize;
 		for (float z = -gridOffset; z < gridOffset; z += gridSize)
 		{
-			float yPos0 = z + xzOffset;
-			float yPos1 = yPos0+gridSize;
+			const float yPos0 = z + xzOffset;
+			const float yPos1 = yPos0+gridSize;
 
-			float zPos0 = noiseHeight * noise.GetOctave(xPos0/noiseScale, yPos0/noiseScale, 4);
-			float zPos1 = noiseHeight * noise.GetOctave(xPos0/noiseScale, yPos1/noiseScale, 4);
-			float zPos2 = noiseHeight * noise.GetOctave(xPos1/noiseScale, yPos1/noiseScale, 4);
-			float zPos3 = noiseHeight * noise.GetOctave(xPos1/noiseScale, yPos0/noiseScale, 4);
-			Vec4 pos0(xPos0, yPos0, zPos0, 1.f);
-			Vec4 pos1(xPos0, yPos1, zPos1, 1.f);
-			Vec4 pos2(xPos1, yPos1, zPos2, 1.f);
-			Vec4 pos3(xPos1, yPos0, zPos3, 1.f);
+			const float zPos0 = noiseHeight * noise.GetOctave(xPos0/noiseScale, yPos0/noiseScale, 4);
+			const float zPos1 = noiseHeight * noise.GetOctave(xPos0/noiseScale, yPos1/noiseScale, 4);
+			const float zPos2 = noiseHeight * noise.GetOctave(xPos1/noiseScale, yPos1/noiseScale, 4);
+			const float zPos3 = noiseHeight * noise.GetOctave(xPos1/noiseScale, yPos0/noiseScale, 4);
+			const Vec4 pos0(xPos0, yPos0, zPos0, 1.f);
+			const Vec4 pos1(xPos0, yPos1, zPos1, 1.f);
+			const Vec4 pos2(xPos1, yPos1, zPos2, 1.f);
+			const Vec4 pos3(xPos1, yPos0, zPos3, 1.f);
 
 			vertices[vertexIndex+0].position = pos0;
 			vertices[vertexIndex+1].position = pos1;
@@ -413,7 +413,7 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 	meshes[1].m_indexBuffer.Allocate(renderInterface, decltype(lineIndices)::element_size, vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, lineIndices.begin());
 	meshes[1].m_materialIndex = 0;
 
-	bool success = m_gridModel.InitFromBuffers(&vertexBuffer, meshes, materials);
+	const bool success = m_gridModel.InitFromBuffers(&vertexBuffer, meshes, materials);
 	if (!success) { BE_ASSERT(false); return; }
 }
 

@@ -62,9 +62,9 @@ class beStringView
 
 	int FindLast(char c) const
 	{
-		auto _begin = begin();
-		auto _rbegin = rbegin();
-		auto _rend = rend();
+		const auto _begin = begin();
+		const auto _rbegin = rbegin();
+		const auto _rend = rend();
 		auto it = std::find(_rbegin, _rend, c);
 		if (it != _rend)
 		{

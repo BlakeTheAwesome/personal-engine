@@ -73,15 +73,15 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 		{
 			if (beCameraUtils::GetScreeenToWorldRay(*ri, viewMatrix, x, y, &pos, &dir))
 			{
-				Vec3 endPoint3 = pos + (dir * 100.f);
+				const Vec3 endPoint3 = pos + (dir * 100.f);
 				vertices[(size_t)vertCount] = VertexColourType{beMath::ToVec4(pos, 1.f), startColour};
 				vertices[(size_t)vertCount+1] = VertexColourType{beMath::ToVec4(endPoint3, 1.f), endColour};
 				vertCount += 2;
 			}
 		};
 
-		float mouseX = (float)mouse->GetX();
-		float mouseY = (float)mouse->GetY();
+		const float mouseX = (float)mouse->GetX();
+		const float mouseY = (float)mouse->GetY();
 		addPos(mouseX-5, mouseY-5);
 		addPos(mouseX-5, mouseY  );
 		addPos(mouseX-5, mouseY+5);
@@ -128,8 +128,8 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	beArray<u32, vertexCount> indices;
 	
 	// Load the vertex array with data.
-	float AxisLength = 5.f;
-	float w = 1.f;
+	constexpr float AxisLength = 5.f;
+	constexpr float w = 1.f;
 	vertices[0].position = Vec4(0.f, 0.f, 0.f, w);
 	vertices[0].colour = Vec4(1.f, 0.f, 0.f, 1.f);
 	vertices[1].position = Vec4(AxisLength, 0.f, 0.f, w);
@@ -174,8 +174,8 @@ void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, c
 	{
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 		ID3D11Buffer* vertexBuffers[] = {self.axesVertexBuffer.GetBuffer()};
-		u32 strides[] = {(u32)self.axesVertexBuffer.ElementSize()};
-		u32 offsets[] = {0};
+		const u32 strides[] = {(u32)self.axesVertexBuffer.ElementSize()};
+		const u32 offsets[] = {0};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 		deviceContext->IASetIndexBuffer(self.axesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)self.axesIndexBuffer.D3DIndexTopology());
@@ -187,8 +187,8 @@ void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, c
 	{
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
 		ID3D11Buffer* vertexBuffers[] = {self.mouseVertexBuffer.GetBuffer()};
-		u32 strides[] = {(u32)self.mouseVertexBuffer.ElementSize()};
-		u32 offsets[] = {0};
+		const u32 strides[] = {(u32)self.mouseVertexBuffer.ElementSize()};
+		const u32 offsets[] = {0};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 		deviceContext->IASetIndexBuffer(self.mouseIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)self.mouseIndexBuffer.D3DIndexTopology());

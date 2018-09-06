@@ -33,8 +33,7 @@ bool beFont::ReadLine(const std::string& line)
 	if (*next == 'F')
 	{
 		int lineHeight;
-		int res = sscanf_s(next, "F %d", &lineHeight);
-		if (res != 1)
+		if (1 != sscanf_s(next, "F %d", &lineHeight))
 		{
 			return false;
 		}
@@ -45,8 +44,7 @@ bool beFont::ReadLine(const std::string& line)
 		u32 characterCode;
 		int pixelWidth, preKern, postKern;
 		float u1, v1, u2, v2;
-		int res = sscanf_s(next, "C %u %f %f %f %f %d %d %d", &characterCode, &u1, &v1, &u2, &v2, &pixelWidth, &preKern, &postKern);
-		if (res != 8)
+		if (8 != sscanf_s(next, "C %u %f %f %f %f %d %d %d", &characterCode, &u1, &v1, &u2, &v2, &pixelWidth, &preKern, &postKern))
 		{
 			return false;
 		}
@@ -65,8 +63,7 @@ bool beFont::ReadLine(const std::string& line)
 	{
 		u32 left, right;
 		int kern;
-		int res = sscanf_s(next, "K %u %u %d", &left, &right, &kern);
-		if (res != 3)
+		if (3 != sscanf_s(next, "K %u %u %d", &left, &right, &kern))
 		{
 			return false;
 		}
@@ -133,8 +130,8 @@ bool beFont::LoadTexture(beRenderInterface* ri, beShaderPack* shaderPack, const 
 
 static bool CompareTop32(const u64* _lhs, const u64* _rhs, int* comparison)
 {
-	u64 lhs = *_lhs >> 32;
-	u64 rhs = *_rhs >> 32;
+	const u64 lhs = *_lhs >> 32;
+	const u64 rhs = *_rhs >> 32;
 	if (lhs == rhs)
 	{
 		*comparison = 0;
@@ -154,7 +151,7 @@ static bool CompareTop32(const u64* _lhs, const u64* _rhs, int* comparison)
 
 const beFont::CharacterInfo* beFont::FindCharacterInfo(u32 c) const
 {
-	u64 searchKey = ((u64)c) << 32;
+	const u64 searchKey = ((u64)c) << 32;
 	const u64* entry = nullptr;
 	if (m_characterIndices.BinarySearch<CompareTop32>(&searchKey, &entry))
 	{
@@ -199,8 +196,8 @@ const beFont::CharacterInfo* beFont::FindCharacterInfo(u32 c) const
 
 bool beFont::CompareExtraKerning(const beFont::ExtraKerning* _lhs, const beFont::ExtraKerning* _rhs, int* comparison)
 {
-	u64 lhs = _lhs->pair;
-	u64 rhs = _rhs->pair;
+	const u64 lhs = _lhs->pair;
+	const u64 rhs = _rhs->pair;
 	if (lhs == rhs)
 	{
 		*comparison = 0;
@@ -244,13 +241,13 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 	beStringConversion::UTF8ToWide(string.c_str(), &wstring);
 
 	const int vertsPerChar = 6; // TODO: re-use verts
-	int numChars = (int)wstring.size();
-	int numVerts = numChars * vertsPerChar;
+	const int numChars = (int)wstring.size();
+	const int maxVerts = numChars * vertsPerChar;
 
-	beVector<VertexInputType> vertices(numVerts, numVerts, 0);
-	beVector<u32> indices(numVerts, numVerts, 0);
+	beVector<VertexInputType> vertices(maxVerts, maxVerts, 0);
+	beVector<u32> indices(maxVerts, maxVerts, 0);
 	
-	for (int i = 0; i < numVerts; i++)
+	for (int i = 0; i < maxVerts; i++)
 	{
 		indices[i] = i;
 	}
@@ -373,7 +370,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 		lineWidth = newLineWidth;
 		lastChar = nextChar;
 	}
-	numVerts = vertIndex;
+	const int numVerts = vertIndex;
 
 	outStringInfo->height = (float)totalHeight;
 	outStringInfo->width = (float)totalWidth;

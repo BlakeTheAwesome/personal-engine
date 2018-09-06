@@ -21,12 +21,10 @@ void beGamepad::Deinit()
 
 void beGamepad::Update(float dt)
 {
-	XINPUT_STATE state = {0};
-	DWORD res = XInputGetState(m_index, &state);
-
 	m_lastStateFlags = m_thisStateFlags;
 
-	if(res == ERROR_SUCCESS)
+	XINPUT_STATE state = {0};
+	if (XInputGetState(m_index, &state) == ERROR_SUCCESS)
 	{
 		m_connected = true;
 		if (m_lastPacketNumber != state.dwPacketNumber)
@@ -34,12 +32,12 @@ void beGamepad::Update(float dt)
 			m_lastPacketNumber = state.dwPacketNumber;
 			m_thisStateFlags = state.Gamepad.wButtons;
 			
-			BYTE leftTrigger = state.Gamepad.bLeftTrigger;
-			BYTE rightTrigger = state.Gamepad.bRightTrigger;
-			SHORT leftX = state.Gamepad.sThumbLX;
-			SHORT leftY = state.Gamepad.sThumbLY;
-			SHORT rightX = state.Gamepad.sThumbRX;
-			SHORT rightY = state.Gamepad.sThumbRY;
+			const BYTE leftTrigger = state.Gamepad.bLeftTrigger;
+			const BYTE rightTrigger = state.Gamepad.bRightTrigger;
+			const SHORT leftX = state.Gamepad.sThumbLX;
+			const SHORT leftY = state.Gamepad.sThumbLY;
+			const SHORT rightX = state.Gamepad.sThumbRX;
+			const SHORT rightY = state.Gamepad.sThumbRY;
 
 			if (leftTrigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 			{

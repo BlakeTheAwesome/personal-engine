@@ -17,8 +17,8 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 	shaderPack->shaderColour.SetShaderParameters(renderInterface);
 
 	ID3D11DeviceContext* deviceContext = renderInterface->GetDeviceContext();
-	unsigned int stride = m_vertexBuffer.ElementSize();
-	unsigned int offset = 0;
+	const unsigned int stride = m_vertexBuffer.ElementSize();
+	const unsigned int offset = 0;
 
 	ID3D11Buffer* vertexBuffers[] ={m_vertexBuffer.GetBuffer()};
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, &stride, &offset);
@@ -51,7 +51,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 		{
 			for (int x : RangeIter(m_cells.Length()))
 			{
-				char c = m_cells.At(x, y) ? 'o' : 'x';
+				const char c = m_cells.At(x, y) ? 'o' : 'x';
 				testString << c;
 			}
 			testString << "\n";
@@ -74,8 +74,8 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 
 void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float yPos, float distance, bool highlight)
 {
-	float currentHeight = block->verts[2].position.z;
-	float newHeight = beMath::Clamp(currentHeight+distance, 0.f, BlockHeight);
+	const float currentHeight = block->verts[2].position.z;
+	const float newHeight = beMath::Clamp(currentHeight+distance, 0.f, BlockHeight);
 
 
 	//-x
@@ -224,32 +224,32 @@ void LifeGameCells::Initialise(beAppData* appData)
 
 	beRandom rng;
 	rng.InitFromSystemTime();
-	int numBlocks = m_renderBlocks.Capacity();
+	const int numBlocks = m_renderBlocks.Capacity();
 	m_renderBlocks.SetCountUninitialised(numBlocks);
 
 	for (int y : RangeIter(m_cells.Length()))
 	{
 		for (int x : RangeIter(m_cells.Length()))
 		{
-			int arrayIndex = m_cells.ToIndex(x, y);
+			const int arrayIndex = m_cells.ToIndex(x, y);
 
 			bool live = rng.NextBool();
 			m_cells[arrayIndex] = live;
 
-			float xPos = x*BlockLength;
-			float yPos = y*BlockLength;
-			float height = live ? BlockHeight : 0.f;
+			const float xPos = x*BlockLength;
+			const float yPos = y*BlockLength;
+			const float height = live ? BlockHeight : 0.f;
 			//LOG("Writing to block[%d]", arrayIndex);
 			InitBlock(&m_renderBlocks[arrayIndex], xPos, yPos, height);
 		}
 	}
 
-	int numVerts = numBlocks * Block::VertsPerBlock;
+	const int numVerts = numBlocks * Block::VertsPerBlock;
 	//int numTris = numBlocks * Block::TrisPerBlock;
 	bool success = m_vertexBuffer.Allocate(renderInterface, sizeof(GridVertexFormat), numVerts, D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, m_renderBlocks.begin());
 	BE_ASSERT(success);
 
-	u32 FaceIndexLayout[Block::IndicesPerFace] ={
+	const u32 FaceIndexLayout[Block::IndicesPerFace] ={
 		0, 1, 2, 2, 1, 3
 	};
 
@@ -257,13 +257,13 @@ void LifeGameCells::Initialise(beAppData* appData)
 	indices.SetCount(numBlocks * Block::IndicesPerBlock);
 	for (int blockIndex : RangeIter(m_renderBlocks.Count()))
 	{
-		int vertBlockStart = blockIndex * Block::VertsPerBlock;
-		int indexBlockStart = blockIndex * Block::IndicesPerBlock;
+		const int vertBlockStart = blockIndex * Block::VertsPerBlock;
+		const int indexBlockStart = blockIndex * Block::IndicesPerBlock;
 
 		for (int faceIndex : RangeIter(Block::FacesPerBlock))
 		{
-			int vertFaceStart = vertBlockStart + (faceIndex * Block::VertsPerFace);
-			int indexFaceStart = indexBlockStart + (faceIndex * Block::IndicesPerFace);
+			const int vertFaceStart = vertBlockStart + (faceIndex * Block::VertsPerFace);
+			const int indexFaceStart = indexBlockStart + (faceIndex * Block::IndicesPerFace);
 
 			for (int indexIndex : RangeIter(Block::IndicesPerFace))
 			{
@@ -324,16 +324,16 @@ void LifeGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatri
 
 
 
-	float distance = m_animationDistancePerSecond * dt;
-	float negDist = -distance;
+	const float distance = m_animationDistancePerSecond * dt;
+	const float negDist = -distance;
 
 	for (auto iter : m_cells.GridIter())
 	{
 		Block* block = &m_renderBlocks[iter.index];
-		float increment = *iter ? distance : negDist;
-		float xPos = iter.xPos() * BlockLength;
-		float yPos = iter.yPos() * BlockLength;
-		bool highlight = iter.index == m_hightlightIndex;
+		const float increment = *iter ? distance : negDist;
+		const float xPos = iter.xPos() * BlockLength;
+		const float yPos = iter.yPos() * BlockLength;
+		const bool highlight = iter.index == m_hightlightIndex;
 		UpdateBlock(block, xPos, yPos, increment, highlight);
 	}
 
@@ -350,14 +350,14 @@ void LifeGameCells::TickGame()
 	const int length = m_cells.Length();
 	for (int y : RangeIter(length))
 	{
-		int yUp = (y-1+length) % length;
-		int yDown = (y+1+length) % length;
+		const int yUp = (y-1+length) % length;
+		const int yDown = (y+1+length) % length;
 		for (int x : RangeIter(length))
 		{
-			int xLeft = (x-1+length) % length;
-			int xRight = (x+1+length) % length;
+			const int xLeft = (x-1+length) % length;
+			const int xRight = (x+1+length) % length;
 
-			int adjecentLivingCells =
+			const int adjecentLivingCells =
 				(int)m_cells.At(xLeft, yUp) +
 				(int)m_cells.At(xLeft, y) +
 				(int)m_cells.At(xLeft, yDown) +
@@ -371,7 +371,7 @@ void LifeGameCells::TickGame()
 			//Any live cell with two or three live neighbours lives on to the next generation.
 			//Any live cell with more than three live neighbours dies, as if by overpopulation.
 			//Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-			int index = m_nextCells.ToIndex(x, y);
+			const int index = m_nextCells.ToIndex(x, y);
 			if (adjecentLivingCells == 2)
 			{
 				m_nextCells[index] = m_cells[index];

@@ -16,7 +16,7 @@ class beHashMapBase
 
 	beHashMapBase()
 	{
-		int capacity = m_validEntries.Capacity();
+		const int capacity = m_validEntries.Capacity();
 		m_validEntries.SetCount(capacity, false);
 		m_keys.SetCountUninitialised(capacity);
 		m_values.SetCountUninitialised(capacity);
@@ -194,8 +194,8 @@ class beHashMapBase
 	template <typename lookup_type>
 	bool GetHashIndex(const lookup_type& key, int* out_index) const
 	{
-		size_t capacity = Capacity();
-		size_t searchStartIndex = beHash<key_type>::GetHash(key);
+		const size_t capacity = Capacity();
+		const size_t searchStartIndex = beHash<key_type>::GetHash(key);
 		for (size_t i = searchStartIndex, searchEndIndex = searchStartIndex + capacity; i < searchEndIndex; i++)
 		{
 			int index = (int)(i % capacity);
@@ -214,8 +214,8 @@ class beHashMapBase
 		{
 			BE_ASSERT(false); // Unable to grow
 		}
-		int currentCount = m_validEntries.Count();
-		int newCapacity = m_validEntries.Capacity();
+		const int currentCount = m_validEntries.Count();
+		const int newCapacity = m_validEntries.Capacity();
 		BE_ASSERT(currentCount < newCapacity);
 
 		struct Remap
@@ -247,10 +247,10 @@ class beHashMapBase
 
 		for (const Remap& remap : remaps)
 		{
-			int searchStartIndex = remap.hash % newCapacity;
+			const int searchStartIndex = remap.hash % newCapacity;
 			for (int i : RangeIter(searchStartIndex, searchStartIndex + newCapacity))
 			{
-				int index = i % newCapacity;
+				const int index = i % newCapacity;
 				if ((!m_validEntries[index]))
 				{
 					m_validEntries[index] = true;

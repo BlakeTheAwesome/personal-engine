@@ -58,7 +58,7 @@ namespace beMath
 
 	inline float Length(const beMath::Vec3& v)
 	{
-		XMVECTOR xv = XMLoadFloat3(&v);
+		const XMVECTOR xv = XMLoadFloat3(&v);
 		XMFLOAT4A out; XMStoreFloat4A(&out, xv);
 		return out.x;
 	}
@@ -77,9 +77,9 @@ namespace beMath
 
 	inline beMath::Vec3 operator-(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
-		XMVECTOR l = XMLoadFloat3(&lhs);
-		XMVECTOR r = XMLoadFloat3(&rhs);
-		XMVECTOR xv = XMVectorSubtract(l, r);
+		const XMVECTOR l = XMLoadFloat3(&lhs);
+		const XMVECTOR r = XMLoadFloat3(&rhs);
+		const XMVECTOR xv = XMVectorSubtract(l, r);
 		beMath::Vec3 out;
 		XMStoreFloat3(&out, xv);
 		return out;
@@ -87,9 +87,9 @@ namespace beMath
 
 	inline beMath::Vec3 operator+(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
-		XMVECTOR l = XMLoadFloat3(&lhs);
-		XMVECTOR r = XMLoadFloat3(&rhs);
-		XMVECTOR xv = XMVectorAdd(l, r);
+		const XMVECTOR l = XMLoadFloat3(&lhs);
+		const XMVECTOR r = XMLoadFloat3(&rhs);
+		const XMVECTOR xv = XMVectorAdd(l, r);
 		beMath::Vec3 out;
 		XMStoreFloat3(&out, xv);
 		return out;
@@ -97,8 +97,8 @@ namespace beMath
 
 	inline beMath::Vec3 operator*(const beMath::Vec3& v, const float& scale)
 	{
-		XMVECTOR l = XMLoadFloat3(&v);
-		XMVECTOR xv = XMVectorScale(l, scale);
+		const XMVECTOR l = XMLoadFloat3(&v);
+		const XMVECTOR xv = XMVectorScale(l, scale);
 		beMath::Vec3 out;
 		XMStoreFloat3(&out, xv);
 		return out;
@@ -106,9 +106,9 @@ namespace beMath
 
 	inline beMath::Vec4 operator-(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
 	{
-		XMVECTOR l = XMLoadFloat4(&lhs);
-		XMVECTOR r = XMLoadFloat4(&rhs);
-		XMVECTOR xv = XMVectorSubtract(l, r);
+		const XMVECTOR l = XMLoadFloat4(&lhs);
+		const XMVECTOR r = XMLoadFloat4(&rhs);
+		const XMVECTOR xv = XMVectorSubtract(l, r);
 		beMath::Vec4 out;
 		XMStoreFloat4(&out, xv);
 		return out;
@@ -116,9 +116,9 @@ namespace beMath
 
 	inline beMath::Vec4 operator+(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
 	{
-		XMVECTOR l = XMLoadFloat4(&lhs);
-		XMVECTOR r = XMLoadFloat4(&rhs);
-		XMVECTOR xv = XMVectorAdd(l, r);
+		const XMVECTOR l = XMLoadFloat4(&lhs);
+		const XMVECTOR r = XMLoadFloat4(&rhs);
+		const XMVECTOR xv = XMVectorAdd(l, r);
 		beMath::Vec4 out;
 		XMStoreFloat4(&out, xv);
 		return out;
@@ -126,8 +126,8 @@ namespace beMath
 
 	inline beMath::Vec4 operator*(const beMath::Vec4& v, const float& scale)
 	{
-		XMVECTOR l = XMLoadFloat4(&v);
-		XMVECTOR xv = XMVectorScale(l, scale);
+		const XMVECTOR l = XMLoadFloat4(&v);
+		const XMVECTOR xv = XMVectorScale(l, scale);
 		beMath::Vec4 out;
 		XMStoreFloat4(&out, xv);
 		return out;
@@ -136,9 +136,9 @@ namespace beMath
 	inline bool operator==(const beMath::Matrix& m1, const beMath::Matrix& m2)
 	{
 		bool ret = true;
-		for (int i : RangeIter(4))
+		for (const int i : RangeIter(4))
 		{
-			for (int j : RangeIter(4))
+			for (const int j : RangeIter(4))
 			{
 				ret = ret && m1(i, j) == m2(i, j);
 			}
@@ -236,18 +236,18 @@ namespace beMath
 		return t * t * t * (t * (t * 6 - 15) + 10);			// 6t^5 - 15t^4 + 10t^3
 	}
 
-	inline float Lerp(float min, float max, float lerp)
+	inline constexpr float Lerp(float min, float max, float lerp)
 	{
-		float range = max-min;
+		const float range = max-min;
 		return min + lerp*range;
 	}
 
-	inline float SmoothLerp(float min, float max, float lerp)
+	inline constexpr float SmoothLerp(float min, float max, float lerp)
 	{
 		return Lerp(min, max, SmoothStep(lerp));
 	}
 
-	inline float SmootherLerp(float min, float max, float lerp)
+	inline constexpr float SmootherLerp(float min, float max, float lerp)
 	{
 		return Lerp(min, max, SmootherStep(lerp));
 	}
@@ -255,8 +255,8 @@ namespace beMath
 
 	inline beMath::Vec3 normalise(const beMath::Vec3& v)
 	{
-		XMVECTOR xv = XMLoadFloat3(&v);
-		XMVECTOR normalised = XMVector3Normalize(xv);
+		const XMVECTOR xv = XMLoadFloat3(&v);
+		const XMVECTOR normalised = XMVector3Normalize(xv);
 		beMath::Vec3 out;
 		XMStoreFloat3(&out, normalised);
 		return out;
@@ -279,7 +279,7 @@ namespace beMath
 
 		const auto& row = matrix.m[3];
 		BE_ASSERT(row[3] != 0.f);
-		float invScale = 1.f / row[3];
+		const float invScale = 1.f / row[3];
 		return Vec3(row[0] * invScale, row[1] * invScale, row[2] * invScale);
 	}
 

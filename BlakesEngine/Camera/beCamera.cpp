@@ -28,19 +28,19 @@ const Matrix& beCamera::GetViewMatrix() const
 
 void beCamera::Update()
 {
-	float pitch = DEG_TO_RAD(m_rot.x);
-	float yaw = DEG_TO_RAD(m_rot.y);
-	float roll = DEG_TO_RAD(m_rot.z);
+	const float pitch = DEG_TO_RAD(m_rot.x);
+	const float yaw = DEG_TO_RAD(m_rot.y);
+	const float roll = DEG_TO_RAD(m_rot.z);
 
-	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	const XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 
-	Vec3 up(0.0f, 0.0f, 1.0f);
-	Vec3 lookAt(1.0f, 0.0f, 0.0f);
+	const Vec3 up(0.0f, 0.0f, 1.0f);
+	const Vec3 lookAt(1.0f, 0.0f, 0.0f);
 	
-	XMVECTOR xUp = XMVector3TransformCoord(XMLoadFloat3(&up), rotationMatrix);
-	XMVECTOR xLookAt = XMVector3TransformCoord(XMLoadFloat3(&lookAt), rotationMatrix);
+	const XMVECTOR xUp = XMVector3TransformCoord(XMLoadFloat3(&up), rotationMatrix);
+	const XMVECTOR xLookAt = XMVector3TransformCoord(XMLoadFloat3(&lookAt), rotationMatrix);
 	
-	XMMATRIX xViewMat = XMMatrixLookAtLH(XMLoadFloat3(&m_pos), xLookAt, xUp);
+	const XMMATRIX xViewMat = XMMatrixLookAtLH(XMLoadFloat3(&m_pos), xLookAt, xUp);
 	XMStoreFloat4x4(&m_matrix, xViewMat);
 }
 

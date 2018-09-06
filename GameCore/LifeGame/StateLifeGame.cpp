@@ -85,8 +85,8 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	m_camera.Update(dt);
 	debugWorld->Update(*m_appData, m_camera.GetViewMatrix());
 
-	bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
-	bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space) || gamepad->GetPressed(beGamepad::Button::X);
+	const bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
+	const bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space) || gamepad->GetPressed(beGamepad::Button::X);
 	if (step)
 	{
 		m_timeUntilNextUpdate = m_updateTimeFrequency - m_timeUntilNextUpdate;

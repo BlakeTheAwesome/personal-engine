@@ -80,9 +80,9 @@ namespace beStringUtil
 	template <typename Iter>
 	inline int FindLast(Iter begin, Iter end, char c)
 	{
-		auto rbegin = std::reverse_iterator(end);
-		auto rend = std::reverse_iterator(begin);
-		auto it = std::find(rbegin, rend, c);
+		const auto rbegin = std::reverse_iterator(end);
+		const auto rend = std::reverse_iterator(begin);
+		const auto it = std::find(rbegin, rend, c);
 		if (it != rend)
 		{
 			return (int)std::distance(&(*begin), &(*it));
@@ -133,10 +133,10 @@ namespace beStringUtil
 	template <typename Iter, typename IterPattern>
 	inline bool EndsWith(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
-		auto rbeginRange = std::reverse_iterator(endRange);
-		auto rendRange = std::reverse_iterator(beginRange);
-		auto rbeginPattern = std::reverse_iterator(endPattern);
-		auto rendPattern = std::reverse_iterator(beginPattern);
+		const auto rbeginRange = std::reverse_iterator(endRange);
+		const auto rendRange = std::reverse_iterator(beginRange);
+		const auto rbeginPattern = std::reverse_iterator(endPattern);
+		const auto rendPattern = std::reverse_iterator(beginPattern);
 		return BeginsWith(rbeginRange, rendRange, rbeginPattern, rendPattern);
 	}
 	WRAP_PERMUTATIONS(EndsWith);
@@ -144,10 +144,10 @@ namespace beStringUtil
 	template <typename Iter, typename IterPattern>
 	inline bool EndsWithI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
-		auto rbeginRange = std::reverse_iterator(endRange);
-		auto rendRange = std::reverse_iterator(beginRange);
-		auto rbeginPattern = std::reverse_iterator(endPattern);
-		auto rendPattern = std::reverse_iterator(beginPattern);
+		const auto rbeginRange = std::reverse_iterator(endRange);
+		const auto rendRange = std::reverse_iterator(beginRange);
+		const auto rbeginPattern = std::reverse_iterator(endPattern);
+		const auto rendPattern = std::reverse_iterator(beginPattern);
 		return BeginsWithI(rbeginRange, rendRange, rbeginPattern, rendPattern);
 	}
 	WRAP_PERMUTATIONS(EndsWithI);

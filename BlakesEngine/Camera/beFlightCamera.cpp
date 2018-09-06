@@ -15,8 +15,8 @@ static constexpr bool INVERT_X = false;
 
 beFlightCamera::beFlightCamera()
 {
-	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(m_yaw, m_pitch, m_roll);
-	XMMATRIX startingOrientation = XMMatrixRotationQuaternion(quat);
+	const XMVECTOR quat = XMQuaternionRotationRollPitchYaw(m_yaw, m_pitch, m_roll);
+	const XMMATRIX startingOrientation = XMMatrixRotationQuaternion(quat);
 	XMStoreFloat4x4(&m_orientationMatrix, startingOrientation);
 
 	UpdateImpl(0.f, 0.f, 0.f, 0.f, 0.f);
@@ -60,14 +60,14 @@ void beFlightCamera::Update(float dt)
 
 	if (m_gamepad && m_gamepad->IsConnected())
 	{
-		float lX = m_gamepad->GetLeftX();
-		float lY = m_gamepad->GetLeftY();
-		float rX = m_gamepad->GetRightX();
-		float rY = m_gamepad->GetRightY();
+		const float lX = m_gamepad->GetLeftX();
+		const float lY = m_gamepad->GetLeftY();
+		const float rX = m_gamepad->GetRightX();
+		const float rY = m_gamepad->GetRightY();
 
 		if (lX != 0.f || lY != 0.f || rX != 0.f || rY != 0.f)
 		{
-			float moveSpeedFactor = (5.f + (R2_MULTIPLIER*m_gamepad->GetR2()));
+			const float moveSpeedFactor = (5.f + (R2_MULTIPLIER*m_gamepad->GetR2()));
 
 			extraPitch = (INVERT_Y ? rY : -rY) * ROTATIONS_PER_SECOND * dt;
 			extraYaw = (INVERT_X ? -rX : rX) * ROTATIONS_PER_SECOND * dt;
@@ -75,8 +75,8 @@ void beFlightCamera::Update(float dt)
 			right = (INVERT_X ? -lX : lX) * DISTANCE_PER_SECOND * dt * moveSpeedFactor;
 		}
 	} else if (m_mouse) {
-		bool lDown = m_mouse->IsDown(beMouse::Button::LeftButton);
-		bool rDown = m_mouse->IsDown(beMouse::Button::RightButton);
+		const bool lDown = m_mouse->IsDown(beMouse::Button::LeftButton);
+		const bool rDown = m_mouse->IsDown(beMouse::Button::RightButton);
 		extraPitch = lDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 		extraYaw = lDown ? m_mouse->GetXMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
 		forwards = rDown ? m_mouse->GetYMovement() * MOUSE_SPEED_MULTIPLIER : 0.f;
@@ -91,21 +91,21 @@ void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, floa
 	m_pitch = beMath::Clamp(m_pitch, (float)-M_PI, 0.f);
 	m_yaw += extraYaw;
 
-	float yaw = m_yaw;
+	const float yaw = m_yaw;
 	// #TODO #CAMERA this used to do a whole lot of matrix stuff, is this better?
-	XMMATRIX rotZ = XMMatrixRotationZ(yaw);
-	XMMATRIX rotX = XMMatrixRotationX(m_pitch);
+	const XMMATRIX rotZ = XMMatrixRotationZ(yaw);
+	const XMMATRIX rotX = XMMatrixRotationX(m_pitch);
 	XMMATRIX orientation = rotZ * rotX;
 	orientation = XMMatrixInverse(nullptr, orientation);
 
 	//cycles input
 	XMVECTOR currentPosition = XMVectorSet(m_position.x, m_position.y, m_position.z, 1.f);
-	XMVECTOR translation = XMVectorSet(extraRight, 0.f, extraForwards, 0.f);
-	XMVECTOR transformedTranslation = XMVector3TransformNormal(translation, orientation);
+	const XMVECTOR translation = XMVectorSet(extraRight, 0.f, extraForwards, 0.f);
+	const XMVECTOR transformedTranslation = XMVector3TransformNormal(translation, orientation);
 	currentPosition += transformedTranslation;
 	orientation.r[3] = currentPosition;
 
-	XMMATRIX viewMatrix = XMMatrixInverse(nullptr, orientation);
+	const XMMATRIX viewMatrix = XMMatrixInverse(nullptr, orientation);
 
 	XMStoreFloat4x4(&m_orientationMatrix, orientation);
 	XMStoreFloat4x4(&m_viewMatrix, viewMatrix);

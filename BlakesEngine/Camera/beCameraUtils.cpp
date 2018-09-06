@@ -8,21 +8,21 @@
 bool intersectsBounds(const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVECTOR& rayStart, const XMVECTOR& rayDir, float* distance)
 {
 	// transform into local space
-	XMVECTOR boundsMin = XMLoadFloat3(&_boundsMin);
-	XMVECTOR boundsMax = XMLoadFloat3(&_boundsMax);
+	const XMVECTOR boundsMin = XMLoadFloat3(&_boundsMin);
+	const XMVECTOR boundsMax = XMLoadFloat3(&_boundsMax);
 
 	// Check if the start is inside the bounding box
-	bool inside = XMVector3Greater(rayStart, boundsMin) && XMVector3Less(rayStart, boundsMax);
+	const bool inside = XMVector3Greater(rayStart, boundsMin) && XMVector3Less(rayStart, boundsMax);
 
 	// Test against the planes of the box
 	float tNear = -FLT_MAX, tFar = FLT_MAX;
 	int i = 0;
 	for (; i < 3; i++)
 	{
-		float dir1 = XMVectorGetByIndex(rayDir, i);
-		float pos1 = XMVectorGetByIndex(rayStart, i);
-		float min1 = XMVectorGetByIndex(boundsMin, i);
-		float max1 = XMVectorGetByIndex(boundsMax, i);
+		const float dir1 = XMVectorGetByIndex(rayDir, i);
+		const float pos1 = XMVectorGetByIndex(rayStart, i);
+		const float min1 = XMVectorGetByIndex(boundsMin, i);
+		const float max1 = XMVectorGetByIndex(boundsMax, i);
 		if (dir1 == (float)0.0f)
 		{
 			// If not moving along this axes, and we're not within the bounds on this axes, there is no intersection.
@@ -73,12 +73,12 @@ std::optional<Vec3> beCameraUtils::WorldPosFromScreenPos(const beRenderInterface
 	float intersectionDist = 0.f;
 	// Todo: Allow checks against other volumes
 
-	Vec3 minGroundBounds{-1000.f, -1000.f, -0.5f};
-	Vec3 maxGroundBounds{ 1000.f,  1000.f,  0.0f};
+	const Vec3 minGroundBounds{-1000.f, -1000.f, -0.5f};
+	const Vec3 maxGroundBounds{ 1000.f,  1000.f,  0.0f};
 
-	XMVECTOR worldPosV = XMLoadFloat3(&worldPos);
-	XMVECTOR worldDirV = XMLoadFloat3(&worldDir);
-	bool intersects = intersectsBounds(minGroundBounds, maxGroundBounds, worldPosV, worldDirV, &intersectionDist);
+	const XMVECTOR worldPosV = XMLoadFloat3(&worldPos);
+	const XMVECTOR worldDirV = XMLoadFloat3(&worldDir);
+	const bool intersects = intersectsBounds(minGroundBounds, maxGroundBounds, worldPosV, worldDirV, &intersectionDist);
 	if (!intersects) { return {}; }
 
 	Vec3 result;
@@ -105,15 +105,15 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 	inputVecs.at(0) = Vec3(screenX, screenY, 0.f);
 	inputVecs.at(1) = Vec3(screenX, screenY, 1.f);
 
-	XMMATRIX viewMatrix = XMLoadFloat4x4(&_viewMatrix);
-	XMMATRIX projectionMatrix = XMLoadFloat4x4(&ri.GetProjectionMatrix());
-	XMMATRIX worldMatrix = XMLoadFloat4x4(&ri.GetWorldMatrix());
+	const XMMATRIX viewMatrix = XMLoadFloat4x4(&_viewMatrix);
+	const XMMATRIX projectionMatrix = XMLoadFloat4x4(&ri.GetProjectionMatrix());
+	const XMMATRIX worldMatrix = XMLoadFloat4x4(&ri.GetWorldMatrix());
 
 	XMVector3UnprojectStream(outputVecs.data(), sizeof(Vec3), inputVecs.data(), sizeof(Vec3), 2, 0.f, 0.f, screenWidth, screenHeight, 0.f, 1.f, projectionMatrix, viewMatrix, worldMatrix);
 
-	XMVECTOR worldPos    = XMLoadFloat3(&outputVecs.at(0));
-	XMVECTOR worldAlongZ = XMLoadFloat3(&outputVecs.at(1));
-	XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
+	const XMVECTOR worldPos    = XMLoadFloat3(&outputVecs.at(0));
+	const XMVECTOR worldAlongZ = XMLoadFloat3(&outputVecs.at(1));
+	const XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
 
 
 	XMStoreFloat3(pos, worldPos);

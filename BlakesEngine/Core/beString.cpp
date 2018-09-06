@@ -16,12 +16,12 @@ void beStringConversion::UTF8ToWide(const beStringView& utf8, beWString* outWStr
 
 void beStringConversion::UTF8FromWide(const beWString& wStr, beString* outStr)
 {
-	int strLen = (int)wStr.size();
-	int requiredBufferSize = WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), strLen, nullptr, 0, nullptr, nullptr);
+	const int strLen = (int)wStr.size();
+	const int requiredBufferSize = WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), strLen, nullptr, 0, nullptr, nullptr);
 
 	beVector<char, 256> buffer;
 	buffer[0] = 0;
-	int len = WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), strLen, buffer.begin(), requiredBufferSize, nullptr, nullptr);
+	const int len = WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), strLen, buffer.begin(), requiredBufferSize, nullptr, nullptr);
 	BE_ASSERT(GetLastError() != ERROR_NO_UNICODE_TRANSLATION);
 	outStr->assign(buffer.begin(), len);
 	return;

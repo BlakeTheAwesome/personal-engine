@@ -32,8 +32,8 @@ beBitmap::~beBitmap()
 
 bool beBitmap::Init(beRenderInterface* ri, const beTexture& texture)
 {
-	float width = (float)texture.GetWidth();
-	float height = (float)texture.GetHeight();
+	const float width = (float)texture.GetWidth();
+	const float height = (float)texture.GetHeight();
 	if (!InitCommon(ri, width, height))
 	{
 		return false;
@@ -121,7 +121,7 @@ bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStrin
 	m_indexBuffer = std::move(info.indexBuffer);
 	m_texture.Set(*font->GetTexture());
 	
-	auto success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
+	const auto success = m_positionBuffer.Allocate(ri, sizeof(PositionBufferType), 1, D3D11_USAGE_DYNAMIC, D3D11_BIND_CONSTANT_BUFFER, 0, D3D11_CPU_ACCESS_WRITE, 0, nullptr);
 	if(!success) { BE_ASSERT(false); return false; }
 
 	return true;
@@ -173,8 +173,8 @@ void beBitmap::Render(beRenderInterface* ri)
 		m_dirtyPositionBuffer = false;
 
 		//Vec2 windowSize = ri->GetScreenSize();
-		float xOffset = m_position.x + (m_anchorPoint.x * 1.f);// - (windowSize.x / 2.f);
-		float yOffset = m_position.y + (m_anchorPoint.y * 1.f);// - (windowSize.y / 2.f);
+		const float xOffset = m_position.x + (m_anchorPoint.x * 1.f);// - (windowSize.x / 2.f);
+		const float yOffset = m_position.y + (m_anchorPoint.y * 1.f);// - (windowSize.y / 2.f);
 
 		PositionBufferType* dataPtr = (PositionBufferType*)m_positionBuffer.Map(ri);
 		if (!dataPtr)
@@ -188,8 +188,8 @@ void beBitmap::Render(beRenderInterface* ri)
 
 	ID3D11Buffer* vertexBuffers[] = {m_vertexBuffer.GetBuffer()};
 	ID3D11Buffer* constantBuffers[] = {m_positionBuffer.GetBuffer()};
-	u32 strides[] = {(u32)m_vertexBuffer.ElementSize()};
-	u32 offsets[] = {0};
+	const u32 strides[] = {(u32)m_vertexBuffer.ElementSize()};
+	const u32 offsets[] = {0};
 
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());

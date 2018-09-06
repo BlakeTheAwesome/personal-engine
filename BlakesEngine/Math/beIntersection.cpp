@@ -6,12 +6,12 @@ int beIntersection::TRayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const V
 	float maxS = -FLT_MAX;
 	float minT = FLT_MAX;
 
-	for (int i : RangeIter(3))
+	for (const int i : RangeIter(3))
 	{
-		float dir1 = VecElem(rayDir, i);
-		float start1 = VecElem(rayStart, i);
-		float boxMin1 = VecElem(boxMin, i);
-		float boxMax1 = VecElem(boxMax, i);
+		const float dir1 = VecElem(rayDir, i);
+		const float start1 = VecElem(rayStart, i);
+		const float boxMin1 = VecElem(boxMin, i);
+		const float boxMax1 = VecElem(boxMax, i);
 
 		if (std::fabs(dir1) < 0.0001f)
 		{
@@ -22,7 +22,7 @@ int beIntersection::TRayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const V
 		}
 		else
 		{
-			float invDir = 1.f/dir1;
+			const float invDir = 1.f/dir1;
 			float s = (boxMin1 - start1) * invDir;
 			float t = (boxMax1 - start1) * invDir;
 			if (s > t)

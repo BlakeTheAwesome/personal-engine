@@ -91,7 +91,7 @@ void beMouse::Update(float dt)
 
 static inline bool isDown(const DIMOUSESTATE2& mouseState, beMouse::Button button)
 {
-	u8 buttonState = gsl::at(mouseState.rgbButtons, button);
+	const u8 buttonState = gsl::at(mouseState.rgbButtons, button);
 	return (buttonState & 0x80) != 0;
 }
 
