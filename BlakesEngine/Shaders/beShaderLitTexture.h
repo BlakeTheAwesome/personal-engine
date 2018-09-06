@@ -24,6 +24,11 @@ public:
 	beShaderLitTexture() = default;
 	~beShaderLitTexture();
 
+	beShaderLitTexture(const beShaderLitTexture&) = delete;
+	beShaderLitTexture(beShaderLitTexture&&) = delete;
+	beShaderLitTexture& operator=(const beShaderLitTexture&) = delete;
+	beShaderLitTexture& operator=(beShaderLitTexture&&) = delete;
+
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 

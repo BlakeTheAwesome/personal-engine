@@ -7,10 +7,6 @@
 // First used original Perlin noise implementation from: http://webstaff.itn.liu.se/~stegu/TNM022-2005/perlinnoiselinks/perlin-noise-math-faq.html
 // Updated with improved Perlin noise, found at: http://flafla2.github.io/2014/08/09/perlinnoise.html
 
-bePerlinNoise2D::bePerlinNoise2D()
-{
-}
-
 void bePerlinNoise2D::Initialise(int randomSeed)
 {
 	beArray<u8, 256> hashTable;

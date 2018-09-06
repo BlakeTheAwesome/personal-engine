@@ -30,9 +30,6 @@ public:
 		float height = 0.f;
 	};
 
-	beFont() = default;
-	~beFont() = default;
-
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beStringView& textureFilename);
 	void Deinit();
 

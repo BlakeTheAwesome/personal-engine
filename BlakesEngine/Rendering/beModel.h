@@ -49,7 +49,14 @@ public:
 		beString m_texEnv;
 	};
 
+	beModel() = default;
 	~beModel() { BE_ASSERT(!m_vertexBuffer.IsValid()); }
+
+	beModel(const beModel&) = delete;
+	beModel(beModel&&) = delete;
+	beModel& operator=(const beModel&) = delete;
+	beModel& operator=(beModel&&) = delete;
+
 
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename);
 	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const LoadOptions& loadOptions);

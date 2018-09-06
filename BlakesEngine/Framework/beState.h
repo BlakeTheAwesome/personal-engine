@@ -5,6 +5,12 @@ class beState
 {
 	public:
 	virtual ~beState() = default;
+	beState() = default;
+	beState(const beState&) = default;
+	beState(beState&&) = default;
+	beState& operator=(const beState&) = default;
+	beState& operator=(beState&&) = default;
+
 	virtual void Load(){}
 	virtual bool UpdateLoading(float dt){ return true; }
 	virtual void Unload(){}

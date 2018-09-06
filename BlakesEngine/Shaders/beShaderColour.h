@@ -21,6 +21,11 @@ public:
 	beShaderColour() = default;
 	~beShaderColour();
 
+	beShaderColour(const beShaderColour&) = delete;
+	beShaderColour(beShaderColour&&) = delete;
+	beShaderColour& operator=(const beShaderColour&) = delete;
+	beShaderColour& operator=(beShaderColour&&) = delete;
+
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 

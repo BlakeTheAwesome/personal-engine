@@ -12,6 +12,11 @@ public:
 	beKeyboard() = default;
 	~beKeyboard();
 
+	beKeyboard(const beKeyboard&) = delete;
+	beKeyboard(beKeyboard&&) = delete;
+	beKeyboard& operator=(const beKeyboard&) = delete;
+	beKeyboard& operator=(beKeyboard&&) = delete;
+
 	void Init(beSystemEventManager* systemEventManager);
 	void Deinit();
 

@@ -33,6 +33,12 @@ public:
 	beMouse() = default;
 	~beMouse();
 
+	beMouse(const beMouse&) = delete;
+	beMouse(beMouse&&) = delete;
+	beMouse& operator=(const beMouse&) = delete;
+	beMouse& operator=(beMouse&&) = delete;
+
+
 	void Init(beSystemEventManager* systemEventManager, const beWindow* window);
 	void Deinit();
 

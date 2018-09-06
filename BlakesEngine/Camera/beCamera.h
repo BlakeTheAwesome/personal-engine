@@ -4,9 +4,6 @@
 class beCamera
 {
 	public:
-		beCamera();
-		~beCamera();
-
 		void SetPosition(const Vec3& pos);
 		void SetRotation(const Vec3& rot);
 
@@ -17,7 +14,7 @@ class beCamera
 		const Matrix& GetViewMatrix() const;
 
 	private:
-		Vec3 m_pos;
-		Vec3 m_rot;
+		Vec3 m_pos{0.0f, 0.0f, 3.0f};
+		Vec3 m_rot{0.0f, 0.f, -1.0f};
 		Matrix m_matrix;
 };

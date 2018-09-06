@@ -21,7 +21,14 @@ struct LifeGameCells
 	static constexpr float HalfBlockLength = BlockLength * 0.5f;
 	static constexpr float BlockHeight = 1.f;
 
+	LifeGameCells() = default;
 	~LifeGameCells() { Finalise(); }
+
+	LifeGameCells(const LifeGameCells&) = delete;
+	LifeGameCells(LifeGameCells&&) = delete;
+	LifeGameCells& operator=(const LifeGameCells&) = delete;
+	LifeGameCells& operator=(LifeGameCells&&) = delete;
+
 	void Initialise(beAppData* appData);
 	void Finalise();
 	void TickGame();

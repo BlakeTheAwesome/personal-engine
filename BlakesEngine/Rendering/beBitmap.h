@@ -16,6 +16,12 @@ public:
 	beBitmap() = default;
 	~beBitmap();
 
+	beBitmap(const beBitmap&) = delete;
+	beBitmap(beBitmap&&) = delete;
+	beBitmap& operator=(const beBitmap&) = delete;
+	beBitmap& operator=(beBitmap&&) = delete;
+
+
 	bool Init(beRenderInterface* ri, const beTexture& texture);
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, float width, float height, const beStringView& textureFilename);
 	void Deinit();

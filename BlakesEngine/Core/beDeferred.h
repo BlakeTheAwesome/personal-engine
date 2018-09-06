@@ -9,6 +9,7 @@ namespace beDeferred
 	{
 		LambdaDefer(Lambda&& l) : m_fn(std::move(l)) {}
 		LambdaDefer(LambdaDefer&& rhs) = default;
+		LambdaDefer& operator=(LambdaDefer&&) = default;
 		LambdaDefer(const LambdaDefer&) = delete;
 		LambdaDefer& operator=(const LambdaDefer&) = delete;
 

@@ -326,3 +326,25 @@ void beTexture::Clear(beRenderInterface* ri, Vec4 clearColour)
 	context->ClearRenderTargetView(m_renderTargetView, &clearColour.x);
 	context->ClearDepthStencilView(ri->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
+
+beTexture::beTexture(beTexture&& rhs)
+{
+	*this = rhs;
+	rhs.m_texture = nullptr;
+	rhs.m_texture2d = nullptr;
+	rhs.m_renderTargetView = nullptr;
+	rhs.m_depthStencilBuffer = nullptr;
+	rhs.m_depthStencilView = nullptr;
+}
+
+beTexture& beTexture::operator=(beTexture&& rhs)
+{
+	Deinit();
+	*this = rhs;
+	rhs.m_texture = nullptr;
+	rhs.m_texture2d = nullptr;
+	rhs.m_renderTargetView = nullptr;
+	rhs.m_depthStencilBuffer = nullptr;
+	rhs.m_depthStencilView = nullptr;
+	return *this;
+}

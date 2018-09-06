@@ -1,16 +1,6 @@
 #include "BlakesEngine/bePCH.h"
 #include "beCamera.h"
 
-beCamera::beCamera()
-	: m_pos(0.0f, 0.0f, 3.0f)
-	, m_rot(0.0f, 0.f, -1.0f)
-{
-}
-
-beCamera::~beCamera()
-{
-}
-
 void beCamera::SetPosition(const Vec3& pos)
 {
 	m_pos = pos;

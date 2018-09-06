@@ -8,7 +8,12 @@ class beFlightCamera
 {
 	public:
 		beFlightCamera();
+		beFlightCamera(const beFlightCamera&) = default;
+		beFlightCamera(beFlightCamera&&) = default;
 		~beFlightCamera();
+
+		beFlightCamera& operator=(const beFlightCamera&) = default;
+		beFlightCamera& operator=(beFlightCamera&&) = default;
 
 		void AttachGamepad(beGamepad* gamepad);
 		void DetachGamepad();

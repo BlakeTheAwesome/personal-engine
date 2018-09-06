@@ -7,9 +7,6 @@
 class bePerlinNoise2D
 {
 	public:
-	bePerlinNoise2D();
-	~bePerlinNoise2D(){}
-
 	void Initialise(int randomSeed);
 
 	float Get(float x, float y);

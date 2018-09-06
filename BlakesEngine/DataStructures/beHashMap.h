@@ -27,6 +27,11 @@ class beHashMapBase
 		Release();
 	}
 
+	beHashMapBase(const beHashMapBase&) = default;
+	beHashMapBase(beHashMapBase&&) = default;
+	beHashMapBase& operator=(const beHashMapBase&) = default;
+	beHashMapBase& operator=(beHashMapBase&&) = default;
+
 	void Release()
 	{
 		for (int i = 0; i < m_validEntries.Count(); i++)

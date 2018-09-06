@@ -14,7 +14,9 @@
     private:                                                                                                     \
         _class() : self(*PIMPL_GET_DATA(this)){};                                                                \
         _class(const _class&) = delete;                                                                          \
+        _class(_class&&) = delete;                                                                          \
         _class& operator=(const _class&) = delete;                                                               \
+        _class& operator=(_class&&) = delete;                                                               \
         struct Impl; Impl& self;                                                                                 \
     public:                                                                                                      \
         static _class* Create(__VA_ARGS__);                                                                      \
@@ -28,8 +30,12 @@
 struct _class::Impl                                                                                              \
 {                                                                                                                \
     Impl(__VA_ARGS__);                                                                                           \
+    Impl(const Impl&) = delete;                                                                                  \
+    Impl(Impl&&) = delete;                                                                                       \
+    Impl& operator=(const Impl&) = delete;                                                                       \
+    Impl& operator=(Impl&&) = delete;                                                                            \
     ~Impl();                                                                                                     \
-    _class* Parent() { return PIMPL_GET_PARENT(_class, this);}                                                                \
+    _class* Parent() { return PIMPL_GET_PARENT(_class, this);}                                                   \
 // PIMPL_DATA
 #define PIMPL_DATA_END };
 

@@ -29,7 +29,10 @@ public:
 		bool cpuWritable = false;
 	};
 
+	beTexture() = default;
 	~beTexture();
+	beTexture(beTexture&&);
+	beTexture& operator=(beTexture&&);
 
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, optional_arg<LoadOptions> loadOptions);
 	bool InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptions);
@@ -47,6 +50,9 @@ public:
 	void Clear(beRenderInterface* ri, Vec4 clearColour);
 
 private:
+	beTexture(const beTexture&) = delete;
+	beTexture& operator=(const beTexture&) = default;
+
 	D3D11_TEXTURE2D_DESC m_desc;
 	mutable ID3D11ShaderResourceView* m_texture = nullptr;
 	ID3D11Texture2D* m_texture2d = nullptr;

@@ -22,6 +22,11 @@ public:
 	beShaderTexture() = default;
 	~beShaderTexture();
 
+	beShaderTexture(const beShaderTexture&) = delete;
+	beShaderTexture(beShaderTexture&&) = delete;
+	beShaderTexture& operator=(const beShaderTexture&) = delete;
+	beShaderTexture& operator=(beShaderTexture&&) = delete;
+
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilename);
 	void Deinit();
 

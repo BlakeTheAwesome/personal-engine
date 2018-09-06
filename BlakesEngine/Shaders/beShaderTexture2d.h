@@ -28,6 +28,11 @@ public:
 	beShaderTexture2d() = default;
 	~beShaderTexture2d();
 
+	beShaderTexture2d(const beShaderTexture2d&) = delete;
+	beShaderTexture2d(beShaderTexture2d&&) = delete;
+	beShaderTexture2d& operator=(const beShaderTexture2d&) = delete;
+	beShaderTexture2d& operator=(beShaderTexture2d&&) = delete;
+
 	bool Init(beRenderInterface* renderInterface, const beWString& pixelFilename, const beWString& vertexFilenameNormalised, const beWString& vertexFilenamePixelSpace);
 	void Deinit();
 

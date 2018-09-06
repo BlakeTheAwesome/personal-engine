@@ -26,7 +26,11 @@ class beVectorBase : protected Policy
 			: Policy(capacity, increaseBy)
 		{
 		}
-		
+		beVectorBase(const beVectorBase&) = default;
+		beVectorBase(beVectorBase&&) = default;
+		beVectorBase& operator=(const beVectorBase&) = default;
+		beVectorBase& operator=(beVectorBase&&) = default;
+
 		~beVectorBase()
 		{
 			Release();
@@ -35,7 +39,7 @@ class beVectorBase : protected Policy
 		void Release()
 		{
 			DestructElements(0, m_count-1);
-			Policy::Release();
+			PolicyRelease();
 		}
 
 		void Clear()
@@ -46,12 +50,12 @@ class beVectorBase : protected Policy
 		
 		void ReleaseUninitialised()
 		{
-			Policy::Release();
+			PolicyRelease();
 		}
 
 		void Reserve(int capacity)
 		{
-			Policy::Reserve(capacity);
+			PolicyReserve(capacity);
 		}
 		
 		void ReserveAndSetCount(int count)
@@ -120,7 +124,7 @@ class beVectorBase : protected Policy
 		
 		int Capacity() const
 		{
-			return Policy::Capacity();
+			return PolicyCapacity();
 		}
 		
 		int Insert(T& that)
@@ -359,7 +363,7 @@ class beVectorBase : protected Policy
 
 		bool CheckRoomForAlloc()
 		{
-			return Policy::CheckRoomForAlloc();
+			return PolicyCheckRoomForAlloc();
 		}
 
 	private:
@@ -397,16 +401,28 @@ class beVector : public beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>
 	explicit beVector(int capacity=HYBRID_CAPACITY, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
 	beVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
+
+	~beVector() = default;
+	beVector(const beVector&) = delete;
+	beVector(beVector&&) = delete;
+	beVector& operator=(const beVector&) = delete;
+	beVector& operator=(beVector&&) = delete;
 };
 
 template <typename T, int INITIAL_SIZE=8>
 class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T, INITIAL_SIZE>>
 {
-	typedef beVectorBase<T, beVectorMallocPolicy<T>> Base;
+	using Base = beVectorBase<T, beVectorMallocPolicy<T>>;
 	public:
 	explicit beHeapVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beHeapVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
 	beHeapVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
+
+	~beHeapVector() = default;
+	beHeapVector(const beHeapVector&) = delete;
+	beHeapVector(beHeapVector&&) = delete;
+	beHeapVector& operator=(const beHeapVector&) = delete;
+	beHeapVector& operator=(beHeapVector&&) = delete;
 };
 
 template <typename T, int CAPACITY>
@@ -418,5 +434,11 @@ class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 
 	beFixedVector() = default;
 	beFixedVector(std::initializer_list<T> list) : Base(CAPACITY, 0, list) {}
+
+	~beFixedVector() = default;
+	beFixedVector(const beFixedVector&) = delete;
+	beFixedVector(beFixedVector&&) = delete;
+	beFixedVector& operator=(const beFixedVector&) = delete;
+	beFixedVector& operator=(beFixedVector&&) = delete;
 };
 #pragma warning(pop)

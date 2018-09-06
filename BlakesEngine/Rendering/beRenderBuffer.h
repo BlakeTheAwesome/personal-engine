@@ -8,7 +8,13 @@ class beRenderInterface;
 class beRenderBuffer : public NonCopiable
 {
 	public:
+
+	beRenderBuffer() = default;
 	~beRenderBuffer() { Release(); }
+
+	beRenderBuffer(const beRenderBuffer&) = delete;
+	beRenderBuffer(beRenderBuffer&&) = delete;
+	beRenderBuffer& operator=(beRenderBuffer&& rhs) { StealBuffer(&rhs); return *this; }
 
 	bool Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, beRendering::Topology d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData=nullptr);
 	bool Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, int d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData=nullptr);
@@ -20,8 +26,6 @@ class beRenderBuffer : public NonCopiable
 
 	void StealBuffer(beRenderBuffer* that);
 	
-	beRenderBuffer& operator=(beRenderBuffer&& rhs) { StealBuffer(&rhs); return *this; }
-
 	bool IsValid() const { return m_buffer != nullptr; }
 	ID3D11Buffer* GetBuffer() const { return m_buffer; }
 
