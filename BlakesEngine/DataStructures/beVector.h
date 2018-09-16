@@ -332,7 +332,7 @@ class beVectorBase : protected Policy
 			{
 				const T* entry = &At(index);
 				
-				int diff;
+				int diff = 0;
 				bool res = fn(target, entry, &diff);
 				if (res)
 				{
@@ -414,6 +414,7 @@ class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T, INITIAL_SIZE
 {
 	using Base = beVectorBase<T, beVectorMallocPolicy<T>>;
 	public:
+	beHeapVector() = default;
 	explicit beHeapVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beHeapVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
 	beHeapVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}

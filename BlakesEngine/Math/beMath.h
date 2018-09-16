@@ -68,6 +68,14 @@ namespace beMath
 		return beMath::Vec4(v.x, v.y, v.z, w);
 	}
 
+	inline Matrix IdentityMatrix()
+	{
+		return Matrix(1.f, 0.f, 0.f, 0.f,
+					  0.f, 1.f, 0.f, 0.f,
+					  0.f, 0.f, 1.f, 0.f,
+					  0.f, 0.f, 0.f, 1.f);
+	}
+
 	inline beMath::Vec2& operator*=(beMath::Vec2& lhs, const beMath::Vec2& rhs)
 	{
 		lhs.x *= rhs.x;

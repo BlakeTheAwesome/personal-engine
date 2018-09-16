@@ -31,8 +31,8 @@ public:
 
 	beTexture() = default;
 	~beTexture();
-	beTexture(beTexture&&);
-	beTexture& operator=(beTexture&&);
+	beTexture(beTexture&&) noexcept;
+	beTexture& operator=(beTexture&&) noexcept;
 
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, optional_arg<LoadOptions> loadOptions);
 	bool InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptions);

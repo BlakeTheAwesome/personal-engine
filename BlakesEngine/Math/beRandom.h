@@ -83,8 +83,8 @@ public:
 
 
 private:
-	u32 a;
-	u32 b;
-	u32 c;
-	u32 d;
+	u32 a = 0;
+	u32 b = 0;
+	u32 c = 0;
+	u32 d = 0;
 };

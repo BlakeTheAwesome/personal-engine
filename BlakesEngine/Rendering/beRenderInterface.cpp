@@ -213,7 +213,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int wind
 		defer({ adapterOutput->Release(); });
 
 		
-		unsigned int numModes;
+		unsigned int numModes = 0;
 		res = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, nullptr);
 		if(FAILED(res)) { BE_ASSERT(false); return; }
 

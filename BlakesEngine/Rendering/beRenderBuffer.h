@@ -14,7 +14,7 @@ class beRenderBuffer : public NonCopiable
 
 	beRenderBuffer(const beRenderBuffer&) = delete;
 	beRenderBuffer(beRenderBuffer&&) = delete;
-	beRenderBuffer& operator=(beRenderBuffer&& rhs) { StealBuffer(&rhs); return *this; }
+	beRenderBuffer& operator=(beRenderBuffer&& rhs) noexcept { StealBuffer(&rhs); return *this; }
 
 	bool Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, beRendering::Topology d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData=nullptr);
 	bool Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, int d3dIndexTopology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData=nullptr);

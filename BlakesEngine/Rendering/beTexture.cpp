@@ -327,7 +327,7 @@ void beTexture::Clear(beRenderInterface* ri, Vec4 clearColour)
 	context->ClearDepthStencilView(ri->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-beTexture::beTexture(beTexture&& rhs)
+beTexture::beTexture(beTexture&& rhs) noexcept
 {
 	*this = rhs;
 	rhs.m_texture = nullptr;
@@ -337,7 +337,7 @@ beTexture::beTexture(beTexture&& rhs)
 	rhs.m_depthStencilView = nullptr;
 }
 
-beTexture& beTexture::operator=(beTexture&& rhs)
+beTexture& beTexture::operator=(beTexture&& rhs) noexcept
 {
 	Deinit();
 	*this = rhs;

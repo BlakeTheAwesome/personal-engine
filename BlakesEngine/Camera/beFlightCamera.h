@@ -32,8 +32,8 @@ class beFlightCamera
 	private:
 		void UpdateImpl(float dt, float extraPitch, float extraYaw, float extraForwards, float extraRight);
 
-		Matrix m_viewMatrix;
-		Matrix m_orientationMatrix;
+		Matrix m_viewMatrix = IdentityMatrix();
+		Matrix m_orientationMatrix = IdentityMatrix();
 		Vec3 m_position{20.f, -30.f, 30.f};
 		beGamepad* m_gamepad{nullptr};
 		beMouse* m_mouse{nullptr};

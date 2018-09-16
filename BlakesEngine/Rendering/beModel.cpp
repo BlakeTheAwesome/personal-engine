@@ -35,17 +35,17 @@ struct Face
 
 struct beModel::OBJFileInfo
 {
-	beVector<Vec3> vertices{2048};
-	beVector<Vec3> vertexNormals{2048};
-	beVector<Vec2> texCoords{2048};
+	beHeapVector<Vec3, 2048> vertices;
+	beHeapVector<Vec3, 2048> vertexNormals;
+	beHeapVector<Vec2, 2048> texCoords;
 	struct Mesh
 	{
 		beString meshName;
 		beString material;
-		beVector<Face> faces{1024};
+		beHeapVector<Face, 1024> faces;
 		bool smoothShading = false;
 	};
-	beVector<Mesh> meshes;
+	beHeapVector<Mesh> meshes;
 };
 
 #pragma warning(push)
