@@ -227,6 +227,8 @@
     <ClCompile Include="LifeGame\StateLifeGame.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Test\StateRenderTest.cpp" />
+    <ClCompile Include="WarGame\StateWarGame.cpp" />
+    <ClCompile Include="WarGame\WarGameCells.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlakesEngine\BlakesEngine.vcxproj">
@@ -238,6 +240,10 @@
     <ClInclude Include="LifeGame\LifeGameCells.h" />
     <ClInclude Include="LifeGame\StateLifeGame.h" />
     <ClInclude Include="Test\StateRenderTest.h" />
+    <ClInclude Include="WarGame\StateWarGame.h" />
+    <ClInclude Include="WarGame\Unit.h" />
+    <ClInclude Include="WarGame\UnitVisual.h" />
+    <ClInclude Include="WarGame\WarGameCells.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
