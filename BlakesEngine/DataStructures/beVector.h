@@ -58,19 +58,6 @@ class beVectorBase : protected Policy
 			PolicyReserve(capacity);
 		}
 		
-		void ReserveAndSetCount(int count)
-		{
-			Reserve(count);
-			SetCount(count);
-		}
-
-		template <typename... Args>
-		void ReserveAndSetCount(int count, Args... args)
-		{
-			Reserve(count);
-			SetCount(count, std::forward<Args>(args)...);
-		}
-
 		void ReserveAndSetCountUninitialised(int count)
 		{
 			Reserve(count);
@@ -79,8 +66,8 @@ class beVectorBase : protected Policy
 
 		void SetCount(int count)
 		{
+			Reserve(count);
 			const int currentCount = m_count;
-			BE_ASSERT(count <= Capacity());
 			if (count > currentCount) // growing
 			{
 				ConstructElements(currentCount, count);
@@ -95,6 +82,7 @@ class beVectorBase : protected Policy
 		template <typename... Args>
 		void SetCount(int count, Args&&... defaultVal)
 		{
+			Reserve(count);
 			const int currentCount = m_count;
 			BE_ASSERT(count <= Capacity());
 			if (count > currentCount) // growing
@@ -113,7 +101,7 @@ class beVectorBase : protected Policy
 
 		void SetCountUninitialised(int count)
 		{
-			BE_ASSERT(count <= Capacity());
+			Reserve(count);
 			m_count = count;
 		}
 

@@ -26,17 +26,17 @@ class beStringView
 
 	gsl::span<const char> ToSpan() const
 	{
-		return {begin(), Length()};
+		return {c_str(), Length()};
 	}
 
-	const char* begin() const
+	auto begin() const
 	{
 		return c_str();
 	}
 	
-	const char* end() const
+	auto end() const
 	{
-		return &(*ToSpan().end());
+		return c_str() + Length();
 	}
 	auto rbegin() const
 	{

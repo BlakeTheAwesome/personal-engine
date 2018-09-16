@@ -241,9 +241,9 @@ class beHashMapBase
 			}
 		}
 			
-		m_validEntries.ReserveAndSetCount(newCapacity, false);
-		m_keys.ReserveAndSetCountUninitialised(newCapacity);
-		m_values.ReserveAndSetCountUninitialised(newCapacity);
+		m_validEntries.SetCount(newCapacity, false);
+		m_keys.SetCountUninitialised(newCapacity);
+		m_values.SetCountUninitialised(newCapacity);
 
 		for (const Remap& remap : remaps)
 		{
