@@ -23,7 +23,7 @@
     <ProjectGuid>{42330BEC-5B97-463A-AB8D-55FB2B675A6D}</ProjectGuid>
     <RootNamespace>BlakesEngine</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
@@ -91,10 +91,10 @@
     <IntDir>$(SolutionDir)\obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Label="LLVM" Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">
-    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter</ClangClAdditionalOptions>
+    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter -Wno-unknown-pragmas</ClangClAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Label="LLVM" Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'">
-    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter</ClangClAdditionalOptions>
+    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter -Wno-unknown-pragmas</ClangClAdditionalOptions>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -116,6 +116,7 @@
       <OmitFramePointers>false</OmitFramePointers>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnablePREfast>false</EnablePREfast>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -145,6 +146,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)BlakesEngine\External</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -172,6 +174,7 @@
       <ForcedIncludeFiles>BlakesEngine/bePCH.h</ForcedIncludeFiles>
       <SupportJustMyCode>false</SupportJustMyCode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -202,6 +205,7 @@
       <ForcedIncludeFiles>BlakesEngine/bePCH.h</ForcedIncludeFiles>
       <SupportJustMyCode>false</SupportJustMyCode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

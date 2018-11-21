@@ -23,7 +23,7 @@
     <ProjectGuid>{FD95CFB2-CFB3-42B7-9CE8-34E5E828F3F4}</ProjectGuid>
     <RootNamespace>GameCore</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
@@ -97,10 +97,10 @@
     <OutDir>$(SolutionDir)\bin\$(ProjectName)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Label="LLVM" Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">
-    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter</ClangClAdditionalOptions>
+    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter -Wno-unknown-pragmas</ClangClAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Label="LLVM" Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'">
-    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter</ClangClAdditionalOptions>
+    <ClangClAdditionalOptions>-Wno-error=unused-command-line-argument -Wno-unused-parameter -Wno-unknown-pragmas</ClangClAdditionalOptions>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -119,6 +119,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_c.pdb</ProgramDataBaseFileName>
       <EnablePREfast>false</EnablePREfast>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,6 +151,7 @@
       <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_c.pdb</ProgramDataBaseFileName>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -179,6 +181,7 @@
       <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <SupportJustMyCode>false</SupportJustMyCode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -209,6 +212,9 @@
       <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <SupportJustMyCode>false</SupportJustMyCode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

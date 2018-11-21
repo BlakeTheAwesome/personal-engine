@@ -24,8 +24,8 @@ class beDataBufferBase : protected Policy
 	gsl::span<const u8> ToSpan() const { return {Policy::m_buffer, Policy::m_count}; }
 	gsl::span<u8> ModifySpan() { return {Policy::m_buffer, Policy::m_count}; }
 
-	const u8* GetBuffer() const { return m_buffer; }
-	u8* ModifyBuffer() { return m_buffer; }
+	const u8* GetBuffer() const { return Policy::m_buffer; }
+	u8* ModifyBuffer() { return Policy::m_buffer; }
 };
 
 class beDataBuffer : public beDataBufferBase<beAssignableMallocPolicy<u8, 0>>
