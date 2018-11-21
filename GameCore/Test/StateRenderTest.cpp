@@ -38,11 +38,11 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
 	m_font.Init(renderInterface, shaderPack, "tutefont.txt", "tutefont.dds");
 	m_models.AddNew()->Init(renderInterface, shaderPack, "boar.dds");
-	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "zombie/obj/zombie.obj", "zombie/obj/zombie.mtl", beModel::LoadOptions::Swizzle(beModel::LoadOptions::swizY, beModel::LoadOptions::swizX, beModel::LoadOptions::swizZ));
-	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube.obj", "seafloor.dds", {});
-	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube2.obj",  "seafloor.dds", {});
-	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "teapot.obj", "seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
-	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "boxes.obj", "barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
+	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "zombie/obj/zombie.obj", "zombie/obj/zombie.mtl", beModel::LoadOptions::Swizzle(beModel::LoadOptions::swizY, beModel::LoadOptions::swizX, beModel::LoadOptions::swizZ));
+	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube.obj", "seafloor.dds", {});
+	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube2.obj",  "seafloor.dds", {});
+	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "teapot.obj", "seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
+	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "boxes.obj", "barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
 
 	InitGrid(renderInterface);
 
@@ -182,41 +182,41 @@ void StateRenderTest::Render()
 
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix());
 
-	if (!m_haveWrittenToTexture)
-	{
-		beTexture writeTexture;
-		beTexture::LoadOptions textureLoadOptions;
-		textureLoadOptions.height = 512;
-		textureLoadOptions.width = 512;
-		textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
-		writeTexture.InitAsTarget(renderInterface, textureLoadOptions);
-		defer(
-			writeTexture.Deinit();
-		);
-		m_haveWrittenToTexture = true;
-		writeTexture.SetAsTarget(renderInterface);
-		writeTexture.Clear(renderInterface, V40());
-		m_models[3].Render(renderInterface, shaderPack, beRendering::ShaderType::Colour);
-		
-		renderInterface->DisableZBuffer();
-		shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
-			
-		//m_bitmapTexQuad.Render(renderInterface);
-		//textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
-		
-		renderInterface->EnableAlpha();
-		m_bitmapTextDynamic.InitText(renderInterface, &m_font, "initial string", 1.f, 640.f, 0, false, beFont::WrapMode::Default);
-		m_bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
-		m_bitmapTextDynamic.Render(renderInterface);
-		shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), true);
-		renderInterface->DisableAlpha();
-		renderInterface->EnableZBuffer();
-		renderInterface->RestoreRenderTarget();
-		writeTexture.FinaliseTarget();
-				
-		m_bitmapTextPreRendered.Init(renderInterface, writeTexture);
-		m_bitmapTextPreRendered.SetPosition(-400, -400);
-	}
+	//if (!m_haveWrittenToTexture)
+	//{
+	//	beTexture writeTexture;
+	//	beTexture::LoadOptions textureLoadOptions;
+	//	textureLoadOptions.height = 512;
+	//	textureLoadOptions.width = 512;
+	//	textureLoadOptions.format = beTextureFormat::R32G32B32_FLOAT;
+	//	writeTexture.InitAsTarget(renderInterface, textureLoadOptions);
+	//	defer(
+	//		writeTexture.Deinit();
+	//	);
+	//	m_haveWrittenToTexture = true;
+	//	writeTexture.SetAsTarget(renderInterface);
+	//	writeTexture.Clear(renderInterface, V40());
+	//	m_models[3].Render(renderInterface, shaderPack, beRendering::ShaderType::Colour);
+	//	
+	//	renderInterface->DisableZBuffer();
+	//	shaderPack->shaderTexture2d.SetShaderParameters(renderInterface, m_camera.GetViewMatrix());
+	//		
+	//	//m_bitmapTexQuad.Render(renderInterface);
+	//	//textureShader2d.Render(renderInterface, m_bitmapTexQuad.GetIndexCount(), m_bitmapTexQuad.GetTexture());
+	//	
+	//	renderInterface->EnableAlpha();
+	//	m_bitmapTextDynamic.InitText(renderInterface, &m_font, "initial string", 1.f, 640.f, 0, false, beFont::WrapMode::Default);
+	//	m_bitmapTextDynamic.SetPosition((float)(-writeTexture.GetWidth() / 2), (float)(writeTexture.GetHeight() / 2));
+	//	m_bitmapTextDynamic.Render(renderInterface);
+	//	shaderPack->shaderTexture2d.Render(renderInterface, m_bitmapTextDynamic.GetIndexCount(), m_bitmapTextDynamic.GetTexture(), true);
+	//	renderInterface->DisableAlpha();
+	//	renderInterface->EnableZBuffer();
+	//	renderInterface->RestoreRenderTarget();
+	//	writeTexture.FinaliseTarget();
+	//			
+	//	m_bitmapTextPreRendered.Init(renderInterface, writeTexture);
+	//	m_bitmapTextPreRendered.SetPosition(-400, -400);
+	//}
 	
 	auto renderFrame = [&](bool writingToScreenGrabTexture)
 	{
@@ -372,15 +372,21 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 			const float zPos1 = noiseHeight * noise.GetOctave(xPos0/noiseScale, yPos1/noiseScale, 4);
 			const float zPos2 = noiseHeight * noise.GetOctave(xPos1/noiseScale, yPos1/noiseScale, 4);
 			const float zPos3 = noiseHeight * noise.GetOctave(xPos1/noiseScale, yPos0/noiseScale, 4);
+
 			const Vec4 pos0(xPos0, yPos0, zPos0, 1.f);
 			const Vec4 pos1(xPos0, yPos1, zPos1, 1.f);
 			const Vec4 pos2(xPos1, yPos1, zPos2, 1.f);
 			const Vec4 pos3(xPos1, yPos0, zPos3, 1.f);
 
+			LOG("0- {:.3f}, {:.3f}, {:.3f}", pos0.x, pos0.y, pos0.z);
+			LOG("1- {:.3f}, {:.3f}, {:.3f}", pos1.x, pos1.y, pos1.z);
+			LOG("2- {:.3f}, {:.3f}, {:.3f}", pos2.x, pos2.y, pos2.z);
+			LOG("3- {:.3f}, {:.3f}, {:.3f}", pos3.x, pos3.y, pos3.z);
+
 			vertices[vertexIndex+0].position = pos0;
 			vertices[vertexIndex+1].position = pos1;
 			vertices[vertexIndex+2].position = pos1;
-			vertices[vertexIndex+3].position = pos2;
+			vertices[vertexIndex+3].position = pos2;  
 			vertices[vertexIndex+4].position = pos2;
 			vertices[vertexIndex+5].position = pos3;
 			vertices[vertexIndex+6].position = pos3;

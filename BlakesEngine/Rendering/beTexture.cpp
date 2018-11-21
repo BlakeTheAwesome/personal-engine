@@ -100,7 +100,7 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 		sampleDesc.Count = 1;
 		sampleDesc.Quality = 0;
 
-		D3D11_TEXTURE2D_DESC desc{0};
+		D3D11_TEXTURE2D_DESC desc{};
 		desc.Width = imageWidth;
 		desc.Height = imageHeight;
 		desc.MipLevels = 1;
@@ -241,7 +241,7 @@ bool beTexture::InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptio
 	res = device->CreateShaderResourceView(m_texture2d, &shaderResourceViewDesc, &m_texture);
 	if(FAILED(res)) { return false; }
 	
-	D3D11_TEXTURE2D_DESC depthBufferDesc = {0};
+	D3D11_TEXTURE2D_DESC depthBufferDesc{};
 	
 	depthBufferDesc.Width = width;
 	depthBufferDesc.Height = height;

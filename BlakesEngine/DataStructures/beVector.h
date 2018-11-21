@@ -39,7 +39,7 @@ class beVectorBase : protected Policy
 		void Release()
 		{
 			DestructElements(0, m_count-1);
-			PolicyRelease();
+			Policy::PolicyRelease();
 		}
 
 		void Clear()
@@ -50,12 +50,12 @@ class beVectorBase : protected Policy
 		
 		void ReleaseUninitialised()
 		{
-			PolicyRelease();
+			Policy::PolicyRelease();
 		}
 
 		void Reserve(int capacity)
 		{
-			PolicyReserve(capacity);
+			Policy::PolicyReserve(capacity);
 		}
 		
 		void ReserveAndSetCountUninitialised(int count)
@@ -112,7 +112,7 @@ class beVectorBase : protected Policy
 		
 		int Capacity() const
 		{
-			return PolicyCapacity();
+			return Policy::PolicyCapacity();
 		}
 		
 		int Insert(T& that)
@@ -351,7 +351,7 @@ class beVectorBase : protected Policy
 
 		bool CheckRoomForAlloc()
 		{
-			return PolicyCheckRoomForAlloc();
+			return Policy::PolicyCheckRoomForAlloc();
 		}
 
 	private:

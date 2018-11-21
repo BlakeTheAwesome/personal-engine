@@ -41,12 +41,12 @@ bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numEle
 	if (!m_buffer)
 	{
 		
-		D3D11_SUBRESOURCE_DATA subResData = {0};
+		D3D11_SUBRESOURCE_DATA subResData{};
 		subResData.pSysMem = initialData;
 		subResData.SysMemPitch = 0;
 		subResData.SysMemSlicePitch = 0;
 
-		D3D11_BUFFER_DESC bufferDesc = {0};	
+		D3D11_BUFFER_DESC bufferDesc{};
 		bufferDesc.Usage = (D3D11_USAGE)d3dUsage;
 		bufferDesc.ByteWidth = newBufferSize;
 		bufferDesc.BindFlags = d3dBindFlags;
@@ -84,7 +84,7 @@ void beRenderBuffer::Update(beRenderInterface* ri, void* data, int dataLen)
 	{
 		case D3D11_USAGE_DEFAULT:
 		{
-			D3D11_BOX box = {0};
+			D3D11_BOX box{};
 			box.left = 0;
 			box.right = dataLen;
 			box.top = 0;

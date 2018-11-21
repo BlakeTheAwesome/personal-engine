@@ -304,7 +304,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int wind
 
 void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
 {
-	D3D11_TEXTURE2D_DESC depthBufferDesc = {0};
+	D3D11_TEXTURE2D_DESC depthBufferDesc = {};
 	
 	depthBufferDesc.Width = width;
 	depthBufferDesc.Height = height;
@@ -324,7 +324,7 @@ void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
 
 void beRenderInterface::Impl::CreateStencilView()
 {
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {0};
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
 	{
 		// Set up the description of the stencil state.
 		depthStencilDesc.DepthEnable = true;
@@ -372,7 +372,7 @@ void beRenderInterface::Impl::CreateStencilView()
 
 void beRenderInterface::Impl::CreateBlendStates()
 {
-	D3D11_BLEND_DESC blendDesc = {0};
+	D3D11_BLEND_DESC blendDesc{};
 	
 	blendDesc.RenderTarget[0].BlendEnable = true;
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
@@ -443,7 +443,7 @@ void beRenderInterface::Impl::CreateRasterState()
 void beRenderInterface::Impl::InitialiseViewport(float width, float height)
 {
 	// top left is -1,-1
-	D3D11_VIEWPORT viewport = {0};
+	D3D11_VIEWPORT viewport{};
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
 	viewport.MinDepth = 0.0f;

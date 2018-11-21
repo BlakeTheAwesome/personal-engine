@@ -66,7 +66,7 @@ private:
 		int x{0};
 		int y{0};
 		int z{0};
-		DIMOUSESTATE2 mouseState{0};
+		DIMOUSESTATE2 mouseState{};
 	};
 	
 

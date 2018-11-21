@@ -69,7 +69,7 @@ bool beShaderColour::Init(beRenderInterface* ri, const beWString& pixelFilename,
 	}
 	
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
-	//D3D11_BUFFER_DESC matrixBufferDesc = {0};
+	//D3D11_BUFFER_DESC matrixBufferDesc{};
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;

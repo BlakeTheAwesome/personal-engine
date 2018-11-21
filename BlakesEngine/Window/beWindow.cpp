@@ -33,7 +33,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 	std::wstring wideWindowName;
 	wideWindowName.assign(windowName.begin(), windowName.end());
 
-	WNDCLASSEX wc = {0};
+	WNDCLASSEX wc{};
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
@@ -64,7 +64,7 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 
 	// display the window on the screen
 	ShowWindow(m_hWnd, SW_SHOW);
-	RECT clientRect{0};
+	RECT clientRect{};
 	if (!GetClientRect(m_hWnd, &clientRect))
 	{
 		BE_ASSERT(false);

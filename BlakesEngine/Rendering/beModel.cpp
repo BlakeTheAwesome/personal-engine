@@ -305,6 +305,7 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	{
 		if (auto vec = ReadVec3(lineStartPtr+2, lineEndPtr))
 		{
+			LOG("V - {:.3f}, {:.3f}, {:.3f}", vec->x, vec->y, vec->z);
 			fileInfo->vertices.Insert(vec.value());
 			return true;
 		}
@@ -419,11 +420,12 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 				normal.z *= -1.f;
 				texCoord.y *= -1.f;
 
+				LOG("Before - {:.3f}, {:.3f}, {:.3f}", vertex.x, vertex.y, vertex.z);
 				vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
 				vert->normal = normal;
 				vert->uv = texCoord;
 
-				//LOG("- %3.3f, %3.3f, %3.3f", vertices[vertexIndex].position.x, vertices[vertexIndex].position.y, vertices[vertexIndex].position.z);
+				LOG("- {:.3f}, {:.3f}, {:.3f}", vert->position.x, vert->position.y, vert->position.z);
 			}
 
 			enum IndexOrder

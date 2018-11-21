@@ -33,7 +33,7 @@ PIMPL_DESTROY(beSystemEventManager)
 
 void beSystemEventManager::Update()
 {
-	MSG msg{0};
+	MSG msg{};
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
 		// translate keystroke messages into the right format

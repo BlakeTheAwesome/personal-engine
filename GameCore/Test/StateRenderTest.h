@@ -44,7 +44,7 @@ class StateRenderTest : public beState
 	beRendering::ShaderType m_shaderToUse = beRendering::ShaderType::Default;
 	int m_modelToUse = 3;
 
-	bool m_haveWrittenToTexture = false;
+	[[maybe_unused]] bool m_haveWrittenToTexture = false;
 	bool m_renderAxes = true;
 	bool m_renderGrid = true;
 	bool m_showGroundFilled = false;

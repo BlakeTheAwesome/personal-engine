@@ -23,7 +23,7 @@ void beGamepad::Update(float dt)
 {
 	m_lastStateFlags = m_thisStateFlags;
 
-	XINPUT_STATE state = {0};
+	XINPUT_STATE state{};
 	if (XInputGetState(m_index, &state) == ERROR_SUCCESS)
 	{
 		m_connected = true;
