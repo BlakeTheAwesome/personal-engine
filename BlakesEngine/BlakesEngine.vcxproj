@@ -356,6 +356,7 @@
     <ClInclude Include="Input\beMouse.h" />
     <ClInclude Include="Math\beIntersection.h" />
     <ClInclude Include="Math\beMath.h" />
+    <ClInclude Include="Math\beMathFormat.h" />
     <ClInclude Include="Math\bePerlinNoise.h" />
     <ClInclude Include="Math\beRandom.h" />
     <ClInclude Include="Math\beZOrder.h" />

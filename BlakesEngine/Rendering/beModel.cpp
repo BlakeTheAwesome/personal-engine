@@ -420,12 +420,12 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 				normal.z *= -1.f;
 				texCoord.y *= -1.f;
 
-				LOG("Before - {:.3f}, {:.3f}, {:.3f}", vertex.x, vertex.y, vertex.z);
+				LOG("Before - {}", vertex);
 				vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
 				vert->normal = normal;
 				vert->uv = texCoord;
 
-				LOG("- {:.3f}, {:.3f}, {:.3f}", vert->position.x, vert->position.y, vert->position.z);
+				LOG("- {}", vert->position);
 			}
 
 			enum IndexOrder

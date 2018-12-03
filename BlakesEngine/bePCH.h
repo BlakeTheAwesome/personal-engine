@@ -27,6 +27,7 @@
 #include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
-
+#include "BlakesEngine/Math/beMath.h"
+#include "BlakesEngine/Math/beMathFormat.h"
 //#include "BlakesEngine/Core/beTypeTests.h"
 

@@ -378,10 +378,10 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 			const Vec4 pos2(xPos1, yPos1, zPos2, 1.f);
 			const Vec4 pos3(xPos1, yPos0, zPos3, 1.f);
 
-			LOG("[{},{}] 0- {:.3f}, {:.3f}, {:.3f}", x, y, pos0.x, pos0.y, pos0.z);
-			LOG("[{},{}] 1- {:.3f}, {:.3f}, {:.3f}", x, y, pos1.x, pos1.y, pos1.z);
-			LOG("[{},{}] 2- {:.3f}, {:.3f}, {:.3f}", x, y, pos2.x, pos2.y, pos2.z);
-			LOG("[{},{}] 3- {:.3f}, {:.3f}, {:.3f}", x, y, pos3.x, pos3.y, pos3.z);
+			LOG("[{},{}] 0- {}", x, y, pos0);
+			LOG("[{},{}] 1- {}", x, y, pos1);
+			LOG("[{},{}] 2- {}", x, y, pos2);
+			LOG("[{},{}] 3- {}", x, y, pos3);
 
 			vertices[vertexIndex+0].position = pos0;
 			vertices[vertexIndex+1].position = pos1;
