@@ -321,7 +321,7 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 {
 	const int gridRadius = 100;
 	const float gridSize = 1.f;
-	const float xzOffset = gridSize / 2.f; // Don't draw on same spot as renderAxes
+	const float xyOffset = gridSize / 2.f; // Don't draw on same spot as renderAxes
 	const float gridOffset = ((float)gridRadius / 2.f);
 
 	const int quadCount = gridRadius * gridRadius;
@@ -361,11 +361,11 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 	int vertexIndex = 0;
 	for (float x = -gridOffset; x < gridOffset; x += gridSize)
 	{
-		const float xPos0 = x + xzOffset;
+		const float xPos0 = x + xyOffset;
 		const float xPos1 = xPos0+gridSize;
-		for (float z = -gridOffset; z < gridOffset; z += gridSize)
+		for (float y = -gridOffset; y < gridOffset; y += gridSize)
 		{
-			const float yPos0 = z + xzOffset;
+			const float yPos0 = y + xyOffset;
 			const float yPos1 = yPos0+gridSize;
 
 			const float zPos0 = noiseHeight * noise.GetOctave(xPos0/noiseScale, yPos0/noiseScale, 4);
@@ -378,10 +378,10 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 			const Vec4 pos2(xPos1, yPos1, zPos2, 1.f);
 			const Vec4 pos3(xPos1, yPos0, zPos3, 1.f);
 
-			LOG("0- {:.3f}, {:.3f}, {:.3f}", pos0.x, pos0.y, pos0.z);
-			LOG("1- {:.3f}, {:.3f}, {:.3f}", pos1.x, pos1.y, pos1.z);
-			LOG("2- {:.3f}, {:.3f}, {:.3f}", pos2.x, pos2.y, pos2.z);
-			LOG("3- {:.3f}, {:.3f}, {:.3f}", pos3.x, pos3.y, pos3.z);
+			LOG("[{},{}] 0- {:.3f}, {:.3f}, {:.3f}", x, y, pos0.x, pos0.y, pos0.z);
+			LOG("[{},{}] 1- {:.3f}, {:.3f}, {:.3f}", x, y, pos1.x, pos1.y, pos1.z);
+			LOG("[{},{}] 2- {:.3f}, {:.3f}, {:.3f}", x, y, pos2.x, pos2.y, pos2.z);
+			LOG("[{},{}] 3- {:.3f}, {:.3f}, {:.3f}", x, y, pos3.x, pos3.y, pos3.z);
 
 			vertices[vertexIndex+0].position = pos0;
 			vertices[vertexIndex+1].position = pos1;

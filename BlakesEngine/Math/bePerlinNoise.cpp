@@ -14,7 +14,8 @@ void bePerlinNoise2D::Initialise(int randomSeed)
 	std::shuffle(hashTable.begin(), hashTable.end(), std::default_random_engine(randomSeed));
 
 	// We have this at double the size so that the p[p[p[x0]+y0]+z0]; code doesn't run off the end (could also mask it with 0xff at each step).
-	std::generate(m_hashTable.begin(), m_hashTable.end(), [i = 0, &hashTable]() mutable { return hashTable.at(i & 0xff); });
+	std::generate(m_hashTable.begin(), m_hashTable.end(), [i = 0, &hashTable]() mutable
+		{ return hashTable.at(i++ & 0xff); });
 }
 
 float bePerlinNoise2D::GetOctave(float x, float y, int octaves, float persistence)
@@ -24,8 +25,9 @@ float bePerlinNoise2D::GetOctave(float x, float y, int octaves, float persistenc
 	float amplitude = 1.f;
 	float maxValue = 0.f; // Used for normalizing result to [0.0,1.0]
 
-	for (int i=0; i<octaves; i++)
+	for (int i : RangeIter(octaves))
 	{
+		Unused(i);
 		total += Get(x * frequency, y * frequency) * amplitude;
 			
 		maxValue += amplitude;
@@ -130,7 +132,8 @@ float bePerlinNoise2D::Grad(int hash, float x, float y, float z)
 		case 0xD: return -y + z;
 		case 0xE: return  y - x;
 		case 0xF: return -y - z;
-		default: break; // never happens
+
+		default: BE_ASSERT(false); break;
 	}
-	return 0; // impossibru
+	return 0.f; // impossibru
 }
