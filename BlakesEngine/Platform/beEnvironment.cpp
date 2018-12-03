@@ -1,5 +1,66 @@
 #include "BlakesEngine/bePCH.h"
 #include "beEnvironment.h"
+#include <fstream>
+
+beString RemoveQuotes(const beString& input)
+{
+	auto inputLen = input.size();
+	if (inputLen < 2)
+	{
+		return input;
+	}
+	if (input[0] != '"')
+	{
+		return input;
+	}
+
+	BE_ASSERT(input[inputLen-1] == '"');
+	return beString(&input[1], inputLen-2);
+ }
+
+bool beEnvironment::InitialiseWithFile(const beStringView& filePath)
+{
+	std::string line;
+	std::ifstream fstream(filePath.c_str());
+	if (!fstream.is_open())
+	{
+		return false;
+	}
+	while (!fstream.eof())
+	{
+		std::getline(fstream, line);
+		if (line.size() == 0)
+		{
+			continue;
+		}
+		const char* lineStart = &line[0];
+		const char* lineEnd = lineStart + line.size();
+		while (*lineStart  == ' ')
+		{
+			++lineStart;
+		}
+
+		if (*lineStart == '#' || *lineStart == ';')
+		{
+			continue;
+		}
+
+		const char* separator = std::find(lineStart, lineEnd, ' ');
+		if (separator == lineEnd)
+		{
+			auto key = RemoveQuotes({lineStart, lineEnd});
+			m_map.GetOrCreate(key, "");
+		}
+		else
+		{
+			auto key = RemoveQuotes({lineStart, separator});
+			auto value = RemoveQuotes({separator+1, lineEnd});
+			m_map.GetOrCreate(key, value);
+		}
+	}
+	PrintMap();
+	return true;
+}
 
 void beEnvironment::Initialise(const beStringView& commandLine)
 {
@@ -98,7 +159,11 @@ void beEnvironment::Initialise(const beStringView& commandLine)
 			 nextChar++;
 		}
 	}
+	PrintMap();
+}
 
+void beEnvironment::PrintMap()
+{
 	LOG("Environment Args:");
 	for (auto it : m_map)
 	{

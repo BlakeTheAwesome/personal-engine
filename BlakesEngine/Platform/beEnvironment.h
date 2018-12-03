@@ -5,8 +5,10 @@
 class beEnvironment
 {
 	public:
-	beEnvironment() = default;
+	bool InitialiseWithFile(const beStringView& filePath);
 	void Initialise(const beStringView& commandLine);
+
+	void PrintMap();
 
 	const beString* Get(const beStringView& str);
 	const beString* Get(const char* str);

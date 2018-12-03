@@ -255,6 +255,14 @@
     <ClInclude Include="WarGame\UnitVisual.h" />
     <ClInclude Include="WarGame\WarGameCells.h" />
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="cmdargs.txt">
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\bin\Data\</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">$(SolutionDir)\bin\Data\</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'">$(SolutionDir)\bin\Data\</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\bin\Data\</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

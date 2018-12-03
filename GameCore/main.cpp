@@ -41,7 +41,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 {
 	Cout2VisualStudioDebugOutput c2v;
 	beEnvironment environment;
-	environment.Initialise(GetCommandLineA());
+	if (!environment.InitialiseWithFile("cmdargs.txt"))
+	{
+		environment.Initialise(GetCommandLineA());
+	}
 
 	beSystemEventManager* systemEventManager = PIMPL_NEW(beSystemEventManager)();
 	defer(PIMPL_DELETE(systemEventManager));
