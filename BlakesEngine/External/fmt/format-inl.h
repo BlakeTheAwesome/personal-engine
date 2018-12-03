@@ -948,12 +948,22 @@ FMT_FUNC void vprint(std::FILE *f, string_view format_str, format_args args) {
   internal::vformat_to(buffer, format_str,
                        basic_format_args<buffer_context<char>::type>(args));
   std::fwrite(buffer.data(), 1, buffer.size(), f);
+
+  // BLAKE HAX - OUTPUTDEBUGSTRING
+  char debugBuffer[4096];
+  strncpy_s(debugBuffer, buffer.data(), buffer.size());
+  OutputDebugStringA(debugBuffer);
 }
 
 FMT_FUNC void vprint(std::FILE *f, wstring_view format_str, wformat_args args) {
   wmemory_buffer buffer;
   internal::vformat_to(buffer, format_str, args);
   std::fwrite(buffer.data(), sizeof(wchar_t), buffer.size(), f);
+
+  // BLAKE HAX - OUTPUTDEBUGSTRING
+  wchar_t debugBuffer[4096];
+  wcsncpy_s(debugBuffer, buffer.data(), buffer.size());
+  OutputDebugStringW(debugBuffer);
 }
 
 FMT_FUNC void vprint(string_view format_str, format_args args) {
