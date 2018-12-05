@@ -170,7 +170,7 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 			SetAsTarget(ri);
 			// Render into new texture
 			
-			shaderPack->shaderTexture2d.RenderQuad(ri, V20(), V21(), loadedTexture, true, beShaderTexture2d::TextureMode::Clamped);
+			shaderPack->shaderTexture2d.RenderQuad(ri, V2N1(), V21(), false, loadedTexture, true, beShaderTexture2d::TextureMode::Clamped);
 			ri->RestoreRenderTarget();
 			FinaliseTarget();
 			loadedTexture->Release();

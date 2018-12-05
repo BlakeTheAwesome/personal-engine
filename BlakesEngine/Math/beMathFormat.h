@@ -13,7 +13,7 @@ namespace fmt
 		template <typename FormatContext>
 		auto format(beMath::Vec2 const& vec, FormatContext &ctx)
 		{
-			return format_to(ctx.begin(), "{{{:.3f}, {:.3f}}}", vec.x, vec.y, vec.z);
+			return format_to(ctx.begin(), "{{{:.3f}, {:.3f}}}", vec.x, vec.y);
 		}
 	};
 

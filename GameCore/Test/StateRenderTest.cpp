@@ -38,11 +38,11 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
 	m_font.Init(renderInterface, shaderPack, "tutefont.txt", "tutefont.dds");
 	m_models.AddNew()->Init(renderInterface, shaderPack, "boar.dds");
-	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "zombie/obj/zombie.obj", "zombie/obj/zombie.mtl", beModel::LoadOptions::Swizzle(beModel::LoadOptions::swizY, beModel::LoadOptions::swizX, beModel::LoadOptions::swizZ));
-	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube.obj", "seafloor.dds", {});
-	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube2.obj",  "seafloor.dds", {});
-	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "teapot.obj", "seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
-	//m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "boxes.obj", "barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "zombie/obj/zombie.obj", "zombie/obj/zombie.mtl", beModel::LoadOptions::Swizzle(beModel::LoadOptions::swizY, beModel::LoadOptions::swizX, beModel::LoadOptions::swizZ));
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube.obj", "seafloor.dds", {});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube2.obj",  "seafloor.dds", {});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "teapot.obj", "seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "boxes.obj", "barrels.dds", {beRendering::Topology::TriangleList, true, 0.1f,{0,2,1}});
 
 	InitGrid(renderInterface);
 
@@ -314,7 +314,6 @@ void StateRenderTest::Render()
 		renderInterface->ClearDepth();
 	}
 	renderFrame(false);
-
 }
 
 void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
@@ -378,10 +377,10 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 			const Vec4 pos2(xPos1, yPos1, zPos2, 1.f);
 			const Vec4 pos3(xPos1, yPos0, zPos3, 1.f);
 
-			LOG("[{},{}] 0- {}", x, y, pos0);
-			LOG("[{},{}] 1- {}", x, y, pos1);
-			LOG("[{},{}] 2- {}", x, y, pos2);
-			LOG("[{},{}] 3- {}", x, y, pos3);
+			//LOG("[{},{}] 0- {}", x, y, pos0);
+			//LOG("[{},{}] 1- {}", x, y, pos1);
+			//LOG("[{},{}] 2- {}", x, y, pos2);
+			//LOG("[{},{}] 3- {}", x, y, pos3);
 
 			vertices[vertexIndex+0].position = pos0;
 			vertices[vertexIndex+1].position = pos1;
@@ -399,7 +398,7 @@ void StateRenderTest::InitGrid(beRenderInterface* renderInterface)
 			vertices[vertexIndex+5].colour = Vec4(zPos3 / noiseHeight, zPos3 / noiseHeight, 1.f, 1.f);
 			vertices[vertexIndex+6].colour = Vec4(zPos3 / noiseHeight, zPos3 / noiseHeight, 1.f, 1.f);
 			vertices[vertexIndex+7].colour = Vec4(zPos0 / noiseHeight, zPos0 / noiseHeight, 1.f, 1.f);
-			vertexIndex += 8;
+			vertexIndex += 8; 
 		}
 	}
 

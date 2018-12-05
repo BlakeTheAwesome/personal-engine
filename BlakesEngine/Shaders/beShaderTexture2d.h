@@ -38,7 +38,7 @@ public:
 
 	void SetShaderParameters(beRenderInterface* renderInterface, const Matrix& viewMatrix);
 	
-	void RenderQuad(beRenderInterface* renderInterface, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode=TextureMode::Wrapped);
+	void RenderQuad(beRenderInterface* renderInterface, Vec2 uvMin, Vec2 uvMax, bool scaleToScreen, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode=TextureMode::Wrapped);
 	void Render(beRenderInterface* renderInterface, int indexCount, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode=TextureMode::Wrapped);
 
 	// Todo: add async loader

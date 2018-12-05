@@ -19,7 +19,7 @@ namespace beMath
 	static inline Vec2 V21()  { return Vec2( 1.f,  1.f); }
 	static inline Vec2 V2X()  { return Vec2( 1.f,  0.f); }
 	static inline Vec2 V2Y()  { return Vec2( 0.f,  1.f); }
-	static inline Vec2 V2N0() { return Vec2(-1.f, -1.f); }
+	static inline Vec2 V2N1() { return Vec2(-1.f, -1.f); }
 	static inline Vec2 V2NX() { return Vec2(-1.f,  0.f); }
 	static inline Vec2 V2NY() { return Vec2( 0.f, -1.f); }
 

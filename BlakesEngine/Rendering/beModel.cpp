@@ -534,7 +534,17 @@ bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStri
 	success = mesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleStrip, 0, 0, indices.begin());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	return LoadTexture(ri, shaderPack, textureFilename, "");
+	if (!LoadTexture(ri, shaderPack, textureFilename, ""))
+	{
+		BE_ASSERT(false);
+		return false;
+	}
+	if (m_materials.Count() > 0)
+	{
+		BE_ASSERT(m_materials.Count() == 1);
+		mesh->m_materialIndex = 0;
+	}
+	return true;
 }
 
 void beModel::Deinit()

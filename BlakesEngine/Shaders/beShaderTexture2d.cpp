@@ -147,11 +147,15 @@ void beShaderTexture2d::SetShaderParameters(beRenderInterface* ri, const Matrix&
 {
 }
 
-void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode)
+void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax, bool scaleToScreen, ID3D11ShaderResourceView* texture, bool normalisedVerts, TextureMode textureMode)
 {
 	{
 		Vec2 size = uvMax-uvMin;
-		size *= ri->GetScreenSize();
+		if (scaleToScreen)
+		{
+			size *= ri->GetScreenSize();
+		}
+
 		auto vertices = (beArray<VertexType, c_quadVertexCount>*)m_vertexBuffer.Map(ri);
 		vertices->at(0).position = Vec2(0.f, size.y);  // TL
 		vertices->at(0).uv = Vec2(0.f, 0.f);
