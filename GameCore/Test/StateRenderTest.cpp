@@ -38,7 +38,7 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	shaderPack->UpdateFrameBuffers(renderInterface, m_camera.GetViewMatrix()); // Set ortho matrix buffer
 	m_font.Init(renderInterface, shaderPack, "tutefont.txt", "tutefont.dds");
 	m_models.AddNew()->Init(renderInterface, shaderPack, "boar.dds");
-	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "zombie/obj/zombie.obj", "zombie/obj/zombie.mtl", beModel::LoadOptions::Swizzle(beModel::LoadOptions::swizY, beModel::LoadOptions::swizX, beModel::LoadOptions::swizZ));
+	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "zombie/obj/zombie.obj", "zombie/obj/zombie.mtl", beModel::LoadOptions::Swizzle(beModel::LoadOptions::swizZ, beModel::LoadOptions::swizX, beModel::LoadOptions::swizY));
 	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube.obj", "seafloor.dds", {});
 	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "cube2.obj",  "seafloor.dds", {});
 	m_models.AddNew()->InitWithFilename(renderInterface, shaderPack, "teapot.obj", "seafloor.dds", {beRendering::Topology::TriangleList, true, 1.f,{0,2,1}});
