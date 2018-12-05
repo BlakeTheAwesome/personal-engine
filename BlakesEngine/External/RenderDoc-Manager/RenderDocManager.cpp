@@ -64,8 +64,8 @@ RenderDocManager::RenderDocManager(HWND p_Handle, LPCWSTR pRenderDocPath, const 
 	m_renderDocFns->SetCaptureKeys(NULL, 0);
 
 	// Uncomment to define a capture key.
-	//RENDERDOC_InputButton captureKey =  eRENDERDOC_Key_F12;
-	//m_renderDocFns->SetCaptureKeys(&captureKey, 1);
+	RENDERDOC_InputButton captureKey =  eRENDERDOC_Key_PrtScrn;
+	m_renderDocFns->SetCaptureKeys(&captureKey, 1);
 
 
 	m_renderDocFns->SetCaptureOptionU32(eRENDERDOC_Option_CaptureCallstacks, true);
