@@ -116,6 +116,28 @@ std::optional<Vec3> ReadVec3(const char* begin, const char* end)
 	return {};
 }
 
+template <int N, typename T, typename U>
+static inline beString SubString(T lineStart, U lineEnd, const char(&)[N])
+{
+	auto lineStartPtr = lineStart + N;
+	while (*lineStartPtr == ' ')
+	{
+		++lineStartPtr;
+	}
+	return beString(lineStart+N, lineEnd);
+}
+
+template <int N, typename T>
+static inline const char* Offset(T lineStart, const char(&)[N])
+{
+	auto lineStartPtr = lineStart + N;
+	while (*lineStartPtr == ' ')
+	{
+		++lineStartPtr;
+	}
+	return &(*lineStartPtr);
+}
+
 bool beModel::ReadMaterialLine(const std::string& line)
 {
 	auto begin = line.c_str();
@@ -124,7 +146,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	if (beStringUtil::BeginsWith(begin, end, "newmtl"))
 	{
 		Material* material = m_materials.AddNew();
-		material->m_name = beString(begin + 7, end);
+		material->m_name = SubString(begin, end, "newmtl");
 		return true;
 	}
 	
@@ -136,7 +158,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	Material* material = &m_materials.Last();
 	if (beStringUtil::BeginsWith(begin, end, "Ka"))
 	{
-		if (auto res = ReadVec3(begin + 3, end))
+		if (auto res = ReadVec3(Offset(begin, "Ka"), end))
 		{
 			material->m_ambientColour = *res;
 			return true;
@@ -146,7 +168,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Kd"))
 	{
-		if (auto res = ReadVec3(begin + 3, end))
+		if (auto res = ReadVec3(Offset(begin, "Kd"), end))
 		{
 			material->m_diffuseColour = *res;
 			return true;
@@ -156,7 +178,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Ks"))
 	{
-		if (auto res = ReadVec3(begin + 3, end))
+		if (auto res = ReadVec3(Offset(begin, "Ks"), end))
 		{
 			material->m_specularColour = *res;
 			return true;
@@ -166,7 +188,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Ns"))
 	{
-		if (auto f = ReadFloat(begin + 3, end))
+		if (auto f = ReadFloat(Offset(begin, "Ns"), end))
 		{
 			material->m_specularPower = f.value();
 			return true;
@@ -176,7 +198,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "d"))
 	{
-		if (auto f = ReadFloat(begin + 2, end))
+		if (auto f = ReadFloat(Offset(begin, "d"), end))
 		{
 			material->m_alpha = f.value();
 			return true;
@@ -186,7 +208,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "Tr"))
 	{
-		if (auto f = ReadFloat(begin + 3, end))
+		if (auto f = ReadFloat(Offset(begin, "Tr"), end))
 		{
 			material->m_alpha = 1.f - f.value();
 			return true;
@@ -196,7 +218,7 @@ bool beModel::ReadMaterialLine(const std::string& line)
 	}
 	else if (beStringUtil::BeginsWith(begin, end, "illum"))
 	{
-		if (auto i = ReadInt(begin + 6, end))
+		if (auto i = ReadInt(Offset(begin, "illum"), end))
 		{
 			material->m_illuminationMode = i;
 			return true;
@@ -229,14 +251,15 @@ bool beModel::ReadMaterialLine(const std::string& line)
 
 		if (lastSpaceIndex != 8)
 		{
-			auto subParamStart = begin + 8;
+			auto subParamStart = Offset(begin, "map_Bump");
 			auto subParamEnd = begin + lastSpaceIndex;
 			while (subParamStart != subParamEnd)
 			{
-				subParamStart++;
+				while (*subParamStart == ' ') { subParamStart++; }
+
 				if (beStringUtil::BeginsWith(subParamStart, subParamEnd, "-bm"))
 				{
-					if (auto f = ReadFloat(subParamStart + 4, subParamEnd))
+					if (auto f = ReadFloat(Offset(subParamStart, "-bm"), subParamEnd))
 					{
 						material->m_bumpMultiplier = f.value();
 					}
@@ -268,24 +291,26 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	auto lineStart = _line.begin();
 	auto lineEnd = _line.end();
 
+
+
 	if (beStringUtil::BeginsWith(lineStart, lineEnd, "o "))
 	{
 		if (currentMesh->faces.Count() > 0)
 		{
 			currentMesh = fileInfo->meshes.AddNew();
 		}
-		currentMesh->meshName = _line.substr(2);
+		currentMesh->meshName = SubString(lineStart, lineEnd, "o");
 		return true;
 	}
 
 	if (beStringUtil::BeginsWith(lineStart, lineEnd, "usemtl "))
 	{
-		currentMesh->material = _line.substr(7);
+		currentMesh->material = SubString(lineStart, lineEnd, "usemtl");
 		return true;
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "vn "))
 	{
-		if (auto vec = ReadVec3(lineStartPtr+3, lineEndPtr))
+		if (auto vec = ReadVec3(Offset(lineStart, "vn"), lineEndPtr))
 		{
 			fileInfo->vertexNormals.Insert(vec.value());
 			return true;
@@ -294,7 +319,7 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "vt "))
 	{
-		if (auto vec = ReadVec2(lineStartPtr+3, lineEndPtr))
+		if (auto vec = ReadVec2(Offset(lineStartPtr, "vt"), lineEndPtr))
 		{
 			fileInfo->texCoords.Insert(vec.value());
 			return true;
@@ -303,9 +328,9 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "v "))
 	{
-		if (auto vec = ReadVec3(lineStartPtr+2, lineEndPtr))
+		if (auto vec = ReadVec3(Offset(lineStartPtr, "v"), lineEndPtr))
 		{
-			LOG("V - {:.3f}, {:.3f}, {:.3f}", vec->x, vec->y, vec->z);
+			//LOG("V - {:.3f}, {:.3f}, {:.3f}", vec->x, vec->y, vec->z);
 			fileInfo->vertices.Insert(vec.value());
 			return true;
 		}
@@ -313,8 +338,7 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 	}
 	else if (beStringUtil::BeginsWith(lineStart, lineEnd, "f "))
 	{
-		const char* next = lineStartPtr + 1;
-		while (*next == ' ') { next++; }
+		const char* next = Offset(lineStartPtr, "f");
 
 		Face* face = currentMesh->faces.AddNew();
 
@@ -420,12 +444,12 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 				normal.z *= -1.f;
 				texCoord.y *= -1.f;
 
-				LOG("Before - {}", vertex);
+				//LOG("Before - {}", vertex);
 				vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
 				vert->normal = normal;
 				vert->uv = texCoord;
 
-				LOG("- {}", vert->position);
+				//LOG("- {}", vert->position);
 			}
 
 			enum IndexOrder
