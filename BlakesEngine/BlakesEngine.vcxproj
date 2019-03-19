@@ -238,6 +238,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DataFormat\bePackedData.cpp" />
+    <ClCompile Include="DataStructures\beByteStreams.cpp" />
     <ClCompile Include="DataStructures\beDataBuffer.cpp" />
     <ClCompile Include="External\fmt\format.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'">NotUsing</PrecompiledHeader>
@@ -263,8 +265,10 @@
     <ClCompile Include="Math\beIntersection.cpp" />
     <ClCompile Include="Math\bePerlinNoise.cpp" />
     <ClCompile Include="Math\beRandom.cpp" />
+    <ClCompile Include="Math\beRandomFunctions.cpp" />
     <ClCompile Include="Platform\beEnvironment.cpp" />
     <ClCompile Include="Platform\beSystemEventManager.cpp" />
+    <ClCompile Include="Rendering\beAnimatedModel.cpp" />
     <ClCompile Include="Rendering\beBitmap.cpp" />
     <ClCompile Include="Rendering\beDebugWorld.cpp" />
     <ClCompile Include="Rendering\beFont.cpp" />
@@ -308,8 +312,11 @@
     <ClInclude Include="Core\RangeIter.h" />
     <ClInclude Include="Core\String\StringBuilder.h" />
     <ClInclude Include="Core\ZeroMem.h" />
+    <ClInclude Include="DataFormat\bePackedData.h" />
     <ClInclude Include="DataStructures\beArray.h" />
+    <ClInclude Include="DataStructures\beArrayIterator.h" />
     <ClInclude Include="DataStructures\beByteStreams.h" />
+    <ClInclude Include="DataStructures\beConstexprAlgorithms.h" />
     <ClInclude Include="DataStructures\beDataBuffer.h" />
     <ClInclude Include="DataStructures\beFastGrid.h" />
     <ClInclude Include="DataStructures\beHashMap.h" />
@@ -359,10 +366,12 @@
     <ClInclude Include="Math\beMathFormat.h" />
     <ClInclude Include="Math\bePerlinNoise.h" />
     <ClInclude Include="Math\beRandom.h" />
+    <ClInclude Include="Math\beRandomFunctions.h" />
     <ClInclude Include="Math\beZOrder.h" />
     <ClInclude Include="Platform\beEnvironment.h" />
     <ClInclude Include="Platform\beSystemEventManager.h" />
     <ClInclude Include="Platform\beWindows.h" />
+    <ClInclude Include="Rendering\beAnimatedModel.h" />
     <ClInclude Include="Rendering\beBitmap.h" />
     <ClInclude Include="Rendering\beDebugWorld.h" />
     <ClInclude Include="Rendering\beFont.h" />

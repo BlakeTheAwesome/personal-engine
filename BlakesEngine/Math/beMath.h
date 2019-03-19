@@ -83,6 +83,50 @@ namespace beMath
 		return lhs;
 	}
 
+	inline beMath::Vec3& operator*=(beMath::Vec3& lhs, const beMath::Vec3& rhs)
+	{
+		lhs.x *= rhs.x;
+		lhs.y *= rhs.y;
+		lhs.z *= rhs.z;
+		return lhs;
+	}
+
+	inline beMath::Vec4& operator*=(beMath::Vec4& lhs, const beMath::Vec4& rhs)
+	{
+		lhs.x *= rhs.x;
+		lhs.y *= rhs.y;
+		lhs.z *= rhs.z;
+		lhs.w *= rhs.w;
+		return lhs;
+	}
+
+	inline beMath::Vec2 operator*(const beMath::Vec2& lhs, const beMath::Vec2& rhs)
+	{
+		return {
+			lhs.x * rhs.x,
+			lhs.y * rhs.y,
+		};
+	}
+
+	inline beMath::Vec3 operator*(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
+	{
+		return {
+			lhs.x * rhs.x,
+			lhs.y * rhs.y,
+			lhs.z * rhs.z,
+		};
+	}
+
+	inline beMath::Vec4 operator*(const beMath::Vec4& lhs, const beMath::Vec4& rhs)
+	{
+		return {
+			lhs.x * rhs.x,
+			lhs.y * rhs.y,
+			lhs.z * rhs.z,
+			lhs.w * rhs.w,
+		};
+	}
+
 	inline beMath::Vec3 operator-(const beMath::Vec3& lhs, const beMath::Vec3& rhs)
 	{
 		const XMVECTOR l = XMLoadFloat3(&lhs);

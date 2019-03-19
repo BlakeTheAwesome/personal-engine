@@ -8,7 +8,7 @@ class beFastGrid
 	static const int STRIDE_LENGTH = beMath::NextPowerOfTwo(LENGTH);
 	static const int CAPACITY = STRIDE_LENGTH * STRIDE_LENGTH;
 	public:
-		typedef T value_type;
+		using value_type = T;
 		enum { element_size = sizeof(T) };
 
 		beFastGrid() = default;

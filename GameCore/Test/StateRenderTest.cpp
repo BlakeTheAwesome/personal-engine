@@ -23,6 +23,7 @@
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
 #include <shellapi.h>
 #include <iomanip>
+#include "BlakesEngine/DataFormat/bePackedData.h"
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC
@@ -47,6 +48,11 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 
 	InitGrid(renderInterface);
 
+
+	bePackedData packedModel;
+	packedModel.LoadFromFile(R"===(D:\Dev\BigAnt\data\blobs\characters\player\models\player_master_head_male\player_master_head_male.vbo.pc)===");
+
+
 	beTexture::LoadOptions textureLoadOptions;
 	textureLoadOptions.height = 256;
 	textureLoadOptions.width = 256;
@@ -58,7 +64,7 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 	m_bitmapTexQuadPixelCoord.Init(renderInterface, shaderPack, 128, 128, "bark.dds");
 	m_bitmapTexQuadPixelCoord.SetPosition(-0.8f, -0.5f);
 
-	m_bitmapTextDynamic.SetColour(Vec4(0.f, 1.f, 0.8f, 1.f));
+	m_bitmapTextDynamic.SetColour({0.f, 1.f, 0.8f, 1.f});
 	
 	m_camera.AttachGamepad(m_appData->gamepad);
 	m_camera.AttachMouse(m_appData->mouse);

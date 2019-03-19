@@ -25,6 +25,7 @@
 
 #include "GameCore/Test/StateRenderTest.h"
 #include "GameCore/LifeGame/StateLifeGame.h"
+#include "GameCore/WarGame/StateWarGame.h"
 
 #include <shellapi.h>
 
@@ -171,6 +172,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		else if (*mode == "life")
 		{
 			initialState = std::make_shared<StateLifeGame>(&appData);
+		}
+		else if (*mode == "war")
+		{
+			initialState = std::make_shared<StateWarGame>(&appData);
 		}
 	}
 	else

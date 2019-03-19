@@ -1,67 +1,64 @@
-#ifndef _ByteStreams_h_
-#define _ByteStreams_h_
+#pragma once
 
-#include "BlakesEngine/DataStructures/DataStructuresConsts.h"
+#include "beDataBuffer.h"
 
 
 class beByteStreamBase
 {
-	typedef u32 dataSize;
-	
 	public:
+		using dataSize = u32;
+
 		void Reset();
-		void Continue();
-		void SkipBytes( dataSize numBytes );
+		void SkipBytes(dataSize numBytes);
 	
 	protected:
-		void StreamBytes( void* srcData, dataSize srcDataLength );
-		template<T> void StreamBytes( const T& data )
-			{	StreamBytes( &data, sizeof(data) ); }
-			
-		void*    m_streamData;
-		dataSize m_streamLength;
-		dataSize m_streamedBytes;
-		bool     m_isWriteStream;
-		bool     m_hasFailed;
+		void ReadBytes(void* data, dataSize numBytes);
+		void WriteBytes(const void* data, dataSize numBytes);
+		u8*    m_data = nullptr;
+		dataSize m_streamLength = 0;
+		dataSize m_streamedBytes = 0;
+		bool     m_hasFailed = false;
 		
 		// protected constructors
-		beByteStreamBase();
-		beByteStreamBase( void* data, dataSize length, bool isWrite );
-		~beByteStreamBase();
-}
+		beByteStreamBase() = default;
+		beByteStreamBase(void* data, dataSize length) : m_data((u8*)data), m_streamLength(length) {}
+};
 
 class beReadStream : public beByteStreamBase
 {
 	public:
-		beReadStream( void* data, dataSize length )
-			:	beByteStreamBase( data, length, false ){};
-			
+		beReadStream( void const* data, dataSize length ) : beByteStreamBase(const_cast<void*>(data), length){};
+		beReadStream(beDataBuffer const& buffer) : beReadStream(buffer.GetBuffer(), buffer.GetSize()) {}
+		
+		template<typename T> void Stream(T& data) { ReadBytes(&data, sizeof(data)); }
+		template<typename T> beReadStream& operator>>(T& data) { ReadBytes(&data, sizeof(data)); return *this; }
+
 	private:
-		beReadStream& operator= (const beVector&){};
-		beReadStream(const beVector&){};
-}
+		beReadStream& operator= (const beReadStream&) = delete;
+		beReadStream(const beReadStream&) = delete;
+};
 
 class beWriteStream : public beByteStreamBase
 {
 	public:
-		beWriteStream( void* data, dataSize length )
-			:	beByteStreamBase( data, length, true ){};
-			
+		beWriteStream( void* data, dataSize length ) : beByteStreamBase(data, length){};
+		beWriteStream(beDataBuffer* buffer) : beWriteStream(buffer->ModifyBuffer(), buffer->GetSize()) {}
+
+		template<typename T> void Stream(const T& data) { WriteBytes(&data, sizeof(data)); }
+		template<typename T> beWriteStream& operator<<(const T& data) { WriteBytes(&data, sizeof(data)); return *this; }
 	private:
-		beWriteStream& operator= (const beVector&){};
-		beWriteStream(const beVector&){};
-}
+		beWriteStream& operator= (const beWriteStream&) = delete;
+		beWriteStream(const beWriteStream&) = delete;
+};
 
 template< int streamSize >
 class beFixedWriteStream : beWriteStream
 {
 	public:
-		beFixedWriteStream()
-			:	beWriteStream( m_internalData, streamSize ){};
-	
+		beFixedWriteStream() : beWriteStream(m_internalData, streamSize){};
+
+		template<typename T> void Stream(const T& data) { WriteBytes(&data, sizeof(data)); }
+		template<typename T> beFixedWriteStream& operator<<(const T& data) { WriteBytes(&data, sizeof(data)); return *this; }
 	private:
 		u8 m_internalData[streamSize];
-}
-
-
-#endif
+};
