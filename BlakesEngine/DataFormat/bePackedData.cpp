@@ -35,7 +35,7 @@ struct ScopedFile
 
 void bePackedData::LoadFromFile(beStringView filePath)
 {
-	std::FILE* file = std::fopen(filePath.c_str(), "r");
+	std::FILE* file = std::fopen(filePath.c_str(), "rb");
 	if (!file)
 	{
 		BE_ASSERT(false);
