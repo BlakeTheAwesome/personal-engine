@@ -14,7 +14,7 @@ static int ReadString(char* buffer, int bufferLen, std::FILE* file)
 
 	BE_ASSERT(stringLength < bufferLen);
 
-	int bytesRead = std::fread(buffer, sizeof(u8), stringLength, file);
+	int bytesRead = (int)std::fread(buffer, sizeof(u8), stringLength, file);
 	if (bytesRead < stringLength)
 	{
 		BE_ASSERT(false);
