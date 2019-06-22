@@ -8,6 +8,7 @@ class beRenderInterface;
 class beShaderPack;
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
+class bePackedData;
 
 class beModel
 {
@@ -66,6 +67,7 @@ public:
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename);
 	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const LoadOptions& loadOptions);
 	bool InitFromBuffers(beRenderBuffer* vertexBuffer, gsl::span<Mesh> meshes, gsl::span<Material> materials);
+	bool InitFromPackedData(beRenderInterface* ri, beShaderPack* shaderPack, bePackedData const& packedData);
 	void Deinit();
 
 	void SetMeshVisibility(const beStringView& meshName, bool visible);
@@ -89,4 +91,5 @@ private:
 	beRenderBuffer m_vertexBuffer;
 	beVector<Mesh, 1> m_meshes;
 	beVector<Material, 1> m_materials;
+	bool VerifyHeader(bePackedData const& packedData);
 };

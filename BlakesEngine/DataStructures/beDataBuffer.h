@@ -11,24 +11,31 @@ class beDataBufferBase : protected Policy
 {
 	public:
 	using value_type = u8;
+	using Policy::m_buffer;
+	using Policy::m_count;
+
 	enum { element_size = sizeof(value_type) };
 
 	beDataBufferBase() = default;
 	beDataBufferBase(const beDataBufferBase&) = delete;
 	beDataBufferBase(beDataBufferBase&&) = default;
 
-	explicit beDataBufferBase(int capacity) : Policy(capacity) {}
-	beDataBufferBase(void* buffer, int bufferLen, bool takeOwnership) : Policy(buffer, bufferLen, takeOwnership) {}
-	beDataBufferBase(const void* buffer, int bufferLen) : Policy(buffer, bufferLen) {}
+	explicit beDataBufferBase(int capacity) : Policy(capacity) { m_count = capacity; }
+	beDataBufferBase(void* buffer, int bufferLen, bool takeOwnership) : Policy(buffer, bufferLen, takeOwnership) { m_count = bufferLen; }
+	beDataBufferBase(const void* buffer, int bufferLen) : Policy(buffer, bufferLen) { m_count = bufferLen; }
 
-	gsl::span<const u8> ToSpan() const { return {Policy::m_buffer, Policy::m_count}; }
-	gsl::span<u8> ModifySpan() { return {Policy::m_buffer, Policy::m_count}; }
+	gsl::span<const u8> ToSpan() const { return {m_buffer, m_count}; }
+	gsl::span<u8> ModifySpan() { return {m_buffer, m_count}; }
 
-	int GetSize() const { return Policy::m_count; }
-	const u8* GetBuffer() const { return Policy::m_buffer; }
-	u8* ModifyBuffer() { return Policy::m_buffer; }
+	int GetSize() const { return m_count; }
+	const u8* GetBuffer() const { return m_buffer; }
+	u8* ModifyBuffer() { return m_buffer; }
 
-	void ResizeBuffer(int size) { Policy::PolicyReserve(size); }
+	void ResizeBuffer(int size)
+	{
+		Policy::PolicyReserve(size);
+		m_count = size;
+	}
 };
 
 class beDataBuffer : public beDataBufferBase<beAssignableMallocPolicy<u8, 0>>

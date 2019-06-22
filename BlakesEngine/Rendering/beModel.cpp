@@ -16,6 +16,8 @@
 #include <fstream>
 #include <charconv>
 #include <filesystem>
+#include "BlakesEngine/DataFormat/bePackedData.h"
+#include "BlakesEngine/DataStructures/beByteStreams.h"
 
 using namespace beRendering;
 
@@ -379,6 +381,7 @@ bool beModel::ReadMeshLine(const std::string& _line, OBJFileInfo* fileInfo)
 
 	return true;
 }
+
 #pragma warning(pop)
 
 bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const beModel::LoadOptions& loadOptions)
@@ -514,6 +517,54 @@ bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, gsl::span<Mesh> mesh
 	}
 
 	return valid;
+}
+
+bool beModel::VerifyHeader(bePackedData const& packedData)
+{
+	beDataBuffer headerBuffer = packedData.GetStream("main");
+	if (headerBuffer.GetSize() != 2)
+	{
+		return false;
+	}
+
+
+	u8 magic = 0;
+	u8 version = 0;
+	beReadStream headerBufferStream(headerBuffer);
+	headerBufferStream.Stream(magic);
+	headerBufferStream.Stream(version);
+	BE_ASSERT(magic == 0xef);
+	if (version != 1)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool beModel::InitFromPackedData(beRenderInterface* ri, beShaderPack* shaderPack, bePackedData const& packedData)
+{
+	Deinit();
+	if (!VerifyHeader(packedData))
+	{
+		return false;
+	}
+	return true;
+	//struct DrawCallInfo
+	//{
+	//	s32 lodIndex;
+	//	u32 vertexOffset;
+	//	u32 vertexCount;
+	//	u32 indexOffset;
+	//	u32 indexCount;
+	//	s32 shadowCapIndexCount;
+	//	u32 materialIndex;
+	//	u32 vertexFormatIndex;
+	//	float boundingBox[6];
+	//	int vertexCount[5];
+	//};
+	//
+	//beReadStream
 }
 
 bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename)
