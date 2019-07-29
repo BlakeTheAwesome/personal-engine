@@ -424,34 +424,9 @@ inline size_t count_code_points(basic_string_view<Char> s) {
   return s.size();
 }
 
-// Counts the number of code points in a UTF-8 string.
-inline size_t count_code_points(basic_string_view<char8_t> s) {
-  const char8_t* data = s.data();
-  size_t num_code_points = 0;
-  for (size_t i = 0, size = s.size(); i != size; ++i) {
-    if ((data[i] & 0xc0) != 0x80) ++num_code_points;
-  }
-  return num_code_points;
-}
-
-inline char8_t to_char8_t(char c) { return static_cast<char8_t>(c); }
-
-template <typename InputIt, typename OutChar>
-using needs_conversion = bool_constant<
-    std::is_same<typename std::iterator_traits<InputIt>::value_type,
-                 char>::value &&
-    std::is_same<OutChar, char8_t>::value>;
-
-template <typename OutChar, typename InputIt, typename OutputIt,
-          FMT_ENABLE_IF(!needs_conversion<InputIt, OutChar>::value)>
+template <typename OutChar, typename InputIt, typename OutputIt>
 OutputIt copy_str(InputIt begin, InputIt end, OutputIt it) {
   return std::copy(begin, end, it);
-}
-
-template <typename OutChar, typename InputIt, typename OutputIt,
-          FMT_ENABLE_IF(needs_conversion<InputIt, OutChar>::value)>
-OutputIt copy_str(InputIt begin, InputIt end, OutputIt it) {
-  return std::transform(begin, end, it, to_char8_t);
 }
 
 #ifndef FMT_USE_GRISU
@@ -472,24 +447,6 @@ void buffer<T>::append(const U* begin, const U* end) {
   size_ = new_size;
 }
 }  // namespace internal
-
-// A UTF-8 string view.
-class u8string_view : public basic_string_view<char8_t> {
- public:
-  u8string_view(const char* s)
-      : basic_string_view<char8_t>(reinterpret_cast<const char8_t*>(s)) {}
-  u8string_view(const char* s, size_t count) FMT_NOEXCEPT
-      : basic_string_view<char8_t>(reinterpret_cast<const char8_t*>(s), count) {
-  }
-};
-
-#if FMT_USE_USER_DEFINED_LITERALS
-inline namespace literals {
-inline u8string_view operator"" _u(const char* s, std::size_t n) {
-  return {s, n};
-}
-}  // namespace literals
-#endif
 
 // The number of characters to store in the basic_memory_buffer object itself
 // to avoid dynamic memory allocation.
