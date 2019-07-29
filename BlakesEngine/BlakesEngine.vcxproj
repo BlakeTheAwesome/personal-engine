@@ -149,7 +149,7 @@
       <EnablePREfast>false</EnablePREfast>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>-Wno-unused-parameter -Wno-unknown-pragmas %(AdditionalOptions)</AdditionalOptions>
-      <TreatWarningAsError>true</TreatWarningAsError>
+
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -329,7 +329,9 @@
     <ClInclude Include="External\DirectXTK\VertexTypes.h" />
     <ClInclude Include="External\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="External\DirectXTK\XboxDDSTextureLoader.h" />
+    <ClInclude Include="External\fmt\chrono.h" />
     <ClInclude Include="External\fmt\color.h" />
+    <ClInclude Include="External\fmt\compile.h" />
     <ClInclude Include="External\fmt\core.h" />
     <ClInclude Include="External\fmt\format-inl.h" />
     <ClInclude Include="External\fmt\format.h" />
@@ -338,6 +340,7 @@
     <ClInclude Include="External\fmt\posix.h" />
     <ClInclude Include="External\fmt\printf.h" />
     <ClInclude Include="External\fmt\ranges.h" />
+    <ClInclude Include="External\fmt\safe-duration-cast.h" />
     <ClInclude Include="External\fmt\time.h" />
     <ClInclude Include="External\Misc\StreamToDebugOutput.h" />
     <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
