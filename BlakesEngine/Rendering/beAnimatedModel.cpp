@@ -18,7 +18,7 @@ void Initialise(bePackedData const& packedData)
 	#endif
 	
 	{
-		beDataBuffer formats = packedData.GetStream("formats");
+		//beDataBuffer formats = packedData.GetStream("formats");
 	}
 }
 

@@ -90,7 +90,7 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 		{
 			std::filesystem::path path(additionalLoadDir);
 			path /= textureFilename.c_str();
-			const beString& u8Path = path.u8string();
+			const beString& u8Path = path.string();
 			imageBuffer = stbi_load(u8Path.c_str(), &imageWidth, &imageHeight, &channelsInFile, 4);
 		}
 		BE_ASSERT(imageBuffer);

@@ -388,7 +388,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 {
 	std::filesystem::path modelPath(filename);
 	std::filesystem::path modelFolder = modelPath.parent_path();
-	if (!LoadTexture(ri, shaderPack, textureFilename, modelFolder.u8string()))
+	if (!LoadTexture(ri, shaderPack, textureFilename, modelFolder.string()))
 	{
 		BE_ASSERT(false);
 		return false;
@@ -549,22 +549,34 @@ bool beModel::InitFromPackedData(beRenderInterface* ri, beShaderPack* shaderPack
 	{
 		return false;
 	}
+
+	struct DrawCallInfo
+	{
+		s32 lodIndex;
+		u32 vertexOffset;
+		u32 vertexCount;
+		u32 indexOffset;
+		u32 indexCount;
+		s32 shadowCapIndexCount;
+		u32 materialIndex;
+		u32 vertexFormatIndex;
+		float boundingBox[6];
+		int segmentVertexCount[5];
+	};
+	
+	beReadStream drawCallsStream(packedData.GetStream("drawCalls"));
+	u32 drawCallCount = 0; drawCallsStream >> drawCallCount;
+	beVector<DrawCallInfo> drawCalls;
+	drawCalls.ReserveAndSetCountUninitialised(drawCallCount);
+	drawCallsStream.Stream(drawCalls.begin(), drawCalls.Count() * sizeof(DrawCallInfo));
+	if (drawCallsStream.HasFailed() || drawCallsStream.GetRemaining() != 0)
+	{
+		BE_ASSERT(false);
+		return false;
+	}
+
+
 	return true;
-	//struct DrawCallInfo
-	//{
-	//	s32 lodIndex;
-	//	u32 vertexOffset;
-	//	u32 vertexCount;
-	//	u32 indexOffset;
-	//	u32 indexCount;
-	//	s32 shadowCapIndexCount;
-	//	u32 materialIndex;
-	//	u32 vertexFormatIndex;
-	//	float boundingBox[6];
-	//	int vertexCount[5];
-	//};
-	//
-	//beReadStream
 }
 
 bool beModel::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename)
