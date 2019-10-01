@@ -149,7 +149,6 @@
       <EnablePREfast>false</EnablePREfast>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>-Wno-unused-parameter -Wno-unknown-pragmas %(AdditionalOptions)</AdditionalOptions>
-
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\BlakesEngine\External\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

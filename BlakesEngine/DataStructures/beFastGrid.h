@@ -13,30 +13,15 @@ class beFastGrid
 
 		beFastGrid() = default;
 		beFastGrid(const T& def) { SetAll(def); }
-		beFastGrid(std::initializer_list<T> list)// : m_buffer{list} Todo: fix this
+		beFastGrid(std::initializer_list<T> list)
+			: m_buffer(list)
 		{
-			BE_ASSERT(list.size() == 1 || list.size() == CAPACITY);
-			if (list.size() == 1)
-			{
-				SetAll(*list.begin());
-			}
-			else
-			{
-				const T* buf = list.begin();
-				for (int i = 0; i < CAPACITY; i++)
-				{
-					m_buffer[i] = buf[i];
-				}
-			}
 		}
 		~beFastGrid() = default;
 		
 		void SetAll(const T& v)
 		{
-			for (int i = 0; i < CAPACITY; i++)
-			{
-				m_buffer[i] = v;
-			}
+			m_buffer.SetAllTo(v);
 		}
 		
 		constexpr int Capacity() const
@@ -183,5 +168,5 @@ class beFastGrid
 		ConstGridIterator GridIter() const { return ConstGridIterator{this}; }
 
 	protected:
-		T m_buffer[CAPACITY];
+		beArray<T, CAPACITY> m_buffer;
 };

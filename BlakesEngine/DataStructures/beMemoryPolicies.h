@@ -22,12 +22,12 @@ struct beVectorFixedPolicy
 	{
 		BE_ASSERT(increaseBy == 0);
 		BE_ASSERT(capacity <= CAPACITY); 
-		BE_ASSERT((int)list.size() <= capacity);
+		
+		int numToCopy = (int)list.size();
+		BE_ASSERT(numToCopy <= capacity);
 
-		for (const T& iter : list)
-		{
-			BE_NEW(m_buffer+m_count++) T(iter);
-		}
+		std::uninitialized_copy(m_buffer, m_buffer + numToCopy, list.begin());
+		m_count = numToCopy;
 	}
 	beVectorFixedPolicy(int capacity, int increaseBy)
 	{
@@ -70,12 +70,12 @@ struct beVectorMallocPolicy : public NonCopiable
 
 	beVectorMallocPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
-		BE_ASSERT((int)list.size() <= capacity);
+		int numToCopy = (int)list.size();
+		BE_ASSERT(numToCopy <= capacity);
+
 		PolicyReserve(capacity);
-		for (const T& iter : list)
-		{
-			BE_NEW(m_buffer+m_count++) T(iter);
-		}
+		std::uninitialized_copy(m_buffer, m_buffer + numToCopy, list.begin());
+		m_count = numToCopy;
 	}
 
 
@@ -150,12 +150,12 @@ struct beVectorHybridPolicy : public NonCopiable
 	beVectorHybridPolicy() : beVectorHybridPolicy(0, -1) {}
 	beVectorHybridPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
-		BE_ASSERT((int)list.size() <= capacity);
+		int numToCopy = (int)list.size();
+		BE_ASSERT(numToCopy <= capacity);
+
 		PolicyReserve(capacity);
-		for (const T& iter : list)
-		{
-			BE_NEW(m_buffer+m_count++) T(iter);
-		}
+		std::uninitialized_copy(m_buffer, m_buffer + numToCopy, list.begin());
+		m_count = numToCopy;
 	}
 
 	beVectorHybridPolicy(int capacity, int increaseBy)

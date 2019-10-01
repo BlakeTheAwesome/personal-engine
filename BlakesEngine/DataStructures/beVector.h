@@ -38,13 +38,13 @@ class beVectorBase : protected Policy
 
 		void Release()
 		{
-			DestructElements(0, m_count-1);
+			DestructElements(0, m_count);
 			Policy::PolicyRelease();
 		}
 
 		void Clear()
 		{
-			DestructElements(0, m_count-1);
+			DestructElements(0, m_count);
 			m_count = 0;
 		}
 		
@@ -74,7 +74,7 @@ class beVectorBase : protected Policy
 			}
 			else if (count < currentCount) // shrinking
 			{
-				DestructElements(count, currentCount-1);
+				DestructElements(count, currentCount);
 			}
 			m_count = count;
 		}
@@ -89,12 +89,13 @@ class beVectorBase : protected Policy
 			{
 				for (int i = currentCount; i < count; i++)
 				{
-					new(&m_buffer[i]) value_type(std::forward<Args>(defaultVal)...);
+					// Forward here would be unsafe
+					new(&m_buffer[i]) value_type(defaultVal...);
 				}
 			}
 			else if (count < currentCount) // shrinking
 			{
-				DestructElements(count, currentCount-1);
+				DestructElements(count, currentCount);
 			}
 			m_count = count;
 		}
@@ -147,7 +148,7 @@ class beVectorBase : protected Policy
 		void Remove(int index)
 		{
 			BE_ASSERT(index >= 0 && index < m_count);
-			DestructElements(index, index);
+			DestructElements(index, index+1);
 			const int endIndex = m_count - 1;
 			const int numToMove = endIndex - index;
 			if (numToMove > 0)
@@ -160,7 +161,7 @@ class beVectorBase : protected Policy
 		void QuickRemove(int index)
 		{
 			BE_ASSERT(index >= 0 && index < m_count);
-			DestructElements(index, index);
+			DestructElements(index, index+1);
 			const int endIndex = m_count - 1;
 			if (index < endIndex)
 			{
@@ -189,11 +190,7 @@ class beVectorBase : protected Policy
 		void AddRange(const T* range, int rangeLength)
 		{
 			ReserveAndSetCountUninitialised(m_count + rangeLength);
-			T* ptr = end() - rangeLength;
-			for (int i : RangeIter(rangeLength))
-			{
-				BE_NEW(ptr+i) T(range[i]);
-			}
+			std::uninitialized_copy_n(end() - rangeLength, rangeLength, range);
 		}
 
 		template <typename U>//, typename std::enable_if_t<!std::is_convertible_v<decltype(std::declval<T>() == std::declval<U>()), bool>> = 0>
@@ -362,22 +359,13 @@ class beVectorBase : protected Policy
 		{
 			if (!std::is_trivially_constructible_v<T>)
 			{
-				for (int i = startElement; i < endElement; i++)
-				{
-					BE_NEW(m_buffer + i) T();
-				}
+				std::uninitialized_value_construct(&At(startElement), &At(endElement));
 			}
 		}
 		
 		void DestructElements(int startElement, int endElement)
 		{
-			if (!std::is_trivially_destructible_v<T>)
-			{
-				for (int i = startElement; i <= endElement; i++)
-				{
-						At(i).~T();
-				}
-			}
+			std::destroy(&At(startElement), &At(endElement));
 		}
 };
 
