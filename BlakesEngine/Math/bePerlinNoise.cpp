@@ -14,7 +14,7 @@ void bePerlinNoise2D::Initialise(int randomSeed)
 	std::shuffle(hashTable.begin(), hashTable.end(), std::default_random_engine(randomSeed));
 
 	// We have this at double the size so that the p[p[p[x0]+y0]+z0]; code doesn't run off the end (could also mask it with 0xff at each step).
-	std::generate(m_hashTable.begin(), m_hashTable.end(), [i = 0, &hashTable]() mutable
+	std::ranges::generate(m_hashTable, [i = 0, &hashTable]() mutable
 		{ return hashTable.at(i++ & 0xff); });
 }
 

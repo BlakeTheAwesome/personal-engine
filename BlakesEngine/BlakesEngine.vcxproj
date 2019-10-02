@@ -275,6 +275,7 @@
     <ClCompile Include="Window\beWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="beRanges.h" />
     <ClInclude Include="Camera\beCamera.h" />
     <ClInclude Include="Camera\beCameraUtils.h" />
     <ClInclude Include="Camera\beFlightCamera.h" />
@@ -342,6 +343,7 @@
     <ClInclude Include="External\fmt\safe-duration-cast.h" />
     <ClInclude Include="External\fmt\time.h" />
     <ClInclude Include="External\Misc\StreamToDebugOutput.h" />
+    <ClInclude Include="External\NanoRange\nanorange.hpp" />
     <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
     <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />
     <ClInclude Include="External\stb\stb_image.h" />

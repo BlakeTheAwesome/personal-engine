@@ -5,6 +5,7 @@
 #endif
 
 //#define _USE_MATH_DEFINES
+#include "BlakesEngine/Core/beRanges.h"
 #include <cmath>  
 
 #include"BlakesEngine/External/fmt/format.h"
