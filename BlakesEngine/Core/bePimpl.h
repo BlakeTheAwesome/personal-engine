@@ -4,7 +4,7 @@
 
 // Usage in other files
 #define PIMPL_NEW(_class) _class::Create
-#define PIMPL_DELETE(ptr) { if (ptr) { ptr->Dispose(); } ptr = nullptr; }
+#define PIMPL_DELETE(x) { if ((x)) { (x)->Dispose(); } (x) = nullptr; }
 #define PIMPL_GET_DATA(_this) ((Impl*)(intptr_t(_this)+sizeof(*this)))
 #define PIMPL_GET_PARENT(_class, _this) ((_class*)(intptr_t(_this)-sizeof(_class)))
 

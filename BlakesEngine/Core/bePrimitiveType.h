@@ -3,12 +3,12 @@
 template <typename T>
 struct bePrimitiveType
 {
-	typedef T type;
+	using type = T;
 
 	T value;
 
 	T operator++() { return ++value; }
-	T operator++(int) { return value++; }
+	const T operator++(int) { return value++; }
 };
 
 #define PrimitiveType(name, T, def) struct name : bePrimitiveType<u8>\

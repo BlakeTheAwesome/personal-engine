@@ -7,9 +7,9 @@ namespace beDeferred
 	template <typename Lambda>
 	struct LambdaDefer
 	{
-		LambdaDefer(Lambda&& l) : m_fn(std::move(l)) {}
-		LambdaDefer(LambdaDefer&& rhs) = default;
-		LambdaDefer& operator=(LambdaDefer&&) = default;
+		LambdaDefer(Lambda&& l) noexcept : m_fn(std::move(l)) {}
+		LambdaDefer(LambdaDefer&& rhs) noexcept = default;
+		LambdaDefer& operator=(LambdaDefer&&) noexcept = default;
 		LambdaDefer(const LambdaDefer&) = delete;
 		LambdaDefer& operator=(const LambdaDefer&) = delete;
 

@@ -26,10 +26,10 @@ class beVectorBase : protected Policy
 			: Policy(capacity, increaseBy)
 		{
 		}
-		beVectorBase(const beVectorBase&) = default;
-		beVectorBase(beVectorBase&&) = default;
-		beVectorBase& operator=(const beVectorBase&) = default;
-		beVectorBase& operator=(beVectorBase&&) = default;
+		beVectorBase(const beVectorBase&) noexcept = default;
+		beVectorBase(beVectorBase&&) noexcept = default;
+		beVectorBase& operator=(const beVectorBase&) noexcept = default;
+		beVectorBase& operator=(beVectorBase&&) noexcept = default;
 
 		~beVectorBase()
 		{
@@ -106,12 +106,12 @@ class beVectorBase : protected Policy
 			m_count = count;
 		}
 
-		int Count() const
+		[[nodiscard]] int Count() const
 		{
 			return Policy::m_count;
 		}
 		
-		int Capacity() const
+		[[nodiscard]] int Capacity() const
 		{
 			return Policy::PolicyCapacity();
 		}

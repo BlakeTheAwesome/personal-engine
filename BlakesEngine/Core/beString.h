@@ -17,38 +17,39 @@ class beStringView
 	beStringView(beString&& beStr) : m_ownedStr(std::move(beStr)) {}
 	beStringView(const char* cStr) : m_cstr(cStr) {}
 
-	int Length() const
+	[[nodiscard]] int Length() const
 	{
 		if (m_cstr) { return (int)strlen(m_cstr); } 
 		if (m_beStr) { return (int)m_beStr->size(); } 
 		return (int)m_ownedStr.size();
 	}
 
-	gsl::span<const char> ToSpan() const
+	[[nodiscard]] gsl::span<const char> ToSpan() const
 	{
 		return {c_str(), Length()};
 	}
 
-	auto begin() const
+	[[nodiscard]] auto begin() const
 	{
 		return c_str();
 	}
 	
-	auto end() const
+	[[nodiscard]] auto end() const
 	{
 		return c_str() + Length();
 	}
-	auto rbegin() const
+
+	[[nodiscard]] auto rbegin() const
 	{
 		return std::reverse_iterator(end());
 	}
 	
-	auto rend() const
+	[[nodiscard]] auto rend() const
 	{
 		return std::reverse_iterator(begin());
 	}
 
-	int FindFirst(char c) const
+	[[nodiscard]] int FindFirst(char c) const
 	{
 		auto _begin = begin();
 		auto _end = end();
@@ -60,7 +61,7 @@ class beStringView
 		return -1;
 	}
 
-	int FindLast(char c) const
+	[[nodiscard]] int FindLast(char c) const
 	{
 		const auto _begin = begin();
 		const auto _rbegin = rbegin();
@@ -73,21 +74,21 @@ class beStringView
 		return -1;
 	}
 
-	const char* c_str() const
+	[[nodiscard]] const char* c_str() const
 	{
 		if (m_cstr) { return m_cstr; }
 		if (m_beStr) { return m_beStr->c_str(); }
 		return m_ownedStr.c_str();
 	}
 
-	bool IsEqual(const beString& rhs) const
+	[[nodiscard]] bool IsEqual(const beString& rhs) const
 	{
 		if (m_beStr) { return rhs == *m_beStr; }
 		if (m_cstr) { return rhs == m_cstr; }
 		return rhs == m_ownedStr;
 	}
 
-	beString ToString() const
+	[[nodiscard]] beString ToString() const
 	{
 		if (m_beStr) { return *m_beStr; }
 		if (m_cstr) { return beString(m_cstr); }

@@ -187,9 +187,9 @@ class beArray
 		return Get(intVal);
 	}
 
-	constexpr T* data() { return m_storage; }
-	constexpr const void* data() const { return m_storage; }
-	constexpr int ByteSize() const { return Size * sizeof(T); }
+	[[nodiscard]] constexpr T* data() { return m_storage; }
+	[[nodiscard]] constexpr const void* data() const { return m_storage; }
+	[[nodiscard]] constexpr int ByteSize() const { return Size * sizeof(T); }
 	void ZeroMem() { memset(m_storage, 0, sizeof(m_storage)); }
 
 	constexpr beArray& operator= (const beArray& rhs)
@@ -274,12 +274,12 @@ class beArray<T, 0>
 	constexpr int IndexOf(const T& t) const { return -1; }
 	static constexpr int Capacity() { return 0; }
 	static constexpr int size() { return 0; }
-	constexpr bool Contains(const T&) const { return false; }
+	constexpr bool Contains(const T& val) const { return false; }
 	constexpr T& at(int i) { return Get(i); }
 	constexpr const T& at(int i) const { return Get(i); }
-	constexpr T* data() { return nullptr; }
-	constexpr const void* data() const { return nullptr; }
-	constexpr int ByteSize() const { return 0; }
+	[[nodiscard]] constexpr T* data() { return nullptr; }
+	[[nodiscard]] constexpr const void* data() const { return nullptr; }
+	[[nodiscard]] constexpr int ByteSize() const { return 0; }
 	constexpr void ZeroMem() {}
 	static constexpr int SIZE = 0;
 	private:

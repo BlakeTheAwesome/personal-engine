@@ -8,7 +8,7 @@ namespace ExternalStringBuilder
 	class StringElement
 	{
 		public:
-			StringElement(const std::string& s) : m_value(s) {};
+			StringElement(std::string s) : m_value(std::move(s)) {};
 			StringElement(const char* cp) : m_value(cp) {};
 			StringElement(double d) : m_value(ToString(d)) {};
 			StringElement(float f) : m_value(ToString(f)) {};
@@ -18,7 +18,7 @@ namespace ExternalStringBuilder
 			StringElement(short s) : m_value(ToString(s)) {};
 			StringElement(bool b) : m_value(ToString(b)) {};
 
-			const std::string& ToString() const { return m_value; };
+			[[nodiscard]] const std::string& ToString() const { return m_value; };
 
 		private:
 			template<typename T>
@@ -37,12 +37,12 @@ namespace ExternalStringBuilder
 	{
 		public:
 			void Clear() { m_value.clear(); };
-			void Append(StringElement element) { m_value.append(element.ToString()); };
-			const std::string& ToString() const { return m_value; };
-			const char* c_str() const { return m_value.c_str(); };
+			void Append(StringElement const& element) { m_value.append(element.ToString()); };
+			[[nodiscard]] const std::string& ToString() const { return m_value; };
+			[[nodiscard]] const char* c_str() const { return m_value.c_str(); };
 	
 			StringBuilder &operator<<(StringElement se) {
-				Append(se);
+				Append(std::move(se));
 				return *this;
 			};
 
