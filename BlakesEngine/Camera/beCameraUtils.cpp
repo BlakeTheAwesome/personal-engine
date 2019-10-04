@@ -82,7 +82,7 @@ std::optional<Vec3> beCameraUtils::WorldPosFromScreenPos(const beRenderInterface
 	if (!intersects) { return {}; }
 
 	Vec3 result;
-	XMStoreFloat3(&result, worldPosV + (worldDirV * intersectionDist));
+	XMStoreFloat3(&result, XMVectorMultiplyAdd(worldDirV, XMVectorReplicate(intersectionDist), worldPosV));
 	return result;
 }
 
@@ -113,7 +113,7 @@ bool beCameraUtils::GetScreeenToWorldRay(const beRenderInterface& ri, const Matr
 
 	const XMVECTOR worldPos    = XMLoadFloat3(&outputVecs.at(0));
 	const XMVECTOR worldAlongZ = XMLoadFloat3(&outputVecs.at(1));
-	const XMVECTOR worldForward = XMVector3Normalize(worldAlongZ - worldPos);
+	const XMVECTOR worldForward = XMVector3Normalize(XMVectorSubtract(worldAlongZ, worldPos));
 
 
 	XMStoreFloat3(pos, worldPos);

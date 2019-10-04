@@ -102,7 +102,7 @@ void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, floa
 	XMVECTOR currentPosition = XMVectorSet(m_position.x, m_position.y, m_position.z, 1.f);
 	const XMVECTOR translation = XMVectorSet(extraRight, 0.f, extraForwards, 0.f);
 	const XMVECTOR transformedTranslation = XMVector3TransformNormal(translation, orientation);
-	currentPosition += transformedTranslation;
+	currentPosition = XMVectorAdd(currentPosition, transformedTranslation);
 	orientation.r[3] = currentPosition;
 
 	const XMMATRIX viewMatrix = XMMatrixInverse(nullptr, orientation);
