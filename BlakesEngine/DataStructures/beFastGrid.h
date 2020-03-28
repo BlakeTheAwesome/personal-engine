@@ -77,8 +77,8 @@ class beFastGrid
 			beFastGrid* grid;
 			int index;
 			void operator++() { index++; }
-			bool operator==(const iterator& rhs) { return index == rhs.index; }
-			bool operator!=(const iterator& rhs) { return !(*this == rhs); }
+			bool operator==(const iterator& rhs) const { return index == rhs.index; }
+			bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
 			T& operator*() { return grid->At(index); }
 			int xPos() const { return beZOrder::DecodeMorton2X(index); }
 			int yPos() const { return beZOrder::DecodeMorton2Y(index); }
@@ -90,8 +90,8 @@ class beFastGrid
 			const beFastGrid* grid;
 			int index;
 			void operator++() { index++; }
-			bool operator==(const const_iterator& rhs) { return index == rhs.index; }
-			bool operator!=(const const_iterator& rhs) { return !(*this == rhs); }
+			bool operator==(const const_iterator& rhs) const { return index == rhs.index; }
+			bool operator!=(const const_iterator& rhs) const { return !(*this == rhs); }
 			const T& operator*() { return grid->At(index); }
 			int xPos() const { return beZOrder::DecodeMorton2X(index); }
 			int yPos() const { return beZOrder::DecodeMorton2Y(index); }
@@ -126,8 +126,8 @@ class beFastGrid
 				grid_iterator(iterator _it) : it(_it) {}
 				iterator it;
 				void operator++() { it.index++; }
-				bool operator==(const grid_iterator& rhs) { return it == rhs.it; }
-				bool operator!=(const grid_iterator& rhs) { return !(*this == rhs); }
+				bool operator==(const grid_iterator& rhs) const { return it == rhs.it; }
+				bool operator!=(const grid_iterator& rhs) const { return !(*this == rhs); }
 				iterator operator*() { return it; }
 			};
 			grid_iterator begin()
@@ -150,8 +150,8 @@ class beFastGrid
 				const_grid_iterator(const_iterator _it) : it(_it) {}
 				const_iterator it;
 				void operator++() { it.index++; }
-				bool operator==(const const_grid_iterator& rhs) { return it == rhs.it; }
-				bool operator!=(const const_grid_iterator& rhs) { return !(*this == rhs); }
+				bool operator==(const const_grid_iterator& rhs) const { return it == rhs.it; }
+				bool operator!=(const const_grid_iterator& rhs) const { return !(*this == rhs); }
 				const_iterator operator*() { return it; }
 			};
 
