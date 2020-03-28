@@ -53,7 +53,7 @@ private:
 	beTexture(const beTexture&) = delete;
 	beTexture& operator=(const beTexture&) = default;
 
-	D3D11_TEXTURE2D_DESC m_desc;
+	D3D11_TEXTURE2D_DESC m_desc{};
 	mutable ID3D11ShaderResourceView* m_texture = nullptr;
 	ID3D11Texture2D* m_texture2d = nullptr;
 
