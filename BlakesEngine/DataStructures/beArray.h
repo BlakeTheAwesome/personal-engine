@@ -1,4 +1,6 @@
 #pragma once
+#include "BlakesEngine/Core/beConcepts.h"
+
 #include "beArrayIterator.h"
 #include "beConstexprAlgorithms.h"
 #include <initializer_list>
@@ -70,6 +72,16 @@ class beArray
 	}
 
 	constexpr iterator end()
+	{
+		return &Get(Size);
+	}
+
+	constexpr const_iterator cbegin() const
+	{
+		return &Get(0);
+	}
+
+	constexpr const_iterator cend() const
 	{
 		return &Get(Size);
 	}
@@ -235,6 +247,8 @@ class beArray
 		return m_storage[i];
 	}
 	T m_storage[Size];
+
+
 };
 
 // If you end up making a zero lengthed fixed size array, allow it to compile.
@@ -264,6 +278,8 @@ class beArray<T, 0>
 	constexpr const T& Last() const { return Get(0); }
 	constexpr iterator begin() { return nullptr; }
 	constexpr iterator end() { return nullptr; }
+	constexpr const_iterator cbegin() const { return nullptr; }
+	constexpr const_iterator cend() const { return nullptr; }
 	constexpr const_iterator begin() const { return nullptr; }
 	constexpr const_iterator end() const { return nullptr; }
 	constexpr beArrayIter<T> ArrayIter() { return beArrayIter<T>(begin(), end()); }
@@ -285,3 +301,6 @@ class beArray<T, 0>
 	private:
 	constexpr T& Get(int i) const { return *(T*)1; }
 };
+
+static_assert(Container<beArray<int, 2>>);
+static_assert(Container<beArray<int, 0>>);

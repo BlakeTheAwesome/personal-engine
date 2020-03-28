@@ -226,6 +226,7 @@
     <ClCompile Include="Camera\beCameraUtils.cpp" />
     <ClCompile Include="Camera\beFlightCamera.cpp" />
     <ClCompile Include="Core\beAssert.cpp" />
+    <ClCompile Include="Core\beContainerHelpers.cpp" />
     <ClCompile Include="Core\beHash.cpp" />
     <ClCompile Include="Core\bePrintf.cpp" />
     <ClCompile Include="Core\beString.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="Camera\beCameraUtils.h" />
     <ClInclude Include="Camera\beFlightCamera.h" />
     <ClInclude Include="Core\beAssert.h" />
+    <ClInclude Include="Core\beConcepts.h" />
     <ClInclude Include="Core\beContainerHelpers.h" />
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />

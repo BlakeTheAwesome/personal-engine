@@ -1,4 +1,5 @@
 #pragma once
+#include "BlakesEngine/Core/beConcepts.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "beMemoryPolicies.h"
@@ -15,9 +16,11 @@
 template<typename T, typename Policy>
 class beVectorBase : protected Policy
 {
-
+	using Policy::GetBuffer;
 	public:
 		using value_type = T;
+		using iterator = T*;
+		using const_iterator = const T*;
 		enum { element_size = sizeof(T) };
 		
 		beVectorBase() = default;
@@ -90,7 +93,7 @@ class beVectorBase : protected Policy
 				for (int i = currentCount; i < count; i++)
 				{
 					// Forward here would be unsafe
-					new(&m_buffer[i]) value_type(defaultVal...);
+					new(&GetBuffer()[i]) value_type(defaultVal...);
 				}
 			}
 			else if (count < currentCount) // shrinking
@@ -124,7 +127,7 @@ class beVectorBase : protected Policy
 			}
 
 			int index = m_count++;
-			BE_NEW(&m_buffer[index]) T(that);
+			BE_NEW(&GetBuffer()[index]) T(that);
 			return index;
 		}
 
@@ -153,7 +156,7 @@ class beVectorBase : protected Policy
 			const int numToMove = endIndex - index;
 			if (numToMove > 0)
 			{
-				memmove(&m_buffer[index], &m_buffer[index+1], sizeof(T) * numToMove);
+				memmove(&GetBuffer()[index], &GetBuffer()[index+1], sizeof(T) * numToMove);
 			}
 			m_count--;
 		}
@@ -165,7 +168,7 @@ class beVectorBase : protected Policy
 			const int endIndex = m_count - 1;
 			if (index < endIndex)
 			{
-				memcpy(&m_buffer[index], &m_buffer[endIndex], sizeof(T));
+				memcpy(&GetBuffer()[index], &GetBuffer()[endIndex], sizeof(T));
 			}
 			m_count--;
 		}
@@ -177,7 +180,7 @@ class beVectorBase : protected Policy
 				return nullptr;
 			}
 			int index = m_count++;
-			return (T*)&m_buffer[index];
+			return (T*)&GetBuffer()[index];
 		}
 
 		template<class ...Args>
@@ -258,22 +261,32 @@ class beVectorBase : protected Policy
 
 		T* begin()
 		{
-			return (T*)Policy::m_buffer;
+			return GetBuffer();
 		}
 
 		T* end()
 		{
-			return ((T*)Policy::m_buffer) + m_count;
+			return GetBuffer() + m_count;
+		}
+
+		const T* cbegin() const
+		{
+			return GetBuffer();
+		}
+
+		const T* cend() const
+		{
+			return GetBuffer() + m_count;
 		}
 
 		const T* begin() const
 		{
-			return (const T*)Policy::m_buffer;
+			return cbegin();
 		}
 
 		const T* end() const
 		{
-			return ((const T*)Policy::m_buffer) + m_count;
+			return cend();
 		}
 
 		T& First()
@@ -352,7 +365,6 @@ class beVectorBase : protected Policy
 		}
 
 	private:
-		using Policy::m_buffer;
 		using Policy::m_count;
 
 		void ConstructElements(int startElement, int endElement)
@@ -374,6 +386,10 @@ class beVector : public beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>
 {
 	using Base = beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>>;
 	public:
+	using value_type = typename Base::value_type;
+	using iterator = typename Base::iterator;
+	using const_iterator = typename Base::const_iterator;
+
 	explicit beVector(int capacity=HYBRID_CAPACITY, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
 	beVector(int capacity, int increaseBy, std::initializer_list<T> list) : Base(capacity, increaseBy, list) {}
@@ -384,12 +400,17 @@ class beVector : public beVectorBase<T, beVectorHybridPolicy<T, HYBRID_CAPACITY>
 	beVector& operator=(const beVector&) = delete;
 	beVector& operator=(beVector&&) = delete;
 };
+static_assert(Container<beVector<int>>);
 
 template <typename T, int INITIAL_SIZE=8>
 class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T, INITIAL_SIZE>>
 {
 	using Base = beVectorBase<T, beVectorMallocPolicy<T>>;
 	public:
+	using value_type = typename Base::value_type;
+	using iterator = typename Base::iterator;
+	using const_iterator = typename Base::const_iterator;
+
 	beHeapVector() = default;
 	explicit beHeapVector(int capacity, int increaseBy=-1) : Base(capacity, increaseBy) {}
 	explicit beHeapVector(int capacity, int count, int increaseBy) : Base(capacity, increaseBy) { Base::SetCount(count); }
@@ -401,12 +422,16 @@ class beHeapVector : public beVectorBase<T, beVectorMallocPolicy<T, INITIAL_SIZE
 	beHeapVector& operator=(const beHeapVector&) = delete;
 	beHeapVector& operator=(beHeapVector&&) = delete;
 };
+static_assert(Container<beHeapVector<int>>);
 
 template <typename T, int CAPACITY>
 class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 {
 	using Base = beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>;
 	public:
+	using value_type = typename Base::value_type;
+	using iterator = typename Base::iterator;
+	using const_iterator = typename Base::const_iterator;
 	using Base::DataSize;
 
 	beFixedVector() = default;
@@ -418,4 +443,7 @@ class beFixedVector : public beVectorBase<T, beVectorFixedPolicy<T, CAPACITY>>
 	beFixedVector& operator=(const beFixedVector&) = delete;
 	beFixedVector& operator=(beFixedVector&&) = delete;
 };
+static_assert(Container<beFixedVector<int, 2>>);
+static_assert(Container<beFixedVector<int, 0>>);
 #pragma warning(pop)
+

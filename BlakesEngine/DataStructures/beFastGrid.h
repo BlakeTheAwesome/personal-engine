@@ -1,4 +1,6 @@
 #pragma once
+#include "BlakesEngine/Core/beConcepts.h"
+
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Math/beZOrder.h"
 
@@ -106,15 +108,25 @@ class beFastGrid
 		{
 			return iterator(this, CAPACITY);
 		}
-		
-		const_iterator begin() const
+
+		const_iterator cbegin() const
 		{
 			return const_iterator(this, 0);
 		}
 
-		const_iterator end() const
+		const_iterator cend() const
 		{
 			return const_iterator(this, CAPACITY);
+		}
+		
+		const_iterator begin() const
+		{
+			return cbegin();
+		}
+
+		const_iterator end() const
+		{
+			return cend();
 		}
 
 
@@ -170,3 +182,5 @@ class beFastGrid
 	protected:
 		beArray<T, CAPACITY> m_buffer;
 };
+
+static_assert(Container<beFastGrid<int, 16>>);

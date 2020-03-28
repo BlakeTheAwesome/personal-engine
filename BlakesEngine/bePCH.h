@@ -5,6 +5,7 @@
 #endif
 
 //#define _USE_MATH_DEFINES
+//#include "BlakesEngine/Core/beConcepts.h"
 #include "BlakesEngine/Core/beRanges.h"
 #include <cmath>  
 

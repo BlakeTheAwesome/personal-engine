@@ -54,8 +54,50 @@ struct beVectorFixedPolicy
 
 	int m_count = 0;
 	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer[CAPACITY];
+
+	T* GetBuffer()
+	{
+		return (T*)m_buffer;
+	}
+
+	const T* GetBuffer() const
+	{
+		return (const T*)m_buffer;
+	}
 };
 
+template <typename T>
+struct beVectorFixedPolicy<T, 0>
+{
+	static constexpr int CAPACITY = 0;
+	public:
+	static constexpr int DataSize() { return 0; }
+
+	protected:
+	beVectorFixedPolicy() = default;
+	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
+	{
+		BE_ASSERT(increaseBy == 0);
+		BE_ASSERT(capacity <= CAPACITY);
+	}
+	beVectorFixedPolicy(int capacity, int increaseBy)
+	{
+		BE_ASSERT(increaseBy == 0);
+		BE_ASSERT(capacity <= CAPACITY);
+	}
+
+	void PolicyReserve(int capacity)
+	{
+		BE_ASSERT(capacity <= CAPACITY);
+	}
+
+	void PolicyRelease() { }
+	bool PolicyCheckRoomForAlloc() const { return false;  }
+	constexpr int PolicyCapacity() const { return CAPACITY; }
+
+	const T* GetBuffer() const { return nullptr; }
+	int m_count = 0;
+};
 
 template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
 struct beVectorMallocPolicy : public NonCopiable
@@ -135,6 +177,16 @@ struct beVectorMallocPolicy : public NonCopiable
 	}
 
 	int PolicyCapacity() const { return m_capacity; }
+
+	T* GetBuffer()
+	{
+		return m_buffer;
+	}
+
+	const T* GetBuffer() const
+	{
+		return m_buffer;
+	}
 
 	T* m_buffer = nullptr;
 	int m_count = 0;
@@ -232,6 +284,16 @@ struct beVectorHybridPolicy : public NonCopiable
 	}
 
 	int PolicyCapacity() const { return m_capacity; }
+
+	T* GetBuffer()
+	{
+		return m_buffer;
+	}
+
+	const T* GetBuffer() const
+	{
+		return m_buffer;
+	}
 
 	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_storage[RESERVED_SIZE];
 
@@ -339,6 +401,16 @@ struct beAssignableMallocPolicy
 	}
 
 	int PolicyCapacity() const { return m_capacity; }
+
+	T* GetBuffer()
+	{
+		return m_buffer;
+	}
+
+	const T* GetBuffer() const
+	{
+		return m_buffer;
+	}
 
 	T* m_buffer = nullptr;
 	int m_count = 0;

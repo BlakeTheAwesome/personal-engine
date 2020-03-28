@@ -1,4 +1,6 @@
 #pragma once
+#include "BlakesEngine/Core/beConcepts.h"
+
 #include "beVector.h"
 #include "BlakesEngine/Core/beHash.h"
 
@@ -184,8 +186,10 @@ class beHashMapBase
 
 	iterator begin() { return iterator(this, true); }
 	iterator end() { return iterator(this, false); }
-	const_iterator begin() const { return const_iterator(this, true); }
-	const_iterator end() const { return const_iterator(this, false); }
+	const_iterator cbegin() const { return const_iterator(this, true); }
+	const_iterator cend() const { return const_iterator(this, false); }
+	const_iterator begin() const { return cbegin(); }
+	const_iterator end() const { return cend(); }
 
 	private:
 	friend struct iterator;
@@ -267,7 +271,6 @@ class beHashMapBase
 	value_storage_type m_values;
 };
 
-
 template <typename key_type, typename value_type, int HYBRID_CAPACITY=16>
 class beHashMap : public beHashMapBase<key_type, value_type, beVectorHybridPolicy, HYBRID_CAPACITY>
 {
@@ -282,3 +285,7 @@ template <typename key_type, typename value_type, int CAPACITY=16>
 class beHashMapFixed : public beHashMapBase<key_type, value_type, beVectorFixedPolicy, CAPACITY>
 {
 };
+
+static_assert(Container<beHashMap<int, int>>);
+static_assert(Container<beHashMapHeap<int, int>>);
+static_assert(Container<beHashMapFixed<int, int>>);

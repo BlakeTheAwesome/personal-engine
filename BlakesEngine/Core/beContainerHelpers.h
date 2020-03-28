@@ -1,7 +1,9 @@
 #pragma once
+#include "BlakesEngine/Core/beConcepts.h"
 
-template <typename T>
-inline constexpr int ElementSize(T& container)
+
+template <Container T>
+inline constexpr int ElementSize(T const& container)
 {
 	return sizeof(typename T::value_type);
 }
