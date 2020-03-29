@@ -66,7 +66,7 @@ public:
 
 	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beString& textureFilename);
 	bool InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, const char* filename, const beString& textureFilename, const LoadOptions& loadOptions);
-	bool InitFromBuffers(beRenderBuffer* vertexBuffer, gsl::span<Mesh> meshes, gsl::span<Material> materials);
+	bool InitFromBuffers(beRenderBuffer* vertexBuffer, std::span<Mesh> meshes, std::span<Material> materials);
 	bool InitFromPackedData(beRenderInterface* ri, beShaderPack* shaderPack, bePackedData const& packedData);
 	void Deinit();
 

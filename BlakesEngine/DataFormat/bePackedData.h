@@ -21,7 +21,7 @@ class bePackedData
 	void ReadHeaders(std::FILE* file);
 
 	beDataBuffer GetStream(beStringView name) const;
-	gsl::span<const DataStream> GetStreams() const { return to_span(m_streams); }
+	std::span<const DataStream> GetStreams() const { return to_span(m_streams); }
 
 	private:
 		void ReadStreams(std::FILE* file);

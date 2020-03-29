@@ -24,9 +24,16 @@ class beStringView
 		return (int)m_ownedStr.size();
 	}
 
-	[[nodiscard]] gsl::span<const char> ToSpan() const
+	[[nodiscard]] size_t ULength() const
 	{
-		return {c_str(), Length()};
+		if (m_cstr) { return strlen(m_cstr); }
+		if (m_beStr) { return m_beStr->size(); }
+		return m_ownedStr.size();
+	}
+
+	[[nodiscard]] std::span<const char> ToSpan() const
+	{
+		return {c_str(), ULength()};
 	}
 
 	[[nodiscard]] auto begin() const
@@ -36,7 +43,7 @@ class beStringView
 	
 	[[nodiscard]] auto end() const
 	{
-		return c_str() + Length();
+		return c_str() + ULength();
 	}
 
 	[[nodiscard]] auto rbegin() const

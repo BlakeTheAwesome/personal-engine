@@ -294,6 +294,7 @@
     <ClInclude Include="Core\bePimpl.h" />
     <ClInclude Include="Core\bePrimitiveType.h" />
     <ClInclude Include="Core\bePrintf.h" />
+    <ClInclude Include="Core\beSpan.h" />
     <ClInclude Include="Core\beStringUtil.h" />
     <ClInclude Include="Core\optional_arg.h" />
     <ClInclude Include="Core\Reconstruct.h" />

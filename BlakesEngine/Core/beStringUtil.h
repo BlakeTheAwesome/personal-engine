@@ -17,7 +17,7 @@ namespace beStringUtil
 		                         inline auto FunctionName(const beStringView& str, const beStringView& pattern)        { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 		template <typename Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beWString& str, const beWString& pattern)              { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
-		                         inline auto FunctionName(const beWString& str, gsl::span<const wchar_t> pattern)      { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
+		                         inline auto FunctionName(const beWString& str, std::span<const wchar_t> pattern)      { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 	// WRAP_PERMUTATIONS
 	#pragma warning(push)
 	#pragma warning(disable:26481) // Pointer arithmetic

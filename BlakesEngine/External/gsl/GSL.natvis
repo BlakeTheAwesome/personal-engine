@@ -21,7 +21,7 @@
 
     <!-- These types are from the span header. -->
     <!-- This is for dynamic_extent spans. -->
-    <Type Name="gsl::span&lt;*, -1&gt;">
+    <Type Name="std::span&lt;*, -1&gt;">
         <DisplayString>{{ extent = {storage_.size_} }}</DisplayString>
         <Expand>
             <ArrayItems>
@@ -32,7 +32,7 @@
     </Type>
 
     <!-- This works for constexpr size spans. -->
-    <Type Name="gsl::span&lt;*, *&gt;">
+    <Type Name="std::span&lt;*, *&gt;">
         <DisplayString>{{ extent = {extent} }}</DisplayString>
         <Expand>
             <ArrayItems>

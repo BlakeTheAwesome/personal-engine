@@ -497,7 +497,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 	return true;
 }
 
-bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, gsl::span<Mesh> meshes, gsl::span<Material> materials)
+bool beModel::InitFromBuffers(beRenderBuffer* vertexBuffer, std::span<Mesh> meshes, std::span<Material> materials)
 {
 	Deinit();
 

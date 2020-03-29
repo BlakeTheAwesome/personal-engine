@@ -1,11 +1,11 @@
 #pragma once
-#include "BlakesEngine/Core/beGSL.h"
+#include "BlakesEngine/Core/beSpan.h"
 
 template <typename T, bool reverse=false>
 class beArrayIter
 {
 	public:
-	constexpr beArrayIter(gsl::span<T> span)
+	constexpr beArrayIter(std::span<T> span)
 		: m_itStart(span.data())
 		, m_itEnd(span.data() + span.size())
 		, m_count((int)span.size())
@@ -81,4 +81,4 @@ class beArrayIter
 	int m_count = 0;
 };
 
-template<typename T> beArrayIter(gsl::span<T>) -> beArrayIter<T>;
+template<typename T> beArrayIter(std::span<T>) -> beArrayIter<T>;

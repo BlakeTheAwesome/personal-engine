@@ -24,8 +24,8 @@ class beDataBufferBase : protected Policy
 	beDataBufferBase(void* buffer, int bufferLen, bool takeOwnership) : Policy(buffer, bufferLen, takeOwnership) { m_count = bufferLen; }
 	beDataBufferBase(const void* buffer, int bufferLen) : Policy(buffer, bufferLen) { m_count = bufferLen; }
 
-	gsl::span<const u8> ToSpan() const { return {m_buffer, m_count}; }
-	gsl::span<u8> ModifySpan() { return {m_buffer, m_count}; }
+	std::span<const u8> ToSpan() const { return {m_buffer, m_count}; }
+	std::span<u8> ModifySpan() { return {m_buffer, m_count}; }
 
 	int GetSize() const { return m_count; }
 	const u8* GetBuffer() const { return m_buffer; }

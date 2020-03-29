@@ -1,10 +1,10 @@
 #pragma once
 #include "beRandom.h"
-#include "BlakesEngine/Core/beGSL.h"
+#include "BlakesEngine/Core/beSpan.h"
 
 namespace beRandomFunctions
 {
-	int WeightedRandom(beRandom* random, gsl::span<int> weights)
+	int WeightedRandom(beRandom* random, std::span<int> weights)
 	{
 		BE_ASSERT(weights.size() > 0);
 		auto sum = std::accumulate(weights.begin(), weights.end(), 0);

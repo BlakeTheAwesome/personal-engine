@@ -36,7 +36,7 @@ class beArray
 		}
 	};
 
-	constexpr beArray(gsl::span<const T> span)
+	constexpr beArray(std::span<const T> span)
 	{
 		BE_ASSERT(span.size() == Size);
 		c_copy(span.begin(), span.end(), begin());
@@ -221,19 +221,19 @@ class beArray
 	static constexpr int SIZE = Size;
 
 	// std::span compatibility
-	constexpr operator gsl::span<T>()
+	constexpr operator std::span<T>()
 	{
 		return {begin(), end()};
 	}
-	constexpr operator gsl::span<const T>() const
+	constexpr operator std::span<const T>() const
 	{
 		return {begin(), end()};
 	}
-	constexpr operator gsl::span<T, SIZE>()
+	constexpr operator std::span<T, SIZE>()
 	{
 		return m_storage;
 	}
-	constexpr operator gsl::span<const T, SIZE>() const
+	constexpr operator std::span<const T, SIZE>() const
 	{
 		return m_storage;
 	}
