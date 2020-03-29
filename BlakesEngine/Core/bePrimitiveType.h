@@ -1,6 +1,7 @@
 #pragma once
+#include "BlakesEngine/Core/beConcepts.h"
 
-template <typename T>
+template <std::integral T>
 struct bePrimitiveType
 {
 	using type = T;

@@ -1,10 +1,16 @@
 #pragma once
+#include <type_traits>
 
 #define defer(body) auto MACRO_CONCAT(_deferredCall, __COUNTER__) = beDeferred::MakeLambdaDefer([&](){body;})
 
 namespace beDeferred
 {
-	template <typename Lambda>
+	template <typename T>
+	concept Deferrable =
+		std::move_constructible<T>
+		&& std::invocable<T>;
+
+	template <Deferrable Lambda>
 	struct LambdaDefer
 	{
 		LambdaDefer(Lambda&& l) noexcept : m_fn(std::move(l)) {}
@@ -42,7 +48,7 @@ namespace beDeferred
 		bool m_valid = true;
 	};
 
-	template <typename Lambda>
+	template <Deferrable Lambda>
 	LambdaDefer<Lambda> MakeLambdaDefer(Lambda&& l)
 	{
 		return LambdaDefer<Lambda>(std::move(l));
