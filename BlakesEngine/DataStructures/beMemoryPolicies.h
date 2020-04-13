@@ -6,6 +6,36 @@
 #include "BlakesEngine/Math/beMath.h"
 
 // Policies do not need to handle constructing/destructing elements, vector base does that. Default vector is hybrid<16>
+namespace beMemoryPolicies
+{
+	template <typename Policy>
+	struct Derived : Policy
+	{
+		using typename Policy::value_type;
+		using Policy::Policy;
+		using Policy::GetBuffer;
+		using Policy::m_count;
+	};
+
+	template<typename T>
+	concept MemoryPolicyDerivedImpl =
+		std::is_default_constructible_v<Derived<T>> &&
+		requires(Derived<T> policy)
+	{
+		{ policy.GetBuffer() }->std::same_as<typename T::value_type*>;
+		{ policy.m_count }->std::convertible_to<int>;
+	};
+}
+
+
+template<typename T>
+concept MemoryPolicy = beMemoryPolicies::MemoryPolicyDerivedImpl<T>;
+
+template<typename T>
+concept VectorMemoryPolicy =
+	MemoryPolicy<T> &&
+	std::is_constructible_v<T, int, int, std::initializer_list<typename T::value_type>>;
+
 
 #pragma warning(push)
 #pragma warning(disable:26485) // Pointer arithmetic
@@ -16,7 +46,7 @@ struct beVectorFixedPolicy
 	public:
 	static constexpr int DataSize() { return sizeof(m_buffer); }
 
-	protected:
+	using value_type = T;
 	beVectorFixedPolicy() = default;
 	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
@@ -70,10 +100,9 @@ template <typename T>
 struct beVectorFixedPolicy<T, 0>
 {
 	static constexpr int CAPACITY = 0;
-	public:
+	using value_type = T;
 	static constexpr int DataSize() { return 0; }
 
-	protected:
 	beVectorFixedPolicy() = default;
 	beVectorFixedPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
@@ -85,6 +114,7 @@ struct beVectorFixedPolicy<T, 0>
 		BE_ASSERT(increaseBy == 0);
 		BE_ASSERT(capacity <= CAPACITY);
 	}
+	protected:
 
 	void PolicyReserve(int capacity)
 	{
@@ -95,14 +125,17 @@ struct beVectorFixedPolicy<T, 0>
 	bool PolicyCheckRoomForAlloc() const { return false;  }
 	constexpr int PolicyCapacity() const { return CAPACITY; }
 
+	T* GetBuffer() { return nullptr; }
 	const T* GetBuffer() const { return nullptr; }
 	int m_count = 0;
 };
+static_assert(VectorMemoryPolicy<beVectorFixedPolicy<int, 1>>);
+static_assert(VectorMemoryPolicy<beVectorFixedPolicy<int, 0>>);
 
 template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
 struct beVectorMallocPolicy : public NonCopiable
 {
-	protected:
+	using value_type = T;
 	beVectorMallocPolicy() : beVectorMallocPolicy(INITIAL_SIZE, -1) {}
 	beVectorMallocPolicy(int capacity, int increaseBy)
 		: m_increaseBy(increaseBy)
@@ -119,6 +152,7 @@ struct beVectorMallocPolicy : public NonCopiable
 		std::uninitialized_copy(m_buffer, m_buffer + numToCopy, list.begin());
 		m_count = numToCopy;
 	}
+	protected:
 
 
 	void PolicyReserve(int capacity)
@@ -188,17 +222,20 @@ struct beVectorMallocPolicy : public NonCopiable
 		return m_buffer;
 	}
 
-	T* m_buffer = nullptr;
 	int m_count = 0;
+
+	private:
+	T* m_buffer = nullptr;
 	int m_increaseBy = -1;
 	int m_capacity = 0;
 };
-
+static_assert(VectorMemoryPolicy<beVectorMallocPolicy<int, 1>>);
+static_assert(VectorMemoryPolicy<beVectorMallocPolicy<int, 0>>);
 
 template <typename T, int RESERVED_SIZE = 16>
 struct beVectorHybridPolicy : public NonCopiable
 {
-	protected:
+	using value_type = T;
 	beVectorHybridPolicy() : beVectorHybridPolicy(0, -1) {}
 	beVectorHybridPolicy(int capacity, int increaseBy, std::initializer_list<T> list)
 	{
@@ -215,6 +252,7 @@ struct beVectorHybridPolicy : public NonCopiable
 	{
 		PolicyReserve(capacity);
 	}
+	protected:
 
 	void PolicyReserve(int capacity)
 	{
@@ -297,17 +335,33 @@ struct beVectorHybridPolicy : public NonCopiable
 
 	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_storage[RESERVED_SIZE];
 
-	T* m_buffer = nullptr;
 	int m_count = 0;
+
+	private:
+	T* m_buffer = nullptr;
 	int m_increaseBy = -1;
 	int m_capacity = 0;
 };
+
+template <typename T>
+struct beVectorHybridPolicy<T, 0> : public beVectorMallocPolicy<T, 0>
+{
+	using Base = beVectorMallocPolicy<T, 0>;
+
+	using Base::Base;
+	using typename Base::value_type;
+	using Base::GetBuffer;
+	using Base::m_count;
+};
+
+static_assert(VectorMemoryPolicy<beVectorHybridPolicy<int, 1>>);
+static_assert(VectorMemoryPolicy<beVectorHybridPolicy<int, 0>>);
 
 
 template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
 struct beAssignableMallocPolicy
 {
-	protected:
+	using value_type = T;
 	beAssignableMallocPolicy() : beAssignableMallocPolicy(INITIAL_SIZE) {}
 	beAssignableMallocPolicy(int capacity)
 	{
@@ -339,6 +393,7 @@ struct beAssignableMallocPolicy
 		: beAssignableMallocPolicy(const_cast<void*>(buffer), bufferLen, false)
 	{
 	}
+	protected:
 
 	void PolicyReserve(int capacity, bool ensureOwnBuffer=false)
 	{
@@ -412,9 +467,13 @@ struct beAssignableMallocPolicy
 		return m_buffer;
 	}
 
-	T* m_buffer = nullptr;
 	int m_count = 0;
+
+	private:
+	T* m_buffer = nullptr;
 	int m_capacity = 0;
 	bool m_ownsBuffer = false;
 };
+static_assert(MemoryPolicy<beAssignableMallocPolicy<int, 1>>);
+
 #pragma warning(pop)

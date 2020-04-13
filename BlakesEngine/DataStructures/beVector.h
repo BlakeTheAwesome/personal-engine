@@ -13,7 +13,7 @@
 #pragma warning(disable:26446) // pointer arithmetic
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
-template<typename T, typename Policy>
+template<typename T, VectorMemoryPolicy Policy>
 class beVectorBase : protected Policy
 {
 	using Policy::GetBuffer;

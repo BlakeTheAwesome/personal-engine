@@ -6,12 +6,11 @@
 #include <type_traits>
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
-template<typename Policy>
+template<MemoryPolicy Policy>
 class beDataBufferBase : protected Policy
 {
 	public:
 	using value_type = u8;
-	using Policy::m_buffer;
 	using Policy::m_count;
 
 	enum { element_size = sizeof(value_type) };
@@ -24,12 +23,12 @@ class beDataBufferBase : protected Policy
 	beDataBufferBase(void* buffer, int bufferLen, bool takeOwnership) : Policy(buffer, bufferLen, takeOwnership) { m_count = bufferLen; }
 	beDataBufferBase(const void* buffer, int bufferLen) : Policy(buffer, bufferLen) { m_count = bufferLen; }
 
-	std::span<const u8> ToSpan() const { return {m_buffer, m_count}; }
-	std::span<u8> ModifySpan() { return {m_buffer, m_count}; }
+	std::span<const u8> ToSpan() const { return {Policy::GetBuffer(), m_count}; }
+	std::span<u8> ModifySpan() { return {Policy::GetBuffer(), m_count}; }
 
 	int GetSize() const { return m_count; }
-	const u8* GetBuffer() const { return m_buffer; }
-	u8* ModifyBuffer() { return m_buffer; }
+	const u8* GetBuffer() const { return Policy::GetBuffer(); }
+	u8* ModifyBuffer() { return Policy::GetBuffer(); }
 
 	void ResizeBuffer(int size)
 	{
