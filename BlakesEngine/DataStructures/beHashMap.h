@@ -96,12 +96,17 @@ class beHashMapBase
 		return &m_values[insertionIndex];
 	}
 	
-	int Count() const
+	[[nodiscard]] int Count() const
 	{
 		return m_validEntries.Count();
 	}
 
-	int Capacity() const
+	[[nodiscard]] int size() const
+	{
+		return m_validEntries.Count();
+	}
+
+	[[nodiscard]] int Capacity() const
 	{
 		return m_validEntries.Capacity();
 	}

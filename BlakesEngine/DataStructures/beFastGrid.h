@@ -26,12 +26,17 @@ class beFastGrid
 			m_buffer.SetAllTo(v);
 		}
 		
-		constexpr int Capacity() const
+		[[nodiscard]] constexpr int Capacity() const
 		{
 			return CAPACITY;
 		}
 		
-		constexpr int Length() const
+		[[nodiscard]] constexpr int Length() const
+		{
+			return LENGTH;
+		}
+
+		[[nodiscard]] constexpr int size() const
 		{
 			return LENGTH;
 		}

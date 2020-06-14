@@ -50,7 +50,7 @@ void StateRenderTest::Enter(beStateMachine* stateMachine)
 
 
 	bePackedData packedModel;
-	packedModel.LoadFromFile(R"===(D:\Dev\BigAnt\data\blobs\characters\player\models\player_master_head_male\player_master_head_male.modelcomponent.pc)===");
+	packedModel.LoadFromFile(R"===(C:\Dev\BigAnt\data\blobs\characters\player\models\player_master_head_male\player_master_head_male.modelcomponent.pc)===");
 	m_models.AddNew()->InitFromPackedData(renderInterface, shaderPack, packedModel);
 
 	beTexture::LoadOptions textureLoadOptions;

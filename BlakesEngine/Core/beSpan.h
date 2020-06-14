@@ -20,15 +20,33 @@ namespace std
 
 	template <class Type, std::size_t Size>
 	span(const std::array<Type, Size>&)->span<const Type, Size>;
+
+	template<class It, class End>
+	span(It first, End last)->span<std::remove_reference_t<decltype(*first)>>;
 }
 
 #endif
 
 #include "beConcepts.h"
 
+namespace beSpan::detail
+{
+	template<auto> struct require_constant;
+	template<class T>
+	concept has_constexpr_size = requires { typename require_constant<T::size()>; };
+}
+
 template <Container T>
 auto to_span(T&& container)
 {
-	return std::span(container.begin(), container.end());
+
+	if constexpr (beSpan::detail::has_constexpr_size<T>)
+	{
+		return std::span<typename T::value_type, container.size()>(container.begin(), container.end());
+	}
+	else
+	{
+		return std::span(container.begin(), container.end());
+	}
 }
 

@@ -15,6 +15,7 @@ namespace beConcepts
 		{ std::declval<const T>().end() }->std::same_as<typename T::const_iterator>;
 		{ cont.cbegin() }->std::same_as<typename T::const_iterator>;
 		{ cont.cend() }->std::same_as<typename T::const_iterator>;
+		{ cont.size() }->std::convertible_to<size_t>;
 	};
 
 }

@@ -113,7 +113,12 @@ class beVectorBase : protected Policy
 		{
 			return Policy::m_count;
 		}
-		
+
+		[[nodiscard]] int size() const
+		{
+			return Policy::m_count;
+		}
+
 		[[nodiscard]] int Capacity() const
 		{
 			return Policy::PolicyCapacity();

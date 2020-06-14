@@ -276,7 +276,6 @@
     <ClCompile Include="Window\beWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="beRanges.h" />
     <ClInclude Include="Camera\beCamera.h" />
     <ClInclude Include="Camera\beCameraUtils.h" />
     <ClInclude Include="Camera\beFlightCamera.h" />
@@ -292,6 +291,7 @@
     <ClInclude Include="Core\bePimpl.h" />
     <ClInclude Include="Core\bePrimitiveType.h" />
     <ClInclude Include="Core\bePrintf.h" />
+    <ClInclude Include="Core\beRanges.h" />
     <ClInclude Include="Core\beSpan.h" />
     <ClInclude Include="Core\beStringUtil.h" />
     <ClInclude Include="Core\optional_arg.h" />
