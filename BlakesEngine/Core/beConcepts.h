@@ -37,7 +37,13 @@ template<typename T>
 concept Iterator = beConcepts::__LegacyIterator<std::remove_cvref_t<T>>;
 
 template <class T>
-concept Integral = std::is_integral<T>::value;
+concept Integral = std::is_integral_v<T>;
+
+template <class T>
+concept FloatingPoint = std::is_floating_point_v<T>;
+
+template <class T>
+concept Number = Integral<T> || FloatingPoint<T>;
 
 template <typename Index>
 concept IntOrEnum = std::is_integral_v<Index> || std::is_enum_v<Index>;
