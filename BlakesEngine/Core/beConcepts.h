@@ -3,12 +3,22 @@
 
 namespace beConcepts
 {
+	// from https://en.cppreference.com/w/cpp/named_req/Iterator
+	template<class T>
+	concept __LegacyIterator = std::copyable<T> && requires(T i)
+	{
+		{ *i };
+		{ ++i } -> std::same_as<T&>;
+		{ *i++ };
+	};
+
 	template<typename T>
 	concept ContainerImpl = requires(T cont)
 	{
 		typename T::value_type;
 		typename T::iterator;
 		typename T::const_iterator;
+		__LegacyIterator<typename T::value_type>;
 		{ cont.begin() }->std::same_as<typename T::iterator>;
 		{ cont.end() }->std::same_as<typename T::iterator>;
 		{ std::declval<const T>().begin() }->std::same_as<typename T::const_iterator>;
@@ -22,3 +32,9 @@ namespace beConcepts
 
 template<typename T>
 concept Container = beConcepts::ContainerImpl<std::remove_cvref_t<T>>;
+
+template<typename T>
+concept Iterator = beConcepts::__LegacyIterator<std::remove_cvref_t<T>>;
+
+template <class T>
+concept Integral = std::is_integral<T>::value;

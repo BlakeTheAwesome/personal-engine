@@ -1,5 +1,6 @@
 #pragma once
 #include "beString.h"
+#include "beConcepts.h"
 #include <locale>
 
 namespace beStringUtil
@@ -13,22 +14,24 @@ namespace beStringUtil
 
 
 	#define WRAP_PERMUTATIONS(FunctionName)\
-		template <typename Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beStringView& pattern) { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
+		template <Iterator Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beStringView& pattern) { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beStringView& str, const beStringView& pattern)        { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
-		template <typename Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
+		template <Iterator Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beWString& str, const beWString& pattern)              { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beWString& str, std::span<const wchar_t> pattern)      { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 	// WRAP_PERMUTATIONS
 	#pragma warning(push)
 	#pragma warning(disable:26481) // Pointer arithmetic
-	template <typename Iter>
+	template <Iterator Iter>
 	struct LowerIterator : public std::iterator_traits<Iter>
 	{
 		LowerIterator(const Iter& iter) : iter(iter) {}
 		Iter iter;
 		auto operator*() const { return std::tolower(*iter, s_locale); }
 		LowerIterator& operator++() { ++iter; return *this; }
+		LowerIterator operator++(int) { auto ret = *this; ++(*this); return ret; }
 		LowerIterator& operator--() { --iter; return *this; }
+		LowerIterator operator--(int) { auto ret = *this; --(*this); return ret; }
 		auto operator-  (const LowerIterator& val) const { return iter -  val.iter; }
 		auto operator<  (const LowerIterator& val) const { return iter <  val.iter; }
 		auto operator>  (const LowerIterator& val) const { return iter >  val.iter; }
@@ -36,16 +39,16 @@ namespace beStringUtil
 		auto operator>= (const LowerIterator& val) const { return iter >= val.iter; }
 		auto operator== (const LowerIterator& val) const { return iter == val.iter; }
 		auto operator!= (const LowerIterator& val) const { return iter != val.iter; }
-		template <typename T> auto operator+  (T val) const { return LowerIterator(iter + val); }
-		template <typename T> auto operator+= (T val) { iter += val; return *this; }
-		template <typename T> auto operator-  (T val) const { return LowerIterator(iter - val); }
-		template <typename T> auto operator-= (T val) { iter -= val; return *this; }
-		template <typename T> auto operator[] (T val) const { return iter[val]; }
+		template <Integral T> auto operator+  (T val) const { return LowerIterator(iter + val); }
+		template <Integral T> auto operator+= (T val) { iter += val; return *this; }
+		template <Integral T> auto operator-  (T val) const { return LowerIterator(iter - val); }
+		template <Integral T> auto operator-= (T val) { iter -= val; return *this; }
+		template <Integral T> auto operator[] (T val) const { return iter[val]; }
 	};
 	#pragma warning(pop)
 
 
-	template <typename Iter>
+	template <Iterator Iter>
 	inline int FindFirst(Iter begin, Iter end, char c)
 	{
 		auto it = std::find(begin, end, c);
@@ -57,7 +60,7 @@ namespace beStringUtil
 	}
 	WRAP_PERMUTATIONS_CHAR(FindFirst);
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline int FindFirst(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
@@ -77,7 +80,7 @@ namespace beStringUtil
 
 
 
-	template <typename Iter>
+	template <Iterator Iter>
 	inline int FindLast(Iter begin, Iter end, char c)
 	{
 		const auto rbegin = std::reverse_iterator(end);
@@ -91,7 +94,7 @@ namespace beStringUtil
 	}
 	WRAP_PERMUTATIONS_CHAR(FindLast);
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline int FindLast(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
@@ -109,7 +112,7 @@ namespace beStringUtil
 	}
 	WRAP_PERMUTATIONS(FindLast);
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline bool BeginsWith(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
@@ -123,14 +126,14 @@ namespace beStringUtil
 	}
 	WRAP_PERMUTATIONS(BeginsWith);
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline bool BeginsWithI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		return BeginsWith(LowerIterator{beginRange}, LowerIterator{endRange}, LowerIterator{beginPattern}, LowerIterator{endPattern});
 	}
 	WRAP_PERMUTATIONS(BeginsWithI);
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline bool EndsWith(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		const auto rbeginRange = std::reverse_iterator(endRange);
@@ -141,7 +144,7 @@ namespace beStringUtil
 	}
 	WRAP_PERMUTATIONS(EndsWith);
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline bool EndsWithI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		const auto rbeginRange = std::reverse_iterator(endRange);
@@ -153,7 +156,7 @@ namespace beStringUtil
 	WRAP_PERMUTATIONS(EndsWithI);
 
 
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline bool IsEqual(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		if (std::distance(beginRange, endRange) != std::distance(beginPattern, endPattern))
@@ -164,7 +167,7 @@ namespace beStringUtil
 	}
 	WRAP_PERMUTATIONS(IsEqual);
 	
-	template <typename Iter, typename IterPattern>
+	template <Iterator Iter, Iterator IterPattern>
 	inline bool IsEqualI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
 	{
 		return IsEqual(LowerIterator{beginRange}, LowerIterator{endRange}, LowerIterator{beginPattern}, LowerIterator{endPattern});
