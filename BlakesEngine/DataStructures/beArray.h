@@ -7,10 +7,23 @@
 
 using namespace beConstexpr;
 
+namespace beArrayDetail
+{
+	template <typename Index>
+	concept IntOrEnum = std::is_integral_v<Index> || std::is_enum_v<Index>;
+
+	template <typename Fn, typename T>
+	concept InvokableWith = std::is_invocable_v<Fn, T const&>;
+
+	template <typename Arg, typename T>
+	concept SearchArg = std::equality_comparable_with<Arg, T> || InvokableWith<Arg, T>;
+}
+
 template <typename T, auto _Size>
 class beArray
 {
 	static constexpr int Size = (int)_Size;
+
 	public:
 	using value_type = T;
 	using iterator = T*;
@@ -48,13 +61,13 @@ class beArray
 	}
 
 	// these templates allow you to use enum class entries to index the array
-	template <typename E>
+	template <beArrayDetail::IntOrEnum E>
 	constexpr T& operator[] (E intOrEnum)
 	{
 		return at((int)intOrEnum);
 	}
 
-	template <typename E>
+	template <beArrayDetail::IntOrEnum E>
 	constexpr T const& operator[] (E intOrEnum) const
 	{
 		return at((int)intOrEnum);
@@ -125,9 +138,8 @@ class beArray
 	}
 
 	// Finding something with a lambda, have to disable template override for things that convert to T (this would get called with const char* searching for const void*)
-	template <typename Fn>
-	typename std::enable_if_t<!std::is_convertible<Fn, T>::value, int>
-	constexpr IndexOf(const Fn& compareFn)
+	template <beArrayDetail::InvokableWith<T> Fn>
+	constexpr int IndexOf(const Fn& compareFn) const
 	{
 		for (int i = 0; i < Size; ++i)
 		{
@@ -139,39 +151,24 @@ class beArray
 		return -1;
 	}
 
-	// Finding something with a lambda, have to disable template override for things that convert to T (this would get called with const char* searching for const void*)
-	template <typename Fn>
-	typename std::enable_if_t<!std::is_convertible<Fn, T>::value, int>
-	constexpr IndexOf(const Fn& compareFn) const
-	{
-		for (int i = 0; i < Size; ++i)
-		{
-			if (compareFn(Get(i)))
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	template <typename U>
+	template <beArrayDetail::SearchArg<T> U> 
 	constexpr T* AddressOf(U&& itemOrFn)
 	{
-		int index = IndexOf(itemOrFn);
+		int index = IndexOf(std::forward<U>(itemOrFn));
 		return index != -1 ? &Get(index) : nullptr;
 	}
 
-	template <typename U>
+	template <beArrayDetail::SearchArg<T> U>
 	constexpr const T* AddressOf(U&& itemOrFn) const
 	{
-		int index = IndexOf(itemOrFn);
+		int index = IndexOf(std::forward<U>(itemOrFn));
 		return index != -1 ? &Get(index) : nullptr;
 	}
 
-	template <typename U>
+	template <beArrayDetail::SearchArg<T> U>
 	constexpr bool Contains(U&& itemOrFn) const
 	{
-		return IndexOf(itemOrFn) != -1;
+		return IndexOf(std::forward<U>(itemOrFn)) != -1;
 	}
 
 	static constexpr int Capacity()
@@ -184,19 +181,20 @@ class beArray
 		return Size;
 	}
 
-	// these templates allow you to use enum class entries to index the array
-	template <typename E>
+	template <beArrayDetail::IntOrEnum E>
 	constexpr T& at(E intVal)
 	{
-		BE_ASSERT(intVal >= 0 && intVal < Size);
-		return Get(intVal);
+		const int i = (int)intVal;
+		BE_ASSERT(i >= 0 && i < Size);
+		return Get(i);
 	}
 
-	template <typename E>
+	template <beArrayDetail::IntOrEnum E>
 	constexpr T const& at(E intVal) const
 	{
-		BE_ASSERT(intVal >= 0 && intVal < Size);
-		return Get(intVal);
+		const int i = (int)intVal;
+		BE_ASSERT(i >= 0 && i < Size);
+		return Get(i);
 	}
 
 	[[nodiscard]] constexpr T* data() { return m_storage; }
@@ -267,9 +265,9 @@ class beArray<T, 0>
 	constexpr void SetAllTo(const T& value) {}
 	constexpr T& operator [] (int i) { return Get(i); }
 	constexpr const T& operator [] (int i) const { return Get(i); }
-	template <typename E>
+	template <beArrayDetail::IntOrEnum E>
 	constexpr T& operator [] (E e) { return (*this)[(int)e]; }
-	template <typename E>
+	template <beArrayDetail::IntOrEnum E>
 	constexpr const T& operator [] (E e) const { return (*this)[(int)e]; }
 
 	constexpr T& First() { return Get(0); }
