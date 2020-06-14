@@ -12,6 +12,12 @@
 #pragma warning(disable:26485) // pointer arithmetic
 #pragma warning(disable:26446) // pointer arithmetic
 
+namespace beVectorDetail
+{
+	template <typename Arg, typename T>
+	concept SearchArg = std::equality_comparable_with<Arg, T> || InvokableWith<Arg, T>;
+}
+
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<typename T, VectorMemoryPolicy Policy>
 class beVectorBase : protected Policy
@@ -82,7 +88,7 @@ class beVectorBase : protected Policy
 			m_count = count;
 		}
 		
-		template <typename... Args>
+		template <typename... Args> requires std::is_constructible_v<T, Args...>
 		void SetCount(int count, Args&&... defaultVal)
 		{
 			Reserve(count);
@@ -201,35 +207,35 @@ class beVectorBase : protected Policy
 			std::uninitialized_copy_n(end() - rangeLength, rangeLength, range);
 		}
 
-		template <typename U>//, typename std::enable_if_t<!std::is_convertible_v<decltype(std::declval<T>() == std::declval<U>()), bool>> = 0>
+		template <InvokableWith<T> U>
 		T* AddressOf(U&& comp)
 		{
 			auto ret = std::find_if(begin(), end(), std::forward<U>(comp));
 			return ret != end() ? ret : nullptr;
 		}
 
-		template <typename U>//, typename std::enable_if_t<!std::is_convertible_v<decltype(std::declval<T>() == std::declval<U>()), bool>> = 0>
+		template <InvokableWith<T> U>
 		const T* AddressOf(U&& comp) const
 		{
 			auto ret = std::find_if(begin(), end(), std::forward<U>(comp));
 			return ret != end() ? ret : nullptr;
 		}
 
-		template <typename U>
+		template <std::equality_comparable_with<T> U>
 		T* AddressOf(const U& val)
 		{
 			auto ret = std::find(begin(), end(), val);
 			return ret != end() ? ret : nullptr;
 		}
 
-		template <typename U>
+		template <std::equality_comparable_with<T> U>
 		const T* AddressOf(const U& val) const
 		{
 			auto ret = std::find(begin(), end(), val);
 			return ret != end() ? ret : nullptr;
 		}
 
-		template <typename U>
+		template <beVectorDetail::SearchArg<T> U>
 		int IndexOf(U&& comp) const
 		{
 			auto address = AddressOf(std::forward<U>(comp));

@@ -9,12 +9,6 @@ using namespace beConstexpr;
 
 namespace beArrayDetail
 {
-	template <typename Index>
-	concept IntOrEnum = std::is_integral_v<Index> || std::is_enum_v<Index>;
-
-	template <typename Fn, typename T>
-	concept InvokableWith = std::is_invocable_v<Fn, T const&>;
-
 	template <typename Arg, typename T>
 	concept SearchArg = std::equality_comparable_with<Arg, T> || InvokableWith<Arg, T>;
 }
@@ -61,13 +55,13 @@ class beArray
 	}
 
 	// these templates allow you to use enum class entries to index the array
-	template <beArrayDetail::IntOrEnum E>
+	template <IntOrEnum E>
 	constexpr T& operator[] (E intOrEnum)
 	{
 		return at((int)intOrEnum);
 	}
 
-	template <beArrayDetail::IntOrEnum E>
+	template <IntOrEnum E>
 	constexpr T const& operator[] (E intOrEnum) const
 	{
 		return at((int)intOrEnum);
@@ -138,7 +132,7 @@ class beArray
 	}
 
 	// Finding something with a lambda, have to disable template override for things that convert to T (this would get called with const char* searching for const void*)
-	template <beArrayDetail::InvokableWith<T> Fn>
+	template <InvokableWith<T> Fn>
 	constexpr int IndexOf(const Fn& compareFn) const
 	{
 		for (int i = 0; i < Size; ++i)
@@ -181,7 +175,7 @@ class beArray
 		return Size;
 	}
 
-	template <beArrayDetail::IntOrEnum E>
+	template <IntOrEnum E>
 	constexpr T& at(E intVal)
 	{
 		const int i = (int)intVal;
@@ -189,7 +183,7 @@ class beArray
 		return Get(i);
 	}
 
-	template <beArrayDetail::IntOrEnum E>
+	template <IntOrEnum E>
 	constexpr T const& at(E intVal) const
 	{
 		const int i = (int)intVal;
@@ -265,9 +259,9 @@ class beArray<T, 0>
 	constexpr void SetAllTo(const T& value) {}
 	constexpr T& operator [] (int i) { return Get(i); }
 	constexpr const T& operator [] (int i) const { return Get(i); }
-	template <beArrayDetail::IntOrEnum E>
+	template <IntOrEnum E>
 	constexpr T& operator [] (E e) { return (*this)[(int)e]; }
-	template <beArrayDetail::IntOrEnum E>
+	template <IntOrEnum E>
 	constexpr const T& operator [] (E e) const { return (*this)[(int)e]; }
 
 	constexpr T& First() { return Get(0); }

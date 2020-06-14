@@ -38,3 +38,9 @@ concept Iterator = beConcepts::__LegacyIterator<std::remove_cvref_t<T>>;
 
 template <class T>
 concept Integral = std::is_integral<T>::value;
+
+template <typename Index>
+concept IntOrEnum = std::is_integral_v<Index> || std::is_enum_v<Index>;
+
+template <typename Fn, typename T>
+concept InvokableWith = std::is_invocable_v<Fn, T const&>;
