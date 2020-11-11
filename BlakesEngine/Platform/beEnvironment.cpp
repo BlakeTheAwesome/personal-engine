@@ -107,7 +107,7 @@ void beEnvironment::Initialise(const beStringView& commandLine)
 		if (wordComplete)
 		{
 			const char* stringStart = searchStart;
-			ptrdiff_t stringLen = nextChar - searchStart;
+			u64 stringLen = (u64)(nextChar - searchStart);
 			if (stringLen == 0)
 			{
 				// Finished iterating.

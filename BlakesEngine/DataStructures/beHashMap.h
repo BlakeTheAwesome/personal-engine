@@ -87,11 +87,11 @@ class beHashMapBase
 		{
 			m_validEntries[insertionIndex] = true;
 			new(&m_keys[insertionIndex]) key_type(key);
-			new(&m_values[insertionIndex]) value_type(std::forward<Args>(args)...);
+			new(&m_values[insertionIndex]) value_type{std::forward<Args>(args)...};
 		}
 		else
 		{
-			m_values[insertionIndex] = value_type(std::forward<Args>(args)...);
+			m_values[insertionIndex] = value_type{std::forward<Args>(args)...};
 		}
 		return &m_values[insertionIndex];
 	}

@@ -201,6 +201,12 @@ class beVectorBase : protected Policy
 			return BE_NEW(obj) T{std::forward<Args>(args)...};
 		}
 
+		template<class ...Args>
+		T* push_back(Args&&... args)
+		{
+			return AddNew(std::forward<Args>(args)...);
+		}
+
 		void AddRange(const T* range, int rangeLength)
 		{
 			ReserveAndSetCountUninitialised(m_count + rangeLength);
