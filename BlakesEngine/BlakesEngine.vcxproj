@@ -286,7 +286,6 @@
     <ClInclude Include="Core\beContainerHelpers.h" />
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
-    <ClInclude Include="Core\beGSL.h" />
     <ClInclude Include="Core\beHash.h" />
     <ClInclude Include="Core\beMacros.h" />
     <ClInclude Include="Core\beNonCopiable.h" />
@@ -446,19 +445,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="External\DirectXTK\SimpleMath.inl" />
-    <None Include="External\GSL\gsl" />
-    <None Include="External\GSL\gsl_algorithm" />
-    <None Include="External\GSL\gsl_assert" />
-    <None Include="External\GSL\gsl_byte" />
-    <None Include="External\GSL\gsl_util" />
-    <None Include="External\GSL\multi_span" />
-    <None Include="External\GSL\pointers" />
-    <None Include="External\GSL\span" />
-    <None Include="External\GSL\string_span" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(SolutionDir)\MyEngine.natvis" />
-    <Natvis Include="External\GSL\GSL.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
