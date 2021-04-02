@@ -564,17 +564,159 @@ bool beModel::InitFromPackedData(beRenderInterface* ri, beShaderPack* shaderPack
 		int segmentVertexCount[5];
 	};
 	
-	beReadStream drawCallsStream(packedData.GetStream("drawCalls"));
-	u32 drawCallCount = 0; drawCallsStream >> drawCallCount;
 	beVector<DrawCallInfo> drawCalls;
-	drawCalls.ReserveAndSetCountUninitialised(drawCallCount);
-	drawCallsStream.Stream(drawCalls.begin(), drawCalls.Count() * sizeof(DrawCallInfo));
-	if (drawCallsStream.HasFailed() || drawCallsStream.GetRemaining() != 0)
+	{
+		beReadStream drawCallsStream(packedData.GetStream("drawCalls"));
+		u32 drawCallCount = 0; drawCallsStream >> drawCallCount;
+		drawCalls.ReserveAndSetCountUninitialised(drawCallCount);
+		drawCallsStream.Stream(drawCalls.begin(), drawCalls.Count() * sizeof(DrawCallInfo));
+		if (drawCallsStream.HasFailed() || drawCallsStream.GetRemaining() != 0)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+	}
+
+
+	enum class VertexDataFormat : u16
+	{
+		Float = 0,
+		Half,
+		UByte,
+		UInt12121212,
+		SInt101111,
+	};
+
+	struct VertexInfo
+	{
+		beString label;
+		VertexDataFormat type;
+		u16 numElements;
+	};
+
+	using VertexSet = beVector<VertexInfo>;
+
+	beVector<VertexSet> vertexFormats;
+	{
+		beReadStream vertexFormatStream(packedData.GetStream("formats"));
+		u32 numVertexSets; vertexFormatStream >> numVertexSets;
+		vertexFormats.Reserve(numVertexSets);
+		while (numVertexSets--)
+		{
+			VertexSet& vertexSet = *vertexFormats.AddNew(); 
+			u8 vertexFormatCount = 0; vertexFormatStream >> vertexFormatCount;
+			std::generate_n(std::back_inserter(vertexSet), vertexFormatCount, 
+				[&vertexFormatStream]() -> VertexInfo {
+					u8 labelLen; vertexFormatStream >> labelLen;
+					char labelBuffer[256];
+					vertexFormatStream.Stream(labelBuffer, labelLen);
+					labelBuffer[labelLen] = '\0';
+
+					u16 type; vertexFormatStream >> type;
+					u16 components; vertexFormatStream >> components;
+
+					return {labelBuffer, VertexDataFormat{type}, components};
+				}
+			);
+		}
+	}
+
+
+
+
+	beDataBuffer packedIndexBuffer = packedData.GetStream("IndexBuffer");
+	beDataBuffer packedVertexBuffer = packedData.GetStream("VertexBuffer");
+
+	if (packedIndexBuffer.GetSize() % 2 != 0 || packedIndexBuffer.GetSize() % 12 != 0)
 	{
 		BE_ASSERT(false);
 		return false;
 	}
 
+	std::span<const u16> packedIndices(reinterpret_cast<const u16*>(packedIndexBuffer.GetBuffer()), packedIndexBuffer.GetSize() / sizeof(u16));
+	std::span<const Vec3> packedVertices(reinterpret_cast<const Vec3*>(packedVertexBuffer.GetBuffer()), packedVertexBuffer.GetSize() / sizeof(Vec3));
+
+	m_meshes.Reserve(drawCalls.Count());
+	for (DrawCallInfo const& drawCall : drawCalls)
+	{
+		if (drawCall.vertexFormatIndex >= (u32)vertexFormats.Count())
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+		VertexSet const& vertexSet = vertexFormats[drawCall.vertexFormatIndex];
+
+		VertexInfo const* positionInfo = std::find_if(vertexSet.begin(), vertexSet.end(), [](VertexInfo const& it) {
+			return it.label == "Position";
+		});
+		if (!positionInfo)
+		{
+			BE_ASSERT(false && "No position vertex info");
+			return false;
+		}
+		if (positionInfo->type != VertexDataFormat::Float || positionInfo->numElements != 3)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+
+		VertexInfo const* normalInfo = std::find_if(vertexSet.begin(), vertexSet.end(), [](VertexInfo const& it) {
+			return it.label == "Normal";
+		});
+		if (!normalInfo)
+		{
+			BE_ASSERT(false && "No normal vertex info");
+			return false;
+		}
+		if (normalInfo->type != VertexDataFormat::Float || normalInfo->numElements != 3)
+		{
+			BE_ASSERT(false);
+			return false;
+		}
+
+
+		u32 positionVertexOffset = drawCall.vertexOffset;
+		u32 positionVertexCount = drawCall.vertexCount;
+		u32 positionIndexOffset = drawCall.indexOffset;
+		u32 positionIndexCount = drawCall.indexCount;
+		//u32 normalVertexOffset = normalInfo->vertexOffset;
+		//u32 normalVertexCount = normalInfo->vertexCount;
+		//u32 normalIndexOffset = normalInfo->indexOffset;
+		//u32 normalIndexCount = normalInfo->indexCount;
+		//BE_ASSERT(positionVertexCount == normalVertexCount);
+		//BE_ASSERT(positionVertexCount == normalIndexCount);
+
+		BE_ASSERT(positionVertexOffset + positionVertexCount < packedVertices.size());
+		//BE_ASSERT(normalVertexOffset + normalVertexCount) < packedVertices.size());
+		BE_ASSERT(positionIndexOffset + positionIndexCount < packedIndices.size());
+		//BE_ASSERT(normalIndexOffset + normalIndexCount) < packedIndices.size());
+
+
+		beVector<VertexWithNormalType> vertices(positionVertexCount, positionVertexCount, 0);
+		for (u32 i = 0; i < positionVertexCount; i++)
+		{
+			vertices[i].position = ToVec4(packedVertices[positionVertexOffset+i], 1.f);
+			vertices[i].normal = packedVertices[positionVertexOffset+i]; //packedVertices[normalVertexOffset+i];
+			vertices[i].uv = V20();
+		}
+		beVector<u32> indices(positionIndexCount, positionIndexCount, 0);
+		for (u32 i = 0; i < positionIndexCount; i++)
+		{
+			u32 originalIndex = packedIndices[positionIndexOffset+i];
+			BE_ASSERT(originalIndex < positionVertexCount);
+			indices[i] = originalIndex;
+		}
+
+		bool success = m_vertexBuffer.Allocate(ri, ElementSize(vertices), vertices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.begin());
+		if (!success) { BE_ASSERT(false); return false; }
+
+		Mesh* mesh = m_meshes.AddNew();
+		success = mesh->m_indexBuffer.Allocate(ri, ElementSize(indices), indices.Count(), D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, beRendering::Topology::TriangleList, 0, 0, indices.begin());
+		if (!success) { BE_ASSERT(false); return false; }
+		if (true) {
+			break;
+		}
+	}
 
 	return true;
 }
