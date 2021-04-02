@@ -3,10 +3,10 @@
 #include "BlakesEngine/Rendering/beFont.h"
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/DataStructures/beFastGrid.h"
-#include "BlakesEngine/Camera/beFlightCamera.h"
 #include "WarGameCells.h"
 
 import beStateMachine;
+import beFlightCamera;
 
 struct beAppData;
 class beDebugWorld;

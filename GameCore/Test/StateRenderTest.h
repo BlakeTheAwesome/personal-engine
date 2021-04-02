@@ -7,9 +7,9 @@
 #include "BlakesEngine/Shaders/beShaderTexture.h"
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/Shaders/beShaderLitTexture.h"
-#include "BlakesEngine/Camera/beFlightCamera.h"
 
 import beStateMachine;
+import beFlightCamera;
 
 struct beAppData;
 class beDebugWorld;

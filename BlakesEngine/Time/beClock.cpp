@@ -1,7 +1,8 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beClock.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include <chrono>
+module beClock;
 
 using ClockType = std::chrono::high_resolution_clock;
 using TimePoint = ClockType::time_point;

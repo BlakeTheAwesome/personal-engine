@@ -2,18 +2,18 @@
 #include "WarGameCells.h"
 
 #include "BlakesEngine/Core/beContainerHelpers.h"
-#include "BlakesEngine/Input/beGamepad.h"
-#include "BlakesEngine/Input/beKeyboard.h"
-#include "BlakesEngine/Input/beMouse.h"
 #include "BlakesEngine/Framework/beAppData.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Math/beIntersection.h"
 #include "BlakesEngine/Math/beRandomFunctions.h"
 
 import beMath;
 import beRandom;
+import beCameraUtils;
+import beGamepad;
+import beKeyboard;
+import beMouse;
 
 static constexpr int MAX_HP = 5;
 

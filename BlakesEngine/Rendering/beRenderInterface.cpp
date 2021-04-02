@@ -5,11 +5,11 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beDeferred.h"
-#include "BlakesEngine/Window/beWindow.h"
 
 #include <d3d11.h>
 ///#include <DirectXPackedVector.h>
 
+import beWindow;
 import ZeroMem;
 import beDirectXMath;
 using namespace DirectXMath;

@@ -1,11 +1,13 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beGamepad.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 
 //#define DIRECTINPUT_VERSION 0x0800
 #include "BlakesEngine/Platform/beWindows.h"
 #include <xinput.h>
+
+module beGamepad;
 
 #pragma comment(lib, "xinput.lib")
 

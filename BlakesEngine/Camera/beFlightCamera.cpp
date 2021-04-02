@@ -1,11 +1,12 @@
-#include "BlakesEngine/bePCH.h"
-#include "beFlightCamera.h"
+module;
 
+#include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/Input/beGamepad.h"
-#include "BlakesEngine/Input/beMouse.h"
 
+module beFlightCamera;
+import beGamepad;
+import beMouse;
 import beDirectXMath;
 using namespace DirectXMath;
 

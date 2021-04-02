@@ -273,9 +273,15 @@
     <ClCompile Include="Window\beWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera\beCamera.h" />
-    <ClInclude Include="Camera\beCameraUtils.h" />
-    <ClInclude Include="Camera\beFlightCamera.h" />
+    <ClCompile Include="Camera\beCamera.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Camera\beCameraUtils.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Camera\beFlightCamera.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beAssert.h" />
     <ClCompile Include="Core\beConcepts.ixx">
       <FileType>Document</FileType>
@@ -332,11 +338,15 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="DataStructures\beFastGrid.h" />
-    <ClInclude Include="DataStructures\beHashMap.h" />
+    <ClCompile Include="DataStructures\beHashMap.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClCompile Include="DataStructures\beMemoryPolicies.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="DataStructures\beVector.h" />
+    <ClCompile Include="DataStructures\beVector.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="External\DirectXTK\Audio.h" />
     <ClInclude Include="External\DirectXTK\CommonStates.h" />
     <ClInclude Include="External\DirectXTK\DDSTextureLoader.h" />
@@ -376,9 +386,15 @@
     <ClInclude Include="Framework\beAppData.h" />
     <ClCompile Include="Framework\beStateMachineState.ixx" />
     <ClCompile Include="Framework\beStateMachine.ixx" />
-    <ClInclude Include="Input\beGamepad.h" />
-    <ClInclude Include="Input\beKeyboard.h" />
-    <ClInclude Include="Input\beMouse.h" />
+    <ClCompile Include="Input\beGamepad.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Input\beKeyboard.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Input\beMouse.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Math\beIntersection.h" />
     <ClCompile Include="Math\beMath.ixx">
       <FileType>Document</FileType>
@@ -392,8 +408,12 @@
     </ClCompile>
     <ClInclude Include="Math\beRandomFunctions.h" />
     <ClInclude Include="Math\beZOrder.h" />
-    <ClInclude Include="Platform\beEnvironment.h" />
-    <ClInclude Include="Platform\beSystemEventManager.h" />
+    <ClCompile Include="Platform\beEnvironment.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Platform\beSystemEventManager.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Platform\beWindows.h" />
     <ClInclude Include="Rendering\beAnimatedModel.h" />
     <ClInclude Include="Rendering\beBitmap.h" />
@@ -410,10 +430,16 @@
     <ClInclude Include="Shaders\beShaderPack.h" />
     <ClInclude Include="Shaders\beShaderTexture.h" />
     <ClInclude Include="Shaders\beShaderTexture2d.h" />
-    <ClInclude Include="Time\beClock.h" />
-    <ClInclude Include="Time\beFrameTimer.h" />
+    <ClCompile Include="Time\beClock.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Time\beFrameTimer.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Time\beTimeValue.h" />
-    <ClInclude Include="Window\beWindow.h" />
+    <ClCompile Include="Window\beWindow.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\colour_p.hlsl">

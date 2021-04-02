@@ -1,9 +1,15 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "beKeyboard.h"
 #include "BlakesEngine/Core/beAssert.h"
-#include "BlakesEngine/Platform/beSystemEventManager.h"
+#include "BlakesEngine/Platform/beWindows.h"
+#include "BlakesEngine/External/DirectXTK/Keyboard.h"
 
 #include <mutex>
+
+module beKeyboard;
+
+import beSystemEventManager;
 
 DirectX::Keyboard s_keyboard;
 static int s_instanceCount = 0;

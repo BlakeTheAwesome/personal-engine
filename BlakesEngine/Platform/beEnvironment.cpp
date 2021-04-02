@@ -1,8 +1,16 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "beEnvironment.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beString.h"
 #include <fstream>
 
-beString RemoveQuotes(const beString& input)
+module beEnvironment;
+
+import beTypes;
+import beHash;
+
+static beString RemoveQuotes(const beString& input)
 {
 	auto inputLen = input.size();
 	if (inputLen < 2)

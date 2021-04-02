@@ -6,17 +6,9 @@
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
-#include "BlakesEngine/Input/beGamepad.h"
-#include "BlakesEngine/Input/beKeyboard.h"
-#include "BlakesEngine/Input/beMouse.h"
-#include "BlakesEngine/Time/beFrameTimer.h"
-#include "BlakesEngine/Time/beClock.h"
-#include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Platform/beSystemEventManager.h"
-#include "BlakesEngine/Platform/beEnvironment.h"
 #include "BlakesEngine/Framework/beAppData.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
@@ -29,8 +21,17 @@
 #include "GameCore/WarGame/StateWarGame.h"
 
 #include <shellapi.h>
+#include <chrono>
 
+import beWindow;
+import beMouse;
+import beSystemEventManager;
 import beStateMachine;
+import beEnvironment;
+import beGamepad;
+import beKeyboard;
+import beFrameTimer;
+import beClock;
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC

@@ -1,12 +1,17 @@
-#include "BlakesEngine/bePCH.h"
-#include "beSystemEventManager.h"
+module;
 
-#include "BlakesEngine/DataStructures/beVector.h"
+#include "BlakesEngine/bePCH.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/bePimpl.h"
+#include "BlakesEngine/Platform/beWindows.h"
+
+module beSystemEventManager;
+
+import beVector;
 
 static beSystemEventManager* s_instance = nullptr;
 
 PIMPL_DATA(beSystemEventManager)
-
 	struct CallbackWin32Pump { void* userdata; tCallbackWinPump cb; CallbackId id; };
 	beFixedVector<CallbackWin32Pump, 16> m_callbackWin32Pump;
 

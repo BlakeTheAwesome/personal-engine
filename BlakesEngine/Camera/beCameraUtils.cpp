@@ -1,11 +1,12 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beCameraUtils.h"
-#include "beCamera.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
-#include "BlakesEngine/Input/beMouse.h"
 
+module beCameraUtils;
+import beCamera;
 import beArray;
 import beDirectXMath;
+import beMouse;
 using namespace DirectXMath;
 
 bool intersectsBounds(const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVECTOR& rayStart, const XMVECTOR& rayDir, float* distance)

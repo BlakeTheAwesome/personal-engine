@@ -4,7 +4,6 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
 
@@ -15,6 +14,7 @@
 #include <string>
 
 import beMath;
+import beVector;
 
 bool beFont::ReadLine(const std::string& line)
 {

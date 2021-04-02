@@ -1,5 +1,7 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beCamera.h"
+
+module beCamera;
 
 import beDirectXMath;
 using namespace DirectXMath;

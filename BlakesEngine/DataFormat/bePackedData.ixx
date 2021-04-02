@@ -1,11 +1,13 @@
 module;
 
-#include "BlakesEngine/DataStructures/beHashMap.h"
 #include "BlakesEngine/Core/beString.h"
 
 export module bePackedData;
 import beSpan;
 import beDataBuffer;
+import beVector;
+import beHashMap;
+import beTypes;
 
 export class bePackedData
 {

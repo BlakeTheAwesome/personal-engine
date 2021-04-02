@@ -4,7 +4,6 @@
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
 #include "BlakesEngine/Shaders/beShaderTexture.h"
@@ -19,6 +18,7 @@
 #include <charconv>
 #include <filesystem>
 
+import beVector;
 import bePackedData;
 import beMath;
 import RangeIter;

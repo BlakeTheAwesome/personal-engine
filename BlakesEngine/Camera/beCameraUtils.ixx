@@ -1,12 +1,13 @@
-#pragma once
+module;
+#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include <optional>
 
+export module beCameraUtils;
+
 import beMath;
+import beMouse;
 
-class beRenderInterface;
-class beMouse;
-
-namespace beCameraUtils
+export namespace beCameraUtils
 {
 	struct PosDir
 	{

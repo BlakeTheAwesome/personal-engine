@@ -2,9 +2,10 @@
 #include "beRenderBuffer.h"
 #include "beTexture.h"
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/DataStructures/beVector.h"
-import beMath;
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
+
+import beVector;
+import beMath;
 
 class beRenderInterface;
 class beShaderPack;

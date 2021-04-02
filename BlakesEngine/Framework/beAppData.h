@@ -1,14 +1,15 @@
 #pragma once
 
-class beEnvironment;
-class beSystemEventManager;
+import beKeyboard;
+import beGamepad;
+import beSystemEventManager;
+import beMouse;
+import beEnvironment;
+import beWindow;
+
 class beRenderInterface;
 class RenderDocManager;
-class beKeyboard;
-class beMouse;
-class beGamepad;
 class beDebugWorld;
-class beWindow;
 class beShaderPack;
 
 struct beAppData

@@ -1,10 +1,14 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beWindow.h"
 
+#include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beMacros.h"
-#include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Platform/beWindows.h"
+module beWindow;
+
+import beSystemEventManager;
 
 PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

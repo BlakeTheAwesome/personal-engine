@@ -5,10 +5,10 @@
 #include "BlakesEngine/Shaders/beShaderColour.h"
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/DataStructures/beFastGrid.h"
-#include "BlakesEngine/Camera/beFlightCamera.h"
 
 import beArray;
 import beStateMachine;
+import beFlightCamera;
 
 struct beAppData;
 class beDebugWorld;

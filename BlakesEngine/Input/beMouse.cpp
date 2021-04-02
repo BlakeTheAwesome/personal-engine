@@ -1,10 +1,14 @@
-
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beMouse.h"
 #include "BlakesEngine/Core/beAssert.h"
-#include "BlakesEngine/Platform/beSystemEventManager.h"
-#include "BlakesEngine/Window/beWindow.h"
+#include "BlakesEngine/Platform/beWindows.h"
 #include <Windowsx.h>
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+
+module beMouse;
+import beSystemEventManager;
+import beWindow;
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")

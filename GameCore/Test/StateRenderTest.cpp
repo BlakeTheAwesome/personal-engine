@@ -2,19 +2,15 @@
 #include "BlakesEngine/bePCH.h"
 #include "StateRenderTest.h"
 
+#include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
-#include "BlakesEngine/Input/beGamepad.h"
-#include "BlakesEngine/Input/beKeyboard.h"
-#include "BlakesEngine/Input/beMouse.h"
-#include "BlakesEngine/Window/beWindow.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
-#include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 #include "BlakesEngine/Framework/beAppData.h"
@@ -33,6 +29,11 @@ import bePackedData;
 import RangeIter;
 import beStateMachine;
 import bePerlinNoise;
+import beCameraUtils;
+import beGamepad;
+import beKeyboard;
+import beMouse;
+import beWindow;
 
 void StateRenderTest::Enter(beStateMachine* stateMachine)
 {

@@ -2,13 +2,13 @@
 #include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/beString.h"
 import beMath;
+import beWindow;
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
 
-class beWindow;
 
 class beRenderInterface
 {

@@ -1,9 +1,10 @@
 #pragma once
+#include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beString.h"
 #include "beRenderBuffer.h"
 #include "beTexture.h"
-#include "BlakesEngine/DataStructures/beVector.h"
 
+import beVector;
 import beMath;
 import beArray;
 
