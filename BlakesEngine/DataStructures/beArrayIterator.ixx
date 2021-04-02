@@ -1,8 +1,10 @@
-#pragma once
+module;
 #include <iterator>
 #include <span>
 
-template <typename T, bool reverse=false>
+export module beArrayIterator;
+
+export template <typename T, bool reverse=false>
 class beArrayIter
 {
 	public:
@@ -82,4 +84,4 @@ class beArrayIter
 	int m_count = 0;
 };
 
-template<typename T> beArrayIter(std::span<T>) -> beArrayIter<T>;
+export template<typename T> beArrayIter(std::span<T>) -> beArrayIter<T>;

@@ -1,10 +1,10 @@
 #pragma once
-import beConcepts;
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
-#include "beMemoryPolicies.h"
 
 #include <type_traits>
+import beConcepts;
+import beMemoryPolicies;
 
 #pragma warning(push)
 #pragma warning(disable:26481) // pointer arithmetic

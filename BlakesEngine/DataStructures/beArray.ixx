@@ -1,12 +1,14 @@
 module;
 
-#include "beArrayIterator.h"
-#include "beConstexprAlgorithms.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include <initializer_list>
+#include <span>
 
 export module beArray;
 import beConcepts;
+import beConstExprAlgorithm;
+import beArrayIterator;
+
 using namespace beConstexpr;
 
 namespace beArrayDetail

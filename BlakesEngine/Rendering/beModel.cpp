@@ -11,7 +11,6 @@
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Core/beStringUtil.h"
 
-#include "BlakesEngine/DataStructures/beByteStreams.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
 
 #include <d3d11.h>
@@ -23,6 +22,7 @@
 import bePackedData;
 import beMath;
 import RangeIter;
+import beByteStreams;
 
 using namespace beRendering;
 

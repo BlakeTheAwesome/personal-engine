@@ -1,5 +1,8 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beByteStreams.h"
+#include "BlakesEngine/Core/beAssert.h"
+
+module beByteStreams;
 
 void beByteStreamBase::Reset()
 {

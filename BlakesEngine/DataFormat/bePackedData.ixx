@@ -2,10 +2,10 @@ module;
 
 #include "BlakesEngine/DataStructures/beHashMap.h"
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/DataStructures/beDataBuffer.h"
 
 export module bePackedData;
 import beSpan;
+import beDataBuffer;
 
 export class bePackedData
 {

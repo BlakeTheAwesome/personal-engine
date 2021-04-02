@@ -1,6 +1,6 @@
-#pragma once
+export module beConstExprAlgorithm;
 
-namespace beConstexpr
+export namespace beConstexpr
 {
 	template<class InputIterator, class OutputIterator>
 	constexpr OutputIterator c_copy(InputIterator first, InputIterator last, OutputIterator result)

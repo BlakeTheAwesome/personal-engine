@@ -231,7 +231,6 @@
     <ClCompile Include="Core\RangeIter.cpp" />
     <ClCompile Include="DataFormat\bePackedData.cpp" />
     <ClCompile Include="DataStructures\beByteStreams.cpp" />
-    <ClCompile Include="DataStructures\beDataBuffer.cpp" />
     <ClCompile Include="External\fmt\format.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -320,13 +319,23 @@
     <ClCompile Include="DataStructures\beArray.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="DataStructures\beArrayIterator.h" />
-    <ClInclude Include="DataStructures\beByteStreams.h" />
-    <ClInclude Include="DataStructures\beConstexprAlgorithms.h" />
-    <ClInclude Include="DataStructures\beDataBuffer.h" />
+    <ClCompile Include="DataStructures\beArrayIterator.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="DataStructures\beByteStreams.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="DataStructures\beConstexprAlgorithms.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="DataStructures\beDataBuffer.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="DataStructures\beFastGrid.h" />
     <ClInclude Include="DataStructures\beHashMap.h" />
-    <ClInclude Include="DataStructures\beMemoryPolicies.h" />
+    <ClCompile Include="DataStructures\beMemoryPolicies.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="DataStructures\beVector.h" />
     <ClInclude Include="External\DirectXTK\Audio.h" />
     <ClInclude Include="External\DirectXTK\CommonStates.h" />

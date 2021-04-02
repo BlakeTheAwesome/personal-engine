@@ -1,10 +1,12 @@
-#pragma once
+module;
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
-#include "beMemoryPolicies.h"
 
 #include <type_traits>
 #include <span>
+
+export module beDataBuffer;
+import beMemoryPolicies;
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<MemoryPolicy Policy>
@@ -38,7 +40,7 @@ class beDataBufferBase : protected Policy
 	}
 };
 
-class beDataBuffer : public beDataBufferBase<beAssignableMallocPolicy<u8, 0>>
+export class beDataBuffer : public beDataBufferBase<beAssignableMallocPolicy<u8, 0>>
 {
 	using Base = beDataBufferBase<beAssignableMallocPolicy<u8, 0>>;
 	public:

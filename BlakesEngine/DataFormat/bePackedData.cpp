@@ -1,12 +1,14 @@
 module;
 #include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/DataStructures/beDataBuffer.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beMacros.h"
 #include <filesystem>
 
 module bePackedData;
-
+import beDataBuffer;
 import RangeIter;
+
 
 static int ReadString(char* buffer, int bufferLen, std::FILE* file)
 {

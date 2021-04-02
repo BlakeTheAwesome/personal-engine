@@ -1,13 +1,15 @@
-#pragma once
+module;
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beMacros.h"
 
 #include <type_traits>
+
+export module beMemoryPolicies;
 import beMath;
 import beNonCopiable;
 
 // Policies do not need to handle constructing/destructing elements, vector base does that. Default vector is hybrid<16>
-namespace beMemoryPolicies
+export namespace beMemoryPolicies
 {
 	template <typename Policy>
 	struct Derived : Policy
@@ -29,10 +31,10 @@ namespace beMemoryPolicies
 }
 
 
-template<typename T>
+export template<typename T>
 concept MemoryPolicy = beMemoryPolicies::MemoryPolicyDerivedImpl<T>;
 
-template<typename T>
+export template<typename T>
 concept VectorMemoryPolicy =
 	MemoryPolicy<T> &&
 	std::is_constructible_v<T, int, int, std::initializer_list<typename T::value_type>>;
@@ -41,7 +43,7 @@ concept VectorMemoryPolicy =
 #pragma warning(push)
 #pragma warning(disable:26485) // Pointer arithmetic
 
-template <typename T, int CAPACITY>
+export template <typename T, int CAPACITY>
 struct beVectorFixedPolicy
 {
 	public:
@@ -97,7 +99,7 @@ struct beVectorFixedPolicy
 	}
 };
 
-template <typename T>
+export template <typename T>
 struct beVectorFixedPolicy<T, 0>
 {
 	static constexpr int CAPACITY = 0;
@@ -133,7 +135,7 @@ struct beVectorFixedPolicy<T, 0>
 static_assert(VectorMemoryPolicy<beVectorFixedPolicy<int, 1>>);
 static_assert(VectorMemoryPolicy<beVectorFixedPolicy<int, 0>>);
 
-template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
+export template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
 struct beVectorMallocPolicy : public NonCopiable
 {
 	using value_type = T;
@@ -233,7 +235,7 @@ struct beVectorMallocPolicy : public NonCopiable
 static_assert(VectorMemoryPolicy<beVectorMallocPolicy<int, 1>>);
 static_assert(VectorMemoryPolicy<beVectorMallocPolicy<int, 0>>);
 
-template <typename T, int RESERVED_SIZE = 16>
+export template <typename T, int RESERVED_SIZE = 16>
 struct beVectorHybridPolicy : public NonCopiable
 {
 	using value_type = T;
@@ -344,7 +346,7 @@ struct beVectorHybridPolicy : public NonCopiable
 	int m_capacity = 0;
 };
 
-template <typename T>
+export template <typename T>
 struct beVectorHybridPolicy<T, 0> : public beVectorMallocPolicy<T, 0>
 {
 	using Base = beVectorMallocPolicy<T, 0>;
@@ -359,7 +361,7 @@ static_assert(VectorMemoryPolicy<beVectorHybridPolicy<int, 1>>);
 static_assert(VectorMemoryPolicy<beVectorHybridPolicy<int, 0>>);
 
 
-template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
+export template <typename T, int INITIAL_SIZE=8> // INTIAL_SIZE for consistency, also using for default constructor size
 struct beAssignableMallocPolicy
 {
 	using value_type = T;
