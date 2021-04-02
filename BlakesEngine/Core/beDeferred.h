@@ -1,5 +1,6 @@
 #pragma once
 #include <type_traits>
+#include <concepts>
 
 #define defer(body) auto MACRO_CONCAT(_deferredCall, __COUNTER__) = beDeferred::MakeLambdaDefer([&](){body;})
 

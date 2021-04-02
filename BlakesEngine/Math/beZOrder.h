@@ -1,6 +1,6 @@
 #pragma once
 #include "BlakesEngine/Core/beTypes.h"
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 
 // z order curves/morton curves give nice cache locality when dealing with 2d arrays (used in texture swizzling)
 

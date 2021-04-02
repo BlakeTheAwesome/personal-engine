@@ -1,6 +1,8 @@
 #include "BlakesEngine/bePCH.h"
 #include "LifeGameCells.h"
 
+#include "BlakesEngine/Core/beContainerHelpers.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
@@ -11,6 +13,9 @@
 #include "BlakesEngine/Math/beRandom.h"
 #include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Math/beIntersection.h"
+
+import RangeIter;
+import beMath;
 
 void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
@@ -75,7 +80,7 @@ void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* sha
 void LifeGameCells::UpdateBlock(LifeGameCells::Block* block, float xPos, float yPos, float distance, bool highlight)
 {
 	const float currentHeight = block->verts[2].position.z;
-	const float newHeight = beMath::Clamp(currentHeight+distance, 0.f, BlockHeight);
+	const float newHeight = Clamp(currentHeight+distance, 0.f, BlockHeight);
 
 
 	//-x
@@ -204,13 +209,13 @@ void LifeGameCells::InitBlock(LifeGameCells::Block* block, float xPos, float yPo
 	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, yPos + HalfBlockLength, height, 1.f);
 }
 
-beMath::Vec3 LifeGameCells::Block::BlockMin() const
+Vec3 LifeGameCells::Block::BlockMin() const
 {
 	const Vec4& minVert = verts[0].position;
 	return Vec3(minVert.x, minVert.y, minVert.z);
 }
 
-beMath::Vec3 LifeGameCells::Block::BlockMax() const
+Vec3 LifeGameCells::Block::BlockMax() const
 {
 	const Vec4& maxVert = verts[6].position;
 	return Vec3(maxVert.x, maxVert.y, maxVert.z);
@@ -304,7 +309,7 @@ void LifeGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatri
 			{
 				if (collisions->first >= 0.f)
 				{
-					minPosS = std::min(minPosS, collisions->first);
+					minPosS = Min(minPosS, collisions->first);
 					collidingIndex = iter;
 				}
 			}

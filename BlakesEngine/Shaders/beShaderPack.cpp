@@ -2,8 +2,13 @@
 #include "beShaderPack.h"
 #include "beShaderCBufferDefinitions.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beMacros.h"
 
 #include <d3d11.h>
+
+import beDirectXMath;
+using namespace DirectXMath;
 
 struct beShaderPack::FrameData
 {
@@ -59,7 +64,8 @@ void beShaderPack::UpdateFrameBuffers(beRenderInterface* ri, const Matrix& viewM
 		XMMATRIX txWorldMatrix = XMMatrixTranspose(xWM);
 		XMMATRIX txViewMatrix = XMMatrixTranspose(xVM);
 		XMMATRIX txProjectionMatrix = XMMatrixTranspose(xPM);
-		XMMATRIX txWorldToProj = txProjectionMatrix * txViewMatrix * txWorldMatrix;
+		XMMATRIX txViewToProj = XMMatrixMultiply(txProjectionMatrix, txViewMatrix);
+		XMMATRIX txWorldToProj = XMMatrixMultiply(txViewToProj, txWorldMatrix);
 
 		Matrix world, view, projection, worldToProj;
 		XMStoreFloat4x4(&world, txWorldMatrix);

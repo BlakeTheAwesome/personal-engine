@@ -1,7 +1,7 @@
 #pragma once
 #include "BlakesEngine/Shaders/beShaderColour.h"
 #include "BlakesEngine/DataStructures/beArray.h"
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 
 struct UnitVisual
 {

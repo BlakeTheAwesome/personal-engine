@@ -1,5 +1,6 @@
 #pragma once
 #include "beState.h"
+#include <memory>
 
 class beStateMachine
 {

@@ -2,6 +2,7 @@
 #include "beFont.h"
 
 #include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
@@ -12,6 +13,8 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+
+import beMath;
 
 bool beFont::ReadLine(const std::string& line)
 {
@@ -267,7 +270,7 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 	{
 		for (const beFont::CharacterInfo& charInfo : m_characterInfo)
 		{
-			fixedWidthValue = beMath::Max(fixedWidthValue, (float)charInfo.width);
+			fixedWidthValue = Max(fixedWidthValue, (float)charInfo.width);
 		}
 		fixedWidthValue *= scale;
 	}
@@ -339,8 +342,8 @@ bool beFont::CreateString(beRenderInterface* ri, const beStringView& string, flo
 			wordChars++;
 			wordWidth += charInfo->width * scale;
 		}
-		totalWidth = beMath::Max(totalWidth, newLineWidth);
-		totalHeight = beMath::Max(totalHeight, currentHeight + m_lineHeight);
+		totalWidth = Max(totalWidth, newLineWidth);
+		totalHeight = Max(totalHeight, currentHeight + m_lineHeight);
 
 
 

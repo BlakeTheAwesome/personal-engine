@@ -1,3 +1,4 @@
+
 #include "BlakesEngine/bePCH.h"
 #include "beMouse.h"
 #include "BlakesEngine/Core/beAssert.h"
@@ -7,7 +8,6 @@
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
-
 
 beMouse::~beMouse()
 {
@@ -91,7 +91,8 @@ void beMouse::Update(float dt)
 
 static inline bool isDown(const DIMOUSESTATE2& mouseState, beMouse::Button button)
 {
-	const u8 buttonState = gsl::at(mouseState.rgbButtons, button);
+	BE_ASSERT((u32)button < sizeof(mouseState.rgbButtons));
+	const u8 buttonState = mouseState.rgbButtons[button];
 	return (buttonState & 0x80) != 0;
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include "BlakesEngine/Core/beString.h"
+#include "beTypes.h"
 
 namespace beHashFunctions
 {

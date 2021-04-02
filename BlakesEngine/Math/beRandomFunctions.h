@@ -1,6 +1,11 @@
 #pragma once
 #include "beRandom.h"
-#include "BlakesEngine/Core/beSpan.h"
+#include "BlakesEngine/Core/beAssert.h"
+
+#include <span>
+#include <numeric>
+
+import RangeIter;
 
 namespace beRandomFunctions
 {

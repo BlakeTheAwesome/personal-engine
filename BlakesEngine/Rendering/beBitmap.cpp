@@ -6,6 +6,7 @@
 #include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
+#include "BlakesEngine/Core/beContainerHelpers.h"
 
 #include <d3d11.h>
 

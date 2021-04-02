@@ -1,8 +1,9 @@
 #pragma once
-#include "BlakesEngine/Core/beConcepts.h"
+import beConcepts;
 
 #include "beArrayIterator.h"
 #include "beConstexprAlgorithms.h"
+#include "BlakesEngine/Core/beAssert.h"
 #include <initializer_list>
 
 using namespace beConstexpr;

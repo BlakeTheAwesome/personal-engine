@@ -1,13 +1,15 @@
 #pragma once
-#include "BlakesEngine/Core/beConcepts.h"
-
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Math/beZOrder.h"
+#include "BlakesEngine/DataStructures/beArray.h"
+
+import beConcepts;
+import beMath;
 
 template<typename T, int LENGTH>
 class beFastGrid
 {
-	static const int STRIDE_LENGTH = beMath::NextPowerOfTwo(LENGTH);
+	static const int STRIDE_LENGTH = NextPowerOfTwo(LENGTH);
 	static const int CAPACITY = STRIDE_LENGTH * STRIDE_LENGTH;
 	public:
 		using value_type = T;

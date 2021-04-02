@@ -6,6 +6,9 @@
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
+#include "BlakesEngine/Core/beContainerHelpers.h"
+#include "BlakesEngine/DataFormat/bePackedData.h"
+#include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
 #include "BlakesEngine/Math/beRandom.h"
 #include "BlakesEngine/Math/bePerlinNoise.h"
 #include "BlakesEngine/Input/beGamepad.h"
@@ -20,10 +23,8 @@
 #include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"
 
-#include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
 #include <shellapi.h>
 #include <iomanip>
-#include "BlakesEngine/DataFormat/bePackedData.h"
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC

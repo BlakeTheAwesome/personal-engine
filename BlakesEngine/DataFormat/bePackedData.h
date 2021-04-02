@@ -3,6 +3,8 @@
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/DataStructures/beDataBuffer.h"
 
+import beSpan;
+
 class bePackedData
 {
 	public:

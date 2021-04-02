@@ -1,6 +1,9 @@
 #include "BlakesEngine/bePCH.h"
 #include "beCamera.h"
 
+import beDirectXMath;
+using namespace DirectXMath;
+
 void beCamera::SetPosition(const Vec3& pos)
 {
 	m_pos = pos;

@@ -1,5 +1,6 @@
 #include "BlakesEngine/bePCH.h"
 #include "beStateMachine.h"
+#include "BlakesEngine/Core/beAssert.h"
 
 // This is set up to allow you to get back the current state when you change.
 // Potential issue if you retrieve a state and stash it on the next state who then deletes it.

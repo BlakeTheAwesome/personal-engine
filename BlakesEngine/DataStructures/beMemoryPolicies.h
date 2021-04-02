@@ -3,7 +3,8 @@
 #include "BlakesEngine/Core/beAssert.h"
 
 #include <type_traits>
-#include "BlakesEngine/Math/beMath.h"
+#include "../Core/beNonCopiable.h"
+import beMath;
 
 // Policies do not need to handle constructing/destructing elements, vector base does that. Default vector is hybrid<16>
 namespace beMemoryPolicies
@@ -399,7 +400,7 @@ struct beAssignableMallocPolicy
 	{
 		if (capacity > m_capacity || (ensureOwnBuffer && !m_ownsBuffer))
 		{
-			const int allocSize = beMath::Max(capacity, m_count);
+			const int allocSize = Max(capacity, m_count);
 			T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*allocSize);
 			if (m_count > 0)
 			{
@@ -416,7 +417,7 @@ struct beAssignableMallocPolicy
 	{
 		if (capacity > m_capacity || (ensureOwnBuffer && !m_ownsBuffer))
 		{
-			int allocSize = beMath::Max(capacity, m_count);
+			int allocSize = Max(capacity, m_count);
 			T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*allocSize);
 			BE_FREE_ALIGNED(m_buffer);
 			m_buffer = newBuffer;

@@ -1,5 +1,6 @@
 #pragma once
-#include "beMath.h"
+import beMath;
+
 #include "beRandom.h"
 #include "BlakesEngine/DataStructures/beArray.h"
 

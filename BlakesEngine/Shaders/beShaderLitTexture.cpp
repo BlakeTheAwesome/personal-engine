@@ -1,6 +1,7 @@
 #include "BlakesEngine/bePCH.h"
 #include "beShaderLitTexture.h"
 #include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Rendering/beModel.h"

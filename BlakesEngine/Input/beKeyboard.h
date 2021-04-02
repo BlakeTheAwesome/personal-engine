@@ -1,5 +1,6 @@
 #pragma once
 #include "BlakesEngine/Core/beTypes.h"
+#include "BlakesEngine/Platform/beWindows.h"
 #include "BlakesEngine/External/DirectXTK/Keyboard.h"
 
 class beSystemEventManager;

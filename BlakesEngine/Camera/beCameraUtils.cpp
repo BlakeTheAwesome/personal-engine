@@ -4,6 +4,8 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Input/beMouse.h"
 
+import beDirectXMath;
+using namespace DirectXMath;
 
 bool intersectsBounds(const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVECTOR& rayStart, const XMVECTOR& rayDir, float* distance)
 {
@@ -39,8 +41,8 @@ bool intersectsBounds(const Vec3& _boundsMin, const Vec3& _boundsMax, const XMVE
 			{
 				std::swap(t1, t2);
 			}
-			tNear = beMath::Max(t1, tNear);
-			tFar = beMath::Min(t2, tFar);
+			tNear = Max(t1, tNear);
+			tFar = Min(t2, tFar);
 			if (tNear > tFar || tFar < 0.0f)
 				break;
 		}

@@ -1,7 +1,7 @@
 #pragma once
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Core/bePimpl.h"
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 
 class beRenderInterface;
 class beTexture;

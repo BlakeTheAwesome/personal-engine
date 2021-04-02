@@ -3,6 +3,7 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 
 #include "BlakesEngine/Platform/beWindows.h"

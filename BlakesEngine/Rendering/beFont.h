@@ -3,7 +3,7 @@
 #include "beTexture.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/DataStructures/beVector.h"
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 
 class beRenderInterface;

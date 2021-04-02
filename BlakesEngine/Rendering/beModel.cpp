@@ -10,14 +10,17 @@
 #include "BlakesEngine/Shaders/beShaderTexture.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Core/beStringUtil.h"
+#include "BlakesEngine/DataFormat/bePackedData.h"
+#include "BlakesEngine/DataStructures/beByteStreams.h"
+#include "BlakesEngine/Core/beContainerHelpers.h"
 
 #include <d3d11.h>
 
 #include <fstream>
 #include <charconv>
 #include <filesystem>
-#include "BlakesEngine/DataFormat/bePackedData.h"
-#include "BlakesEngine/DataStructures/beByteStreams.h"
+
+import beMath;
 
 using namespace beRendering;
 
@@ -448,7 +451,7 @@ bool beModel::InitWithFilename(beRenderInterface* ri, beShaderPack* shaderPack, 
 				texCoord.y *= -1.f;
 
 				//LOG("Before - {}", vertex);
-				vert->position = beMath::ToVec4(swizzleVert(vertex), 1.f);
+				vert->position = ToVec4(swizzleVert(vertex), 1.f);
 				vert->normal = normal;
 				vert->uv = texCoord;
 
@@ -906,15 +909,15 @@ void beModel::Render(beRenderInterface* ri, beShaderPack* shaderPack, beRenderin
 				{
 					if (material->m_ambientColour)
 					{
-						shaderParams.ambientColour = beMath::ToVec4(*material->m_ambientColour, 1.f);
+						shaderParams.ambientColour = ToVec4(*material->m_ambientColour, 1.f);
 					}
 					if (material->m_diffuseColour)
 					{
-						shaderParams.diffuseColour = beMath::ToVec4(*material->m_diffuseColour, 1.f);
+						shaderParams.diffuseColour = ToVec4(*material->m_diffuseColour, 1.f);
 					}
 					if (material->m_specularColour)
 					{
-						shaderParams.specularColour = beMath::ToVec4(*material->m_specularColour, 1.f);
+						shaderParams.specularColour = ToVec4(*material->m_specularColour, 1.f);
 					}
 					if (material->m_specularPower)
 					{

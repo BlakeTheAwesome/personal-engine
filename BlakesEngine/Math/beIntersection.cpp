@@ -1,5 +1,8 @@
 #include "BlakesEngine/bePCH.h"
 #include "beIntersection.h"
+#include <cmath>
+
+import RangeIter;
 
 int beIntersection::TRayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const Vec3& boxMin, const Vec3& boxMax, std::span<float, 2> collisions)
 {
@@ -56,7 +59,7 @@ std::optional<std::pair<float, float>> beIntersection::TRayVsAABB(const Vec3& ra
 }
 
 
-std::optional<beMath::Vec3> beIntersection::RayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const Vec3& boxMin, const Vec3& boxMax)
+std::optional<Vec3> beIntersection::RayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const Vec3& boxMin, const Vec3& boxMax)
 {
 	if (auto collisions = TRayVsAABB(rayStart, rayDir, boxMin, boxMax))
 	{

@@ -4,6 +4,7 @@
 #include "beRenderBuffer.h"
 
 #include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/DataStructures/beVector.h"
@@ -17,6 +18,9 @@
 #include <d3d11.h>
 
 #include <fstream>
+
+import beMath;
+import RangeIter;
 
 using VertexColourType = beShaderColour::VertexType;
 
@@ -74,8 +78,8 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 			if (beCameraUtils::GetScreeenToWorldRay(*ri, viewMatrix, x, y, &pos, &dir))
 			{
 				const Vec3 endPoint3 = pos + (dir * 100.f);
-				vertices[(size_t)vertCount] = VertexColourType{beMath::ToVec4(pos, 1.f), startColour};
-				vertices[(size_t)vertCount+1] = VertexColourType{beMath::ToVec4(endPoint3, 1.f), endColour};
+				vertices[(size_t)vertCount] = VertexColourType{ToVec4(pos, 1.f), startColour};
+				vertices[(size_t)vertCount+1] = VertexColourType{ToVec4(endPoint3, 1.f), endColour};
 				vertCount += 2;
 			}
 		};

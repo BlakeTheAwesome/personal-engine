@@ -2,6 +2,7 @@
 #include "beString.h"
 #include "beAssert.h"
 #include "BlakesEngine/Platform/beWindows.h"
+#include "BlakesEngine/DataStructures/beVector.h"
 
 void beStringConversion::UTF8ToWide(const beStringView& utf8, beWString* outWStr)
 {

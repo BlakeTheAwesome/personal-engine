@@ -6,6 +6,9 @@
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beMouse.h"
 
+import beDirectXMath;
+using namespace DirectXMath;
+
 static constexpr float ROTATIONS_PER_SECOND = (float)(1.5 * (2.0 * M_2_PI));
 static constexpr float DISTANCE_PER_SECOND = 1.0f;
 static constexpr float MOUSE_SPEED_MULTIPLIER = 0.01f;
@@ -88,14 +91,14 @@ void beFlightCamera::Update(float dt)
 void beFlightCamera::UpdateImpl(float dt, float extraPitch, float extraYaw, float extraForwards, float extraRight)
 {
 	m_pitch += extraPitch;
-	m_pitch = beMath::Clamp(m_pitch, (float)-M_PI, 0.f);
+	m_pitch = Clamp(m_pitch, (float)-M_PI, 0.f);
 	m_yaw += extraYaw;
 
 	const float yaw = m_yaw;
 	// #TODO #CAMERA this used to do a whole lot of matrix stuff, is this better?
 	const XMMATRIX rotZ = XMMatrixRotationZ(yaw);
 	const XMMATRIX rotX = XMMatrixRotationX(m_pitch);
-	XMMATRIX orientation = rotZ * rotX;
+	XMMATRIX orientation = XMMatrixMultiply(rotZ, rotX);
 	orientation = XMMatrixInverse(nullptr, orientation);
 
 	//cycles input

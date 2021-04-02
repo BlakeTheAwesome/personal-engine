@@ -1,5 +1,6 @@
 #include "BlakesEngine/bePCH.h"
 #include "beRendering.h"
+#include "BlakesEngine/Core/beAssert.h"
 #include <d3d11.h>
 
 using namespace beRendering;

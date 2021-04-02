@@ -3,6 +3,10 @@
 
 #include <random> 
 #include <algorithm> 
+#include <ranges>
+#include <numeric>
+
+import RangeIter;
 
 // First used original Perlin noise implementation from: http://webstaff.itn.liu.se/~stegu/TNM022-2005/perlinnoiselinks/perlin-noise-math-faq.html
 // Updated with improved Perlin noise, found at: http://flafla2.github.io/2014/08/09/perlinnoise.html
@@ -68,9 +72,9 @@ float bePerlinNoise2D::Get(float x, float y)
 	const int x1 = (x0 + 1) % maxX; // [0, maxX)
 	const int y1 = (y0 + 1) % maxY; // [0, maxX)
 	
-	const float u = beMath::SmootherStep(xf);
-	const float v = beMath::SmootherStep(yf);
-	constexpr float w = beMath::SmootherStep(zf);
+	const float u = SmootherStep(xf);
+	const float v = SmootherStep(yf);
+	constexpr float w = SmootherStep(zf);
 
 	u8* p = m_hashTable.data();
 	

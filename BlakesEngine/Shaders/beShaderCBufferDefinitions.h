@@ -2,7 +2,7 @@
 #define _beShaderCBufferDefintions_h_
 
 #ifdef __cplusplus
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 #define cbuffer struct
 #define float4 Vec4
 #define float3 Vec3

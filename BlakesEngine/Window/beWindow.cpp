@@ -1,6 +1,7 @@
 #include "BlakesEngine/bePCH.h"
 #include "beWindow.h"
 
+#include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Platform/beWindows.h"

@@ -1,6 +1,7 @@
 #include "BlakesEngine/bePCH.h"
 #include "WarGameCells.h"
 
+#include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
@@ -12,6 +13,8 @@
 #include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Math/beIntersection.h"
 #include "BlakesEngine/Math/beRandomFunctions.h"
+
+import beMath;
 
 static constexpr int MAX_HP = 5;
 
@@ -101,7 +104,7 @@ static Vec4 GetColour(WarGameCells::WarCell const& cell, float strength)
 void WarGameCells::UpdateBlock(WarGameCells::Block* block, WarCell const& cell, float xPos, float yPos, float distance, bool highlight)
 {
 	float currentHeight = block->verts[2].position.z;
-	float newHeight = beMath::Clamp(currentHeight+distance, 0.f, BlockHeight * cell.hp);
+	float newHeight = Clamp(currentHeight+distance, 0.f, BlockHeight * cell.hp);
 
 	Vec4 colour = GetColour(cell, newHeight);
 
@@ -241,13 +244,13 @@ void WarGameCells::InitBlock(WarGameCells::Block* block, WarCell const& cell, fl
 	block->verts[faceOffset+2].position = Vec4(xPos + HalfBlockLength, yPos + HalfBlockLength, height, 1.f);
 }
 
-beMath::Vec3 WarGameCells::Block::BlockMin() const
+Vec3 WarGameCells::Block::BlockMin() const
 {
 	const Vec4& minVert = verts[0].position;
 	return Vec3(minVert.x, minVert.y, minVert.z);
 }
 
-beMath::Vec3 WarGameCells::Block::BlockMax() const
+Vec3 WarGameCells::Block::BlockMax() const
 {
 	const Vec4& maxVert = verts[6].position;
 	return Vec3(maxVert.x, maxVert.y, maxVert.z);
@@ -375,7 +378,7 @@ void WarGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatrix
 			{
 				if (collisions->first >= 0.f)
 				{
-					minPosS = std::min(minPosS, collisions->first);
+					minPosS = Min(minPosS, collisions->first);
 					collidingIndex = iter;
 				}
 			}
@@ -483,7 +486,7 @@ void WarGameCells::TickGame()
 			}
 			else if (newColour == currentCell.colour)
 			{
-				newCell->hp = beMath::Min(currentCell.hp+1, MAX_HP);
+				newCell->hp = Min(currentCell.hp+1, MAX_HP);
 			}
 			else
 			{

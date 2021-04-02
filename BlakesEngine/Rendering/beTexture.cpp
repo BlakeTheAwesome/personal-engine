@@ -2,7 +2,9 @@
 #include "beTexture.h"
 
 #include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/beStringUtil.h"
+#include "BlakesEngine/Core/ZeroMem.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 #include "BlakesEngine/External/stb/stb_image.h"

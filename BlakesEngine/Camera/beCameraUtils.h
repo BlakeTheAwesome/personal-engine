@@ -1,5 +1,7 @@
 #pragma once
-#include "BlakesEngine/Math/beMath.h"
+#include <optional>
+
+import beMath;
 
 class beRenderInterface;
 class beMouse;

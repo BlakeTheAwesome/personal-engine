@@ -3,6 +3,8 @@
 #include "BlakesEngine/DataStructures/beDataBuffer.h"
 #include <filesystem>
 
+import RangeIter;
+
 static int ReadString(char* buffer, int bufferLen, std::FILE* file)
 {
 	int stringLength = std::fgetc(file);

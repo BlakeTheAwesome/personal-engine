@@ -1,8 +1,10 @@
 #pragma once
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 #include "beRenderBuffer.h"
 #include "beTexture.h"
+#include "BlakesEngine/DataStructures/beArray.h"
+#include "BlakesEngine/DataStructures/beVector.h"
 
 class beRenderInterface;
 class beShaderPack;

@@ -119,6 +119,7 @@
       <ProgramDataBaseFileName>$(OutDir)$(ProjectName)_c.pdb</ProgramDataBaseFileName>
       <EnablePREfast>false</EnablePREfast>
       <ConformanceMode>true</ConformanceMode>
+      <FloatingPointExceptions>true</FloatingPointExceptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

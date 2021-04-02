@@ -1,6 +1,8 @@
 
 #include "BlakesEngine/bePCH.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"

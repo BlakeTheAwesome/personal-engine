@@ -1,5 +1,8 @@
 #pragma once
+#pragma warning(push)
+#pragma warning(disable: 4159)
 #include <cstdint>
+#pragma warning(pop)
 
 using s8 = int8_t;
 using u8 = uint8_t;

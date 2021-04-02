@@ -4,6 +4,7 @@
 #include "beMemoryPolicies.h"
 
 #include <type_traits>
+#include <span>
 
 // If increaseBy == -1, double size, if increaseBy == 0, do not increase
 template<MemoryPolicy Policy>

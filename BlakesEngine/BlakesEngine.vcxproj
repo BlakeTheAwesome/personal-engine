@@ -101,8 +101,6 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <FloatingPointExceptions>true</FloatingPointExceptions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BlakesEngine/bePCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -168,14 +166,13 @@
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <PreprocessorDefinitions>WIN32;_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>BlakesEngine/bePCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)BlakesEngine\External</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4800;4100;4127</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4800;4100;4127;5105;5106</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -233,6 +230,7 @@
     <ClCompile Include="bePCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Core\RangeIter.cpp" />
     <ClCompile Include="DataFormat\bePackedData.cpp" />
     <ClCompile Include="DataStructures\beByteStreams.cpp" />
     <ClCompile Include="DataStructures\beDataBuffer.cpp" />
@@ -250,6 +248,8 @@
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Input\beKeyboard.cpp" />
     <ClCompile Include="Input\beMouse.cpp" />
+    <ClCompile Include="Math\beDirectXMath.cpp" />
+    <ClCompile Include="Math\beDirectXMath.ixx" />
     <ClCompile Include="Math\beIntersection.cpp" />
     <ClCompile Include="Math\bePerlinNoise.cpp" />
     <ClCompile Include="Math\beRandom.cpp" />
@@ -280,7 +280,9 @@
     <ClInclude Include="Camera\beCameraUtils.h" />
     <ClInclude Include="Camera\beFlightCamera.h" />
     <ClInclude Include="Core\beAssert.h" />
-    <ClInclude Include="Core\beConcepts.h" />
+    <ClCompile Include="Core\beConcepts.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beContainerHelpers.h" />
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
@@ -292,7 +294,9 @@
     <ClInclude Include="Core\bePrimitiveType.h" />
     <ClInclude Include="Core\bePrintf.h" />
     <ClInclude Include="Core\beRanges.h" />
-    <ClInclude Include="Core\beSpan.h" />
+    <ClCompile Include="Core\beSpan.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beStringUtil.h" />
     <ClInclude Include="Core\optional_arg.h" />
     <ClInclude Include="Core\Reconstruct.h" />
@@ -300,7 +304,9 @@
     <ClInclude Include="Core\beTypes.h" />
     <ClInclude Include="Core\beTypeTests.h" />
     <ClInclude Include="bePCH.h" />
-    <ClInclude Include="Core\RangeIter.h" />
+    <ClCompile Include="Core\RangeIter.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\String\StringBuilder.h" />
     <ClInclude Include="Core\ZeroMem.h" />
     <ClInclude Include="DataFormat\bePackedData.h" />
@@ -346,7 +352,6 @@
     <ClInclude Include="External\fmt\safe-duration-cast.h" />
     <ClInclude Include="External\fmt\time.h" />
     <ClInclude Include="External\Misc\StreamToDebugOutput.h" />
-    <ClInclude Include="External\NanoRange\nanorange.hpp" />
     <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
     <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />
     <ClInclude Include="External\stb\stb_image.h" />
@@ -357,7 +362,9 @@
     <ClInclude Include="Input\beKeyboard.h" />
     <ClInclude Include="Input\beMouse.h" />
     <ClInclude Include="Math\beIntersection.h" />
-    <ClInclude Include="Math\beMath.h" />
+    <ClCompile Include="Math\beMath.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Math\beMathFormat.h" />
     <ClInclude Include="Math\bePerlinNoise.h" />
     <ClInclude Include="Math\beRandom.h" />

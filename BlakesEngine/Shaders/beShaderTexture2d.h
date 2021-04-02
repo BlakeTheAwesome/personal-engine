@@ -1,6 +1,6 @@
 #pragma once
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
 #include "beShaderCBufferDefinitions.h"
 

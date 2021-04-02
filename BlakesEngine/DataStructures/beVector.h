@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine/Core/beConcepts.h"
+import beConcepts;
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "beMemoryPolicies.h"
@@ -191,7 +191,7 @@ class beVectorBase : protected Policy
 				return nullptr;
 			}
 			int index = m_count++;
-			return (T*)&GetBuffer()[index];
+			return &GetBuffer()[index];
 		}
 
 		template<class ...Args>
@@ -267,13 +267,13 @@ class beVectorBase : protected Policy
 		T& At(int i)
 		{
 			BE_ASSERT(i <= Count());
-			return *(T*)&begin()[i];
+			return begin()[i];
 		}
 
 		const T& At(int i) const
 		{
 			BE_ASSERT(i <= Count());
-			return *(T*)&begin()[i];
+			return begin()[i];
 		}
 
 		T* begin()

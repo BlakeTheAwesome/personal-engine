@@ -1,7 +1,8 @@
 #pragma once
-#include "beMath.h"
+import beMath;
 #include <optional>
 #include <tuple>
+#include <span>
 
 namespace beIntersection
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine/Core/beConcepts.h"
+#include <concepts>
 
 template <std::integral T>
 struct bePrimitiveType

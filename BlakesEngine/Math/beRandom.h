@@ -1,6 +1,8 @@
 #pragma once
+import beMath;
+
 #include "BlakesEngine/Core/beTypes.h"
-#include "beMath.h"
+
 
 // Yoinked from http://www.gamedev.net/topic/643890-simple-and-fast-random-number-generator/
 /* Implementation of the Tyche-i RNG by Samuel Neves and Filipe Araujo.
@@ -34,7 +36,6 @@ public:
 
 	/* Returns a random integer between 0 and 2^32 - 1, inclusive. */
 	u32 Next() {
-		using namespace beMath;
 		b = rotl32(b, 25) ^ c;
 		d = rotl32(d, 24) ^ a;
 		c -= d;

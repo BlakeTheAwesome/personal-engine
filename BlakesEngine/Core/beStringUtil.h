@@ -1,6 +1,7 @@
 #pragma once
 #include "beString.h"
-#include "beConcepts.h"
+import beConcepts;
+
 #include <locale>
 
 namespace beStringUtil

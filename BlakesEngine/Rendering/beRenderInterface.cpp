@@ -4,10 +4,15 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
+#include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Window/beWindow.h"
 
 #include <d3d11.h>
+#include "BlakesEngine/Core/ZeroMem.h"
 ///#include <DirectXPackedVector.h>
+
+import beDirectXMath;
+using namespace DirectXMath;
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment (lib, "d3d11.lib")
@@ -462,7 +467,7 @@ void beRenderInterface::Impl::CreateMatrices(float width, float height, float ne
 	XMMATRIX worldMatrix = XMMatrixIdentity();
 	XMMATRIX orthoMatrix = XMMatrixOrthographicRH(width, height, nearPlane, farPlane);
 	XMVECTOR negHalfScreenVec = XMVectorSet(-width/2.f, -height/2.f, 0.f, 0.f);
-	XMMATRIX orthoMatrixPixelSpace = orthoMatrix * XMMatrixTranslationFromVector(negHalfScreenVec);
+	XMMATRIX orthoMatrixPixelSpace = XMMatrixMultiply(orthoMatrix, XMMatrixTranslationFromVector(negHalfScreenVec));
 
 
 	XMStoreFloat4x4(&m_projectionMatrix, projectionMatrix);

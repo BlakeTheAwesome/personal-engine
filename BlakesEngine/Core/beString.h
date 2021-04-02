@@ -1,6 +1,8 @@
 #pragma once
 #include "BlakesEngine/Core/String/StringBuilder.h"
+#include "BlakesEngine/External/fmt/format.h"
 #include <string>
+#include <span>
 
 using beWString = std::wstring;
 using beString = std::string;

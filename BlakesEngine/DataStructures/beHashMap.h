@@ -1,5 +1,6 @@
 #pragma once
-#include "BlakesEngine/Core/beConcepts.h"
+import beConcepts;
+import RangeIter;
 
 #include "beVector.h"
 #include "BlakesEngine/Core/beHash.h"

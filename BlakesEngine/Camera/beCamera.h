@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine/Math/beMath.h"
+import beMath;
 
 class beCamera
 {

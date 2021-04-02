@@ -1,5 +1,6 @@
 #pragma once
-#include "BlakesEngine/Core/beSpan.h"
+#include <iterator>
+#include <span>
 
 template <typename T, bool reverse=false>
 class beArrayIter

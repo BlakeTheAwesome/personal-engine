@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine/Core/beConcepts.h"
+import beConcepts;
 
 
 template <Container T>
