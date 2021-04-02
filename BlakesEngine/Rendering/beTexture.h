@@ -1,9 +1,9 @@
 #pragma once
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/Core/optional_arg.h"
 #include "BlakesEngine/Core/beTypes.h"
 #include "BlakesEngine/Core/beNonCopiable.h"
 #include <d3d11.h>
+#include <optional>
 
 import beMath;
 
@@ -38,7 +38,7 @@ public:
 	beTexture(beTexture&&) noexcept;
 	beTexture& operator=(beTexture&&) noexcept;
 
-	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, optional_arg<LoadOptions> loadOptions);
+	bool Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, std::optional<std::reference_wrapper<LoadOptions>> loadOptions);
 	bool InitAsTarget(beRenderInterface* ri, const LoadOptions& loadOptions);
 	void FinaliseTarget();
 	void Deinit();

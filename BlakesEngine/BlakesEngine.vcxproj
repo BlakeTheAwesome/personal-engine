@@ -137,7 +137,6 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BlakesEngine/bePCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -193,7 +192,6 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <PreprocessorDefinitions>WIN32;_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>BlakesEngine/bePCH.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -290,15 +288,18 @@
     <ClInclude Include="Core\beMacros.h" />
     <ClInclude Include="Core\beNonCopiable.h" />
     <ClInclude Include="Core\bePimpl.h" />
-    <ClInclude Include="Core\bePrimitiveType.h" />
+    <ClCompile Include="Core\bePrimitiveType.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\bePrintf.h" />
     <ClInclude Include="Core\beRanges.h" />
     <ClCompile Include="Core\beSpan.ixx">
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Core\beStringUtil.h" />
-    <ClInclude Include="Core\optional_arg.h" />
-    <ClInclude Include="Core\Reconstruct.h" />
+    <ClCompile Include="Core\Reconstruct.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beString.h" />
     <ClInclude Include="Core\beTypes.h" />
     <ClInclude Include="Core\beTypeTests.h" />
@@ -307,7 +308,9 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Core\String\StringBuilder.h" />
-    <ClInclude Include="Core\ZeroMem.h" />
+    <ClCompile Include="Core\ZeroMem.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="DataFormat\bePackedData.h" />
     <ClInclude Include="DataStructures\beArray.h" />
     <ClInclude Include="DataStructures\beArrayIterator.h" />

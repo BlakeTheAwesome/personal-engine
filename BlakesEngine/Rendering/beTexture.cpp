@@ -4,7 +4,6 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/beStringUtil.h"
-#include "BlakesEngine/Core/ZeroMem.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 #include "BlakesEngine/External/stb/stb_image.h"
@@ -13,12 +12,14 @@
 #include <D3D11.h>
 #include <filesystem>
 
+import ZeroMem;
+
 beTexture::~beTexture()
 {
 	Deinit();
 }
 
-bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, optional_arg<LoadOptions> loadOptions)
+bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beStringView& textureFilename, std::optional<std::reference_wrapper<LoadOptions>> loadOptions)
 {
 	BE_ASSERT(!m_texture);
 

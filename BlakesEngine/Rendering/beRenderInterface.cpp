@@ -8,9 +8,9 @@
 #include "BlakesEngine/Window/beWindow.h"
 
 #include <d3d11.h>
-#include "BlakesEngine/Core/ZeroMem.h"
 ///#include <DirectXPackedVector.h>
 
+import ZeroMem;
 import beDirectXMath;
 using namespace DirectXMath;
 
