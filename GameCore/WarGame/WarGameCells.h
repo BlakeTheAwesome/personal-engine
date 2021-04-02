@@ -1,13 +1,14 @@
 #pragma once
-#include "BlakesEngine/Framework/beState.h"
 #include "BlakesEngine/Rendering/beBitmap.h"
 #include "BlakesEngine/Rendering/beFont.h"
 #include "BlakesEngine/Rendering/beRenderBuffer.h"
 #include "BlakesEngine/Shaders/beShaderColour.h"
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/DataStructures/beFastGrid.h"
-#include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/Camera/beFlightCamera.h"
+
+import beArray;
+import beStateMachine;
 
 struct beAppData;
 class beDebugWorld;

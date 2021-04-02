@@ -1,7 +1,12 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beHash.h"
-
 #include <CodeAnalysis/Warnings.h>
+
+#include <stdlib.h>
+#include <stdint.h>
+
+module beHash;
+import beTypes;
 #pragma warning(push)
 #pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)
 
@@ -22,8 +27,6 @@
 #if defined(_MSC_VER)
 
 #define FORCE_INLINE	__forceinline
-
-#include <stdlib.h>
 
 #define ROTL32(x,y)	_rotl(x,y)
 #define ROTL64(x,y)	_rotl64(x,y)

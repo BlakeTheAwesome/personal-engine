@@ -242,7 +242,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="External\stb\stb.cpp" />
-    <ClCompile Include="Framework\beStateMachine.cpp" />
+    <ClCompile Include="Framework\beStateMachineMachine.ixx" />
+    <ClCompile Include="Framework\beStateMachineTypes.ixx" />
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Input\beKeyboard.cpp" />
     <ClCompile Include="Input\beMouse.cpp" />
@@ -250,7 +251,6 @@
     <ClCompile Include="Math\beDirectXMath.ixx" />
     <ClCompile Include="Math\beIntersection.cpp" />
     <ClCompile Include="Math\bePerlinNoise.cpp" />
-    <ClCompile Include="Math\beRandom.cpp" />
     <ClCompile Include="Math\beRandomFunctions.cpp" />
     <ClCompile Include="Platform\beEnvironment.cpp" />
     <ClCompile Include="Platform\beSystemEventManager.cpp" />
@@ -284,15 +284,18 @@
     <ClInclude Include="Core\beContainerHelpers.h" />
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
-    <ClInclude Include="Core\beHash.h" />
+    <ClCompile Include="Core\beHash.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beMacros.h" />
-    <ClInclude Include="Core\beNonCopiable.h" />
+    <ClCompile Include="Core\beNonCopiable.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\bePimpl.h" />
     <ClCompile Include="Core\bePrimitiveType.ixx">
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Core\bePrintf.h" />
-    <ClInclude Include="Core\beRanges.h" />
     <ClCompile Include="Core\beSpan.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -301,7 +304,9 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Core\beString.h" />
-    <ClInclude Include="Core\beTypes.h" />
+    <ClCompile Include="Core\beTypes.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beTypeTests.h" />
     <ClInclude Include="bePCH.h" />
     <ClCompile Include="Core\RangeIter.ixx">
@@ -311,8 +316,10 @@
     <ClCompile Include="Core\ZeroMem.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="DataFormat\bePackedData.h" />
-    <ClInclude Include="DataStructures\beArray.h" />
+    <ClCompile Include="DataFormat\bePackedData.ixx" />
+    <ClCompile Include="DataStructures\beArray.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="DataStructures\beArrayIterator.h" />
     <ClInclude Include="DataStructures\beByteStreams.h" />
     <ClInclude Include="DataStructures\beConstexprAlgorithms.h" />
@@ -358,8 +365,8 @@
     <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />
     <ClInclude Include="External\stb\stb_image.h" />
     <ClInclude Include="Framework\beAppData.h" />
-    <ClInclude Include="Framework\beState.h" />
-    <ClInclude Include="Framework\beStateMachine.h" />
+    <ClCompile Include="Framework\beStateMachineState.ixx" />
+    <ClCompile Include="Framework\beStateMachine.ixx" />
     <ClInclude Include="Input\beGamepad.h" />
     <ClInclude Include="Input\beKeyboard.h" />
     <ClInclude Include="Input\beMouse.h" />
@@ -368,8 +375,12 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Math\beMathFormat.h" />
-    <ClInclude Include="Math\bePerlinNoise.h" />
-    <ClInclude Include="Math\beRandom.h" />
+    <ClCompile Include="Math\bePerlinNoise.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Math\beRandom.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Math\beRandomFunctions.h" />
     <ClInclude Include="Math\beZOrder.h" />
     <ClInclude Include="Platform\beEnvironment.h" />

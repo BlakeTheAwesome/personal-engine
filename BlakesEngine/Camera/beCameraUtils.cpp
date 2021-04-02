@@ -4,6 +4,7 @@
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Input/beMouse.h"
 
+import beArray;
 import beDirectXMath;
 using namespace DirectXMath;
 

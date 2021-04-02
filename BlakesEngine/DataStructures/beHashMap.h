@@ -1,9 +1,9 @@
 #pragma once
 import beConcepts;
 import RangeIter;
+import beHash;
 
 #include "beVector.h"
-#include "BlakesEngine/Core/beHash.h"
 
 // Dumb first attempt at this, going with 2 parallel vectors for data, one for keys, one for data
 

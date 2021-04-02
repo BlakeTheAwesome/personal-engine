@@ -1,10 +1,10 @@
 #pragma once
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/Core/beTypes.h"
-#include "BlakesEngine/Core/beNonCopiable.h"
 #include <d3d11.h>
 #include <optional>
 
+import beTypes;
+import beNonCopiable;
 import beMath;
 
 class beRenderInterface;

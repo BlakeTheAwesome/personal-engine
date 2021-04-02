@@ -1,5 +1,5 @@
 #pragma once
-#include "BlakesEngine/Core/beTypes.h"
+import beTypes;
 
 namespace beRendering
 {

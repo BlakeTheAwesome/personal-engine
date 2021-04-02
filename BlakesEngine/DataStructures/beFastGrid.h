@@ -1,8 +1,8 @@
 #pragma once
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Math/beZOrder.h"
-#include "BlakesEngine/DataStructures/beArray.h"
 
+import beArray;
 import beConcepts;
 import beMath;
 

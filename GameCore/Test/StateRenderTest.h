@@ -1,6 +1,4 @@
 #pragma once
-#include "BlakesEngine/Framework/beState.h"
-
 #include "BlakesEngine/Rendering/beBitmap.h"
 #include "BlakesEngine/Rendering/beModel.h"
 #include "BlakesEngine/Rendering/beTexture.h"
@@ -10,6 +8,8 @@
 #include "BlakesEngine/Shaders/beShaderTexture2d.h"
 #include "BlakesEngine/Shaders/beShaderLitTexture.h"
 #include "BlakesEngine/Camera/beFlightCamera.h"
+
+import beStateMachine;
 
 struct beAppData;
 class beDebugWorld;

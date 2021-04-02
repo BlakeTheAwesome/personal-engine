@@ -1,11 +1,13 @@
-#pragma once
+module;
+
 #include "BlakesEngine/DataStructures/beHashMap.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/DataStructures/beDataBuffer.h"
 
+export module bePackedData;
 import beSpan;
 
-class bePackedData
+export class bePackedData
 {
 	public:
 

@@ -1,6 +1,4 @@
 module;
-#include <compare>
-
 export module bePrimitiveType;
 
 export template <typename T, T DefaultVal>
@@ -9,7 +7,7 @@ struct bePrimitiveType
 	constexpr bePrimitiveType() = default;
 	constexpr bePrimitiveType(T val) : value(val) {}
 
-	constexpr auto operator<=>(bePrimitiveType const&) const = default;
+	constexpr bool operator==(bePrimitiveType const&) const = default;
 
 	using type = T;
 

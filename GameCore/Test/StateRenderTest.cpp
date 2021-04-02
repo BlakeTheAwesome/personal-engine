@@ -7,10 +7,7 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
-#include "BlakesEngine/DataFormat/bePackedData.h"
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
-#include "BlakesEngine/Math/beRandom.h"
-#include "BlakesEngine/Math/bePerlinNoise.h"
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
@@ -20,7 +17,6 @@
 #include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
-#include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"
 
 #include <shellapi.h>
@@ -31,6 +27,12 @@
 #define RENDERDOC_PATH L"d:/Dev/Renderdoc/renderDoc.dll"
 #define RENDERDOC_CAPTURE_PATH "d:/temp/renderDoc/capture"
 #endif
+
+import beRandom;
+import bePackedData;
+import RangeIter;
+import beStateMachine;
+import bePerlinNoise;
 
 void StateRenderTest::Enter(beStateMachine* stateMachine)
 {

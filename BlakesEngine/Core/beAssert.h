@@ -1,6 +1,7 @@
 #pragma once
 
-#include "beTypes.h"
+import beTypes;
+
 #include "beMacros.h"
 
 #include "bePrintf.h"

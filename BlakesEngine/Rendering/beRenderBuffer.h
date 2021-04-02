@@ -1,7 +1,7 @@
 #pragma once
-#include "BlakesEngine/Core/beNonCopiable.h"
 #include "beRendering.h"
-#include "BlakesEngine/Core/beTypes.h"
+import beTypes;
+import beNonCopiable;
 
 struct ID3D11Buffer;
 class beRenderInterface;

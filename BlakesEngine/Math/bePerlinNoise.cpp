@@ -1,10 +1,14 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "bePerlinNoise.h"
+#include "BlakesEngine/Core/beMacros.h"
+#include "BlakesEngine/Core/beAssert.h"
 
 #include <random> 
 #include <algorithm> 
 #include <ranges>
 #include <numeric>
+
+module bePerlinNoise;
 
 import RangeIter;
 

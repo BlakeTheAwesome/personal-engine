@@ -1,7 +1,10 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "bePackedData.h"
+#include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/DataStructures/beDataBuffer.h"
 #include <filesystem>
+
+module bePackedData;
 
 import RangeIter;
 

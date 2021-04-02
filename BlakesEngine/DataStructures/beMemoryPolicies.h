@@ -1,10 +1,10 @@
 #pragma once
-#include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/beMacros.h"
 
 #include <type_traits>
-#include "../Core/beNonCopiable.h"
 import beMath;
+import beNonCopiable;
 
 // Policies do not need to handle constructing/destructing elements, vector base does that. Default vector is hybrid<16>
 namespace beMemoryPolicies

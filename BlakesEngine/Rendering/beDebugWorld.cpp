@@ -6,11 +6,8 @@
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/DataStructures/beVector.h"
 #include "BlakesEngine/Shaders/beShaderColour.h"
-#include "BlakesEngine/Math/beRandom.h"
-#include "BlakesEngine/Math/bePerlinNoise.h"
 #include "BlakesEngine/Framework/beAppData.h"
 #include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Input/beMouse.h"
@@ -19,8 +16,11 @@
 
 #include <fstream>
 
+import beRandom;
 import beMath;
 import RangeIter;
+import beArray;
+import bePerlinNoise;
 
 using VertexColourType = beShaderColour::VertexType;
 

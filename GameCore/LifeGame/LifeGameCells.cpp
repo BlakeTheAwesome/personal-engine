@@ -6,16 +6,16 @@
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
-#include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Math/beRandom.h"
 #include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Math/beIntersection.h"
 
 import RangeIter;
 import beMath;
+import beStateMachine;
+import beRandom;
 
 void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {

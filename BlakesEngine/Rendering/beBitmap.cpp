@@ -3,7 +3,6 @@
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beTexture.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
@@ -11,6 +10,8 @@
 #include <d3d11.h>
 
 #include <fstream>
+
+import beArray;
 
 struct PositionBufferType
 {

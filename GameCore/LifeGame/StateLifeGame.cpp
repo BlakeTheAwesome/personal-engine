@@ -4,16 +4,17 @@
 #include "BlakesEngine/Input/beGamepad.h"
 #include "BlakesEngine/Input/beKeyboard.h"
 #include "BlakesEngine/Input/beMouse.h"
-#include "BlakesEngine/Framework/beStateMachine.h"
 #include "BlakesEngine/Framework/beAppData.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Math/beRandom.h"
 #include "BlakesEngine/Camera/beCameraUtils.h"
 #include "BlakesEngine/Window/beWindow.h"
 
 #include <iomanip>
+
+import beRandom;
+import beStateMachine;
 
 void StateLifeGame::Enter(beStateMachine* stateMachine)
 {

@@ -7,13 +7,13 @@
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Platform/beWindows.h"
-#include "BlakesEngine/DataStructures/beArray.h"
 #include "beShaderCBufferDefinitions.h"
 
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>
 
+import beArray;
 import RangeIter;
 
 enum

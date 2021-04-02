@@ -1,10 +1,11 @@
 #pragma once
-#include "BlakesEngine/Core/beTypes.h"
-#include "BlakesEngine/DataStructures/beArray.h"
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
+
+import beTypes;
+import beArray;
 
 class beSystemEventManager;
 class beWindow;

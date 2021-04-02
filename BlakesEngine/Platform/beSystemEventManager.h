@@ -1,9 +1,8 @@
 #pragma once
-#include "BlakesEngine/Core/beTypes.h"
 #include "BlakesEngine/Core/bePimpl.h"
-
 #include "BlakesEngine/Platform/beWindows.h"
 
+import beTypes;
 import bePrimitiveType;
 
 class beSystemEventManager

@@ -10,7 +10,7 @@
 #include "BlakesEngine/Shaders/beShaderTexture.h"
 #include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Core/beStringUtil.h"
-#include "BlakesEngine/DataFormat/bePackedData.h"
+
 #include "BlakesEngine/DataStructures/beByteStreams.h"
 #include "BlakesEngine/Core/beContainerHelpers.h"
 
@@ -20,7 +20,9 @@
 #include <charconv>
 #include <filesystem>
 
+import bePackedData;
 import beMath;
+import RangeIter;
 
 using namespace beRendering;
 

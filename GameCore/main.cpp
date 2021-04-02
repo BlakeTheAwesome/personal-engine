@@ -18,7 +18,6 @@
 #include "BlakesEngine/Platform/beSystemEventManager.h"
 #include "BlakesEngine/Platform/beEnvironment.h"
 #include "BlakesEngine/Framework/beAppData.h"
-#include "BlakesEngine/Framework/beStateMachine.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
@@ -30,6 +29,8 @@
 #include "GameCore/WarGame/StateWarGame.h"
 
 #include <shellapi.h>
+
+import beStateMachine;
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC

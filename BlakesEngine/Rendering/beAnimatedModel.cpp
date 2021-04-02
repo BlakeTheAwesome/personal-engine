@@ -1,8 +1,9 @@
 #include "BlakesEngine/bePCH.h"
 #include "beAnimatedModel.h"
 #include "BlakesEngine/DataStructures/beDataBuffer.h"
-#include "BlakesEngine/DataFormat/bePackedData.h"
 #include "BlakesEngine/DataStructures/beByteStreams.h"
+
+import bePackedData;
 
 void Initialise(bePackedData const& packedData)
 {
