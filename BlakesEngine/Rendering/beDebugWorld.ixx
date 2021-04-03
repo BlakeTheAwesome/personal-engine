@@ -29,15 +29,15 @@ public:
 private:
 	bool InitAxes(beRenderInterface* ri);
 
-	beRenderBuffer axesVertexBuffer;
-	beRenderBuffer axesIndexBuffer;
-	beRenderBuffer mouseVertexBuffer;
-	beRenderBuffer mouseIndexBuffer;
+	beRenderBuffer m_axesVertexBuffer;
+	beRenderBuffer m_axesIndexBuffer;
+	beRenderBuffer m_mouseVertexBuffer;
+	beRenderBuffer m_mouseIndexBuffer;
 
-	beRenderBuffer gridVertexBuffer;
-	beRenderBuffer gridLinesIndexBuffer;
-	beRenderBuffer gridFilledIndexBuffer;
-	bool renderAxes = false;
-	bool renderMouse = false;
-	bool haveMouseVerts = false;
+	beRenderBuffer m_gridVertexBuffer;
+	beRenderBuffer m_gridLinesIndexBuffer;
+	beRenderBuffer m_gridFilledIndexBuffer;
+	bool m_renderAxes = false;
+	bool m_renderMouse = false;
+	bool m_haveMouseVerts = false;
 };

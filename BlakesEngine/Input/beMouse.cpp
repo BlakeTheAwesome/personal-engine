@@ -23,9 +23,9 @@ void beMouse::Init(beSystemEventManager* systemEventManager, const beWindow* win
 	m_windowHeight = window->GetHeight();
 	m_windowWidth = window->GetWidth();
 	
-	auto hinstance = (HINSTANCE*)window->GetHInstance();
-	auto hWnd = *(HWND*)window->GetHWnd();
-	auto result = DirectInput8Create(*hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, nullptr);
+	auto hinstance = window->GetHInstance();
+	auto hWnd = window->GetHWnd();
+	auto result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, nullptr);
 	BE_ASSERT(result >= 0);
 	result = m_directInput->CreateDevice(GUID_SysMouse, &m_mouse, nullptr);
 	BE_ASSERT(result >= 0);

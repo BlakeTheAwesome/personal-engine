@@ -2,10 +2,8 @@
 #include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
-#include "BlakesEngine/Core/beTypeTests.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
@@ -50,8 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		environment.Initialise(GetCommandLineA());
 	}
 
-	beSystemEventManager* systemEventManager = PIMPL_NEW(beSystemEventManager)();
-	defer(PIMPL_DELETE(systemEventManager));
+	auto systemEventManager = std::make_unique<beSystemEventManager>();
 
 	//beTypeTests::RunTypeTests();
 	beClock::Initialise();
@@ -60,30 +57,25 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	frameTimer.LimitFPS(60);
 	
 	beString windowName("TestWindow");
-	auto window = PIMPL_NEW(beWindow)(systemEventManager, &hInstance, windowName, 1600, 900, false);
+	auto window = new beWindow(systemEventManager.get(), hInstance, windowName, 1600, 900, false);
 	
-	RenderDocManager* renderDoc = nullptr;
+	std::unique_ptr<RenderDocManager> renderDoc;
 	#ifdef ENABLE_RENDERDOC
 	const bool usingRenderDoc = environment.Get("r");
 	if (usingRenderDoc)
 	{
-		renderDoc = BE_NEW RenderDocManager(*(HWND*)window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
+		renderDoc = std::make_unique<RenderDocManager>(window->GetHWnd(), RENDERDOC_PATH, RENDERDOC_CAPTURE_PATH);
 	}
-	defer(BE_SAFE_DELETE(renderDoc));
 	#endif
 
-	auto renderInterface = PIMPL_NEW(beRenderInterface)();
+	auto renderInterface = std::make_unique<beRenderInterface>();
 	renderInterface->Init(window, 0.01f, 1000.00f, true);
-	defer(
-		renderInterface->Deinit();
-		PIMPL_DELETE(renderInterface);
-		PIMPL_DELETE(window);
-	);
+	defer( renderInterface->Deinit(); );
 
 	beKeyboard keyboard;
-	keyboard.Init(systemEventManager);
+	keyboard.Init(systemEventManager.get());
 	beMouse mouse;
-	mouse.Init(systemEventManager, window);
+	mouse.Init(systemEventManager.get(), window);
 	beGamepad gamepad;
 	gamepad.Init(0);
 	defer(
@@ -109,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	struct WinProcCallback {
 		HWND hWnd;
-	} winProcCallback {*(HWND*)window->GetHWnd()};
+	} winProcCallback {window->GetHWnd()};
 
 	beSystemEventManager::CallbackId winProcCallbackId = systemEventManager->RegisterCallbackWinProc(&winProcCallback, [](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, void* userdata, LRESULT* result) -> bool {
 		auto* winProcCallback = (WinProcCallback*)userdata;
@@ -134,11 +126,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	
 	beShaderPack shaderPack;
-	shaderPack.shaderColour.Init(renderInterface, beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
-	shaderPack.shaderTexture.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
-	shaderPack.shaderTexture2d.Init(renderInterface, beWString(L"Texture_p.cso"), beWString(L"Texture2dNorm_v.cso"), beWString(L"Texture2dPixels_v.cso"));
-	shaderPack.shaderLitTexture.Init(renderInterface, beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
-	shaderPack.Init(renderInterface);
+	shaderPack.shaderColour.Init(renderInterface.get(), beWString(L"Colour_p.cso"), beWString(L"Colour_v.cso"));
+	shaderPack.shaderTexture.Init(renderInterface.get(), beWString(L"Texture_p.cso"), beWString(L"Texture_v.cso"));
+	shaderPack.shaderTexture2d.Init(renderInterface.get(), beWString(L"Texture_p.cso"), beWString(L"Texture2dNorm_v.cso"), beWString(L"Texture2dPixels_v.cso"));
+	shaderPack.shaderLitTexture.Init(renderInterface.get(), beWString(L"Light_p.cso"), beWString(L"Light_v.cso"));
+	shaderPack.Init(renderInterface.get());
 	defer
 	(
 		shaderPack.Deinit();
@@ -149,16 +141,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	);
 
 
-	std::unique_ptr<beDebugWorld> debugWorld(PIMPL_NEW(beDebugWorld)());
-	debugWorld->Init(renderInterface);
+	auto debugWorld = std::make_unique<beDebugWorld>();
+	debugWorld->Init(renderInterface.get());
 	defer(debugWorld->Deinit(););
 
 	beAppData appData;
 	appData.environment = &environment;
-	appData.systemEventManager = systemEventManager;
-	appData.renderInterface = renderInterface;
+	appData.systemEventManager = systemEventManager.get();
+	appData.renderInterface = renderInterface.get();
 	appData.debugWorld = debugWorld.get();
-	appData.renderDocManager = renderDoc;
+	appData.renderDocManager = renderDoc.get();
 	appData.keyboard = &keyboard;
 	appData.mouse = &mouse;
 	appData.gamepad = &gamepad;

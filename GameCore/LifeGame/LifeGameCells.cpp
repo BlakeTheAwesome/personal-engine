@@ -362,7 +362,7 @@ void LifeGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatri
 	{
 		void* bufferMem = m_vertexBuffer.Map(renderInterface);
 		BE_ASSERT(m_vertexBuffer.BufferSize() == m_renderBlocks.DataSize());
-		BE_MEMCPY(bufferMem, m_renderBlocks.begin(), m_renderBlocks.DataSize());
+		memcpy(bufferMem, m_renderBlocks.begin(), m_renderBlocks.DataSize());
 		m_vertexBuffer.Unmap(renderInterface);
 	}
 }

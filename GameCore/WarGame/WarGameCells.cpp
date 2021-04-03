@@ -1,6 +1,9 @@
 module;
 #include "BlakesEngine/bePCH.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include "BlakesEngine/Core/bePrintf.h"
 #include <d3d11.h>
+#include <numeric>
 
 module WarGameCells;
 
@@ -17,6 +20,7 @@ import beContainerHelpers;
 import beAppData;
 import beZOrder;
 import beRandomFunctions;
+import RangeIter;
 
 static constexpr int MAX_HP = 5;
 
@@ -427,7 +431,7 @@ void WarGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatrix
 	{
 		void* bufferMem = m_vertexBuffer.Map(renderInterface);
 		BE_ASSERT(m_vertexBuffer.BufferSize() == m_renderBlocks.DataSize());
-		BE_MEMCPY(bufferMem, m_renderBlocks.begin(), m_renderBlocks.DataSize());
+		memcpy(bufferMem, m_renderBlocks.begin(), m_renderBlocks.DataSize());
 		m_vertexBuffer.Unmap(renderInterface);
 	}
 }

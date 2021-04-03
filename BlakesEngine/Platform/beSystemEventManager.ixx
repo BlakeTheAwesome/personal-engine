@@ -1,16 +1,17 @@
 module;
-#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Platform/beWindows.h"
 
 export module beSystemEventManager;
 
 import beTypes;
 import bePrimitiveType;
+import beVector;
 
 export class beSystemEventManager
 {
-	PIMPL_DECLARE(beSystemEventManager);
-
+	public:
+	beSystemEventManager();
+	~beSystemEventManager();
 	using CallbackId = bePrimitiveType<u8, 0xff>;
 
 	void Update();
@@ -23,5 +24,14 @@ export class beSystemEventManager
 	CallbackId RegisterCallbackWinProc(void* userdata, tCallbackWinProc);
 	void DeregisterCallbackWinProc(CallbackId id);
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+private:
+	struct CallbackWin32Pump { void* userdata; tCallbackWinPump cb; CallbackId id; };
+	beFixedVector<CallbackWin32Pump, 16> m_callbackWin32Pump;
+
+	struct CallbackWinProc { void* userdata; tCallbackWinProc cb; CallbackId id; };
+	beFixedVector<CallbackWinProc, 16> m_callbackWinProc;
+
+	CallbackId m_nextCallbackId{0};
 };
 

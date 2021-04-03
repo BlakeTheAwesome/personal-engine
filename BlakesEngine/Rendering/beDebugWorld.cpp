@@ -26,42 +26,21 @@ import beAppData;
 
 using VertexColourType = beShaderColour::VertexType;
 
-PIMPL_DATA(beDebugWorld)
-	bool InitAxes(beRenderInterface* ri);
-
-	beRenderBuffer axesVertexBuffer;
-	beRenderBuffer axesIndexBuffer;
-	beRenderBuffer mouseVertexBuffer;
-	beRenderBuffer mouseIndexBuffer;
-	
-	beRenderBuffer gridVertexBuffer;
-	beRenderBuffer gridLinesIndexBuffer;
-	beRenderBuffer gridFilledIndexBuffer;
-	bool renderAxes = false;
-	bool renderMouse = false;
-	bool haveMouseVerts = false;
-PIMPL_DATA_END
-
-
-PIMPL_CONSTRUCT(beDebugWorld)
+beDebugWorld::~beDebugWorld()
 {
-}
-
-PIMPL_DESTROY(beDebugWorld)
-{
-	BE_ASSERT(!axesVertexBuffer.IsValid() && !axesIndexBuffer.IsValid());
+	BE_ASSERT(!m_axesVertexBuffer.IsValid() && !m_axesIndexBuffer.IsValid());
 }
 
 bool beDebugWorld::Init(beRenderInterface* ri)
 {
 	bool success = true;
-	success |= self.InitAxes(ri);
+	success |= InitAxes(ri);
 	return success;
 }
 
 void beDebugWorld::Update(beRenderInterface& ri, const beMouse& mouse, const Matrix& viewMatrix)
 {
-	if (self.renderMouse)
+	if (m_renderMouse)
 	{
 		static constexpr int maxVertexCount = 18;
 		beArray<VertexColourType, maxVertexCount> vertices;
@@ -95,16 +74,16 @@ void beDebugWorld::Update(beRenderInterface& ri, const beMouse& mouse, const Mat
 		addPos(mouseX+5, mouseY  );
 		addPos(mouseX+5, mouseY+5);
 
-		self.haveMouseVerts = vertCount > 0;
+		m_haveMouseVerts = vertCount > 0;
 
 		LOG("MouseX:{:.2f} mouseY{:.2f}", mouseX, mouseY);
 
-		if (self.haveMouseVerts)
+		if (m_haveMouseVerts)
 		{
-			bool success = self.mouseVertexBuffer.Allocate(&ri, ElementSize(vertices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
+			bool success = m_mouseVertexBuffer.Allocate(&ri, ElementSize(vertices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
 			if (!success) { BE_ASSERT(false); }
 
-			success = self.mouseIndexBuffer.Allocate(&ri, ElementSize(indices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
+			success = m_mouseIndexBuffer.Allocate(&ri, ElementSize(indices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
 			if (!success) { BE_ASSERT(false); }
 		}
 	}
@@ -112,15 +91,15 @@ void beDebugWorld::Update(beRenderInterface& ri, const beMouse& mouse, const Mat
 
 void beDebugWorld::Deinit()
 {
-	self.gridFilledIndexBuffer.Release();
-	self.gridLinesIndexBuffer.Release();
-	self.gridVertexBuffer.Release();
+	m_gridFilledIndexBuffer.Release();
+	m_gridLinesIndexBuffer.Release();
+	m_gridVertexBuffer.Release();
 
-	self.axesIndexBuffer.Release();
-	self.axesVertexBuffer.Release();
+	m_axesIndexBuffer.Release();
+	m_axesVertexBuffer.Release();
 }
 
-bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
+bool beDebugWorld::InitAxes(beRenderInterface* ri)
 {
 	enum
 	{
@@ -156,10 +135,10 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 	indices[5] = 5;
 
 
-	bool success = axesVertexBuffer.Allocate(ri, ElementSize(vertices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
+	bool success = m_axesVertexBuffer.Allocate(ri, ElementSize(vertices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
 	if (!success) { BE_ASSERT(false); return false; }
 
-	success = axesIndexBuffer.Allocate(ri, ElementSize(indices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
+	success = m_axesIndexBuffer.Allocate(ri, ElementSize(indices), vertexCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
 	if (!success) { BE_ASSERT(false); return false; }
 	
 	return true;
@@ -167,40 +146,40 @@ bool beDebugWorld::Impl::InitAxes(beRenderInterface* ri)
 
 void beDebugWorld::ToggleRenderMouseRay()
 {
-	self.renderMouse = !self.renderMouse;
+	m_renderMouse = !m_renderMouse;
 }
 
 void beDebugWorld::Render(beRenderInterface* ri, beShaderColour* shaderColour, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
 	shaderColour->SetActive(ri);
-	if (self.renderAxes)
+	if (m_renderAxes)
 	{
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-		ID3D11Buffer* vertexBuffers[] = {self.axesVertexBuffer.GetBuffer()};
-		const u32 strides[] = {(u32)self.axesVertexBuffer.ElementSize()};
+		ID3D11Buffer* vertexBuffers[] = {m_axesVertexBuffer.GetBuffer()};
+		const u32 strides[] = {(u32)m_axesVertexBuffer.ElementSize()};
 		const u32 offsets[] = {0};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
-		deviceContext->IASetIndexBuffer(self.axesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)self.axesIndexBuffer.D3DIndexTopology());
+		deviceContext->IASetIndexBuffer(m_axesIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_axesIndexBuffer.D3DIndexTopology());
 
-		shaderColour->Render(ri, self.axesIndexBuffer.NumElements(), 0);
+		shaderColour->Render(ri, m_axesIndexBuffer.NumElements(), 0);
 	}
 
-	if (self.renderMouse && self.haveMouseVerts)
+	if (m_renderMouse && m_haveMouseVerts)
 	{
 		ID3D11DeviceContext* deviceContext = ri->GetDeviceContext();
-		ID3D11Buffer* vertexBuffers[] = {self.mouseVertexBuffer.GetBuffer()};
-		const u32 strides[] = {(u32)self.mouseVertexBuffer.ElementSize()};
+		ID3D11Buffer* vertexBuffers[] = {m_mouseVertexBuffer.GetBuffer()};
+		const u32 strides[] = {(u32)m_mouseVertexBuffer.ElementSize()};
 		const u32 offsets[] = {0};
 		deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
-		deviceContext->IASetIndexBuffer(self.mouseIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)self.mouseIndexBuffer.D3DIndexTopology());
+		deviceContext->IASetIndexBuffer(m_mouseIndexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_mouseIndexBuffer.D3DIndexTopology());
 
-		shaderColour->Render(ri, self.mouseIndexBuffer.NumElements(), 0);
+		shaderColour->Render(ri, m_mouseIndexBuffer.NumElements(), 0);
 	}
 }
 
 void beDebugWorld::SetRenderAxes(bool v)
 {
-	self.renderAxes = v;
+	m_renderAxes = v;
 }

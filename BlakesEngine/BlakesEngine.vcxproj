@@ -223,7 +223,6 @@
     <ClCompile Include="Core\bePrintf.cpp" />
     <ClCompile Include="Core\beString.cpp" />
     <ClCompile Include="Core\beStringUtil.cpp" />
-    <ClCompile Include="Core\beTypeTests.cpp" />
     <ClCompile Include="bePCH.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -296,7 +295,6 @@
     <ClCompile Include="Core\beNonCopiable.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Core\bePimpl.h" />
     <ClCompile Include="Core\bePrimitiveType.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -312,7 +310,6 @@
     <ClCompile Include="Core\beTypes.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Core\beTypeTests.h" />
     <ClInclude Include="bePCH.h" />
     <ClCompile Include="Core\RangeIter.ixx">
       <FileType>Document</FileType>

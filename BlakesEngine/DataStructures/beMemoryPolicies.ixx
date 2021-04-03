@@ -165,7 +165,7 @@ struct beVectorMallocPolicy : public NonCopiable
 			T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*capacity);
 			if (m_count > 0)
 			{
-				BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
+				memcpy(newBuffer, m_buffer, sizeof(T)*m_count);
 				BE_FREE_ALIGNED(m_buffer);
 			}
 			m_buffer = newBuffer;
@@ -270,7 +270,7 @@ struct beVectorHybridPolicy : public NonCopiable
 				T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*capacity);
 				if (m_count > 0)
 				{
-					BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
+					memcpy(newBuffer, m_buffer, sizeof(T)*m_count);
 					if (m_buffer != (T*)m_storage)
 					{
 						BE_FREE_ALIGNED(m_buffer);
@@ -406,7 +406,7 @@ struct beAssignableMallocPolicy
 			T* newBuffer = (T*)BE_MALLOC_ALIGNED(alignof(T), sizeof(T)*allocSize);
 			if (m_count > 0)
 			{
-				BE_MEMCPY(newBuffer, m_buffer, sizeof(T)*m_count);
+				memcpy(newBuffer, m_buffer, sizeof(T)*m_count);
 			}
 			BE_FREE_ALIGNED(m_buffer);
 			m_buffer = newBuffer;

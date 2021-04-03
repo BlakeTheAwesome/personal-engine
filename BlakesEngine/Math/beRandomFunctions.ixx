@@ -8,7 +8,7 @@ export module beRandomFunctions;
 import beRandom;
 import RangeIter;
 
-namespace beRandomFunctions
+export namespace beRandomFunctions
 {
 	int WeightedRandom(beRandom* random, std::span<int> weights)
 	{

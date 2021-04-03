@@ -141,7 +141,7 @@ class beVectorBase : protected Policy
 			}
 
 			int index = m_count++;
-			BE_NEW(&GetBuffer()[index]) T(that);
+			new(&GetBuffer()[index]) T(that);
 			return index;
 		}
 
@@ -201,7 +201,7 @@ class beVectorBase : protected Policy
 		T* AddNew(Args&&... args)
 		{
 			T* obj = AllocateNew();
-			return BE_NEW(obj) T{std::forward<Args>(args)...};
+			return new(obj) T{std::forward<Args>(args)...};
 		}
 
 		template<class ...Args>

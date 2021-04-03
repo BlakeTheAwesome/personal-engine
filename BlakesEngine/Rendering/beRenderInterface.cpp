@@ -6,7 +6,6 @@ module;
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beDeferred.h"
-#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/beString.h"
 
 #include <d3d11.h>
@@ -96,100 +95,59 @@ mat4 LookAtRH_Fast( vec3 eye, vec3 target, vec3 up )
 
 
 
-
-PIMPL_DATA(beRenderInterface)
-	void CreateDevice(HWND* hWnd, int windowWidth, int windowHeight, int clientWidth, int clientHeight);
-	void CreateDepthBuffer(int clientWidth, int clientHeight);
-	void CreateStencilView();
-	void CreateBlendStates();
-	void CreateBackBuffer();
-	void CreateRasterState();
-	void InitialiseViewport(float clientWidth, float clientHeight);
-	void CreateMatrices(float width, float height, float nearPlane, float farPlane);
-
-	Matrix m_projectionMatrix;
-	Matrix m_worldMatrix;
-	Matrix m_orthoMatrix;
-	Matrix m_orthoMatrixPixelCoord;
-
-	IDXGISwapChain* m_swapChain = nullptr;
-	ID3D11Device* m_device = nullptr; // Mostly memory like stuff
-	ID3D11DeviceContext* m_deviceContext = nullptr; // Mostly GPUish stuff
-	ID3D11RenderTargetView *m_backBuffer = nullptr;
-	ID3D11Texture2D* m_depthStencilBuffer = nullptr;
-	ID3D11DepthStencilState* m_depthDisabledStencilState = nullptr;
-	ID3D11DepthStencilState* m_depthStencilState = nullptr;
-	ID3D11DepthStencilView* m_depthStencilView = nullptr;
-	ID3D11RasterizerState* m_rasterState = nullptr;
-	ID3D11RasterizerState* m_wireframeRasterState = nullptr;
-	ID3D11BlendState* m_alphaEnableBlendingState = nullptr;
-	ID3D11BlendState* m_alphaDisableBlendingState = nullptr;
-
-	Vec3 m_lightDirection {0.f, 0.f, 0.f};
-	float m_width = 0.f;
-	float m_height = 0.f;
-	float m_near = 0.f;
-	float m_far = 0.f;
-	size_t m_videoCardMemory = 0;
-	char m_videoCardDescription[128];
-	bool m_vsync_enabled = false;
-	bool m_wireframe = false;
-
-PIMPL_DATA_END
-
-PIMPL_CONSTRUCT(beRenderInterface)
+beRenderInterface::beRenderInterface()
 {
 	m_videoCardDescription[0] = '\0';
 }
 
-PIMPL_DESTROY(beRenderInterface)
+beRenderInterface::~beRenderInterface()
 {
 	BE_ASSERT(!m_device);
 }
 
 void beRenderInterface::Init(beWindow* window, float nearPlane, float farPlane, bool vSync)
 {
-	self.m_vsync_enabled = vSync;
+	m_vsync_enabled = vSync;
 
-	HWND* hWnd = (HWND*)window->GetHWnd();
+	HWND hWnd = window->GetHWnd();
 	int width = window->GetWidth();
 	int height = window->GetHeight();
 	float fWidth = (float)width;
 	float fHeight = (float)height;
 
-	self.m_width = fWidth;
-	self.m_height = fHeight;
-	self.m_near = nearPlane;
-	self.m_far = farPlane;
-	self.CreateDevice(hWnd, window->GetWindowWidth(), window->GetWindowHeight(), width, height);
-	self.CreateDepthBuffer(width, height);
-	self.CreateStencilView();
-	self.CreateBlendStates();
-	self.CreateBackBuffer();
-	self.CreateRasterState();
-	self.InitialiseViewport(fWidth, fHeight);
-	self.CreateMatrices(fWidth, fHeight, nearPlane, farPlane);
+	m_width = fWidth;
+	m_height = fHeight;
+	m_near = nearPlane;
+	m_far = farPlane;
+	CreateDevice(hWnd, window->GetWindowWidth(), window->GetWindowHeight(), width, height);
+	CreateDepthBuffer(width, height);
+	CreateStencilView();
+	CreateBlendStates();
+	CreateBackBuffer();
+	CreateRasterState();
+	InitialiseViewport(fWidth, fHeight);
+	CreateMatrices(fWidth, fHeight, nearPlane, farPlane);
 }
 
 void beRenderInterface::Deinit()
 {
-	self.m_swapChain->SetFullscreenState(FALSE, nullptr); // Need to be in windowed mode to close cleanly
+	m_swapChain->SetFullscreenState(FALSE, nullptr); // Need to be in windowed mode to close cleanly
 	
-	BE_SAFE_RELEASE(self.m_alphaEnableBlendingState);
-	BE_SAFE_RELEASE(self.m_alphaDisableBlendingState);
-	BE_SAFE_RELEASE(self.m_backBuffer);
-	BE_SAFE_RELEASE(self.m_swapChain);
-	BE_SAFE_RELEASE(self.m_wireframeRasterState);
-	BE_SAFE_RELEASE(self.m_rasterState);
-	BE_SAFE_RELEASE(self.m_depthStencilView);
-	BE_SAFE_RELEASE(self.m_depthStencilState);
-	BE_SAFE_RELEASE(self.m_depthDisabledStencilState);
-	BE_SAFE_RELEASE(self.m_depthStencilBuffer);
-	BE_SAFE_RELEASE(self.m_device);
-	BE_SAFE_RELEASE(self.m_deviceContext);
+	BE_SAFE_RELEASE(m_alphaEnableBlendingState);
+	BE_SAFE_RELEASE(m_alphaDisableBlendingState);
+	BE_SAFE_RELEASE(m_backBuffer);
+	BE_SAFE_RELEASE(m_swapChain);
+	BE_SAFE_RELEASE(m_wireframeRasterState);
+	BE_SAFE_RELEASE(m_rasterState);
+	BE_SAFE_RELEASE(m_depthStencilView);
+	BE_SAFE_RELEASE(m_depthStencilState);
+	BE_SAFE_RELEASE(m_depthDisabledStencilState);
+	BE_SAFE_RELEASE(m_depthStencilBuffer);
+	BE_SAFE_RELEASE(m_device);
+	BE_SAFE_RELEASE(m_deviceContext);
 }
 
-void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int windowHeight, int clientWidth, int clientHeight)
+void beRenderInterface::CreateDevice(HWND hWnd, int windowWidth, int windowHeight, int clientWidth, int clientHeight)
 {
 	unsigned int refreshRateNumerator = 0;
 	unsigned int refreshRateDenominator = 0;
@@ -263,7 +221,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int wind
 	scd.BufferDesc.Width = clientWidth;
 	scd.BufferDesc.Height = clientHeight;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = *hWnd;
+	scd.OutputWindow = hWnd;
 	scd.Windowed = TRUE;
 	scd.SampleDesc.Count = 1; // Antialias level
 	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen switching
@@ -312,7 +270,7 @@ void beRenderInterface::Impl::CreateDevice(HWND* hWnd, int windowWidth, int wind
 	BE_ASSERT(res == 0);
 }
 
-void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
+void beRenderInterface::CreateDepthBuffer(int width, int height)
 {
 	D3D11_TEXTURE2D_DESC depthBufferDesc = {};
 	
@@ -332,7 +290,7 @@ void beRenderInterface::Impl::CreateDepthBuffer(int width, int height)
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 }
 
-void beRenderInterface::Impl::CreateStencilView()
+void beRenderInterface::CreateStencilView()
 {
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
 	{
@@ -380,7 +338,7 @@ void beRenderInterface::Impl::CreateStencilView()
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 }
 
-void beRenderInterface::Impl::CreateBlendStates()
+void beRenderInterface::CreateBlendStates()
 {
 	D3D11_BLEND_DESC blendDesc{};
 	
@@ -402,7 +360,7 @@ void beRenderInterface::Impl::CreateBlendStates()
 	if(FAILED(res)) { BE_ASSERT(false); return; }
 }
 
-void beRenderInterface::Impl::CreateBackBuffer()
+void beRenderInterface::CreateBackBuffer()
 {
 	// Set back buffer as render target
 	ID3D11Texture2D* backBufferTexture = nullptr;
@@ -424,7 +382,7 @@ void beRenderInterface::Impl::CreateBackBuffer()
 	backBufferTexture->Release();
 }
 
-void beRenderInterface::Impl::CreateRasterState()
+void beRenderInterface::CreateRasterState()
 {
 	D3D11_RASTERIZER_DESC rasterDesc;
 	memset(&rasterDesc, 0, sizeof(rasterDesc));
@@ -450,7 +408,7 @@ void beRenderInterface::Impl::CreateRasterState()
 	m_deviceContext->RSSetState(m_rasterState);
 }
 
-void beRenderInterface::Impl::InitialiseViewport(float width, float height)
+void beRenderInterface::InitialiseViewport(float width, float height)
 {
 	// top left is -1,-1
 	D3D11_VIEWPORT viewport{};
@@ -464,7 +422,7 @@ void beRenderInterface::Impl::InitialiseViewport(float width, float height)
 	m_deviceContext->RSSetViewports(1, &viewport);
 }
 
-void beRenderInterface::Impl::CreateMatrices(float width, float height, float nearPlane, float farPlane)
+void beRenderInterface::CreateMatrices(float width, float height, float nearPlane, float farPlane)
 {
 	float fov = (float)PI / 4.0f;
 	float screenAspect = width / height;
@@ -488,11 +446,11 @@ void beRenderInterface::BeginFrame()
 	//float r = sinf(0.0f + s_offset);
 	//float g = sinf(0.2f + s_offset);
 	//float b = sinf(0.4f + s_offset);
-	//self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
+	//m_deviceContext->ClearRenderTargetView(m_backBuffer, D3DXCOLOR(r, g, b, 1.0f));
 
 	float colour[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	self.m_deviceContext->ClearRenderTargetView(self.m_backBuffer, colour);
-	self.m_deviceContext->ClearDepthStencilView(self.m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_deviceContext->ClearRenderTargetView(m_backBuffer, colour);
+	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void beRenderInterface::Update(float dt)
@@ -500,126 +458,126 @@ void beRenderInterface::Update(float dt)
 	s_offset += dt;
 	XMVECTOR lightDir = XMVectorSet(sinf(s_offset* 2.f), sinf(s_offset * 0.7f), cosf(s_offset* 2.f), 0.f);
 	XMVECTOR normalisedDir = XMVector3Normalize(lightDir);
-	XMStoreFloat3(&self.m_lightDirection, normalisedDir);
-	//self.m_lightDirection = Vec3(0.f, 0.f, 1.f);
+	XMStoreFloat3(&m_lightDirection, normalisedDir);
+	//m_lightDirection = Vec3(0.f, 0.f, 1.f);
 }
 
 void beRenderInterface::EndFrame()
 {
-	if (self.m_vsync_enabled)
+	if (m_vsync_enabled)
 	{
-		self.m_swapChain->Present(1, 0);
+		m_swapChain->Present(1, 0);
 	}
 	else
 	{
-		self.m_swapChain->Present(0, 0);
+		m_swapChain->Present(0, 0);
 	}
 }
 
 
 void beRenderInterface::EnableZBuffer()
 {
-	self.m_deviceContext->OMSetDepthStencilState(self.m_depthStencilState, 1);
+	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
 }
 
 void beRenderInterface::DisableZBuffer()
 {
-	self.m_deviceContext->OMSetDepthStencilState(self.m_depthDisabledStencilState, 1);
+	m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
 }
 
 void beRenderInterface::EnableAlpha()
 {
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
-	self.m_deviceContext->OMSetBlendState(self.m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
 }
 
 void beRenderInterface::DisableAlpha()
 {
 	float blendFactor[4] = {0.f, 0.f, 0.f, 0.f};
-	self.m_deviceContext->OMSetBlendState(self.m_alphaDisableBlendingState, blendFactor, 0xffffffff);
+	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 }
 
 Vec2 beRenderInterface::GetScreenSize() const
 {
-	return Vec2(self.m_width, self.m_height);
+	return Vec2(m_width, m_height);
 }
 
 void beRenderInterface::ToggleWireframe()
 {
-	self.m_wireframe = !self.m_wireframe;
-	if (self.m_wireframe)
+	m_wireframe = !m_wireframe;
+	if (m_wireframe)
 	{
-		self.m_deviceContext->RSSetState(self.m_wireframeRasterState);
+		m_deviceContext->RSSetState(m_wireframeRasterState);
 	}
 	else
 	{
-		self.m_deviceContext->RSSetState(self.m_rasterState);
+		m_deviceContext->RSSetState(m_rasterState);
 	}
 }
 
 void beRenderInterface::SetRenderTarget(ID3D11RenderTargetView* renderTarget, ID3D11DepthStencilView* depthStencilView, float width, float height, float nearPlane, float farPlane)
 {
-	self.m_deviceContext->OMSetRenderTargets(1, &renderTarget, depthStencilView);
-	self.CreateMatrices(width, height, nearPlane, farPlane);
-	self.InitialiseViewport(width, height);
+	m_deviceContext->OMSetRenderTargets(1, &renderTarget, depthStencilView);
+	CreateMatrices(width, height, nearPlane, farPlane);
+	InitialiseViewport(width, height);
 }
 
 void beRenderInterface::RestoreRenderTarget()
 {
-	self.m_deviceContext->OMSetRenderTargets(1, &self.m_backBuffer, self.m_depthStencilView);
-	self.CreateMatrices(self.m_width, self.m_height, self.m_near, self.m_far);
-	self.InitialiseViewport(self.m_width, self.m_height);
+	m_deviceContext->OMSetRenderTargets(1, &m_backBuffer, m_depthStencilView);
+	CreateMatrices(m_width, m_height, m_near, m_far);
+	InitialiseViewport(m_width, m_height);
 }
 
 void beRenderInterface::ClearDepth()
 {
-	self.m_deviceContext->ClearDepthStencilView(self.m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 const Matrix& beRenderInterface::GetProjectionMatrix() const
 {
-	return self.m_projectionMatrix;
+	return m_projectionMatrix;
 }
 
 const Matrix& beRenderInterface::GetWorldMatrix() const
 {
-	return self.m_worldMatrix;
+	return m_worldMatrix;
 }
 
 const Matrix& beRenderInterface::GetOrthoMatrix() const
 {
-	return self.m_orthoMatrix;
+	return m_orthoMatrix;
 }
 
 const Matrix& beRenderInterface::GetOrthoMatrixPixelCoord() const
 {
-	return self.m_orthoMatrixPixelCoord;
+	return m_orthoMatrixPixelCoord;
 }
 
 const Vec3& beRenderInterface::GetLightDirection() const
 {
-	return self.m_lightDirection;
+	return m_lightDirection;
 }
 
 ID3D11Device* beRenderInterface::GetDevice()
 {
-	return self.m_device;
+	return m_device;
 }
 
 ID3D11DeviceContext* beRenderInterface::GetDeviceContext()
 {
-	return self.m_deviceContext;
+	return m_deviceContext;
 }
 
 ID3D11DepthStencilView* beRenderInterface::GetDepthStencilView()
 {
-	return self.m_depthStencilView;
+	return m_depthStencilView;
 }
 
 void beRenderInterface::GetVideoCardInfo(beString* cardName, size_t* memory)
 {
-	cardName->assign(self.m_videoCardDescription);
-	*memory = self.m_videoCardMemory;
+	cardName->assign(m_videoCardDescription);
+	*memory = m_videoCardMemory;
 	return;
 }
 

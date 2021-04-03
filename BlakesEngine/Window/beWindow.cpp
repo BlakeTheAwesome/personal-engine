@@ -2,7 +2,6 @@ module;
 #include "BlakesEngine/bePCH.h"
 
 #include "BlakesEngine/Core/beString.h"
-#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Platform/beWindows.h"
@@ -10,31 +9,14 @@ module beWindow;
 
 import beSystemEventManager;
 
-PIMPL_DATA(beWindow, beSystemEventManager* systemEventManager, void* hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
-		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		static Impl* s_staticInstance;
-		beSystemEventManager* m_systemEventManager;
-		HWND m_hWnd{nullptr};
-		HINSTANCE m_hInstance{nullptr};
-		int m_width = 0;
-		int m_height = 0;
-		int m_clientRectWidth = 0;
-		int m_clientRectHeight = 0;
-		int m_x = 0;
-		int m_y = 0;
-PIMPL_DATA_END
+static beWindow* s_staticInstance = nullptr;
 
-beWindow::Impl* beWindow::Impl::s_staticInstance = nullptr;
-
-PIMPL_CONSTRUCT_ARGS(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
-PIMPL_CONSTRUCT_ARGS_VARS(beWindow, systemEventManager, _hInstance, windowName, windowWidth, windowHeight, fullscreen)
-PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, void* _hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
+beWindow::beWindow(beSystemEventManager* systemEventManager, HINSTANCE hInstance, const beStringView& windowName, int windowWidth, int windowHeight, bool fullscreen)
 : m_systemEventManager(systemEventManager)
 , m_width(windowWidth)
 , m_height(windowHeight)
+, m_hInstance(hInstance)
 {
-	auto hInstance = *(HINSTANCE*)_hInstance;
-	m_hInstance = hInstance;
 	std::wstring wideWindowName;
 	wideWindowName.assign(windowName.begin(), windowName.end());
 
@@ -76,56 +58,58 @@ PIMPL_CONSTRUCT_ARGS_BODY(beWindow, beSystemEventManager* systemEventManager, vo
 	}
 	m_clientRectWidth = clientRect.right - clientRect.left;
 	m_clientRectHeight = clientRect.bottom - clientRect.top;
+
+	BE_ASSERT(!s_staticInstance);
 	s_staticInstance = this;
 }
 
-PIMPL_DESTROY(beWindow)
+beWindow::~beWindow()
 {
 	s_staticInstance = nullptr;
 	DestroyWindow(m_hWnd);
 }
 
-void * beWindow::GetHInstance() const
+HINSTANCE beWindow::GetHInstance() const
 {
-	return &self.m_hInstance;
+	return m_hInstance;
 }
 
-void* beWindow::GetHWnd() const
+HWND beWindow::GetHWnd() const
 {
-	return &self.m_hWnd;
+	return m_hWnd;
 }
 
 int beWindow::GetWidth() const
 {
-	return self.m_clientRectWidth;
+	return m_clientRectWidth;
 }
 
 int beWindow::GetHeight() const
 {
-	return self.m_clientRectHeight;
+	return m_clientRectHeight;
 }
 
 int beWindow::GetWindowWidth() const
 {
-	return self.m_width;
+	return m_width;
 }
 
 int beWindow::GetWindowHeight() const
 {
-	return self.m_height;
+	return m_height;
 }
 
 int beWindow::GetX() const
 {
-	return self.m_x;
+	return m_x;
 }
 
 int beWindow::GetY() const
 {
-	return self.m_y;
+	return m_y;
 }
 
-LRESULT CALLBACK beWindow::Impl::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK beWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -139,7 +123,7 @@ LRESULT CALLBACK beWindow::Impl::WindowProc(HWND hWnd, UINT message, WPARAM wPar
 
 		case WM_MOVE:
 		{
-			Impl* self = s_staticInstance;
+			beWindow* self = s_staticInstance;
 			if (self)
 			{
 				self->m_x = (int)(short)LOWORD(lParam);   // horizontal position 

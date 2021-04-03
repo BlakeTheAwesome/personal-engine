@@ -238,8 +238,8 @@ class beHashMapBase
 			Remap(const key_type& key, const value_type& value)
 			{
 				hash = beHash<key_type>::GetHash(key);
-				BE_MEMCPY(keyStorage, &key, sizeof(keyStorage));
-				BE_MEMCPY(valueStorage, &value, sizeof(valueStorage));
+				memcpy(keyStorage, &key, sizeof(keyStorage));
+				memcpy(valueStorage, &value, sizeof(valueStorage));
 			}
 			size_t hash;
 			u8 keyStorage[sizeof(key_type)];
@@ -269,8 +269,8 @@ class beHashMapBase
 				if ((!m_validEntries[index]))
 				{
 					m_validEntries[index] = true;
-					BE_MEMCPY(&m_keys[index], remap.keyStorage, sizeof(key_type));
-					BE_MEMCPY(&m_values[index], remap.valueStorage, sizeof(value_type));
+					memcpy(&m_keys[index], remap.keyStorage, sizeof(key_type));
+					memcpy(&m_values[index], remap.valueStorage, sizeof(value_type));
 					break;
 				}
 			}

@@ -2,7 +2,6 @@ module;
 
 #include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/beAssert.h"
-#include "BlakesEngine/Core/bePimpl.h"
 #include "BlakesEngine/Platform/beWindows.h"
 
 module beSystemEventManager;
@@ -11,23 +10,13 @@ import beVector;
 
 static beSystemEventManager* s_instance = nullptr;
 
-PIMPL_DATA(beSystemEventManager)
-	struct CallbackWin32Pump { void* userdata; tCallbackWinPump cb; CallbackId id; };
-	beFixedVector<CallbackWin32Pump, 16> m_callbackWin32Pump;
-
-	struct CallbackWinProc { void* userdata; tCallbackWinProc cb; CallbackId id; };
-	beFixedVector<CallbackWinProc, 16> m_callbackWinProc;
-
-	CallbackId m_nextCallbackId{0};
-PIMPL_DATA_END
-
-PIMPL_CONSTRUCT(beSystemEventManager)
+beSystemEventManager::beSystemEventManager()
 {
 	BE_ASSERT(!s_instance);
-	s_instance = Parent();
+	s_instance = this;
 }
 
-PIMPL_DESTROY(beSystemEventManager)
+beSystemEventManager::~beSystemEventManager()
 {
 	BE_ASSERT(m_callbackWin32Pump.Count() == 0);
 	BE_ASSERT(m_callbackWinProc.Count() == 0);
@@ -48,7 +37,7 @@ void beSystemEventManager::Update()
 		DispatchMessage(&msg);
 		//LOG("recieved message:0x%08x", msg.message);
 		
-		for (const auto& callback : self.m_callbackWin32Pump)
+		for (const auto& callback : m_callbackWin32Pump)
 		{
 			callback.cb(msg, callback.userdata);
 		}
@@ -57,18 +46,18 @@ void beSystemEventManager::Update()
 
 beSystemEventManager::CallbackId beSystemEventManager::RegisterCallbackWin32Pump(void* userdata, tCallbackWinPump cb)
 {
-	beSystemEventManager::CallbackId id = self.m_nextCallbackId++;
-	self.m_callbackWin32Pump.AddNew(userdata, cb, id);
+	beSystemEventManager::CallbackId id = m_nextCallbackId++;
+	m_callbackWin32Pump.AddNew(userdata, cb, id);
 	return id;
 }
 
 void beSystemEventManager::DeregisterCallbackWin32Pump(beSystemEventManager::CallbackId id)
 {
-	for (auto& cb : self.m_callbackWin32Pump)
+	for (auto& cb : m_callbackWin32Pump)
 	{
 		if (cb.id == id)
 		{
-			self.m_callbackWin32Pump.QuickRemove(&cb);
+			m_callbackWin32Pump.QuickRemove(&cb);
 			return;
 		}
 	}
@@ -79,18 +68,18 @@ void beSystemEventManager::DeregisterCallbackWin32Pump(beSystemEventManager::Cal
 
 beSystemEventManager::CallbackId beSystemEventManager::RegisterCallbackWinProc(void* userdata, tCallbackWinProc cb)
 {
-	beSystemEventManager::CallbackId id = self.m_nextCallbackId++;
-	self.m_callbackWinProc.AddNew(userdata, cb, id);
+	beSystemEventManager::CallbackId id = m_nextCallbackId++;
+	m_callbackWinProc.AddNew(userdata, cb, id);
 	return id;
 }
 
 void beSystemEventManager::DeregisterCallbackWinProc(beSystemEventManager::CallbackId id)
 {
-	for (auto& cb : self.m_callbackWinProc)
+	for (auto& cb : m_callbackWinProc)
 	{
 		if (cb.id == id)
 		{
-			self.m_callbackWinProc.QuickRemove(&cb);
+			m_callbackWinProc.QuickRemove(&cb);
 			return;
 		}
 	}
@@ -104,7 +93,7 @@ LRESULT CALLBACK beSystemEventManager::WindowProc(HWND hWnd, UINT message, WPARA
 	//BE_ASSERT(pThis == s_instance);
 	
 	LRESULT result;
-	for (const auto& callback : s_instance->self.m_callbackWinProc)
+	for (const auto& callback : s_instance->m_callbackWinProc)
 	{
 		if (callback.cb(hWnd, message, wParam, lParam, callback.userdata, &result))
 		{
