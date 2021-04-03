@@ -1,6 +1,3 @@
-module;
-#include "BlakesEngine/Rendering/beDebugWorldDecl.h"
-
 export module StateWarGame;
 import beStateMachine;
 import beFlightCamera;
@@ -10,6 +7,7 @@ import beFont;
 import beFastGrid;
 import beAppData;
 import WarGameCells;
+import beDebugWorld;
 
 
 export class StateWarGame : public beState

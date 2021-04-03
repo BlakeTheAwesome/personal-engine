@@ -1,6 +1,5 @@
 module;
 #include "BlakesEngine/bePCH.h"
-#include "BlakesEngine/Rendering/beDebugWorld.h"
 #include "BlakesEngine/Core/bePrintf.h"
 
 #include <iomanip>
@@ -90,7 +89,7 @@ void StateWarGame::Update(beStateMachine* stateMachine, float dt)
 	}
 
 	m_camera.Update(dt);
-	debugWorld->Update(*m_appData, m_camera.GetViewMatrix());
+	debugWorld->Update(*m_appData->renderInterface, *m_appData->mouse, m_camera.GetViewMatrix());
 
 	bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
 	bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space) || gamepad->GetPressed(beGamepad::Button::X);

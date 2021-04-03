@@ -1,7 +1,5 @@
 module;
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
-#include "BlakesEngine/Rendering/beDebugWorldDecl.h"
-
 export module beAppData;
 
 
@@ -13,6 +11,7 @@ import beEnvironment;
 import beWindow;
 import beShaderPack;
 import beRenderInterface;
+import beDebugWorld;
 
 export struct beAppData
 {

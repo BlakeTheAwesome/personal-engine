@@ -249,7 +249,6 @@
     <ClCompile Include="Math\beDirectXMath.ixx" />
     <ClCompile Include="Math\beIntersection.cpp" />
     <ClCompile Include="Math\bePerlinNoise.cpp" />
-    <ClCompile Include="Math\beRandomFunctions.cpp" />
     <ClCompile Include="Platform\beEnvironment.cpp" />
     <ClCompile Include="Platform\beSystemEventManager.cpp" />
     <ClCompile Include="Rendering\beAnimatedModel.cpp" />
@@ -413,7 +412,7 @@
     <ClCompile Include="Math\beRandom.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Math\beRandomFunctions.h" />
+    <ClCompile Include="Math\beRandomFunctions.ixx" />
     <ClCompile Include="Math\beZOrder.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -428,7 +427,9 @@
     <ClCompile Include="Rendering\beBitmap.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Rendering\beDebugWorld.h" />
+    <ClCompile Include="Rendering\beDebugWorld.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClCompile Include="Rendering\beFont.ixx">
       <FileType>Document</FileType>
     </ClCompile>

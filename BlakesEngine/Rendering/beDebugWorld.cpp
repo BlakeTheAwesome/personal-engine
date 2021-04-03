@@ -1,5 +1,5 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beDebugWorld.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
@@ -7,6 +7,8 @@
 #include <d3d11.h>
 
 #include <fstream>
+
+module beDebugWorld;
 
 import beRenderInterface;
 import beRenderBuffer;
@@ -57,13 +59,10 @@ bool beDebugWorld::Init(beRenderInterface* ri)
 	return success;
 }
 
-void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
+void beDebugWorld::Update(beRenderInterface& ri, const beMouse& mouse, const Matrix& viewMatrix)
 {
 	if (self.renderMouse)
 	{
-		auto mouse = appData.mouse;
-		auto ri = appData.renderInterface;
-
 		static constexpr int maxVertexCount = 18;
 		beArray<VertexColourType, maxVertexCount> vertices;
 		beArray<u32, maxVertexCount> indices; for (int i : RangeIter(maxVertexCount)) { indices[i] = i; }
@@ -75,7 +74,7 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 		Vec3 pos, dir;
 		auto addPos = [&](float x, float y)
 		{
-			if (beCameraUtils::GetScreeenToWorldRay(*ri, viewMatrix, x, y, &pos, &dir))
+			if (beCameraUtils::GetScreeenToWorldRay(ri, viewMatrix, x, y, &pos, &dir))
 			{
 				const Vec3 endPoint3 = pos + (dir * 100.f);
 				vertices[(size_t)vertCount] = VertexColourType{ToVec4(pos, 1.f), startColour};
@@ -84,8 +83,8 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 			}
 		};
 
-		const float mouseX = (float)mouse->GetX();
-		const float mouseY = (float)mouse->GetY();
+		const float mouseX = (float)mouse.GetX();
+		const float mouseY = (float)mouse.GetY();
 		addPos(mouseX-5, mouseY-5);
 		addPos(mouseX-5, mouseY  );
 		addPos(mouseX-5, mouseY+5);
@@ -102,10 +101,10 @@ void beDebugWorld::Update(const beAppData& appData, const Matrix& viewMatrix)
 
 		if (self.haveMouseVerts)
 		{
-			bool success = self.mouseVertexBuffer.Allocate(ri, ElementSize(vertices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
+			bool success = self.mouseVertexBuffer.Allocate(&ri, ElementSize(vertices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_VERTEX_BUFFER, 0, 0, 0, vertices.data());
 			if (!success) { BE_ASSERT(false); }
 
-			success = self.mouseIndexBuffer.Allocate(ri, ElementSize(indices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
+			success = self.mouseIndexBuffer.Allocate(&ri, ElementSize(indices), vertCount, D3D11_USAGE_DEFAULT, D3D11_BIND_INDEX_BUFFER, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, 0, 0, indices.data());
 			if (!success) { BE_ASSERT(false); }
 		}
 	}

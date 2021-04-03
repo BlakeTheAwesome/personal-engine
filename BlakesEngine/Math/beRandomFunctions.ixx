@@ -1,9 +1,10 @@
-#pragma once
+module;
 #include "BlakesEngine/Core/beAssert.h"
 
 #include <span>
 #include <numeric>
 
+export module beRandomFunctions;
 import beRandom;
 import RangeIter;
 

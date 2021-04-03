@@ -6,7 +6,6 @@
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
-#include "BlakesEngine/Rendering/beDebugWorld.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
@@ -31,6 +30,7 @@ import StateLifeGame;
 import StateRenderTest;
 import StateWarGame;
 import beAppData;
+import beDebugWorld;
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC

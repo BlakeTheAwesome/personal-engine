@@ -1,5 +1,3 @@
-module;
-#include "BlakesEngine/Rendering/beDebugWorld.h"
 export module StateRenderTest;
 
 import beStateMachine;

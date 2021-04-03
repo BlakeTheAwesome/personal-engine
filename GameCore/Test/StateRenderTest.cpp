@@ -7,7 +7,6 @@ module;
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
-#include "BlakesEngine/Rendering/beDebugWorld.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 
 #include <shellapi.h>

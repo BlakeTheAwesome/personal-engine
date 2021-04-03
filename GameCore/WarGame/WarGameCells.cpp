@@ -1,6 +1,5 @@
 module;
 #include "BlakesEngine/bePCH.h"
-#include "BlakesEngine/Math/beRandomFunctions.h"
 #include <d3d11.h>
 
 module WarGameCells;
@@ -17,6 +16,7 @@ import beRenderInterface;
 import beContainerHelpers;
 import beAppData;
 import beZOrder;
+import beRandomFunctions;
 
 static constexpr int MAX_HP = 5;
 

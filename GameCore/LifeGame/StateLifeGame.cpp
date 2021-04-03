@@ -1,8 +1,6 @@
 module;
 #include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/Rendering/beDebugWorld.h"
-
 #include <iomanip>
 
 module StateLifeGame;
@@ -17,6 +15,7 @@ import beKeyboard;
 import beMouse;
 import beRenderInterface;
 import beAppData;
+import beDebugWorld;
 
 void StateLifeGame::Enter(beStateMachine* stateMachine)
 {
@@ -86,7 +85,7 @@ void StateLifeGame::Update(beStateMachine* stateMachine, float dt)
 	}
 
 	m_camera.Update(dt);
-	debugWorld->Update(*m_appData, m_camera.GetViewMatrix());
+	debugWorld->Update(*m_appData->renderInterface, *m_appData->mouse, m_camera.GetViewMatrix());
 
 	const bool autoUpdate = !m_paused && ((m_timeUntilNextUpdate -= dt) < 0.f);
 	const bool step = autoUpdate || keyboard->IsPressed(beKeyboard::Button::Space) || gamepad->GetPressed(beGamepad::Button::X);

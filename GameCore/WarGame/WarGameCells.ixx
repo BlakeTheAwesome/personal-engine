@@ -1,6 +1,3 @@
-module;
-#include "BlakesEngine/Rendering/beDebugWorldDecl.h"
-
 export module WarGameCells;
 import beRenderBuffer; 
 import beArray;
@@ -13,6 +10,7 @@ import beFont;
 import beFastGrid;
 import beAppData;
 import beTypes;
+import beDebugWorld;
 
 export class WarGameCells
 {
