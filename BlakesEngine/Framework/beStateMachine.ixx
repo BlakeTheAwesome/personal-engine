@@ -1,3 +1,3 @@
 export module beStateMachine;
-export import :Machine;
-export import :State;
+
+export import :types;

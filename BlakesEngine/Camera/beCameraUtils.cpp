@@ -1,8 +1,11 @@
 module;
-#include "BlakesEngine/bePCH.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
+
+#include <cfloat>
+#include <algorithm>
 
 module beCameraUtils;
+
+import beRenderInterface;
 import beCamera;
 import beArray;
 import beDirectXMath;

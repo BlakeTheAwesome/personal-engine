@@ -1,16 +1,9 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beModel.h"
-#include "beRendering.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-#include "BlakesEngine/Rendering/beTexture.h"
-#include "BlakesEngine/Shaders/beShaderTexture.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/Core/beStringUtil.h"
-
-#include "BlakesEngine/Core/beContainerHelpers.h"
 
 #include <d3d11.h>
 
@@ -18,11 +11,18 @@
 #include <charconv>
 #include <filesystem>
 
+module beModel;
+
+import beRenderInterface;
+import beRendering;
 import beVector;
 import bePackedData;
 import beMath;
 import RangeIter;
 import beByteStreams;
+import beShaderPack;
+import beTexture;
+import beContainerHelpers;
 
 using namespace beRendering;
 

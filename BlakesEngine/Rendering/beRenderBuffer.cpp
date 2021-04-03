@@ -1,10 +1,10 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beRenderBuffer.h"
-#include "beRenderInterface.h"
-
 #include "BlakesEngine/Core/beAssert.h"
-
 #include <d3d11.h>
+module beRenderBuffer;
+
+import beRenderInterface;
 
 bool beRenderBuffer::Allocate(beRenderInterface* ri, int elementSize, int numElements, int d3dUsage, u32 d3dBindFlags, beRendering::Topology topology, u32 d3dCPUAccessFlags, u32 d3dMiscFlags, void* initialData)
 {

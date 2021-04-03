@@ -1,10 +1,14 @@
-#pragma once
-import beMath;
+module;
+
+
 #include <optional>
 #include <tuple>
 #include <span>
 
-namespace beIntersection
+export module beIntersection;
+
+import beMath;
+export namespace beIntersection
 {
 	// Collisions will be 0 at rayStart, 1 at rayStart+rayDir, negative if behind, >1 if past rayStart+rayDir
 	int TRayVsAABB(const Vec3& rayStart, const Vec3& rayDir, const Vec3& boxMin, const Vec3& boxMax, std::span<float, 2> collisions);

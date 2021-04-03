@@ -1,13 +1,13 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "StateLifeGame.h"
-
-#include "BlakesEngine/Framework/beAppData.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
 
 #include <iomanip>
 
+module StateLifeGame;
+
+import beShaderPack;
 import beWindow;
 import beRandom;
 import beStateMachine;
@@ -15,6 +15,8 @@ import beCameraUtils;
 import beGamepad;
 import beKeyboard;
 import beMouse;
+import beRenderInterface;
+import beAppData;
 
 void StateLifeGame::Enter(beStateMachine* stateMachine)
 {

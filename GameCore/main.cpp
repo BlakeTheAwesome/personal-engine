@@ -6,23 +6,17 @@
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Framework/beAppData.h"
 
 #include "BlakesEngine/Platform/beWindows.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
 
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
 
-#include "GameCore/Test/StateRenderTest.h"
-#include "GameCore/LifeGame/StateLifeGame.h"
-#include "GameCore/WarGame/StateWarGame.h"
-
 #include <shellapi.h>
 #include <chrono>
 
+import beShaderPack;
 import beWindow;
 import beMouse;
 import beSystemEventManager;
@@ -32,6 +26,11 @@ import beGamepad;
 import beKeyboard;
 import beFrameTimer;
 import beClock;
+import beRenderInterface;
+import StateLifeGame;
+import StateRenderTest;
+import StateWarGame;
+import beAppData;
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC

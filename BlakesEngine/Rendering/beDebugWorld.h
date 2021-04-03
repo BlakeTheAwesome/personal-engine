@@ -1,12 +1,13 @@
 #pragma once
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Core/bePimpl.h"
+#include "beDebugWorldDecl.h"
 import beMath;
+import beRenderInterface;
+import beAppData;
+import beTexture;
 
-class beRenderInterface;
-class beTexture;
 class beShaderColour;
-struct beAppData;
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 

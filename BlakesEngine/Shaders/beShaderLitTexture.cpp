@@ -1,16 +1,21 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beShaderLitTexture.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
-#include "BlakesEngine/Rendering/beModel.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-
 #include "BlakesEngine/Platform/beWindows.h"
+#include "beShaderCBufferDefinitions.h"
+#include "BlakesEngine/Core/beString.h"
+
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>
+
+module beShaderPack:litTex;
+
+import beRenderInterface;
+import beModel;
 
 using CameraBufferType = beShaderDefinitions::CameraBuffer;
 
@@ -160,7 +165,7 @@ void beShaderLitTexture::SetShaderParameters(beRenderInterface* ri, const Shader
 	}
 
 	ID3D11Buffer* psConstantBuffers[] = { m_lightBuffer.GetBuffer() };
-	deviceContext->PSSetConstantBuffers(CBUFIDX_LightBuffer, 1, psConstantBuffers);
+	deviceContext->PSSetConstantBuffers(CBuffers::LightBuffer, 1, psConstantBuffers);
 }
 
 void beShaderLitTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)

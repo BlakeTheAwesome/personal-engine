@@ -252,13 +252,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LifeGame\LifeGameCells.h" />
-    <ClInclude Include="LifeGame\StateLifeGame.h" />
-    <ClInclude Include="Test\StateRenderTest.h" />
-    <ClInclude Include="WarGame\StateWarGame.h" />
+    <ClCompile Include="LifeGame\LifeGameCells.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="LifeGame\StateLifeGame.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Test\StateRenderTest.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="WarGame\StateWarGame.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="WarGame\Unit.h" />
     <ClInclude Include="WarGame\UnitVisual.h" />
-    <ClInclude Include="WarGame\WarGameCells.h" />
+    <ClCompile Include="WarGame\WarGameCells.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="cmdargs.txt">

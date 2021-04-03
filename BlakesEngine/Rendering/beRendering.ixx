@@ -1,7 +1,7 @@
-#pragma once
+export module beRendering;
 import beTypes;
 
-namespace beRendering
+export namespace beRendering
 {
 	enum class Topology : u8
 	{

@@ -1,12 +1,15 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "beShaderPack.h"
 #include "beShaderCBufferDefinitions.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beMacros.h"
 
 #include <d3d11.h>
 
+module beShaderPack;
+
+import beRenderInterface;
 import beDirectXMath;
 using namespace DirectXMath;
 
@@ -92,7 +95,7 @@ void beShaderPack::UpdateFrameBuffers(beRenderInterface* ri, const Matrix& viewM
 			m_frameData->m_matrixBuffer.Unmap(ri);
 
 			ID3D11Buffer* constantBuffers[] = {m_frameData->m_matrixBuffer.GetBuffer()};
-			deviceContext->VSSetConstantBuffers(CBUFIDX_MatrixBuffer, 1, constantBuffers);
+			deviceContext->VSSetConstantBuffers(CBuffers::MatrixBuffer, 1, constantBuffers);
 		}
 	}
 
@@ -121,7 +124,7 @@ void beShaderPack::UpdateFrameBuffers(beRenderInterface* ri, const Matrix& viewM
 			m_frameData->m_orthoMatrixBuffer.Unmap(ri);
 
 			ID3D11Buffer* vsConstantBuffers[] ={m_frameData->m_orthoMatrixBuffer.GetBuffer()};
-			deviceContext->VSSetConstantBuffers(CBUFIDX_OrthoMatrixBuffer, 1, vsConstantBuffers);
+			deviceContext->VSSetConstantBuffers(CBuffers::OrthoMatrixBuffer, 1, vsConstantBuffers);
 		}
 	}
 
@@ -143,7 +146,7 @@ void beShaderPack::UpdateFrameBuffers(beRenderInterface* ri, const Matrix& viewM
 			m_frameData->m_cameraBuffer.Unmap(ri);
 
 			ID3D11Buffer* vsConstantBuffers[] = {m_frameData->m_cameraBuffer.GetBuffer()};
-			deviceContext->VSSetConstantBuffers(CBUFIDX_CameraBuffer, 1, vsConstantBuffers);
+			deviceContext->VSSetConstantBuffers(CBuffers::CameraBuffer, 1, vsConstantBuffers);
 		}
 	}
 }

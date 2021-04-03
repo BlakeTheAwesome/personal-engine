@@ -18,13 +18,25 @@ import beMath;
 #endif //__cplusplus
 
 
-
 #define CBUFIDX_MatrixBuffer 0
 #define CBUFIDX_OrthoMatrixBuffer 1
 #define CBUFIDX_CameraBuffer 2
 #define CBUFIDX_LightBuffer 3
 #define CBUFIDX_PositionBuffer 4
 #define CBUFIDX_ColourBuffer 5
+
+
+#ifdef __cplusplus
+enum CBuffers
+{
+	MatrixBuffer = CBUFIDX_MatrixBuffer,
+	OrthoMatrixBuffer = CBUFIDX_OrthoMatrixBuffer,
+	CameraBuffer = CBUFIDX_CameraBuffer,
+	LightBuffer = CBUFIDX_LightBuffer,
+	PositionBuffer = CBUFIDX_PositionBuffer,
+	ColourBuffer = CBUFIDX_ColourBuffer,
+};
+#endif
 
 #define CBUF_MatrixBuffer\
 	cbuffer MatrixBuffer SlotId(CBUFIDX_MatrixBuffer)\

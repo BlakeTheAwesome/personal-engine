@@ -1,17 +1,19 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beTexture.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/beStringUtil.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/External/DirectXTK/DDSTextureLoader.h"
 #include "BlakesEngine/External/stb/stb_image.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
 
 #include <D3D11.h>
 #include <filesystem>
 
+module beTexture;
+
+import beRenderInterface;
+import beShaderPack;
 import ZeroMem;
 
 beTexture::~beTexture()

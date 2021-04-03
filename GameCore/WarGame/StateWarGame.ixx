@@ -1,17 +1,18 @@
-#pragma once
-#include "BlakesEngine/Rendering/beBitmap.h"
-#include "BlakesEngine/Rendering/beFont.h"
-#include "BlakesEngine/Shaders/beShaderTexture2d.h"
-#include "BlakesEngine/DataStructures/beFastGrid.h"
-#include "WarGameCells.h"
+module;
+#include "BlakesEngine/Rendering/beDebugWorldDecl.h"
 
+export module StateWarGame;
 import beStateMachine;
 import beFlightCamera;
+import beShaderPack;
+import beBitmap;
+import beFont;
+import beFastGrid;
+import beAppData;
+import WarGameCells;
 
-struct beAppData;
-class beDebugWorld;
 
-class StateWarGame : public beState
+export class StateWarGame : public beState
 {
 	public:
 	StateWarGame() = delete;

@@ -1,8 +1,8 @@
-#pragma once
+export module beContainerHelpers;
+
 import beConcepts;
 
-
-template <Container T>
+export template <Container T>
 inline constexpr int ElementSize(T const& container)
 {
 	return sizeof(typename T::value_type);

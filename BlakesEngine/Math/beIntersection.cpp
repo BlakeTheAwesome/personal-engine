@@ -1,6 +1,9 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "beIntersection.h"
 #include <cmath>
+
+module beIntersection;
 
 import RangeIter;
 

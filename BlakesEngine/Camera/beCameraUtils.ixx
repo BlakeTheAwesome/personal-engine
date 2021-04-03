@@ -1,9 +1,9 @@
 module;
-#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include <optional>
 
 export module beCameraUtils;
 
+import beRenderInterface;
 import beMath;
 import beMouse;
 

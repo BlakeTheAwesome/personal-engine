@@ -1,17 +1,20 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beBitmap.h"
-
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-#include "BlakesEngine/Rendering/beTexture.h"
-#include "BlakesEngine/Core/beContainerHelpers.h"
+#include "BlakesEngine/Shaders/beShaderCBufferDefinitions.h"
 
 #include <d3d11.h>
 
 #include <fstream>
 
+module beBitmap;
+
 import beArray;
+import beRenderInterface;
+import beFont;
+import beTexture;
+import beContainerHelpers;
 
 struct PositionBufferType
 {
@@ -111,7 +114,6 @@ void beBitmap::Deinit()
 	m_vertexBuffer.Release();
 }
 
-#include "beFont.h"
 bool beBitmap::InitText(beRenderInterface* ri, const beFont* font, const beStringView& string, float scale, float maxWidth, u32 invalidStringCharacter, bool fixedWidth, beFont::WrapMode wrapMode)
 {
 	beFont::StringInfo info;
@@ -197,7 +199,7 @@ void beBitmap::Render(beRenderInterface* ri)
 	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-	deviceContext->VSSetConstantBuffers(CBUFIDX_PositionBuffer, 1, constantBuffers);
+	deviceContext->VSSetConstantBuffers(CBuffers::PositionBuffer, 1, constantBuffers);
 }
 
 ID3D11ShaderResourceView* beBitmap::GetTexture() const

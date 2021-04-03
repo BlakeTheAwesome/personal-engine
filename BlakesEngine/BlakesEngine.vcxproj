@@ -219,7 +219,6 @@
     <ClCompile Include="Camera\beCameraUtils.cpp" />
     <ClCompile Include="Camera\beFlightCamera.cpp" />
     <ClCompile Include="Core\beAssert.cpp" />
-    <ClCompile Include="Core\beContainerHelpers.cpp" />
     <ClCompile Include="Core\beHash.cpp" />
     <ClCompile Include="Core\bePrintf.cpp" />
     <ClCompile Include="Core\beString.cpp" />
@@ -241,7 +240,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="External\stb\stb.cpp" />
-    <ClCompile Include="Framework\beStateMachineMachine.ixx" />
+    <ClCompile Include="Framework\beStateMachineMachine.cpp" />
     <ClCompile Include="Framework\beStateMachineTypes.ixx" />
     <ClCompile Include="Input\beGamepad.cpp" />
     <ClCompile Include="Input\beKeyboard.cpp" />
@@ -286,7 +285,9 @@
     <ClCompile Include="Core\beConcepts.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Core\beContainerHelpers.h" />
+    <ClCompile Include="Core\beContainerHelpers.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
     <ClCompile Include="Core\beHash.ixx">
@@ -337,7 +338,9 @@
     <ClCompile Include="DataStructures\beDataBuffer.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="DataStructures\beFastGrid.h" />
+    <ClCompile Include="DataStructures\beFastGrid.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClCompile Include="DataStructures\beHashMap.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -383,8 +386,10 @@
     <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
     <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />
     <ClInclude Include="External\stb\stb_image.h" />
-    <ClInclude Include="Framework\beAppData.h" />
-    <ClCompile Include="Framework\beStateMachineState.ixx" />
+    <ClCompile Include="Framework\beAppData.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Framework\beStateMachineState.cpp" />
     <ClCompile Include="Framework\beStateMachine.ixx" />
     <ClCompile Include="Input\beGamepad.ixx">
       <FileType>Document</FileType>
@@ -395,7 +400,9 @@
     <ClCompile Include="Input\beMouse.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Math\beIntersection.h" />
+    <ClCompile Include="Math\beIntersection.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClCompile Include="Math\beMath.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -407,7 +414,9 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Math\beRandomFunctions.h" />
-    <ClInclude Include="Math\beZOrder.h" />
+    <ClCompile Include="Math\beZOrder.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClCompile Include="Platform\beEnvironment.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -416,20 +425,39 @@
     </ClCompile>
     <ClInclude Include="Platform\beWindows.h" />
     <ClInclude Include="Rendering\beAnimatedModel.h" />
-    <ClInclude Include="Rendering\beBitmap.h" />
+    <ClCompile Include="Rendering\beBitmap.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Rendering\beDebugWorld.h" />
-    <ClInclude Include="Rendering\beFont.h" />
-    <ClInclude Include="Rendering\beModel.h" />
-    <ClInclude Include="Rendering\beRenderBuffer.h" />
-    <ClInclude Include="Rendering\beRendering.h" />
-    <ClInclude Include="Rendering\beRenderInterface.h" />
-    <ClInclude Include="Rendering\beTexture.h" />
+    <ClCompile Include="Rendering\beFont.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Rendering\beModel.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Rendering\beRenderBuffer.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Rendering\beRendering.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Rendering\beRenderInterface.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Rendering\beTexture.ixx" />
+    <ClInclude Include="Rendering\beDebugWorldDecl.h" />
     <ClInclude Include="Shaders\beShaderCBufferDefinitions.h" />
-    <ClInclude Include="Shaders\beShaderColour.h" />
-    <ClInclude Include="Shaders\beShaderLitTexture.h" />
-    <ClInclude Include="Shaders\beShaderPack.h" />
-    <ClInclude Include="Shaders\beShaderTexture.h" />
-    <ClInclude Include="Shaders\beShaderTexture2d.h" />
+    <ClCompile Include="Shaders\beShaderColour.ixx" />
+    <ClCompile Include="Shaders\beShaderLitTexture.ixx" />
+    <ClCompile Include="Shaders\beShaderPack.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Shaders\beShaderTexture.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="Shaders\beShaderTexture2d.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClCompile Include="Time\beClock.ixx">
       <FileType>Document</FileType>
     </ClCompile>

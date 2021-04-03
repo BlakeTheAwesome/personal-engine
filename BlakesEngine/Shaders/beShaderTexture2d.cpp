@@ -1,20 +1,22 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beShaderTexture2d.h"
 #include "BlakesEngine/Core/beAssert.h"
-#include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Platform/beWindows.h"
 #include "beShaderCBufferDefinitions.h"
+#include "BlakesEngine/Core/beString.h"
 
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>
 
+module beShaderPack:tex2d;
 import beArray;
 import RangeIter;
+import beRenderInterface;
+import beContainerHelpers;
 
 enum
 {
@@ -194,7 +196,7 @@ void beShaderTexture2d::RenderQuad(beRenderInterface* ri, Vec2 uvMin, Vec2 uvMax
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffers, strides, offsets);
 	deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)m_indexBuffer.D3DIndexTopology());
 	deviceContext->IASetIndexBuffer(m_indexBuffer.GetBuffer(), DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->VSSetConstantBuffers(CBUFIDX_PositionBuffer, 1, constantBuffers);
+	deviceContext->VSSetConstantBuffers(CBuffers::PositionBuffer, 1, constantBuffers);
 
 	ri->DisableZBuffer();
 	Render(ri, c_quadIndexCount, texture, normalisedVerts, textureMode);

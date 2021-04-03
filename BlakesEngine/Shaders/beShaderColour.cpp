@@ -1,15 +1,18 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beShaderColour.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beDeferred.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-
 #include "BlakesEngine/Platform/beWindows.h"
+#include "BlakesEngine/Core/beString.h"
+
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>
+
+module beShaderPack:colour;
+import beRenderInterface;
 
 beShaderColour::~beShaderColour()
 {

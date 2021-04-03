@@ -1,19 +1,22 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "WarGameCells.h"
-
-#include "BlakesEngine/Core/beContainerHelpers.h"
-#include "BlakesEngine/Framework/beAppData.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Math/beIntersection.h"
 #include "BlakesEngine/Math/beRandomFunctions.h"
+#include <d3d11.h>
 
+module WarGameCells;
+
+import beShaderPack;
 import beMath;
 import beRandom;
 import beCameraUtils;
 import beGamepad;
 import beKeyboard;
 import beMouse;
+import beIntersection;
+import beRenderInterface;
+import beContainerHelpers;
+import beAppData;
+import beZOrder;
 
 static constexpr int MAX_HP = 5;
 
@@ -400,15 +403,26 @@ void WarGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatrix
 	float distance = m_animationDistancePerSecond * dt;
 	float negDist = -distance;
 
-	for (auto iter : m_cells.GridIter())
+	// ICE's in VC 16.9.3
+	//for (auto iter : m_cells.GridIter())
+	//{
+	//	Block* block = &m_renderBlocks[iter.index];
+	//	float increment = (*iter).hp != 0 ? distance : negDist;
+	//	float xPos = iter.xPos() * BlockLength;
+	//	float yPos = iter.yPos() * BlockLength;
+	//	bool highlight = iter.index == m_hightlightIndex;
+	//	UpdateBlock(block, *iter, xPos, yPos, increment, highlight);
+	//}
+	for (int index : RangeIter(m_cells.Capacity()))
 	{
-		Block* block = &m_renderBlocks[iter.index];
-		float increment = (*iter).hp != 0 ? distance : negDist;
-		float xPos = iter.xPos() * BlockLength;
-		float yPos = iter.yPos() * BlockLength;
-		bool highlight = iter.index == m_hightlightIndex;
-		UpdateBlock(block, *iter, xPos, yPos, increment, highlight);
+		Block* block = &m_renderBlocks[index];
+		const float increment = m_cells.At(index).hp ? distance : negDist;
+		const float xPos = beZOrder::DecodeMorton2X(index) * BlockLength;
+		const float yPos = beZOrder::DecodeMorton2Y(index) * BlockLength;
+		const bool highlight = index == m_hightlightIndex;
+		UpdateBlock(block, m_cells.At(index), xPos, yPos, increment, highlight);
 	}
+
 
 	{
 		void* bufferMem = m_vertexBuffer.Map(renderInterface);

@@ -1,22 +1,20 @@
-
+module;
 #include "BlakesEngine/bePCH.h"
-#include "StateRenderTest.h"
 
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beTypeTests.h"
-#include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/External/Misc/StreamToDebugOutput.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
 #include "BlakesEngine/Rendering/beDebugWorld.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
 #include "BlakesEngine/External/RenderDoc-Manager/RenderDocManager.h"
-#include "BlakesEngine/Framework/beAppData.h"
 
 #include <shellapi.h>
 #include <iomanip>
+#include <d3d11.h>
+
+module StateRenderTest;
 
 #ifdef DEBUG
 #define ENABLE_RENDERDOC
@@ -24,6 +22,8 @@
 #define RENDERDOC_CAPTURE_PATH "d:/temp/renderDoc/capture"
 #endif
 
+
+import beShaderPack;
 import beRandom;
 import bePackedData;
 import RangeIter;
@@ -34,6 +34,9 @@ import beGamepad;
 import beKeyboard;
 import beMouse;
 import beWindow;
+import beRenderInterface;
+import beContainerHelpers;
+import beAppData;
 
 void StateRenderTest::Enter(beStateMachine* stateMachine)
 {

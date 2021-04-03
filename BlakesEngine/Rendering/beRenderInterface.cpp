@@ -1,13 +1,18 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "beRenderInterface.h"
 
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beDeferred.h"
+#include "BlakesEngine/Core/bePimpl.h"
+#include "BlakesEngine/Core/beString.h"
 
 #include <d3d11.h>
 ///#include <DirectXPackedVector.h>
+
+module beRenderInterface;
 
 import beWindow;
 import ZeroMem;

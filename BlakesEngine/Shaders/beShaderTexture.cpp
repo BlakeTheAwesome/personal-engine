@@ -1,15 +1,21 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "beShaderTexture.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beDeferred.h"
 #include "BlakesEngine/Core/bePrintf.h"
 #include "BlakesEngine/Core/beMacros.h"
 #include "BlakesEngine/Platform/beWindows.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
+#include "beShaderCBufferDefinitions.h"
+#include "BlakesEngine/Core/beString.h"
 
 #include <windowsx.h>
 #include <d3d11.h>
 #include <D3Dcompiler.h>
+
+module beShaderPack:tex;
+
+import beRenderInterface;
 
 using ColourBufferType = beShaderDefinitions::ColourBuffer;
 
@@ -177,7 +183,7 @@ void beShaderTexture::SetShaderParameters(beRenderInterface* ri)
 	}
 	
 	ID3D11Buffer* buffers[] = {m_colourBuffer.GetBuffer()};
-	deviceContext->VSSetConstantBuffers(CBUFIDX_ColourBuffer, 1, buffers);
+	deviceContext->VSSetConstantBuffers(CBuffers::ColourBuffer, 1, buffers);
 }
 
 void beShaderTexture::Render(beRenderInterface* ri, int indexCount, ID3D11ShaderResourceView* texture)

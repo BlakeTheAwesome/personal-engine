@@ -1,11 +1,9 @@
+module;
 #include "BlakesEngine/bePCH.h"
-#include "beFont.h"
 
 #include "BlakesEngine/Core/beAssert.h"
-#include "BlakesEngine/Core/beContainerHelpers.h"
 #include "BlakesEngine/Core/bePrintf.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-#include "BlakesEngine/Rendering/beTexture.h"
+#include "BlakesEngine/Core/beString.h"
 
 #include <d3d11.h>
 
@@ -13,8 +11,13 @@
 #include <algorithm>
 #include <string>
 
+module beFont;
+
+import beTexture;
+import beRenderInterface;
 import beMath;
 import beVector;
+import beContainerHelpers;
 
 bool beFont::ReadLine(const std::string& line)
 {

@@ -1,32 +1,9 @@
 module;
-
-#include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include <memory>
-export module beStateMachine:Machine;
+module beStateMachine;
 
-import :State;
-
-export class beStateMachine
-{
-	public:
-	beStateMachine(std::shared_ptr<beState> initialState=nullptr);
-	beStateMachine(const beStateMachine&) = delete;
-	beStateMachine(beStateMachine&&) = delete;
-	~beStateMachine();
-	beStateMachine& operator=(const beStateMachine&) = delete;
-	beStateMachine& operator=(beStateMachine&&) = delete;
-
-	void ChangeState(std::shared_ptr<beState> state, std::shared_ptr<beState>* previousState=nullptr); // Can retrieve the previous state instead of destroying it
-	void ChangeStateWhenLoaded(std::shared_ptr<beState> state, std::shared_ptr<beState>* previousState=nullptr);
-	bool Update(float dt);
-	void Render();
-
-	private:
-	std::shared_ptr<beState> m_currentState;
-	std::shared_ptr<beState> m_loadingState;
-};
-
+import :types;
 
 // This is set up to allow you to get back the current state when you change.
 // Potential issue if you retrieve a state and stash it on the next state who then deletes it.

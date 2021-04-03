@@ -1,13 +1,15 @@
+module;
+
 #include "BlakesEngine/bePCH.h"
-#include "LifeGameCells.h"
 
-#include "BlakesEngine/Core/beContainerHelpers.h"
+#include "BlakesEngine/Core/beString.h"
 #include "BlakesEngine/Core/beDeferred.h"
-#include "BlakesEngine/Framework/beAppData.h"
-#include "BlakesEngine/Rendering/beRenderInterface.h"
-#include "BlakesEngine/Shaders/beShaderPack.h"
-#include "BlakesEngine/Math/beIntersection.h"
+#include "BlakesEngine/Core/beAssert.h"
+#include <d3d11.h>
 
+module LifeGameCells;
+
+import beShaderPack;
 import RangeIter;
 import beMath;
 import beStateMachine;
@@ -16,6 +18,11 @@ import beCameraUtils;
 import beGamepad;
 import beKeyboard;
 import beMouse;
+import beIntersection;
+import beRenderInterface;
+import beContainerHelpers;
+import beZOrder;
+import beAppData;
 
 void LifeGameCells::Render(beRenderInterface* renderInterface, beShaderPack* shaderPack, const Matrix& viewMatrix, const Vec3& cameraPosition)
 {
@@ -332,13 +339,23 @@ void LifeGameCells::Update(beAppData* appData, float dt, const Matrix& viewMatri
 	const float distance = m_animationDistancePerSecond * dt;
 	const float negDist = -distance;
 
-	for (auto iter : m_cells.GridIter())
+	// ICE's in VC 16.9.3
+	//for (auto iter : m_cells)
+	//{
+	//	Block* block = &m_renderBlocks[iter.index];
+	//	const float increment = *iter ? distance : negDist;
+	//	const float xPos = iter.xPos() * BlockLength;
+	//	const float yPos = iter.yPos() * BlockLength;
+	//	const bool highlight = iter.index == m_hightlightIndex;
+	//	UpdateBlock(block, xPos, yPos, increment, highlight);
+	//}
+	for (int index : RangeIter(m_cells.Capacity()))
 	{
-		Block* block = &m_renderBlocks[iter.index];
-		const float increment = *iter ? distance : negDist;
-		const float xPos = iter.xPos() * BlockLength;
-		const float yPos = iter.yPos() * BlockLength;
-		const bool highlight = iter.index == m_hightlightIndex;
+		Block* block = &m_renderBlocks[index];
+		const float increment = m_cells.At(index) ? distance : negDist;
+		const float xPos = beZOrder::DecodeMorton2X(index) * BlockLength;
+		const float yPos = beZOrder::DecodeMorton2Y(index) * BlockLength;
+		const bool highlight = index == m_hightlightIndex;
 		UpdateBlock(block, xPos, yPos, increment, highlight);
 	}
 
