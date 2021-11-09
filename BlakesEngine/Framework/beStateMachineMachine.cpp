@@ -119,7 +119,7 @@ void beStateMachine::ChangeStateWhenLoaded(std::shared_ptr<beState> state, std::
 		}
 
 		// Leave current state, set new state being loaded
-		m_loadingState = move(state);
+		m_loadingState = state;
 	}
 	else
 	{
@@ -127,7 +127,7 @@ void beStateMachine::ChangeStateWhenLoaded(std::shared_ptr<beState> state, std::
 		{
 			*out_prevState = move(m_currentState);
 		}
-		m_loadingState = move(state);
+		m_loadingState = state;
 	}
 
 	state->Load();

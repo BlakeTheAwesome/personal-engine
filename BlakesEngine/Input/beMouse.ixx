@@ -13,12 +13,14 @@ import beWindow;
 export class beMouse
 {
 public:
-	enum Mode
+	enum class Mode
 	{
-		MODE_ABSOLUTE = 0,
-		MODE_RELATIVE,
+		Absolute,
+		Relative,
 	};
-	enum Button {
+	
+	enum class Button : u8
+	{
 		LeftButton,
 		RightButton,
 		MiddleButton,

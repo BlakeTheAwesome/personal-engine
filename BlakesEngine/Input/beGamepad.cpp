@@ -138,22 +138,22 @@ bool beGamepad::GetDown(Button button) const
 {
 	switch(button)
 	{
-		case A: return (m_thisStateFlags & XINPUT_GAMEPAD_A) != 0;
-		case B: return (m_thisStateFlags & XINPUT_GAMEPAD_B) != 0;
-		case X: return (m_thisStateFlags & XINPUT_GAMEPAD_X) != 0;
-		case Y: return (m_thisStateFlags & XINPUT_GAMEPAD_Y) != 0;
-		case L1: return (m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0;
-		case R1: return (m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0;
-		case Select: return (m_thisStateFlags & XINPUT_GAMEPAD_BACK) != 0;
-		case Start: return (m_thisStateFlags & XINPUT_GAMEPAD_START) != 0;
-		case Up: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0;
-		case Down: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0;
-		case Left: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0;
-		case Right: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0;
-		case L2: return m_l2 > 0.f;
-		case R2: return m_r2 > 0.f;
+		case Button::A: return (m_thisStateFlags & XINPUT_GAMEPAD_A) != 0;
+		case Button::B: return (m_thisStateFlags & XINPUT_GAMEPAD_B) != 0;
+		case Button::X: return (m_thisStateFlags & XINPUT_GAMEPAD_X) != 0;
+		case Button::Y: return (m_thisStateFlags & XINPUT_GAMEPAD_Y) != 0;
+		case Button::L1: return (m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0;
+		case Button::R1: return (m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0;
+		case Button::Select: return (m_thisStateFlags & XINPUT_GAMEPAD_BACK) != 0;
+		case Button::Start: return (m_thisStateFlags & XINPUT_GAMEPAD_START) != 0;
+		case Button::Up: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0;
+		case Button::Down: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0;
+		case Button::Left: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0;
+		case Button::Right: return (m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0;
+		case Button::L2: return m_l2 > 0.f;
+		case Button::R2: return m_r2 > 0.f;
 		
-		case ButtonCount: break;
+		case Button::Count: break;
 	}
 
 	BE_ASSERT(false);
@@ -164,22 +164,22 @@ bool beGamepad::GetPressed(Button button) const
 {
 	switch(button)
 	{
-		case A: return (m_lastStateFlags & XINPUT_GAMEPAD_A) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_A) != 0);
-		case B: return (m_lastStateFlags & XINPUT_GAMEPAD_B) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_B) != 0);
-		case X: return (m_lastStateFlags & XINPUT_GAMEPAD_X) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_X) != 0);
-		case Y: return (m_lastStateFlags & XINPUT_GAMEPAD_Y) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_Y) != 0);
-		case L1: return (m_lastStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0);
-		case R1: return (m_lastStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0);
-		case Select: return (m_lastStateFlags & XINPUT_GAMEPAD_BACK) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_BACK) != 0);
-		case Start: return (m_lastStateFlags & XINPUT_GAMEPAD_START) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_START) != 0);
-		case Up: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_UP) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0);
-		case Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0);
-		case Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0);
-		case Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0);
+		case Button::A: return (m_lastStateFlags & XINPUT_GAMEPAD_A) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_A) != 0);
+		case Button::B: return (m_lastStateFlags & XINPUT_GAMEPAD_B) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_B) != 0);
+		case Button::X: return (m_lastStateFlags & XINPUT_GAMEPAD_X) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_X) != 0);
+		case Button::Y: return (m_lastStateFlags & XINPUT_GAMEPAD_Y) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_Y) != 0);
+		case Button::L1: return (m_lastStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0);
+		case Button::R1: return (m_lastStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0);
+		case Button::Select: return (m_lastStateFlags & XINPUT_GAMEPAD_BACK) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_BACK) != 0);
+		case Button::Start: return (m_lastStateFlags & XINPUT_GAMEPAD_START) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_START) != 0);
+		case Button::Up: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_UP) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0);
+		case Button::Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0);
+		case Button::Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0);
+		case Button::Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0);
 
-		case L2:
-		case R2:
-		case ButtonCount: break;
+		case Button::L2:
+		case Button::R2:
+		case Button::Count: break;
 	}
 
 	BE_ASSERT(false);
@@ -190,22 +190,22 @@ bool beGamepad::GetReleased(Button button) const
 {
 	switch(button)
 	{
-		case A: return (m_lastStateFlags & XINPUT_GAMEPAD_A) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_A) == 0);
-		case B: return (m_lastStateFlags & XINPUT_GAMEPAD_B) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_B) == 0);
-		case X: return (m_lastStateFlags & XINPUT_GAMEPAD_X) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_X) == 0);
-		case Y: return (m_lastStateFlags & XINPUT_GAMEPAD_Y) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_Y) == 0);
-		case L1: return (m_lastStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) == 0);
-		case R1: return (m_lastStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) == 0);
-		case Select: return (m_lastStateFlags & XINPUT_GAMEPAD_BACK) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_BACK) == 0);
-		case Start: return (m_lastStateFlags & XINPUT_GAMEPAD_START) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_START) == 0);
-		case Up: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) == 0);
-		case Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0);
-		case Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0);
-		case Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0);
+		case Button::A: return (m_lastStateFlags & XINPUT_GAMEPAD_A) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_A) == 0);
+		case Button::B: return (m_lastStateFlags & XINPUT_GAMEPAD_B) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_B) == 0);
+		case Button::X: return (m_lastStateFlags & XINPUT_GAMEPAD_X) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_X) == 0);
+		case Button::Y: return (m_lastStateFlags & XINPUT_GAMEPAD_Y) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_Y) == 0);
+		case Button::L1: return (m_lastStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_LEFT_SHOULDER) == 0);
+		case Button::R1: return (m_lastStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_RIGHT_SHOULDER) == 0);
+		case Button::Select: return (m_lastStateFlags & XINPUT_GAMEPAD_BACK) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_BACK) == 0);
+		case Button::Start: return (m_lastStateFlags & XINPUT_GAMEPAD_START) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_START) == 0);
+		case Button::Up: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_UP) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_UP) == 0);
+		case Button::Down: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_DOWN) == 0);
+		case Button::Left: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_LEFT) == 0);
+		case Button::Right: return (m_lastStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 && ((m_thisStateFlags & XINPUT_GAMEPAD_DPAD_RIGHT) == 0);
 		
-		case L2:
-		case R2:
-		case ButtonCount: break;
+		case Button::L2:
+		case Button::R2:
+		case Button::Count: break;
 	}
 
 	BE_ASSERT(false);

@@ -105,7 +105,7 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 	auto mouse = m_appData->mouse;
 	auto renderInterface = m_appData->renderInterface;
 
-	if (gamepad->GetPressed(beGamepad::A) || keyboard->IsPressed(beKeyboard::Button::W))
+	if (gamepad->GetPressed(beGamepad::Button::A) || keyboard->IsPressed(beKeyboard::Button::W))
 	{
 		renderInterface->ToggleWireframe();
 	}
@@ -119,47 +119,47 @@ void StateRenderTest::Update(beStateMachine* stateMachine, float dt)
 		m_gridModel.SetMeshVisibility("GroundFilled", m_showGroundFilled);
 	}
 
-	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
+	if (gamepad->GetPressed(beGamepad::Button::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
 		stateMachine->ChangeState(nullptr);
 		return;
 	}
-	if (gamepad->GetPressed(beGamepad::Y))
+	if (gamepad->GetPressed(beGamepad::Button::Y))
 	{
 		const int shader = ((int)m_shaderToUse + 1) % (int)beRendering::ShaderType::Count;
 		m_shaderToUse = (beRendering::ShaderType)shader;
 	}
-	if (gamepad->GetPressed(beGamepad::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
+	if (gamepad->GetPressed(beGamepad::Button::X) || mouse->IsPressed(beMouse::Button::MiddleButton))
 	{
 		m_modelToUse++;
 		m_modelToUse %= m_models.Count() + 1;
 	}
-	if (gamepad->GetPressed(beGamepad::Select))
+	if (gamepad->GetPressed(beGamepad::Button::Select))
 	{
 		m_renderAxes = !m_renderAxes;
 	}
-	if (gamepad->GetPressed(beGamepad::Up))
+	if (gamepad->GetPressed(beGamepad::Button::Up))
 	{
 		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() + Vec2(0.f, 0.1f));
 		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() + Vec2(0.f, 20.f));
 	}
-	if (gamepad->GetPressed(beGamepad::Down))
+	if (gamepad->GetPressed(beGamepad::Button::Down))
 	{
 		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() - Vec2(0.f, 0.1f));
 		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() - Vec2(0.f, 20.f));
 	}
-	if (gamepad->GetPressed(beGamepad::Left))
+	if (gamepad->GetPressed(beGamepad::Button::Left))
 	{
 		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() - Vec2(0.1f, 0.f));
 		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() - Vec2(20.f, 0.f));
 	}
-	if (gamepad->GetPressed(beGamepad::Right))
+	if (gamepad->GetPressed(beGamepad::Button::Right))
 	{
 		m_bitmapTexQuadNorm.SetPosition(m_bitmapTexQuadNorm.GetPosition() + Vec2(0.1f, 0.f));
 		m_bitmapTexQuadPixelCoord.SetPosition(m_bitmapTexQuadPixelCoord.GetPosition() + Vec2(20.f, 0.f));
 	}
 
-	if (mouse->IsPressed(beMouse::LeftButton))
+	if (mouse->IsPressed(beMouse::Button::LeftButton))
 	{
 		//auto window = m_appData->window;
 		const float screenX = (float)mouse->GetX();// -window->GetX();

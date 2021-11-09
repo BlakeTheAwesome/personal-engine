@@ -25,14 +25,14 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 {
 	BE_ASSERT(!m_texture);
 
-	enum FileType
+	enum class FileType
 	{
 		Invalid = 0,
 		DDS,
 		PNG,
 	};
 
-	FileType fileType = Invalid;
+	FileType fileType = FileType::Invalid;
 	{
 		auto fileNameBegin = textureFilename.begin();
 		auto fileNameEnd = textureFilename.end();
@@ -46,11 +46,11 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 
 		if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, "dds"))
 		{
-			fileType = DDS;
+			fileType = FileType::DDS;
 		}
 		else if (beStringUtil::IsEqualI(fileNameExt, fileNameEnd, "PNG"))
 		{
-			fileType = PNG;
+			fileType = FileType::PNG;
 		}
 	}
 
@@ -63,7 +63,7 @@ bool beTexture::Init(beRenderInterface* ri, beShaderPack* shaderPack, const beSt
 			additionalLoadDir = options.additionalLoadDir.c_str();
 		}
 	}
-	if (fileType == DDS)
+	if (fileType == FileType::DDS)
 	{
 		beWString filename = beStringConversion::UTF8ToWide(textureFilename);
 		HRESULT res = DirectX::CreateDDSTextureFromFile(ri->GetDevice(), filename.c_str(), nullptr, &m_texture);

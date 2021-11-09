@@ -59,10 +59,10 @@ public:
 	void InitialiseViewport(float clientWidth, float clientHeight);
 	void CreateMatrices(float width, float height, float nearPlane, float farPlane);
 
-	Matrix m_projectionMatrix;
-	Matrix m_worldMatrix;
-	Matrix m_orthoMatrix;
-	Matrix m_orthoMatrixPixelCoord;
+	Matrix m_projectionMatrix = IdentityMatrix();
+	Matrix m_worldMatrix = IdentityMatrix();
+	Matrix m_orthoMatrix = IdentityMatrix();
+	Matrix m_orthoMatrixPixelCoord = IdentityMatrix();
 
 	IDXGISwapChain* m_swapChain = nullptr;
 	ID3D11Device* m_device = nullptr; // Mostly memory like stuff

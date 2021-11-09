@@ -95,8 +95,9 @@ void beMouse::Update(float dt)
 
 static inline bool isDown(const DIMOUSESTATE2& mouseState, beMouse::Button button)
 {
-	BE_ASSERT((u32)button < sizeof(mouseState.rgbButtons));
-	const u8 buttonState = mouseState.rgbButtons[button];
+	u8 buttonIdx = (u8)button;
+	BE_ASSERT(buttonIdx < sizeof(mouseState.rgbButtons));
+	const u8 buttonState = mouseState.rgbButtons[buttonIdx];
 	return (buttonState & 0x80) != 0;
 }
 

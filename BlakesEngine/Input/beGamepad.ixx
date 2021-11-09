@@ -5,7 +5,7 @@ import beTypes;
 export class beGamepad
 {
 public:
-	enum Button
+	enum class Button : u8
 	{
 		A,
 		B,
@@ -22,7 +22,7 @@ public:
 		Left,
 		Right,
 
-		ButtonCount,
+		Count,
 	};
 
 	beGamepad() = default;

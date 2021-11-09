@@ -15,13 +15,13 @@ using namespace DirectXMath;
 
 struct beShaderPack::FrameData
 {
-	beShaderDefinitions::MatrixBuffer m_matrixData;
+	beShaderDefinitions::MatrixBuffer m_matrixData{};
 	beRenderBuffer m_matrixBuffer;
 	
-	beShaderDefinitions::OrthoMatrixBuffer m_orthoMatrixData;
+	beShaderDefinitions::OrthoMatrixBuffer m_orthoMatrixData{};
 	beRenderBuffer m_orthoMatrixBuffer;
 
-	beShaderDefinitions::CameraBuffer m_cameraData;
+	beShaderDefinitions::CameraBuffer m_cameraData{};
 	beRenderBuffer m_cameraBuffer;
 };
 

@@ -85,8 +85,8 @@ struct beVectorFixedPolicy
 
 	constexpr int PolicyCapacity() const { return CAPACITY; }
 
+	alignas(T) u8 m_buffer[CAPACITY * sizeof(T)];
 	int m_count = 0;
-	typename std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer[CAPACITY];
 
 	T* GetBuffer()
 	{

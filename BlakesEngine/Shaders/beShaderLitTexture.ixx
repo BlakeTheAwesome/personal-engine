@@ -45,5 +45,5 @@ private:
 	beRenderBuffer m_lightBuffer;
 	beRenderBuffer m_cameraBuffer;
 
-	ShaderParams m_lastShaderParams;
+	ShaderParams m_lastShaderParams{};
 };

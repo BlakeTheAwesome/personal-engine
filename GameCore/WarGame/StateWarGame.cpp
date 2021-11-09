@@ -47,7 +47,7 @@ void StateWarGame::Update(beStateMachine* stateMachine, float dt)
 	//auto renderInterface = m_appData->renderInterface;
 	auto debugWorld = m_appData->debugWorld;
 
-	if (gamepad->GetPressed(beGamepad::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
+	if (gamepad->GetPressed(beGamepad::Button::B) || keyboard->IsPressed(beKeyboard::Button::Escape))
 	{
 		stateMachine->ChangeState(nullptr);
 		return;
