@@ -335,6 +335,7 @@ export inline Vec3 PositionFromMatrix(const Matrix& matrix)
 	//return position;
 
 	const auto& row = matrix.m[3];
+
 	BE_ASSERT(row[3] != 0.f);
 	const float invScale = 1.f / row[3];
 	return Vec3(row[0] * invScale, row[1] * invScale, row[2] * invScale);

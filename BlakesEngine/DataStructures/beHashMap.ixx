@@ -1,12 +1,12 @@
 module;
 #include "BlakesEngine/Core/beAssert.h"
 #include <type_traits>
+#include "BlakesEngine/Core/beHash.h"
 
 export module beHashMap;
 
 import beConcepts;
 import RangeIter;
-import beHash;
 import beVector;
 import beTypes;
 

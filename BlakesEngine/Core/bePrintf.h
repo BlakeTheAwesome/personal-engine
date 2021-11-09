@@ -9,9 +9,8 @@
 namespace bePrintf
 {
 	template <typename... Args>
-	void bePrintf(Args&& ...args) { fmt::print(std::forward<Args>(args)...); }
+	void bePrintf(fmt::format_string<Args...> fmt, Args&&... args) { fmt::print(fmt, std::forward<Args>(args)...); }
 	//void bePrintf(bool includeLocation, const char* location, const char* format, ...);
 };
 
 #define LOG bePrintf::bePrintf
-

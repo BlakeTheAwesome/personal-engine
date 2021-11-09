@@ -34,7 +34,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Clang - Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -47,7 +47,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Clang - Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -232,9 +232,6 @@
     <ClCompile Include="External\fmt\format.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="External\fmt\posix.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="External\RenderDoc-Manager\RenderDocManager.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -288,7 +285,7 @@
     </ClCompile>
     <ClInclude Include="Core\beDeferred.h" />
     <ClInclude Include="Core\beFunction.h" />
-    <ClCompile Include="Core\beHash.ixx">
+    <ClCompile Include="Core\beHash.h">
       <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="Core\beMacros.h" />
@@ -365,19 +362,9 @@
     <ClInclude Include="External\DirectXTK\VertexTypes.h" />
     <ClInclude Include="External\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="External\DirectXTK\XboxDDSTextureLoader.h" />
-    <ClInclude Include="External\fmt\chrono.h" />
-    <ClInclude Include="External\fmt\color.h" />
-    <ClInclude Include="External\fmt\compile.h" />
     <ClInclude Include="External\fmt\core.h" />
     <ClInclude Include="External\fmt\format-inl.h" />
     <ClInclude Include="External\fmt\format.h" />
-    <ClInclude Include="External\fmt\locale.h" />
-    <ClInclude Include="External\fmt\ostream.h" />
-    <ClInclude Include="External\fmt\posix.h" />
-    <ClInclude Include="External\fmt\printf.h" />
-    <ClInclude Include="External\fmt\ranges.h" />
-    <ClInclude Include="External\fmt\safe-duration-cast.h" />
-    <ClInclude Include="External\fmt\time.h" />
     <ClInclude Include="External\Misc\StreamToDebugOutput.h" />
     <ClInclude Include="External\RenderDoc-Manager\RenderDocManager.h" />
     <ClInclude Include="External\RenderDoc-Manager\renderdoc_app.h" />

@@ -3,12 +3,12 @@ module;
 #include "BlakesEngine/bePCH.h"
 #include "BlakesEngine/Core/beAssert.h"
 #include "BlakesEngine/Core/beString.h"
+#include "BlakesEngine/Core/beHash.h"
 #include <fstream>
 
 module beEnvironment;
 
 import beTypes;
-import beHash;
 
 static beString RemoveQuotes(const beString& input)
 {

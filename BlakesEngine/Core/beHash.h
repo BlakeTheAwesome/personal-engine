@@ -1,17 +1,13 @@
-module;
 #include <functional>
 #include "BlakesEngine/Core/beString.h"
-
-export module beHash;
-
 import beTypes;
 
-export namespace beHashFunctions
+namespace beHashFunctions
 {
 	u32 MurmerHash32(const void* data, int dataLen);
 }
 
-export template <typename T>
+template <typename T>
 struct beHash
 {
 	static size_t GetHash(const T& obj)
@@ -20,7 +16,7 @@ struct beHash
 	}
 };
 
-export template <>
+template <>
 struct beHash<beString>
 {
 	static size_t GetHash(const char* str)

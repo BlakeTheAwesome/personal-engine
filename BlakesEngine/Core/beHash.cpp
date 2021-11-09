@@ -1,11 +1,9 @@
-module;
 #include "BlakesEngine/bePCH.h"
 #include <CodeAnalysis/Warnings.h>
 
 #include <stdlib.h>
 #include <stdint.h>
 
-module beHash;
 import beTypes;
 #pragma warning(push)
 #pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)

@@ -3,6 +3,7 @@
 import beConcepts;
 
 #include <locale>
+#include <algorithm>
 
 namespace beStringUtil
 {

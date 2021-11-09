@@ -286,22 +286,22 @@ void StateRenderTest::Render()
 
 
 			fmt::memory_buffer message;
-			fmt::format_to(message, "Dynamic Text\n");
-			fmt::format_to(message, "Mouse [X, Y]: [{}, {}]\n", mouse->GetX(), mouse->GetY());
-			fmt::format_to(message, "Camera [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", cameraPos.x, cameraPos.y, cameraPos.z);
-			fmt::format_to(message, "Mat Right [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[0][0], viewMatrix.m[0][1], viewMatrix.m[0][2], viewMatrix.m[0][3]);
-			fmt::format_to(message, "Mat Up    [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[1][0], viewMatrix.m[1][1], viewMatrix.m[1][2], viewMatrix.m[1][3]);
-			fmt::format_to(message, "-Mat Forw [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[2][0], viewMatrix.m[2][1], viewMatrix.m[2][2], viewMatrix.m[2][3]);
-			fmt::format_to(message, "_Mat Pos  [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[3][0], viewMatrix.m[3][1], viewMatrix.m[3][2], viewMatrix.m[3][3]);
+			fmt::format_to(std::back_inserter(message), "Dynamic Text\n");
+			fmt::format_to(std::back_inserter(message), "Mouse [X, Y]: [{}, {}]\n", mouse->GetX(), mouse->GetY());
+			fmt::format_to(std::back_inserter(message), "Camera [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", cameraPos.x, cameraPos.y, cameraPos.z);
+			fmt::format_to(std::back_inserter(message), "Mat Right [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[0][0], viewMatrix.m[0][1], viewMatrix.m[0][2], viewMatrix.m[0][3]);
+			fmt::format_to(std::back_inserter(message), "Mat Up    [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[1][0], viewMatrix.m[1][1], viewMatrix.m[1][2], viewMatrix.m[1][3]);
+			fmt::format_to(std::back_inserter(message), "-Mat Forw [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[2][0], viewMatrix.m[2][1], viewMatrix.m[2][2], viewMatrix.m[2][3]);
+			fmt::format_to(std::back_inserter(message), "_Mat Pos  [X, Y, Z, W]: [{:.2f}, {:.2f}, {:.2f}, {:.2f}]\n", viewMatrix.m[3][0], viewMatrix.m[3][1], viewMatrix.m[3][2], viewMatrix.m[3][3]);
 			;
 			if (isInBounds)
 			{
-				fmt::format_to(message, "ClickPos [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", worldPos.x, worldPos.y, worldPos.z);
-				fmt::format_to(message, "ClickDir [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", worldDir.x, worldDir.y, worldDir.z);
+				fmt::format_to(std::back_inserter(message), "ClickPos [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", worldPos.x, worldPos.y, worldPos.z);
+				fmt::format_to(std::back_inserter(message), "ClickDir [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", worldDir.x, worldDir.y, worldDir.z);
 			}
 			if (maybeRealWorldPos)
 			{
-				fmt::format_to(message, "Collision [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", maybeRealWorldPos->x, maybeRealWorldPos->y, maybeRealWorldPos->z);
+				fmt::format_to(std::back_inserter(message), "Collision [X, Y, Z]: [{:.2f}, {:.2f}, {:.2f}]\n", maybeRealWorldPos->x, maybeRealWorldPos->y, maybeRealWorldPos->z);
 			}
 
 			beString messageStr = fmt::to_string(message);
