@@ -16,9 +16,9 @@ namespace beStringUtil
 
 
 	#define WRAP_PERMUTATIONS(FunctionName)\
-		template <Iterator Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beStringView& pattern) { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
+		template <Iterator Iter> inline auto FunctionName(Iter beginHaystack, Iter endHaystack, const beStringView& pattern) { return FunctionName(beginHaystack, endHaystack, pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beStringView& str, const beStringView& pattern)        { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
-		template <Iterator Iter> inline auto FunctionName(Iter beginRange, Iter endRange, const beWString& pattern)    { return FunctionName(beginRange, endRange, pattern.begin(), pattern.end()); }\
+		template <Iterator Iter> inline auto FunctionName(Iter beginHaystack, Iter endHaystack, const beWString& pattern)    { return FunctionName(beginHaystack, endHaystack, pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beWString& str, const beWString& pattern)              { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 		                         inline auto FunctionName(const beWString& str, std::span<const wchar_t> pattern)      { return FunctionName(str.begin(), str.end(), pattern.begin(), pattern.end()); }\
 	// WRAP_PERMUTATIONS
@@ -63,18 +63,25 @@ namespace beStringUtil
 	WRAP_PERMUTATIONS_CHAR(FindFirst);
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline int FindFirst(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline int FindFirst(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
+		const auto haystackSize = std::distance(beginHaystack, endHaystack);
+		const auto needleSize = std::distance(beginNeedle, endNeedle);
+
+		if (haystackSize < needleSize)
 		{
 			// range too small, cannot contain string
 			return -1;
 		}
-
-		auto it = std::search(beginRange, endRange, beginPattern, endPattern);
-		if (it != endRange)
+		else if (needleSize == 0)
 		{
-			return (int)std::distance(beginRange, it);
+			return -1;
+		}
+
+		auto it = std::search(beginHaystack, endHaystack, beginNeedle, endNeedle);
+		if (it != endHaystack)
+		{
+			return (int)std::distance(beginHaystack, it);
 		}
 		return -1;
 	}
@@ -97,82 +104,96 @@ namespace beStringUtil
 	WRAP_PERMUTATIONS_CHAR(FindLast);
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline int FindLast(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline int FindLast(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
+		const auto haystackSize = std::distance(beginHaystack, endHaystack);
+		const auto needleSize = std::distance(beginNeedle, endNeedle);
+		if (haystackSize < needleSize)
 		{
 			// range too small, cannot contain string
 			return -1;
 		}
-
-		auto it = std::find_end(beginRange, endRange, beginPattern, endPattern);
-		if (it != endRange)
+		else if (needleSize == 0)
 		{
-			return (int)std::distance(beginRange, it);
+			return -1;
+		}
+
+		auto it = std::find_end(beginHaystack, endHaystack, beginNeedle, endNeedle);
+		if (it != endHaystack)
+		{
+			return (int)std::distance(beginHaystack, it);
 		}
 		return -1;
 	}
 	WRAP_PERMUTATIONS(FindLast);
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline bool BeginsWith(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool BeginsWith(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		if (std::distance(beginRange, endRange) < std::distance(beginPattern, endPattern))
+		const auto haystackSize = std::distance(beginHaystack, endHaystack);
+		const auto needleSize = std::distance(beginNeedle, endNeedle);
+		if (haystackSize < needleSize)
 		{
 			return false;
 		}
 		#pragma warning(push)
 		#pragma warning(disable:26459) // Passing raw pointer iterator
-		return std::equal(beginPattern, endPattern, beginRange);
+		return std::equal(beginNeedle, endNeedle, beginHaystack);
 		#pragma warning(pop)
 	}
 	WRAP_PERMUTATIONS(BeginsWith);
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline bool BeginsWithI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool BeginsWithI(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		return BeginsWith(LowerIterator{beginRange}, LowerIterator{endRange}, LowerIterator{beginPattern}, LowerIterator{endPattern});
+		return BeginsWith(LowerIterator{beginHaystack}, LowerIterator{endHaystack}, LowerIterator{beginNeedle}, LowerIterator{endNeedle});
 	}
 	WRAP_PERMUTATIONS(BeginsWithI);
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline bool EndsWith(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool EndsWith(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		const auto rbeginRange = std::reverse_iterator(endRange);
-		const auto rendRange = std::reverse_iterator(beginRange);
-		const auto rbeginPattern = std::reverse_iterator(endPattern);
-		const auto rendPattern = std::reverse_iterator(beginPattern);
-		return BeginsWith(rbeginRange, rendRange, rbeginPattern, rendPattern);
+		const auto rbeginHaystack = std::reverse_iterator(endHaystack);
+		const auto rendHaystack = std::reverse_iterator(beginHaystack);
+		const auto rbeginNeedle = std::reverse_iterator(endNeedle);
+		const auto rendNeedle = std::reverse_iterator(beginNeedle);
+		return BeginsWith(rbeginHaystack, rendHaystack, rbeginNeedle, rendNeedle);
 	}
 	WRAP_PERMUTATIONS(EndsWith);
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline bool EndsWithI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool EndsWithI(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		const auto rbeginRange = std::reverse_iterator(endRange);
-		const auto rendRange = std::reverse_iterator(beginRange);
-		const auto rbeginPattern = std::reverse_iterator(endPattern);
-		const auto rendPattern = std::reverse_iterator(beginPattern);
-		return BeginsWithI(rbeginRange, rendRange, rbeginPattern, rendPattern);
+		const auto rbeginHaystack = std::reverse_iterator(endHaystack);
+		const auto rendHaystack = std::reverse_iterator(beginHaystack);
+		const auto rbeginNeedle = std::reverse_iterator(endNeedle);
+		const auto rendNeedle = std::reverse_iterator(beginNeedle);
+		return BeginsWithI(rbeginHaystack, rendHaystack, rbeginNeedle, rendNeedle);
 	}
 	WRAP_PERMUTATIONS(EndsWithI);
 
 
 	template <Iterator Iter, Iterator IterPattern>
-	inline bool IsEqual(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool IsEqual(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		if (std::distance(beginRange, endRange) != std::distance(beginPattern, endPattern))
+		const auto haystackSize = std::distance(beginHaystack, endHaystack);
+		const auto needleSize = std::distance(beginNeedle, endNeedle);
+		if (haystackSize != needleSize)
 		{
 			return false;
 		}
-		return FindFirst(beginRange, endRange, beginPattern, endPattern) == 0;
+		else if (haystackSize == 0)
+		{
+			return true;
+		}
+		return FindFirst(beginHaystack, endHaystack, beginNeedle, endNeedle) == 0;
 	}
 	WRAP_PERMUTATIONS(IsEqual);
 	
 	template <Iterator Iter, Iterator IterPattern>
-	inline bool IsEqualI(Iter beginRange, Iter endRange, IterPattern beginPattern, IterPattern endPattern)
+	inline bool IsEqualI(Iter beginHaystack, Iter endHaystack, IterPattern beginNeedle, IterPattern endNeedle)
 	{
-		return IsEqual(LowerIterator{beginRange}, LowerIterator{endRange}, LowerIterator{beginPattern}, LowerIterator{endPattern});
+		return IsEqual(LowerIterator{beginHaystack}, LowerIterator{endHaystack}, LowerIterator{beginNeedle}, LowerIterator{endNeedle});
 	}
 	WRAP_PERMUTATIONS(IsEqualI);
 
