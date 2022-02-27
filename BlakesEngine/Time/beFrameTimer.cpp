@@ -1,6 +1,6 @@
 module;
 #include "BlakesEngine/bePCH.h"
-#include "beTimeValue.h"
+#include <chrono>
 module beFrameTimer;
 
 using namespace std;

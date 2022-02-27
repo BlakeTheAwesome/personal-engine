@@ -1,5 +1,5 @@
 module;
-#include "beTimeValue.h"
+#include <chrono>
 
 export module beFrameTimer;
 

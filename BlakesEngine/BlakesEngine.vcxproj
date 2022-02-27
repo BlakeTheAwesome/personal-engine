@@ -263,7 +263,6 @@
     <ClCompile Include="Shaders\beShaderTexture2d.cpp" />
     <ClCompile Include="Time\beClock.cpp" />
     <ClCompile Include="Time\beFrameTimer.cpp" />
-    <ClCompile Include="Time\beTimeValue.cpp" />
     <ClCompile Include="Window\beWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -449,7 +448,6 @@
     <ClCompile Include="Time\beFrameTimer.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Time\beTimeValue.h" />
     <ClCompile Include="Window\beWindow.ixx">
       <FileType>Document</FileType>
     </ClCompile>
